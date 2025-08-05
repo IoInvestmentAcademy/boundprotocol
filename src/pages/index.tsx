@@ -22,7 +22,7 @@ export default function Home() {
           <img
             src="/favicon.png"
             alt="BOUND Logo"
-            className="w-8 h-8 rounded-lg"
+            className="w-12 h-12 rounded-lg"
           />
           <span className="text-white">BOUND</span>
         </div>

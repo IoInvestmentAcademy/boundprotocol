@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BOUND Dashboard</title>
+    <title>BOUND - The DeFi Yield Stablecoin</title>
     <style>
       * {
         margin: 0;
@@ -14,1047 +14,418 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 20px;
-        position: relative;
+        background: #000;
+        color: #fff;
+        overflow-x: hidden;
       }
 
-      .network-info {
+      /* Header */
+      header {
         position: fixed;
-        top: 20px;
-        right: 20px;
-        display: flex;
-        gap: 12px;
-        z-index: 1000;
-      }
-
-      .network-selector,
-      .wallet-info {
-        background: white;
-        border: none;
-        border-radius: 20px;
-        padding: 8px 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #1a1a1a;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      .network-selector:hover,
-      .wallet-info:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .polygon-icon {
-        width: 20px;
-        height: 20px;
-        background: linear-gradient(135deg, #8247e5, #a855f7);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 10px;
-        font-weight: bold;
-      }
-
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      }
-
-      .header {
-        text-align: center;
-        margin-bottom: 30px;
-        position: relative;
-      }
-
-      .logo-top-left {
-        position: absolute;
         top: 0;
         left: 0;
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-      .buy-button-top {
-        position: absolute;
-        top: 0;
         right: 0;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 12px;
-        text-decoration: none;
-        display: inline-block;
-      }
-
-      .buy-button-top:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      }
-
-      .title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin: 0;
-      }
-
-      .subtitle {
-        color: #666;
-        font-size: 14px;
-        margin-top: 4px;
-      }
-
-      .hero-card {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 30px;
-        margin-bottom: 30px;
-        color: #1a1a1a;
-      }
-
-      .hero-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 20px;
-      }
-
-      .hero-left h3 {
-        font-size: 14px;
-        font-weight: 500;
-        color: #64748b;
-        margin-bottom: 8px;
-      }
-
-      .hero-price {
-        font-size: 36px;
-        font-weight: 700;
-        margin-bottom: 8px;
-        color: #1a1a1a;
-      }
-
-      .hero-apy {
-        font-size: 16px;
-        font-weight: 600;
-        color: #16a34a;
-      }
-
-      .hero-right {
-        text-align: right;
-      }
-
-      .hero-right .value {
-        font-size: 20px;
-        font-weight: 700;
-        color: #1a1a1a;
-      }
-
-      .hero-right .label {
-        font-size: 11px;
-        color: #64748b;
-      }
-
-      .hero-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        margin-bottom: 20px;
-      }
-
-      .hero-stat {
-        text-align: center;
-      }
-
-      .hero-stat h4 {
-        font-size: 12px;
-        color: #64748b;
-        margin-bottom: 8px;
-      }
-
-      .hero-stat .value {
-        font-size: 20px;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-
-      .surplus {
-        color: #16a34a;
-      }
-
-      .impact-bar {
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        border-radius: 8px;
-        padding: 12px;
+        z-index: 1000;
+        padding: 20px 40px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
       }
 
-      .impact-left {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #16a34a;
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      .pulse-dot {
-        width: 6px;
-        height: 6px;
-        background: #16a34a;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-      }
-
-      .impact-right {
-        color: #16a34a;
-        font-weight: 700;
-        font-size: 16px;
-      }
-
-      @keyframes pulse {
-        0% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-
-      .section {
-        margin-bottom: 30px;
-      }
-
-      .section-header {
+      .logo {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: bold;
       }
 
-      .section-icon {
-        width: 24px;
-        height: 24px;
-        background: #f1f5f9;
-        border-radius: 6px;
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(45deg, #8b5cf6, #a855f7);
+        border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #667eea;
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 18px;
       }
 
-      .section-title {
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #a855f7;
+      }
+
+      .launch-app {
+        background: linear-gradient(45deg, #8b5cf6, #a855f7);
+        padding: 12px 24px;
+        border-radius: 25px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 500;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .launch-app:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+      }
+
+      /* Main Hero Section */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 0 40px;
+      }
+
+      .hero-content {
+        max-width: 800px;
+        z-index: 2;
+      }
+
+      .hero h1 {
+        font-size: clamp(3rem, 8vw, 6rem);
+        font-weight: 300;
+        line-height: 1.1;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #fff 0%, #a855f7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-subtitle {
         font-size: 20px;
-        font-weight: 600;
-        color: #1a1a1a;
+        color: #b3b3b3;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        max-width: 600px;
       }
 
-      .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      .apy-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        padding: 16px 24px;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+      }
+
+      .apy-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(45deg, #8b5cf6, #a855f7);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .apy-text {
+        background: linear-gradient(45deg, #8b5cf6, #a855f7);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      /* 3D Globe Visualization */
+      .globe-container {
+        position: absolute;
+        right: -200px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 800px;
+        height: 800px;
+        z-index: 1;
+      }
+
+      .globe {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(139, 92, 246, 0.3),
+          rgba(139, 92, 246, 0.1),
+          transparent
+        );
+        position: relative;
+        animation: rotate 20s linear infinite;
+      }
+
+      .globe::before {
+        content: "";
+        position: absolute;
+        inset: 20px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, transparent, rgba(139, 92, 246, 0.1)),
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 10px,
+            rgba(139, 92, 246, 0.1) 12px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 10px,
+            rgba(139, 92, 246, 0.1) 12px
+          );
+      }
+
+      .globe-dots {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 2px 2px,
+          rgba(139, 92, 246, 0.8) 1px,
+          transparent 1px
+        );
+        background-size: 40px 40px;
+        animation: pulse 3s ease-in-out infinite;
+      }
+
+      /* Background Dots Pattern */
+      .bg-pattern {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+          circle at 1px 1px,
+          rgba(255, 255, 255, 0.1) 1px,
+          transparent 1px
+        );
+        background-size: 50px 50px;
+        opacity: 0.3;
+        z-index: 0;
+      }
+
+      /* Partners Section */
+      .partners {
+        padding: 80px 40px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+      }
+
+      .partners h2 {
+        font-size: 18px;
+        color: #b3b3b3;
+        margin-bottom: 40px;
+        font-weight: 400;
+      }
+
+      .partners-grid {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .partner-logo {
+        opacity: 0.6;
+        transition: opacity 0.3s;
+        font-size: 24px;
+        font-weight: 500;
+        color: #fff;
+      }
+
+      .partner-logo:hover {
+        opacity: 1;
+      }
+
+      /* Footer */
+      footer {
+        padding: 60px 40px 40px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 2;
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .footer-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 16px;
+        color: #b3b3b3;
+      }
+
+      .footer-brand .logo-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+      }
+
+      .footer-right {
+        display: flex;
+        align-items: center;
         gap: 20px;
       }
 
-      .card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
+      .social-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none;
+        transition: all 0.3s;
       }
 
-      .card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      .social-icon:hover {
+        background: rgba(139, 92, 246, 0.3);
         transform: translateY(-2px);
       }
 
-      .card-header {
-        margin-bottom: 16px;
+      /* Animations */
+      @keyframes rotate {
+        from {
+          transform: translateY(-50%) rotate(0deg);
+        }
+        to {
+          transform: translateY(-50%) rotate(360deg);
+        }
       }
 
-      .card-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #1a1a1a;
-        text-align: center;
-        margin-bottom: 20px;
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 0.8;
+        }
       }
 
-      .balance-amount {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 4px;
-        text-align: center;
-      }
-
-      .balance-currency {
-        color: #64748b;
-        font-size: 13px;
-        font-weight: 500;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      .reserve-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-
-      .reserve-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 18px;
-        font-weight: bold;
-        background: #0891b2;
-      }
-
-      .reserve-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-
-      .protocol-balance-label {
-        color: #64748b;
-        font-size: 13px;
-        margin-bottom: 8px;
-      }
-
-      .reserve-amount {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 4px;
-      }
-
-      .reserve-currency {
-        color: #64748b;
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 20px;
-      }
-
-      .reserve-action {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        background: #cffafe;
-        color: #0891b2;
-      }
-
-      .reserve-action:hover {
-        background: #a5f3fc;
-      }
-
-      .chart-section {
-        margin-bottom: 30px;
-      }
-
-      .chart-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      .chart-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-
-      .chart-legend {
-        display: flex;
-        gap: 20px;
-      }
-
-      .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: #666;
-      }
-
-      .legend-color {
-        width: 12px;
-        height: 12px;
-        border-radius: 2px;
-      }
-
-      .purple {
-        background: #8b5cf6;
-      }
-      .blue {
-        background: #3b82f6;
-      }
-
-      .explanation-box {
-        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-        color: white;
-        padding: 16px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-      }
-
-      .explanation-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 8px;
-      }
-
-      .explanation-icon {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 6px;
-        border-radius: 6px;
-      }
-
-      .explanation-title {
-        font-size: 14px;
-        font-weight: 600;
-      }
-
-      .explanation-text {
-        font-size: 13px;
-        line-height: 1.4;
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      .chart-container {
-        background: #f8fafc;
-        border-radius: 12px;
-        padding: 20px;
-        height: 300px;
-        position: relative;
-      }
-
-      .fees-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-      }
-
-      .fee-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        border: 1px solid #e2e8f0;
-      }
-
-      .fee-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 16px;
-      }
-
-      .fee-icon {
-        width: 36px;
-        height: 36px;
-        background: #f1f5f9;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #667eea;
-        font-size: 14px;
-        font-weight: bold;
-      }
-
-      .fee-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-
-      .fee-amounts {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-
-      .fee-amount {
-        text-align: center;
-        padding: 12px;
-        background: #f8fafc;
-        border-radius: 8px;
-      }
-
-      .fee-label {
-        font-size: 11px;
-        color: #64748b;
-        margin-bottom: 4px;
-      }
-
-      .fee-value {
-        font-size: 16px;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-
+      /* Responsive */
       @media (max-width: 768px) {
-        .container {
-          padding: 20px;
+        header {
+          padding: 15px 20px;
         }
 
-        .hero-stats {
-          grid-template-columns: 1fr;
-          gap: 12px;
+        .nav-links {
+          gap: 20px;
         }
 
-        .cards-grid {
-          grid-template-columns: 1fr;
+        .hero {
+          padding: 0 20px;
+          min-height: 90vh;
+        }
+
+        .globe-container {
+          right: -300px;
+          width: 600px;
+          height: 600px;
+        }
+
+        .partners {
+          padding: 60px 20px;
+        }
+
+        .partners-grid {
+          gap: 40px;
+        }
+
+        .footer-content {
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
         }
       }
     </style>
   </head>
   <body>
-    <div class="network-info">
-      <div class="network-selector">
-        <div class="polygon-icon">⬟</div>
-        <span>Polygon</span>
-        <span style="font-size: 12px">▼</span>
+    <div class="bg-pattern"></div>
+
+    <header>
+      <div class="logo">
+        <div class="logo-icon">∞</div>
+        <span>BOUND</span>
       </div>
-      <div class="wallet-info">
-        <span>4.27 POL</span>
-        <span style="font-size: 12px">🔶</span>
-        <span>0xa3...54a0</span>
-        <span style="font-size: 12px">▼</span>
-      </div>
-    </div>
+      <nav class="nav-links">
+        <a href="#docs">Docs</a>
+        <a href="#app" class="launch-app">Launch App</a>
+      </nav>
+    </header>
 
-    <div class="container">
-      <div class="header">
-        <div class="logo-top-left">B</div>
-        <a href="#" class="buy-button-top">Buy BOUND on Uniswap</a>
-        <div>
-          <h1 class="title">BOUND Dashboard</h1>
-          <p class="subtitle">The DeFi Yield Stablecoin</p>
-        </div>
-      </div>
-
-      <div class="hero-card">
-        <div class="hero-header">
-          <div class="hero-left">
-            <h3>BOUND USD Price</h3>
-            <div class="hero-price">$1.0096</div>
-            <div class="hero-apy">19.86% APY</div>
-          </div>
-          <div class="hero-right">
-            <div
-              style="
-                background: linear-gradient(135deg, #667eea, #764ba2);
-                color: white;
-                padding: 8px 16px;
-                border-radius: 20px;
-                font-size: 12px;
-                font-weight: 500;
-                margin-bottom: 8px;
-              "
-            >
-              Liquidity Supplied
-            </div>
-            <div class="value">$2,000,200</div>
-            <div class="label">BOUND/USDC Pool TVL</div>
-          </div>
-        </div>
-
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <h4>BOUND Total Supply</h4>
-            <div class="value">$7.47B</div>
-          </div>
-          <div class="hero-stat">
-            <h4>Total Collateral Value</h4>
-            <div class="value">$7.55B</div>
-          </div>
-          <div class="hero-stat">
-            <h4>Collateral Surplus</h4>
-            <div class="value surplus">$80M</div>
-          </div>
-        </div>
-
-        <div class="impact-bar">
-          <div class="impact-left">
-            <div class="pulse-dot"></div>
-            Latest Impact
-          </div>
-          <div class="impact-right">↗ +0.24%</div>
-        </div>
-
-        <div
-          style="margin-top: 8px; position: relative; cursor: pointer"
-          onmouseover="showBackingTooltip()"
-          onmouseout="hideBackingTooltip()"
-        >
-          <div
-            style="
-              background: linear-gradient(135deg, #667eea, #764ba2);
-              border-radius: 8px;
-              padding: 12px;
-              text-align: center;
-            "
-          >
-            <div style="color: white; font-size: 12px; font-weight: 500">
-              100.96% Backing Ratio
-            </div>
-          </div>
-          <div
-            id="backingTooltip"
-            style="
-              position: absolute;
-              bottom: 100%;
-              left: 50%;
-              transform: translateX(-50%);
-              background: #1f2937;
-              color: white;
-              padding: 8px 12px;
-              border-radius: 6px;
-              font-size: 11px;
-              white-space: nowrap;
-              margin-bottom: 8px;
-              opacity: 0;
-              visibility: hidden;
-              transition: all 0.3s ease;
-              z-index: 10;
-            "
-          >
-            <div>USDC Reserve: 65.2%</div>
-            <div>Shares Reserve: 34.8%</div>
-            <div
-              style="
-                position: absolute;
-                top: 100%;
-                left: 50%;
-                transform: translateX(-50%);
-                border: 4px solid transparent;
-                border-top-color: #1f2937;
-              "
-            ></div>
-          </div>
+    <main class="hero">
+      <div class="hero-content">
+        <h1>The DeFi Yield<br />Stablecoin</h1>
+        <p class="hero-subtitle">
+          A professional-grade DeFi platform that transforms complex yield
+          strategies into seamless, automated returns.
+        </p>
+        <div class="apy-badge">
+          <div class="apy-icon">$</div>
+          <span>BOUND</span>
+          <div class="apy-text">18.44% APY</div>
         </div>
       </div>
 
-      <div class="chart-section">
-        <div class="chart-header">
-          <h3 class="chart-title">BOUND+ Price</h3>
-          <div class="chart-legend">
-            <div class="legend-item">
-              <div class="legend-color purple"></div>
-              <span>BOUND+ Price</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color blue"></div>
-              <span>Base Value ($1.00)</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="explanation-box">
-          <div class="explanation-header">
-            <div class="explanation-icon">💰</div>
-            <div class="explanation-title">Protocol Surplus Ownership</div>
-          </div>
-          <div class="explanation-text">
-            BOUND+ is a yield-bearing token that represents direct ownership of
-            protocol surplus above 100% backing ratio.
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <div
-            style="position: relative; height: 100%; padding: 0 50px 40px 50px"
-          >
-            <div
-              style="
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: calc(100% - 40px);
-                width: 40px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                font-size: 11px;
-                color: #64748b;
-              "
-            >
-              <div>$1.02</div>
-              <div>$1.01</div>
-              <div>$1.00</div>
-              <div>$0.99</div>
-              <div>$0.98</div>
-            </div>
-
-            <div style="height: calc(100% - 40px); position: relative">
-              <div
-                style="
-                  position: absolute;
-                  top: 20px;
-                  left: 20px;
-                  background: rgba(139, 92, 246, 0.1);
-                  border: 1px solid rgba(139, 92, 246, 0.3);
-                  padding: 6px 10px;
-                  border-radius: 6px;
-                  font-size: 11px;
-                  color: #8b5cf6;
-                  font-weight: 600;
-                "
-              >
-                📈 BOUND+ Premium Zone<br />
-                <span style="font-size: 9px; opacity: 0.8"
-                  >Collateral Surplus Ownership</span
-                >
-              </div>
-
-              <svg style="width: 100%; height: 100%" viewBox="0 0 800 240">
-                <defs>
-                  <linearGradient
-                    id="chartGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="0%"
-                    y2="100%"
-                  >
-                    <stop
-                      offset="0%"
-                      style="stop-color: #8b5cf6; stop-opacity: 0.3"
-                    />
-                    <stop
-                      offset="100%"
-                      style="stop-color: #8b5cf6; stop-opacity: 0.05"
-                    />
-                  </linearGradient>
-                </defs>
-
-                <line
-                  x1="0"
-                  y1="144"
-                  x2="800"
-                  y2="144"
-                  stroke="#3b82f6"
-                  stroke-width="2"
-                  opacity="0.6"
-                />
-
-                <path
-                  d="M0,144 L120,142 L240,139 L360,136 L480,132 L600,128 L720,124 L800,120 L800,144 L0,144 Z"
-                  fill="url(#chartGradient)"
-                />
-
-                <path
-                  d="M0,144 L120,142 L240,139 L360,136 L480,132 L600,128 L720,124 L800,120"
-                  stroke="#8b5cf6"
-                  stroke-width="3"
-                  fill="none"
-                  stroke-linecap="round"
-                />
-
-                <circle cx="0" cy="144" r="3" fill="#8b5cf6" />
-                <circle cx="120" cy="142" r="3" fill="#8b5cf6" />
-                <circle cx="240" cy="139" r="3" fill="#8b5cf6" />
-                <circle cx="360" cy="136" r="3" fill="#8b5cf6" />
-                <circle cx="480" cy="132" r="3" fill="#8b5cf6" />
-                <circle cx="600" cy="128" r="3" fill="#8b5cf6" />
-                <circle cx="720" cy="124" r="3" fill="#8b5cf6" />
-                <circle cx="800" cy="120" r="3" fill="#8b5cf6" />
-
-                <circle
-                  cx="800"
-                  cy="120"
-                  r="5"
-                  fill="#8b5cf6"
-                  stroke="white"
-                  stroke-width="2"
-                />
-              </svg>
-
-              <div
-                style="
-                  position: absolute;
-                  top: 60px;
-                  right: 40px;
-                  background: white;
-                  border: 1px solid #e2e8f0;
-                  padding: 12px;
-                  border-radius: 8px;
-                  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                  font-size: 12px;
-                  min-width: 180px;
-                "
-              >
-                <div style="color: #64748b; margin-bottom: 6px">
-                  Jul 27, 2025, 19:50:57
-                </div>
-                <div
-                  style="font-weight: 700; color: #1a1a1a; margin-bottom: 8px"
-                >
-                  BOUND+ Price: $1.0096
-                </div>
-                <div
-                  style="
-                    background: rgba(74, 222, 128, 0.1);
-                    padding: 6px;
-                    border-radius: 4px;
-                    margin-bottom: 8px;
-                  "
-                >
-                  <div
-                    style="color: #16a34a; font-weight: 600; font-size: 11px"
-                  >
-                    Surplus per BOUND+: $0.0096
-                  </div>
-                  <div style="color: #64748b; font-size: 10px">
-                    Your share of excess collateral
-                  </div>
-                </div>
-                <div style="border-top: 1px solid #e2e8f0; padding-top: 6px">
-                  <div style="color: #64748b; font-size: 11px">
-                    Backing Ratio:
-                    <span style="font-weight: 600; color: #1a1a1a"
-                      >100.96%</span
-                    >
-                  </div>
-                  <div
-                    style="color: #64748b; font-size: 10px; font-style: italic"
-                  >
-                    BOUND+ price reflects backing ratio in dollars
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style="
-                position: absolute;
-                bottom: 0;
-                left: 50px;
-                right: 0;
-                display: flex;
-                justify-content: space-between;
-                font-size: 11px;
-                color: #64748b;
-              "
-            >
-              <div>Dec '24</div>
-              <div>Jan '25</div>
-              <div>Feb '25</div>
-              <div>Mar '25</div>
-              <div>Apr '25</div>
-              <div>May '25</div>
-              <div>Jun '25</div>
-              <div>Jul '25</div>
-            </div>
-          </div>
-
-          <div
-            style="
-              text-align: center;
-              margin-top: 16px;
-              font-size: 11px;
-              color: #64748b;
-              font-style: italic;
-            "
-          >
-            As backing ratio grows above 100%, BOUND+ holders capture the excess
-            value through price appreciation
-          </div>
+      <div class="globe-container">
+        <div class="globe">
+          <div class="globe-dots"></div>
         </div>
       </div>
+    </main>
 
-      <div class="section">
-        <div class="section-header">
-          <div class="section-icon">WO</div>
-          <h2 class="section-title">Wallet Overview</h2>
+    <section class="partners">
+      <h2>Trusted by</h2>
+      <div class="partners-grid">
+        <div class="partner-logo">enzyme</div>
+        <div class="partner-logo">Microsoft</div>
+        <div class="partner-logo">AVANTGARDE</div>
+        <div class="partner-logo">Chainlink</div>
+        <div class="partner-logo">yard[hub]</div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="logo-icon">∞</div>
+          <span>powered by IO INVESTMENT</span>
         </div>
-        <div class="cards-grid">
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">USDC Balance</div>
-            </div>
-            <div class="balance-amount">8,998,973.27</div>
-            <div class="balance-currency">USDC</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">BOUND Balance</div>
-            </div>
-            <div class="balance-amount">0</div>
-            <div class="balance-currency">BNDT</div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <div class="card-title">BOUND+ Balance</div>
-            </div>
-            <div class="balance-amount">0</div>
-            <div class="balance-currency">BNDT+</div>
-          </div>
+        <div class="footer-right">
+          <span style="color: #666">© 2025 BOUND. All rights reserved.</span>
+          <a href="#" class="social-icon">𝕏</a>
         </div>
       </div>
-
-      <div class="section">
-        <div class="section-header">
-          <div class="section-icon">RD</div>
-          <h2 class="section-title">Reserve Details</h2>
-        </div>
-        <div class="cards-grid">
-          <div class="card">
-            <div class="reserve-header">
-              <div class="reserve-icon">L</div>
-              <div class="reserve-title">Liquidity Reserve</div>
-            </div>
-            <div class="protocol-balance-label">Protocol Balance</div>
-            <div class="reserve-amount">2,450,750.50</div>
-            <div class="reserve-currency">USDC</div>
-            <button class="reserve-action">Manage Liquidity</button>
-          </div>
-
-          <div class="card">
-            <div class="reserve-header">
-              <div class="reserve-icon">S</div>
-              <div class="reserve-title">Shares Reserve</div>
-            </div>
-            <div class="protocol-balance-label">Protocol Balance</div>
-            <div class="reserve-amount">1,875,325.75</div>
-            <div class="reserve-currency">USDC</div>
-            <button class="reserve-action">View Shares</button>
-          </div>
-
-          <div class="card">
-            <div class="reserve-header">
-              <div class="reserve-icon">E</div>
-              <div class="reserve-title">Emergency Reserve</div>
-            </div>
-            <div class="protocol-balance-label">Protocol Balance</div>
-            <div class="reserve-amount">500,000.00</div>
-            <div class="reserve-currency">USDC</div>
-            <button class="reserve-action">Emergency Access</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-header">
-          <div class="section-icon">PF</div>
-          <h2 class="section-title">Protocol Fees</h2>
-        </div>
-        <div class="fees-grid">
-          <div class="fee-card">
-            <div class="fee-header">
-              <div class="fee-icon">A</div>
-              <div class="fee-title">AMM Fees</div>
-            </div>
-            <div class="fee-amounts">
-              <div class="fee-amount">
-                <div class="fee-label">BNDT</div>
-                <div class="fee-value">176.59</div>
-              </div>
-              <div class="fee-amount">
-                <div class="fee-label">USDC</div>
-                <div class="fee-value">176.01</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="fee-card">
-            <div class="fee-header">
-              <div class="fee-icon">X</div>
-              <div class="fee-title">Exchange Fees</div>
-            </div>
-            <div class="fee-amounts">
-              <div class="fee-amount">
-                <div class="fee-label">BNDT</div>
-                <div class="fee-value">89.25</div>
-              </div>
-              <div class="fee-amount">
-                <div class="fee-label">BOUND Zero</div>
-                <div class="fee-value">45.80</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-header">
-          <div class="section-icon">CI</div>
-          <h2 class="section-title">Contract Information</h2>
-        </div>
-        <div class="fees-grid">
-          <div class="fee-card">
-            <div class="fee-header">
-              <div
-                style="
-                  width: 36px;
-                  height: 36px;
-                  background: linear-gradient(135deg, #667eea, #764ba2);
-                  border-radius: 8px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  color: white;
-                  font-size: 14px;
-                  font-weight: bold;
-                "
-              >
-                B
-              </div>
-              <div class="fee-title">Bound Contract</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </footer>
   </body>
 </html>
