@@ -1,0 +1,50 @@
+{
+  "name": "mso-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "heroku-postbuild": "npm run build",
+    "generate-favicon": "node scripts/generate-favicon.js"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@headlessui/react": "^2.2.0",
+    "@headlessui/tailwindcss": "^0.2.2",
+    "@heroicons/react": "^2.2.0",
+    "@metamask/providers": "^20.0.0",
+    "@rainbow-me/rainbowkit": "^2.2.4",
+    "@tanstack/react-query": "^5.72.2",
+    "@tremor/react": "^3.18.7",
+    "axios": "^1.7.9",
+    "bn.js": "^5.2.1",
+    "date-fns": "^4.1.0",
+    "ethers": "^6.9.0",
+    "graphql": "^16.11.0",
+    "graphql-request": "^7.2.0",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.15.1",
+    "viem": "^2.26.2",
+    "wagmi": "^2.14.16"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "15.0.3",
+    "postcss": "^8",
+    "sharp": "^0.32.6",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
