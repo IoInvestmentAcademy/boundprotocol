@@ -19,9 +19,11 @@ export default function Home() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-[1000] px-6 sm:px-10 py-5 flex justify-between items-center bg-black/80 backdrop-blur-md">
         <div className="flex items-center gap-3 text-2xl font-bold">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center text-lg">
-            ∞
-          </div>
+          <img
+            src="/favicon.png"
+            alt="BOUND Logo"
+            className="w-8 h-8 rounded-lg"
+          />
           <span className="text-white">BOUND</span>
         </div>
         <nav className="flex gap-4 sm:gap-8 items-center">
@@ -53,9 +55,11 @@ export default function Home() {
             strategies into seamless, automated returns.
           </p>
           <div className="inline-flex items-center gap-3 bg-purple-500/10 border border-purple-500/30 px-6 py-4 rounded-full backdrop-blur-md">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-base font-bold">
-              $
-            </div>
+            <img
+              src="/boundlogo.png"
+              alt="BOUND Token"
+              className="w-8 h-8 rounded-full"
+            />
             <span className="text-white">BOUND</span>
             <div className="bg-gradient-to-br from-purple-500 to-purple-600 px-4 py-2 rounded-full font-bold text-lg">
               18.44% APY
@@ -76,21 +80,31 @@ export default function Home() {
       <section className="py-20 px-6 sm:px-10 text-center relative z-[2]">
         <h2 className="text-lg text-gray-400 mb-10 font-normal">Trusted by</h2>
         <div className="flex justify-center items-center gap-8 sm:gap-16 flex-wrap max-w-6xl mx-auto">
-          <div className="opacity-60 hover:opacity-100 transition-opacity text-2xl font-medium text-white">
-            enzyme
-          </div>
-          <div className="opacity-60 hover:opacity-100 transition-opacity text-2xl font-medium text-white">
-            Microsoft
-          </div>
-          <div className="opacity-60 hover:opacity-100 transition-opacity text-2xl font-medium text-white">
-            AVANTGARDE
-          </div>
-          <div className="opacity-60 hover:opacity-100 transition-opacity text-2xl font-medium text-white">
-            Chainlink
-          </div>
-          <div className="opacity-60 hover:opacity-100 transition-opacity text-2xl font-medium text-white">
-            yard[hub]
-          </div>
+          <img
+            src="/enzyme.png"
+            alt="Enzyme"
+            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="/microsoft.png"
+            alt="Microsoft"
+            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="/avantgarde.png"
+            alt="AVANTGARDE"
+            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="/chain.png"
+            alt="Chainlink"
+            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+          />
+          <img
+            src="/yardhub.png"
+            alt="yard[hub]"
+            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+          />
         </div>
       </section>
 
@@ -98,9 +112,11 @@ export default function Home() {
       <footer className="py-16 px-6 sm:px-10 border-t border-white/10 relative z-[2]">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-5 max-w-6xl mx-auto">
           <div className="flex items-center gap-3 text-base text-gray-400">
-            <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center text-sm">
-              ∞
-            </div>
+            <img
+              src="/favicon.png"
+              alt="BOUND Logo"
+              className="w-6 h-6 rounded-lg"
+            />
             <span>powered by IO INVESTMENT</span>
           </div>
           <div className="flex items-center gap-5">
