@@ -80,31 +80,61 @@ export default function Home() {
       <section className="py-20 px-6 sm:px-10 text-center relative z-[2]">
         <h2 className="text-lg text-gray-400 mb-10 font-normal">Trusted by</h2>
         <div className="flex justify-center items-center gap-8 sm:gap-16 flex-wrap max-w-6xl mx-auto">
-          <img
-            src="/enzyme.png"
-            alt="Enzyme"
-            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="/microsoft.png"
-            alt="Microsoft"
-            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="/avantgarde.png"
-            alt="AVANTGARDE"
-            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="/chain.png"
-            alt="Chainlink"
-            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-          />
-          <img
-            src="/yardhub.png"
-            alt="yard[hub]"
-            className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-          />
+          <a
+            href="https://enzyme.finance/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/enzyme.png"
+              alt="Enzyme"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+          </a>
+          <a
+            href="https://www.microsoft.com/en-us/startups"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/microsoft.png"
+              alt="Microsoft"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+          </a>
+          <a
+            href="https://avantgarde.finance/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/avantgarde.png"
+              alt="Avantgarde"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+          </a>
+          <a
+            href="https://www.base.org/build"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/chain.png"
+              alt="Base"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+          </a>
+          <a
+            href="https://yardhub.tech/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="/yardhub.png"
+              alt="yard[hub]"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+          </a>
         </div>
       </section>
 
@@ -113,7 +143,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-5 max-w-6xl mx-auto">
           <div className="flex items-center gap-3 text-base text-gray-400">
             <img
-              src="/favicon.png"
+              src="/ioicon.png"
               alt="BOUND Logo"
               className="w-6 h-6 rounded-lg"
             />
