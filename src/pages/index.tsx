@@ -13,11 +13,11 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
-      {/* Background Pattern */}
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:50px_50px] opacity-30 z-0 pointer-events-none"></div>
+      {/* Background Pattern - Reduced opacity to work with video */}
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[length:50px_50px] opacity-20 z-0 pointer-events-none"></div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-[1000] px-6 sm:px-10 py-5 flex justify-between items-center bg-black/80 backdrop-blur-md">
+      <header className="fixed top-0 left-0 right-0 z-[1000] px-6 sm:px-10 py-5 flex justify-between items-center bg-gradient-to-b from-black/20 to-transparent  border-b border-white/10">
         <div className="flex items-center gap-3 text-2xl font-bold">
           <img
             src="/favicon.png"
@@ -67,13 +67,29 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 3D Globe Visualization */}
-        <div className="absolute -right-48 top-1/2 -translate-y-1/2 w-[600px] h-[600px] lg:w-[800px] lg:h-[800px] z-[1] hidden md:block">
+        {/* Background Video */}
+        <div className="absolute inset-0 z-[1] overflow-hidden">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "blur(1px)" }}
+          >
+            <source src="/HQ.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute inset-0 bg-black/20"></div>
+        </div>
+
+        {/* 3D Globe Visualization - Commented Out */}
+        {/* <div className="absolute -right-48 top-1/2 -translate-y-1/2 w-[600px] h-[600px] lg:w-[800px] lg:h-[800px] z-[1] hidden md:block">
           <div className="w-full h-full rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(139,92,246,0.3),rgba(139,92,246,0.1),transparent)] relative animate-[rotate_20s_linear_infinite]">
             <div className="absolute inset-5 rounded-full bg-[linear-gradient(45deg,transparent,rgba(139,92,246,0.1)),repeating-linear-gradient(0deg,transparent,transparent_10px,rgba(139,92,246,0.1)_12px),repeating-linear-gradient(90deg,transparent,transparent_10px,rgba(139,92,246,0.1)_12px)]"></div>
             <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_2px_2px,rgba(139,92,246,0.8)_1px,transparent_1px)] bg-[length:40px_40px] animate-[pulse_3s_ease-in-out_infinite]"></div>
           </div>
-        </div>
+        </div> */}
       </main>
 
       {/* Partners Section */}
@@ -113,7 +129,7 @@ export default function Home() {
               className="h-8 opacity-60 hover:opacity-100 transition-opacity"
             />
           </a>
-          <a
+          {/* <a
             href="https://www.base.org/build"
             target="_blank"
             rel="noopener noreferrer"
@@ -123,7 +139,7 @@ export default function Home() {
               alt="Base"
               className="h-8 opacity-60 hover:opacity-100 transition-opacity"
             />
-          </a>
+          </a> */}
           <a
             href="https://yardhub.tech/"
             target="_blank"
