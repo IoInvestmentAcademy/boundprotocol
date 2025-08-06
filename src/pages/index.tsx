@@ -75,7 +75,6 @@ export default function Home() {
             muted
             playsInline
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "blur(1px)" }}
           >
             <source src="/HQ.mp4" type="video/mp4" />
             Your browser does not support the video tag.
