@@ -651,6 +651,57 @@
           height: 300px;
         }
 
+        .floating-icons {
+          width: 350px;
+          height: 350px;
+        }
+
+        .floating-icon {
+          width: 45px;
+          height: 45px;
+          font-size: 20px;
+        }
+
+        .floating-icon.gray-dollar-icon {
+          top: 8%;
+          right: 12%;
+        }
+
+        .floating-icon.yearn-icon {
+          top: 25%;
+          left: 8%;
+        }
+
+        .floating-icon.dai-icon {
+          top: 30%;
+          right: 6%;
+        }
+
+        .floating-icon.green-dollar-icon {
+          bottom: 12%;
+          left: 15%;
+        }
+
+        .floating-icon.tether-icon {
+          top: 3%;
+          left: 35%;
+        }
+
+        .floating-icon.frax-icon {
+          bottom: 3%;
+          right: 30%;
+        }
+
+        .floating-icon.dollar-circle-icon {
+          top: 45%;
+          left: 3%;
+        }
+
+        .floating-icon.usdc-icon {
+          bottom: 15%;
+          right: 8%;
+        }
+
         .trusted-logos {
           flex-wrap: wrap;
           gap: 1.5rem;
@@ -786,409 +837,207 @@
     <script>
       // Create particles background
       function createParticles() {
-        const particlesContainer = document.getElementById("particles");
-        for (let i = 0; i < 50; i++) {
-          const particle = document.createElement("div");
-          particle.className = "particle";
-          particle.style.left = Math.random() * 100 + "%";
-          particle.style.top = Math.random() * 100 + "%";
-          particle.style.animationDelay = Math.random() * 6 + "s";
-          particle.style.animationDuration = 4 + Math.random() * 4 + "s";
-          particlesContainer.appendChild(particle);
-        }
+          const particlesContainer = document.getElementById('particles');
+          for (let i = 0; i < 50; i++) {
+              const particle = document.createElement('div');
+              particle.className = 'particle';
+              particle.style.left = Math.random() * 100 + '%';
+              particle.style.top = Math.random() * 100 + '%';
+              particle.style.animationDelay = Math.random() * 6 + 's';
+              particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+              particlesContainer.appendChild(particle);
+          }
       }
 
       // Advanced 3D Globe Implementation with BOUND text
       function initGlobe() {
-        const canvas = document.getElementById("globe-canvas");
-        const ctx = canvas.getContext("2d");
+          const canvas = document.getElementById('globe-canvas');
+          const ctx = canvas.getContext('2d');
 
-        // Set canvas size
-        const size = Math.min(500, window.innerWidth * 0.8);
-        canvas.width = size;
-        canvas.height = size;
-        canvas.style.width = size + "px";
-        canvas.style.height = size + "px";
+          // Set canvas size
+          const size = Math.min(500, window.innerWidth * 0.8);
+          canvas.width = size;
+          canvas.height = size;
+          canvas.style.width = size + 'px';
+          canvas.style.height = size + 'px';
 
-        const centerX = size / 2;
-        const centerY = size / 2;
-        const radius = size * 0.4;
+          const centerX = size / 2;
+          const centerY = size / 2;
+          const radius = size * 0.4;
 
-        // Globe state
-        let rotation = 0;
-        let time = 0;
+          // Globe state
+          let rotation = 0;
+          let time = 0;
 
-        // Generate points on sphere using Fibonacci sphere
-        const points = [];
-        const numPoints = 1000;
+          // Generate points on sphere using Fibonacci sphere
+          const points = [];
+          const numPoints = 800;
 
-        for (let i = 0; i < numPoints; i++) {
-          const y = 1 - (i / (numPoints - 1)) * 2;
-          const radiusAtY = Math.sqrt(1 - y * y);
-          const theta = (i * 2.39996323) % (2 * Math.PI);
+          for (let i = 0; i < numPoints; i++) {
+              const y = 1 - (i / (numPoints - 1)) * 2;
+              const radiusAtY = Math.sqrt(1 - y * y);
+              const theta = (i * 2.39996323) % (2 * Math.PI);
 
-          points.push({
-            x: Math.cos(theta) * radiusAtY,
-            y: y,
-            z: Math.sin(theta) * radiusAtY,
-            originalIntensity: Math.random() * 0.8 + 0.2,
-          });
-        }
+              points.push({
+                  x: Math.cos(theta) * radiusAtY,
+                  y: y,
+                  z: Math.sin(theta) * radiusAtY,
+                  originalIntensity: Math.random() * 0.8 + 0.2
+              });
+          }
 
-        function draw() {
-          // Clear canvas
-          ctx.clearRect(0, 0, size, size);
+          function draw() {
+              // Clear canvas
+              ctx.clearRect(0, 0, size, size);
 
-          // Create gradient background for glow effect
-          const glowGradient = ctx.createRadialGradient(
-            centerX,
-            centerY,
-            radius * 0.3,
-            centerX,
-            centerY,
-            radius * 1.3
-          );
-          glowGradient.addColorStop(0, "rgba(139, 92, 246, 0.3)");
-          glowGradient.addColorStop(0.4, "rgba(139, 92, 246, 0.1)");
-          glowGradient.addColorStop(1, "rgba(139, 92, 246, 0)");
-
-          ctx.fillStyle = glowGradient;
-          ctx.fillRect(0, 0, size, size);
-
-          // Draw sphere outline
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(139, 92, 246, 0.3)";
-          ctx.lineWidth = 2;
-          ctx.stroke();
-
-          // Fill sphere with dark gradient
-          const sphereGradient = ctx.createRadialGradient(
-            centerX - radius * 0.3,
-            centerY - radius * 0.3,
-            0,
-            centerX,
-            centerY,
-            radius
-          );
-          sphereGradient.addColorStop(0, "rgba(30, 30, 60, 0.9)");
-          sphereGradient.addColorStop(1, "rgba(10, 10, 20, 0.95)");
-          ctx.fillStyle = sphereGradient;
-          ctx.fill();
-
-          // Transform and draw points
-          const transformedPoints = points.map((point) => {
-            // Rotate around Y axis
-            const rotY = rotation;
-            const x = point.x * Math.cos(rotY) - point.z * Math.sin(rotY);
-            const z = point.x * Math.sin(rotY) + point.z * Math.cos(rotY);
-
-            // Slight rotation around X axis
-            const rotX = Math.sin(time * 0.5) * 0.1;
-            const y = point.y * Math.cos(rotX) - z * Math.sin(rotX);
-            const zFinal = point.y * Math.sin(rotX) + z * Math.cos(rotX);
-
-            return {
-              x: x,
-              y: y,
-              z: zFinal,
-              distance: Math.sqrt(x * x + y * y + zFinal * zFinal),
-              originalIntensity: point.originalIntensity,
-            };
-          });
-
-          // Sort points by Z coordinate (back to front)
-          transformedPoints.sort((a, b) => a.z - b.z);
-
-          // Draw points
-          transformedPoints.forEach((point) => {
-            if (point.z > -0.5) {
-              // Only draw front-facing points
-              const screenX = centerX + point.x * radius;
-              const screenY = centerY + point.y * radius;
-
-              // Check if point is within sphere bounds
-              const distFromCenter = Math.sqrt(
-                Math.pow(screenX - centerX, 2) + Math.pow(screenY - centerY, 2)
+              // Create gradient background for glow effect
+              const glowGradient = ctx.createRadialGradient(
+                  centerX, centerY, radius * 0.3,
+                  centerX, centerY, radius * 1.3
               );
+              glowGradient.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
+              glowGradient.addColorStop(0.4, 'rgba(139, 92, 246, 0.1)');
+              glowGradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
 
-              if (distFromCenter <= radius) {
-                // Calculate intensity based on Z position and time
-                const depthFactor = (point.z + 1) / 2; // 0 to 1
-                const timeFactor =
-                  Math.sin(time + point.originalIntensity * 10) * 0.3 + 0.7;
-                const intensity =
-                  point.originalIntensity * depthFactor * timeFactor;
+              ctx.fillStyle = glowGradient;
+              ctx.fillRect(0, 0, size, size);
 
-                // Draw point
-                ctx.beginPath();
-                const pointRadius = 1 + intensity * 2;
-                ctx.arc(screenX, screenY, pointRadius, 0, Math.PI * 2);
+              // Draw sphere outline
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+              ctx.strokeStyle = 'rgba(139, 92, 246, 0.4)';
+              ctx.lineWidth = 2;
+              ctx.stroke();
 
-                // Color based on intensity and position
-                const alpha = intensity * 0.8;
-                const hue = 270 + intensity * 30; // Purple to pink
-                ctx.fillStyle = `hsla(${hue}, 70%, 70%, ${alpha})`;
-                ctx.fill();
-
-                // Add glow for brighter points
-                if (intensity > 0.6) {
-                  ctx.shadowBlur = 10;
-                  ctx.shadowColor = `hsla(${hue}, 70%, 70%, ${alpha})`;
-                  ctx.fill();
-                  ctx.shadowBlur = 0;
-                }
-              }
-            }
-          });
-
-          // Draw BOUND text in the center
-          ctx.save();
-          ctx.font = `bold ${
-            size * 0.12
-          }px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-
-          // Create text gradient
-          const textGradient = ctx.createLinearGradient(
-            centerX - size * 0.1,
-            centerY - size * 0.05,
-            centerX + size * 0.1,
-            centerY + size * 0.05
-          );
-          textGradient.addColorStop(0, "#8b5cf6");
-          textGradient.addColorStop(0.5, "#a855f7");
-          textGradient.addColorStop(1, "#c084fc");
-
-          // Add text shadow
-          ctx.shadowBlur = 20;
-          ctx.shadowColor = "rgba(139, 92, 246, 0.5)";
-
-          ctx.fillStyle = textGradient;
-          ctx.fillText("BOUND", centerX, centerY);
-
-          // Add subtle pulse effect to text
-          const pulseScale = 1 + Math.sin(time * 2) * 0.02;
-          ctx.scale(pulseScale, pulseScale);
-          ctx.restore();
-
-          // Update rotation and time (NO spinning wheel lines)
-          rotation += 0.008;
-          time += 0.02;
-
-          requestAnimationFrame(draw);
-        }
-
-        draw();
-      }
-
-      // Simplified Globe Implementation with BOUND text
-      function initGlobe() {
-        const canvas = document.getElementById("globe-canvas");
-        const ctx = canvas.getContext("2d");
-
-        // Set canvas size
-        const size = Math.min(500, window.innerWidth * 0.8);
-        canvas.width = size;
-        canvas.height = size;
-        canvas.style.width = size + "px";
-        canvas.style.height = size + "px";
-
-        const centerX = size / 2;
-        const centerY = size / 2;
-        const radius = size * 0.4;
-
-        // Globe state
-        let rotation = 0;
-        let time = 0;
-
-        // Generate points on sphere using Fibonacci sphere
-        const points = [];
-        const numPoints = 800;
-
-        for (let i = 0; i < numPoints; i++) {
-          const y = 1 - (i / (numPoints - 1)) * 2;
-          const radiusAtY = Math.sqrt(1 - y * y);
-          const theta = (i * 2.39996323) % (2 * Math.PI);
-
-          points.push({
-            x: Math.cos(theta) * radiusAtY,
-            y: y,
-            z: Math.sin(theta) * radiusAtY,
-            originalIntensity: Math.random() * 0.8 + 0.2,
-          });
-        }
-
-        function draw() {
-          // Clear canvas
-          ctx.clearRect(0, 0, size, size);
-
-          // Create gradient background for glow effect
-          const glowGradient = ctx.createRadialGradient(
-            centerX,
-            centerY,
-            radius * 0.3,
-            centerX,
-            centerY,
-            radius * 1.3
-          );
-          glowGradient.addColorStop(0, "rgba(139, 92, 246, 0.3)");
-          glowGradient.addColorStop(0.4, "rgba(139, 92, 246, 0.1)");
-          glowGradient.addColorStop(1, "rgba(139, 92, 246, 0)");
-
-          ctx.fillStyle = glowGradient;
-          ctx.fillRect(0, 0, size, size);
-
-          // Draw sphere outline
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(139, 92, 246, 0.4)";
-          ctx.lineWidth = 2;
-          ctx.stroke();
-
-          // Fill sphere with dark gradient
-          const sphereGradient = ctx.createRadialGradient(
-            centerX - radius * 0.3,
-            centerY - radius * 0.3,
-            0,
-            centerX,
-            centerY,
-            radius
-          );
-          sphereGradient.addColorStop(0, "rgba(30, 30, 60, 0.9)");
-          sphereGradient.addColorStop(1, "rgba(10, 10, 20, 0.95)");
-          ctx.fillStyle = sphereGradient;
-          ctx.fill();
-
-          // Transform and draw points (only outer edge)
-          const transformedPoints = points.map((point) => {
-            // Rotate around Y axis
-            const rotY = rotation;
-            const x = point.x * Math.cos(rotY) - point.z * Math.sin(rotY);
-            const z = point.x * Math.sin(rotY) + point.z * Math.cos(rotY);
-
-            return {
-              x: x,
-              y: point.y,
-              z: z,
-              originalIntensity: point.originalIntensity,
-            };
-          });
-
-          // Sort points by Z coordinate (back to front)
-          transformedPoints.sort((a, b) => a.z - b.z);
-
-          // Draw points only on the outer edge
-          transformedPoints.forEach((point) => {
-            if (point.z > 0.2) {
-              // Only draw front-facing points on the surface
-              const screenX = centerX + point.x * radius;
-              const screenY = centerY + point.y * radius;
-
-              // Check if point is within sphere bounds
-              const distFromCenter = Math.sqrt(
-                Math.pow(screenX - centerX, 2) + Math.pow(screenY - centerY, 2)
+              // Fill sphere with dark gradient
+              const sphereGradient = ctx.createRadialGradient(
+                  centerX - radius * 0.3, centerY - radius * 0.3, 0,
+                  centerX, centerY, radius
               );
+              sphereGradient.addColorStop(0, 'rgba(30, 30, 60, 0.9)');
+              sphereGradient.addColorStop(1, 'rgba(10, 10, 20, 0.95)');
+              ctx.fillStyle = sphereGradient;
+              ctx.fill();
 
-              if (distFromCenter <= radius && distFromCenter >= radius * 0.95) {
-                // Calculate intensity based on Z position and time
-                const depthFactor = (point.z + 1) / 2;
-                const timeFactor =
-                  Math.sin(time + point.originalIntensity * 10) * 0.3 + 0.7;
-                const intensity =
-                  point.originalIntensity * depthFactor * timeFactor;
+              // Transform and draw points
+              const transformedPoints = points.map(point => {
+                  // Rotate around Y axis
+                  const rotY = rotation;
+                  const x = point.x * Math.cos(rotY) - point.z * Math.sin(rotY);
+                  const z = point.x * Math.sin(rotY) + point.z * Math.cos(rotY);
 
-                // Draw point
-                ctx.beginPath();
-                const pointRadius = 1 + intensity * 1.5;
-                ctx.arc(screenX, screenY, pointRadius, 0, Math.PI * 2);
+                  return {
+                      x: x,
+                      y: point.y,
+                      z: z,
+                      originalIntensity: point.originalIntensity
+                  };
+              });
 
-                // Color based on intensity and position
-                const alpha = intensity * 0.6;
-                const hue = 270 + intensity * 20;
-                ctx.fillStyle = `hsla(${hue}, 70%, 70%, ${alpha})`;
-                ctx.fill();
-              }
-            }
-          });
+              // Sort points by Z coordinate (back to front)
+              transformedPoints.sort((a, b) => a.z - b.z);
 
-          // Draw BOUND text in the center
-          ctx.save();
-          ctx.font = `bold ${
-            size * 0.12
-          }px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+              // Draw points only on the outer edge
+              transformedPoints.forEach(point => {
+                  if (point.z > 0.2) { // Only draw front-facing points on the surface
+                      const screenX = centerX + point.x * radius;
+                      const screenY = centerY + point.y * radius;
 
-          // Create text gradient
-          const textGradient = ctx.createLinearGradient(
-            centerX - size * 0.1,
-            centerY - size * 0.05,
-            centerX + size * 0.1,
-            centerY + size * 0.05
-          );
-          textGradient.addColorStop(0, "#8b5cf6");
-          textGradient.addColorStop(0.5, "#a855f7");
-          textGradient.addColorStop(1, "#c084fc");
+                      // Check if point is within sphere bounds
+                      const distFromCenter = Math.sqrt(
+                          Math.pow(screenX - centerX, 2) +
+                          Math.pow(screenY - centerY, 2)
+                      );
 
-          // Add text shadow
-          ctx.shadowBlur = 20;
-          ctx.shadowColor = "rgba(139, 92, 246, 0.5)";
+                      if (distFromCenter <= radius && distFromCenter >= radius * 0.95) {
+                          // Calculate intensity based on Z position and time
+                          const depthFactor = (point.z + 1) / 2;
+                          const timeFactor = Math.sin(time + point.originalIntensity * 10) * 0.3 + 0.7;
+                          const intensity = point.originalIntensity * depthFactor * timeFactor;
 
-          ctx.fillStyle = textGradient;
-          ctx.fillText("BOUND", centerX, centerY);
+                          // Draw point
+                          ctx.beginPath();
+                          const pointRadius = 1 + intensity * 1.5;
+                          ctx.arc(screenX, screenY, pointRadius, 0, Math.PI * 2);
 
-          // Add subtle pulse effect to text
-          const pulseScale = 1 + Math.sin(time * 2) * 0.02;
-          ctx.scale(pulseScale, pulseScale);
-          ctx.restore();
+                          // Color based on intensity and position
+                          const alpha = intensity * 0.6;
+                          const hue = 270 + intensity * 20;
+                          ctx.fillStyle = hsla(${hue}, 70%, 70%, ${alpha});
+                          ctx.fill();
+                      }
+                  }
+              });
 
-          // Update rotation and time
-          rotation += 0.005;
-          time += 0.02;
+              // Draw BOUND text in the center
+              ctx.save();
+              ctx.font = bold ${size * 0.12}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
 
-          requestAnimationFrame(draw);
-        }
+              // Create text gradient
+              const textGradient = ctx.createLinearGradient(
+                  centerX - size * 0.1, centerY - size * 0.05,
+                  centerX + size * 0.1, centerY + size * 0.05
+              );
+              textGradient.addColorStop(0, '#8b5cf6');
+              textGradient.addColorStop(0.5, '#a855f7');
+              textGradient.addColorStop(1, '#c084fc');
 
-        draw();
+              // Add text shadow
+              ctx.shadowBlur = 20;
+              ctx.shadowColor = 'rgba(139, 92, 246, 0.5)';
+
+              ctx.fillStyle = textGradient;
+              ctx.fillText('BOUND', centerX, centerY);
+
+              // Add subtle pulse effect to text
+              const pulseScale = 1 + Math.sin(time * 2) * 0.02;
+              ctx.scale(pulseScale, pulseScale);
+              ctx.restore();
+
+              // Update rotation and time
+              rotation += 0.005;
+              time += 0.02;
+
+              requestAnimationFrame(draw);
+          }
+
+          draw();
       }
 
       // Mobile menu functionality
-      document
-        .querySelector(".mobile-menu")
-        ?.addEventListener("click", function () {
-          const navLinks = document.querySelector(".nav-links");
-          navLinks.style.display =
-            navLinks.style.display === "flex" ? "none" : "flex";
-        });
+      document.querySelector('.mobile-menu')?.addEventListener('click', function() {
+          const navLinks = document.querySelector('.nav-links');
+          navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+      });
 
       // Initialize everything when page loads
-      document.addEventListener("DOMContentLoaded", function () {
-        createParticles();
-        initGlobe();
+      document.addEventListener('DOMContentLoaded', function() {
+          createParticles();
+          initGlobe();
 
-        // Smooth scrolling for any future anchor links
-        document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-          anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute("href"));
-            if (target) {
-              target.scrollIntoView({
-                behavior: "smooth",
+          // Smooth scrolling for any future anchor links
+          document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+              anchor.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  const target = document.querySelector(this.getAttribute('href'));
+                  if (target) {
+                      target.scrollIntoView({
+                          behavior: 'smooth'
+                      });
+                  }
               });
-            }
           });
-        });
       });
 
       // Handle window resize
-      window.addEventListener("resize", function () {
-        // Recreate globe with new size if needed
-        const canvas = document.getElementById("globe-canvas");
-        if (canvas && window.innerWidth < 768) {
-          initGlobe();
-        }
+      window.addEventListener('resize', function() {
+          // Recreate globe with new size if needed
+          const canvas = document.getElementById('globe-canvas');
+          if (canvas && window.innerWidth < 768) {
+              initGlobe();
+          }
       });
     </script>
   </body>

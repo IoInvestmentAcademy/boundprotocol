@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BOUND Protocol - Whitepaper</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          system-ui, sans-serif;
+        line-height: 1.7;
+        color: #2d3748;
+        background: #f8fafc;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+        min-height: 100vh;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+        color: white;
+        padding: 80px 60px 60px 60px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .title {
+        font-size: 4rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+        opacity: 0.9;
+        font-weight: 300;
+        font-style: italic;
+      }
+
+      .content {
+        padding: 60px;
+        max-width: 100%;
+      }
+
+      .main-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #1a202c;
+        margin: 80px 0 40px 0;
+        text-align: center;
+        position: relative;
+      }
+
+      .main-title::after {
+        content: "";
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+      }
+
+      .section-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 60px 0 30px 0;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #667eea;
+        position: relative;
+      }
+
+      .paragraph {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 25px;
+        color: #4a5568;
+        text-align: justify;
+      }
+
+      .paragraph strong {
+        color: #2d3748;
+        font-weight: 600;
+      }
+
+      .key-properties {
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 30px 0;
+        border-left: 6px solid #667eea;
+      }
+
+      .key-properties h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 20px;
+      }
+
+      .property-item {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .subsection-title {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 40px 0 20px 0;
+        padding-left: 20px;
+        border-left: 4px solid #48bb78;
+      }
+
+      .property-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+      }
+
+      .governance-title {
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 8px;
+      }
+
+      .highlight-box::before {
+        content: "";
+      }
+
+      .note-box::before {
+        content: "";
+      }
+
+      .formula-box::before {
+        content: "";
+      }
+
+      .property-description {
+        color: #4a5568;
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .mechanism-steps {
+        background: #f0f8ff;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 30px 0;
+        border-left: 6px solid #3182ce;
+      }
+
+      .step-item {
+        margin-bottom: 25px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #48bb78;
+      }
+
+      .step-title {
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+
+      .step-description {
+        color: #4a5568;
+        line-height: 1.6;
+      }
+
+      .bullet-point {
+        margin-left: 25px;
+        margin-bottom: 15px;
+        color: #4a5568;
+        position: relative;
+      }
+
+      .bullet-point::before {
+        content: "➤";
+        position: absolute;
+        left: -25px;
+        color: #667eea;
+        font-weight: bold;
+      }
+
+      .highlight-box {
+        background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);
+        border: 2px solid #bee3f8;
+        border-radius: 12px;
+        padding: 25px;
+        margin: 30px 0;
+        position: relative;
+      }
+
+      .highlight-box::before {
+        content: "💡";
+        position: absolute;
+        top: -15px;
+        left: 25px;
+        background: white;
+        padding: 0 10px;
+        font-size: 1.2rem;
+      }
+
+      .note-box {
+        background: #fffbeb;
+        border: 2px solid #f6e05e;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 25px 0;
+        position: relative;
+      }
+
+      .note-box::before {
+        content: "📋";
+        position: absolute;
+        top: -15px;
+        left: 25px;
+        background: white;
+        padding: 0 10px;
+        font-size: 1.2rem;
+      }
+
+      .distribution-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .distribution-item {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e2e8f0;
+        transition: transform 0.3s ease;
+      }
+
+      .distribution-item:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+      }
+
+      .percentage {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #667eea;
+        margin-bottom: 10px;
+      }
+
+      .category {
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+
+      .category-description {
+        color: #4a5568;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .formula-box {
+        background: #1a202c;
+        color: white;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 30px 0;
+        text-align: center;
+        font-family: "Courier New", monospace;
+        position: relative;
+      }
+
+      .formula-box::before {
+        content: "🔢";
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 0 10px;
+        font-size: 1.2rem;
+      }
+
+      .governance-areas {
+        background: #f0fff4;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 30px 0;
+        border-left: 6px solid #48bb78;
+      }
+
+      .governance-item {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .governance-title {
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .governance-description {
+        color: #4a5568;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 768px) {
+        .title {
+          font-size: 2.8rem;
+        }
+
+        .content {
+          padding: 40px 30px;
+        }
+
+        .main-title {
+          font-size: 2.2rem;
+        }
+
+        .section-title {
+          font-size: 1.8rem;
+        }
+
+        .distribution-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .content {
+          padding: 30px 20px;
+        }
+
+        .header {
+          padding: 60px 30px 40px 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-content">
+          <h1 class="title">LitePaper</h1>
+          <p class="subtitle">— BOUND Protocol —</p>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1 class="main-title">Overview</h1>
+
+        <p class="paragraph">
+          Since 2014, stablecoins have proven themselves as the ideal mechanism
+          for transferring value without exposing users to the price volatility
+          of free-floating cryptocurrencies. Yet despite processing trillions in
+          transaction volume and generating billions in revenue, the current
+          stablecoin infrastructure operates on a fundamentally broken economic
+          model that extracts value from users rather than sharing it with them.
+        </p>
+
+        <p class="paragraph">
+          Traditional stablecoins like Tether and USDC retain all revenues for
+          their shareholders while providing users nothing beyond basic
+          stability. When you hold $1000 in USDC, Circle earns yield on your
+          capital while you receive zero participation in the value your
+          deposits create. When stablecoin prices deviate and arbitrage
+          opportunities emerge, whitelisted arbitrageurs capture these profits
+          while users absorb the risk.
+        </p>
+
+        <p class="paragraph">
+          Even existing yield-bearing stablecoins fail to address this
+          fundamental value extraction problem. While they redistribute small
+          portions of underlying yields to users through permissioned
+          mechanisms, they fail to solve the critical issue of mercenary
+          liquidity, where users continuously chase higher returns elsewhere
+          without building sustainable ecosystem value.
+        </p>
+
+        <h1 class="main-title">Introduction</h1>
+
+        <p class="paragraph">
+          BOUND is the world's first DeFi yield stablecoin combining the trust
+          of full USDC backing with automated deployment across proven DeFi
+          yield strategies, allowing users to maintain dollar-pegged stability
+          while earning passive returns from a diversified portfolio of premium
+          stable yield opportunities.
+        </p>
+
+        <p class="paragraph">
+          Built on the Base blockchain, BOUND operates through a fully on-chain
+          infrastructure where underlying collateral is automatically allocated
+          across multiple yield-generating protocols. Rather than manually
+          managing positions across different DeFi platforms, users simply hold
+          BOUND tokens to gain exposure to a professionally curated basket of
+          stable yield strategies. The protocol transforms users from passive
+          customers into active stakeholders by sharing both the underlying
+          yield returns and protocol-generated revenue.
+        </p>
+
+        <p class="paragraph">
+          BOUND's core innovation lies in its Atomic Peg Stability System, which
+          maintains the token's dollar peg while capturing additional revenue
+          streams. When BOUND's market price deviates from $1.00, the system
+          automatically executes stabilization trades that generate arbitrage
+          profits. These profits, traditionally captured by specialized
+          whitelisted entities, are retained within the protocol and distributed
+          to the community, creating an additional yield layer beyond the
+          underlying DeFi strategies, offering one of the most competitive APYs
+          in the stable yield market.
+        </p>
+
+        <p class="paragraph">
+          The BOUND protocol creates powerful incentives for sustained community
+          engagement through ownership participation and competitive APY derived
+          from diversified exposure across leading stable yield protocols and
+          profits generated by the protocol infrastructure, establishing robust
+          foundations for sustainable growth and decentralized governance that
+          rewards commitment rather than temporary yield farming incentives.
+        </p>
+
+        <h2 class="section-title">BOUND Token</h2>
+
+        <p class="paragraph">
+          BOUND is a native decentralized, collateral-backed digital asset
+          designed to provide users with consistent value preservation. The
+          token serves as a strong, stable value token pegged to $1 USDC,
+          functioning as a reliable borrowing asset and productive collateral
+          solution across the DeFi ecosystem. BOUND is fully backed by USDC
+          reserves and tokenized Stable DeFi yield strategies. This backing
+          structure establishes a robust foundation for stable value maintenance
+          against inflation and reliable collateral performance within
+          decentralized finance markets.
+        </p>
+
+        <h3 class="subsection-title">Utility and Access Mechanism</h3>
+
+        <p class="paragraph">
+          To gain exposure to the yield generated on the protocol's collateral
+          reserve, users must first acquire BOUND and exchange it for BOUND+,
+          the protocol's yield-bearing asset. BOUND+ reflects the protocol's
+          earnings in real-time, with holders automatically receiving their
+          proportional share through progressive token value appreciation.
+        </p>
+
+        <p class="paragraph">
+          Each conversion between BOUND and BOUND+ is subject to a protocol fee
+          of 58.67 basis points, calculated on the transaction value. This fee
+          is payable in BOUND and is permanently burned, reducing the total
+          supply of BOUND and thereby increasing the collateral surplus, which
+          directly enhances the APY delivered to BOUND+ holders.
+        </p>
+
+        <p class="paragraph">
+          Users may opt to pay this access fee in BOUND Zero, the protocol's
+          governance token, to receive a 25% fee reduction. To do so, a
+          sufficient balance of BOUND Zero must be present in the user's wallet
+          at the time of the transaction. The BOUND token is pegged to $1 USDC
+          and is designed to provide stable, reliable access to protocol
+          features. It is not intended as a speculative asset, but rather as a
+          mechanism to facilitate protocol participation and align incentives
+          with long-term value creation.
+        </p>
+
+        <h3 class="subsection-title">Token Characteristics</h3>
+
+        <p class="paragraph">
+          BOUND operates as a stable value token engineered to maintain price
+          stability through sophisticated backing mechanisms and automated
+          market operations while enabling users access to yield farming
+          opportunities across the broader DeFi landscape. In the BOUND
+          ecosystem, the BOUND token serves as a stable-value access token whose
+          core function is to serve as the sole medium of exchange to BOUND+,
+          the yield-bearing asset of the BOUND protocol.
+        </p>
+
+        <div class="key-properties">
+          <h4>Key Properties:</h4>
+
+          <div class="property-item">
+            <div class="property-title">Stable Value Peg</div>
+            <div class="property-description">
+              Maintained at 1 USDC in the official BOUND/USDC Uniswap pool
+              through automated decentralized arbitrage mechanisms that respond
+              to market fluctuations in real-time, ensuring consistent value
+              preservation without manual intervention.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">Comprehensive Collateral Backing</div>
+            <div class="property-description">
+              Every BOUND token is backed 1:1 by 1 USDC worth of on-chain
+              collateral, consisting of liquid USDC reserves or tokenized shares
+              of the Avantgarde DeFi Yield Vault, providing transparent and
+              verifiable asset backing.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">External Utility</div>
+            <div class="property-description">
+              Serves as a robust stable value token for DeFi ecosystem
+              participation, offering users a reliable borrowing asset suitable
+              for use as productive collateral in lending protocols, liquidity
+              provision, and other DeFi integrations where stability and
+              on-chain backing are essential.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">Internal Utility</div>
+            <div class="property-description">
+              Functions as the exclusive access medium to BOUND+, the protocol's
+              yield-bearing asset, through a conversion mechanism that enables
+              users to profit from yield generation when the protocol generates
+              returns above baseline requirements.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">Regulatory Compliance</div>
+            <div class="property-description">
+              Operates as a decentralized stable value token without redemption
+              rights or legal entity backing, maintaining price stability
+              through automated smart contract mechanisms rather than
+              centralized control or guarantees.
+            </div>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">Market Access and Trading</h3>
+
+        <p class="paragraph">
+          BOUND is accessible to retail market participants through the official
+          BOUND/USDC trading pair on Uniswap. Users can acquire BOUND tokens by
+          exchanging USDC at an approximate 1 USDC per BOUND, providing
+          straightforward access to the token's stable value proposition.
+        </p>
+
+        <h3 class="subsection-title">Collateral Backing System</h3>
+
+        <p class="paragraph">
+          BOUND is a fully collateralized stable value token where every token
+          is backed by exactly $1 worth of verifiable on-chain assets. The
+          strength of BOUND lies in its sophisticated collateral system that
+          combines immediate collateral liquidity with productive yield
+          generation, ensuring both price stability and long-term value growth.
+        </p>
+
+        <p class="paragraph">
+          The collateral backing BOUND consists of two complementary asset types
+          that work together to maintain system stability while increasing
+          collateral value over time. The collateral is divided between liquid
+          USDC stored in the Liquidity Buffer reserve and illiquid collateral
+          represented by tokenized shares of the Avantgarde DeFi Yield Vault
+          stored in the Shares reserve. The liquid collateral serves as
+          immediate liquidity for peg arbitrage mechanism operations. For
+          example, when BOUND trades below $1, the protocol uses USDC from the
+          Liquidity Buffer Reserve to purchase BOUND tokens from the market and
+          burn them, reducing supply until the price returns to 1 USDC per
+          BOUND. The second component of the reserve represents the illiquid
+          collateral, which consists of tokenized shares of the Avantgarde DeFi
+          Yield Vault stored in the Shares reserve.
+        </p>
+
+        <h3 class="subsection-title">Avantgarde DeFi Yield Vault</h3>
+
+        <p class="paragraph">
+          The Avantgarde Vault represents an institutional-grade, on-chain fund
+          designed to optimize returns while maintaining capital preservation as
+          its primary mandate. This sophisticated yield generation engine
+          employs meticulously selected conservative strategies that focus
+          exclusively on yield-bearing stablecoins, ensuring the underlying
+          collateral maintains its stability while generating consistent
+          returns.
+        </p>
+
+        <p class="paragraph">
+          The fund's strategic approach eliminates downside risk to BOUND's
+          collateral base by investing only in assets that cannot depreciate
+          below their face value. Through careful selection of proven DeFi yield
+          opportunities within the stablecoin ecosystem, the Avantgarde Vault
+          creates a secure environment where capital preservation and yield
+          generation operate together effectively.
+        </p>
+
+        <p class="paragraph">
+          As the vault executes its yield strategies, the accumulated returns
+          directly enhance the value of each vault share, creating organic
+          growth in the total collateral backing BOUND tokens. This appreciation
+          mechanism ensures that the collateral value grows beyond the initial
+          $1 backing per BOUND token, generating surplus value that strengthens
+          the entire protocol while providing additional benefits to users
+          through the yield distribution system.
+        </p>
+
+        <p class="paragraph">
+          The Avantgarde Vault operates as a fully transparent, on-chain fund
+          where all investment decisions, performance metrics, and yield
+          generation can be independently verified, establishing a new standard
+          for institutional-grade DeFi treasury management.
+        </p>
+
+        <h3 class="subsection-title">
+          Protocol-Managed Liquidity Infrastructure
+        </h3>
+
+        <p class="paragraph">
+          The BOUND Protocol incorporates an automated liquidity deployment
+          system specifically designed to establish the BOUND/USDC official pool
+          and secure reliable market access for BOUND tokens. This
+          infrastructure provides comprehensive protection for users against
+          several common DeFi risks that can compromise trading security and
+          market integrity. The automated deployment system addresses critical
+          market vulnerabilities through multiple protection mechanisms such as:
+        </p>
+
+        <div class="bullet-point">
+          Fraud Prevention: Eliminates risks associated with unauthorized or
+          malicious pool creation by ensuring the protocol deploys the official
+          trading pool.
+        </div>
+        <div class="bullet-point">
+          Liquidity Trap Mitigation: Ensures adequate initial liquidity to
+          prevent market manipulation schemes that exploit low-liquidity
+          environments.
+        </div>
+
+        <h3 class="subsection-title">Market Launch and Liquidity Deployment</h3>
+
+        <p class="paragraph">
+          The BOUND Protocol establishes market liquidity through a systematic
+          deployment process designed to ensure stable market conditions from
+          launch. The protocol initiates the BOUND/USDC pool by transferring $1
+          million USDC from the company wallet to the Liquidity Pool Deployer
+          contract. Upon receiving these funds, the contract triggers the
+          Minting Engine to create an equivalent 1 million BOUND tokens,
+          establishing the target launch price of $1.00 per token.
+        </p>
+
+        <p class="paragraph">
+          The protocol pairs these assets to create the official Uniswap
+          liquidity pool, with the resulting LP tokens locked within the
+          protocol treasury. This mechanism prevents liquidity removal that
+          could destabilize the market while ensuring no pre-minted BOUND supply
+          exists prior to pool creation. At launch, the pool becomes active with
+          1 million BOUND tokens providing trading liquidity and 1 million LP
+          tokens secured under protocol control.
+        </p>
+
+        <p class="paragraph">
+          This deployment architecture delivers robust liquidity infrastructure
+          with professional-grade security measures and transparent operational
+          procedures, protecting user interests while maintaining market
+          integrity throughout the token's market introduction.
+        </p>
+
+        <h2 class="section-title">Atomic Peg Stability System (APSS)</h2>
+
+        <p class="paragraph">
+          BOUND becomes the first protocol to implement an automated system that
+          democratizes arbitrage profits traditionally captured by whitelisted
+          arbitrageurs and returns them directly to users. APSS represents a
+          sophisticated stabilization system engineered to maintain the BOUND at
+          a constant value of 1 USDC per BOUND. This mechanism operates directly
+          within the official BOUND/USDC pool on Uniswap, where all retail
+          trading activity occurs.
+        </p>
+
+        <p class="paragraph">
+          The system functions as a decentralized mechanism that responds in
+          real-time to market conditions. It enforces both upside and downside
+          price constraints, ensuring BOUND maintains a fixed exchange rate of 1
+          BOUND per 1 USDC regardless of market pressures. The mechanism
+          operates through active supply management, dynamically adjusting BOUND
+          token circulation based on market demand and trading activity. When
+          market forces push the price away from the $1 peg, the system
+          automatically intervenes by minting new tokens or burning existing
+          supply to restore equilibrium.
+        </p>
+
+        <p class="paragraph">
+          This stabilization mechanism is connected directly to the BOUND smart
+          contract minting engine, enabling autonomous token supply adjustments
+          in response to real-time market fluctuations. The architecture ensures
+          consistent price stability while delivering capital efficiency for the
+          BOUND protocol.
+        </p>
+
+        <p class="paragraph">
+          The automated supply management maintains market equilibrium by
+          expanding token supply during periods of excess demand and contracting
+          supply during selling pressure. This ensures BOUND consistently trades
+          at its target peg regardless of trading volume or market volatility.
+        </p>
+
+        <p class="paragraph">
+          Unlike traditional stablecoin arbitrage mechanisms that rely on
+          external arbitrageurs to identify and capture price dislocations, the
+          BOUND protocol eliminates arbitrage delays and execution risks through
+          automated intervention. While other protocols depend on whitelisted
+          users or market participants to manually execute mint/redeem arbitrage
+          when price deviations occur, BOUND's integrated system captures these
+          arbitrage opportunities directly within the protocol, immediately
+          converting arbitrage profits into additional collateral backing. This
+          automated approach ensures faster price correction, eliminates
+          reliance on third-party arbitrageurs, and allows the protocol to
+          retain arbitrage value rather than distributing it to external
+          participants.
+        </p>
+
+        <h3 class="subsection-title">Mechanism Operations</h3>
+
+        <div class="mechanism-steps">
+          <h4 style="margin-bottom: 20px; color: #1a202c">
+            When Price Exceeds 1 USDC per BOUND
+          </h4>
+
+          <div class="step-item">
+            <div class="step-title">Step 1: Price Deviation Detection</div>
+            <div class="step-description">
+              <div class="bullet-point">
+                User purchases BOUND from the pool, creating upward price
+                pressure above $1
+              </div>
+              <div class="bullet-point">
+                The Price Floor Mechanism immediately detects this market
+                imbalance
+              </div>
+              <div class="bullet-point">
+                Real-time monitoring systems trigger automated response from the
+                protocol
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-title">Step 2: Supply Adjustment Calculation</div>
+            <div class="step-description">
+              <div class="bullet-point">
+                The system calculates the precise amount of BOUND required to
+                rebalance the pool
+              </div>
+              <div class="bullet-point">
+                Mathematical algorithms determine optimal mint quantity to
+                restore equilibrium
+              </div>
+              <div class="bullet-point">
+                Calculation accounts for current pool reserves and target price
+                restoration
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-title">
+              Step 3: Token Minting and Market Intervention
+            </div>
+            <div class="step-description">
+              <div class="bullet-point">
+                The BOUND Mint Engine receives instructions to mint the
+                calculated token amount
+              </div>
+              <div class="bullet-point">
+                Freshly minted BOUND tokens are automatically sold into the
+                Uniswap pool
+              </div>
+              <div class="bullet-point">
+                Market intervention occurs within seconds of initial price
+                deviation
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-title">Step 4: Revenue Capture</div>
+            <div class="step-description">
+              <div class="bullet-point">
+                USDC revenue generated from the arbitrage sale is immediately
+                captured
+              </div>
+              <div class="bullet-point">
+                Funds are deposited into the Liquidity Buffer, the protocol's
+                secure reserve vault
+              </div>
+              <div class="bullet-point">
+                This revenue becomes part of the protocol's collateral backing
+                system
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mechanism-steps">
+          <h4 style="margin-bottom: 20px; color: #1a202c">
+            When Price Falls Below 1 USDC per BOUND
+          </h4>
+
+          <div class="step-item">
+            <div class="step-title">Step 1: Downward Pressure Detection</div>
+            <div class="step-description">
+              <div class="bullet-point">
+                User sells BOUND into the pool, creating downward price pressure
+                below $1
+              </div>
+              <div class="bullet-point">
+                The system immediately identifies this market imbalance
+              </div>
+              <div class="bullet-point">
+                Automated response protocols activate to counteract the price
+                decline
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-title">Step 2: Buy-Back Calculation</div>
+            <div class="step-description">
+              <div class="bullet-point">
+                The system calculates the precise amount of BOUND required to
+                restore the peg
+              </div>
+              <div class="bullet-point">
+                Algorithms determine optimal purchase quantity based on current
+                market conditions
+              </div>
+              <div class="bullet-point">
+                Calculation ensures minimal capital deployment for maximum price
+                impact
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-title">Step 3: Protocol Buy-Back Execution</div>
+            <div class="step-description">
+              <div class="bullet-point">
+                The protocol deploys USDC from the Liquidity Buffer to purchase
+                BOUND
+              </div>
+              <div class="bullet-point">
+                Buy-back operations occur automatically without manual
+                intervention
+              </div>
+              <div class="bullet-point">
+                Purchased tokens are immediately removed from circulation
+              </div>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-title">Step 4: Supply Reduction</div>
+            <div class="step-description">
+              <div class="bullet-point">
+                Acquired BOUND tokens are permanently burned, reducing total
+                supply
+              </div>
+              <div class="bullet-point">
+                Supply contraction creates upward price pressure, restoring the
+                1 USDC peg
+              </div>
+              <div class="bullet-point">
+                Market equilibrium is reestablished through systematic supply
+                management
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">Technical Execution Specifications</h3>
+
+        <div class="highlight-box">
+          <strong>Performance Metrics:</strong>
+          <div class="bullet-point">
+            Execution Speed: Transactions completed in under one second
+          </div>
+          <div class="bullet-point">
+            Transparency: All operations conducted entirely on-chain with full
+            auditability
+          </div>
+          <div class="bullet-point">
+            Automation: Peg security enforced automatically without manual
+            intervention
+          </div>
+          <div class="bullet-point">
+            Precision: Mathematical algorithms ensure price restoration to 1
+            USDC peg
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <strong>Security Features:</strong>
+          <div class="bullet-point">
+            Decentralized Operation: No centralized control or discretionary
+            intervention
+          </div>
+          <div class="bullet-point">
+            Immutable Logic: Smart contract execution prevents manipulation or
+            deviation
+          </div>
+          <div class="bullet-point">
+            Reserve Protection: Liquidity Buffer secured through protocol-owned
+            infrastructure
+          </div>
+          <div class="bullet-point">
+            Continuous Monitoring: Real-time price tracking ensures immediate
+            response to market changes
+          </div>
+        </div>
+
+        <h3 class="subsection-title">Private Market Access – Direct Minting</h3>
+
+        <p class="paragraph">
+          To support institutional demand and high-volume capital flows, the
+          BOUND Protocol incorporates a dedicated Private Minting pathway for
+          accredited and approved investors. This mechanism allows sophisticated
+          investors to mint BOUND tokens directly through the protocol's minting
+          contract, bypassing public liquidity pools and eliminating slippage
+          that affects large transactions. The Private Minting Pathway addresses
+          institutional requirements for capital-efficient token acquisition.
+        </p>
+
+        <p class="paragraph">
+          While retail investors purchase BOUND through the Uniswap pool,
+          institutional participants access a direct minting mechanism that
+          avoids market price impact and AMM inefficiencies. This ensures
+          large-scale investors receive exactly the amount of BOUND tokens
+          corresponding to their USDC deposit. The Private Minting process
+          operates through a streamlined institutional workflow. Investors
+          supply USDC to the BOUND Minting Contract, which mints BOUND tokens at
+          a 1:1 ratio. The protocol automatically allocates the received USDC
+          directly to the Avantgarde Yield Fund, where the newly minted
+          Avantgarde tokenized shares become part of the collateral backing
+          system. Access to direct deposits into the Avantgarde yield fund
+          remains strictly controlled, with only the protocol's smart contracts
+          authorized to manage deposits and withdrawals.
+        </p>
+
+        <p class="paragraph">
+          This dual-access approach demonstrates BOUND's scalability and
+          professional infrastructure. By providing retail access through
+          Uniswap and institutional access through direct minting, the protocol
+          accommodates diverse user needs while maintaining full collateral
+          backing and decentralization principles across all acquisition
+          methods.
+        </p>
+
+        <h2 class="section-title">BOUND+ Token</h2>
+
+        <h3 class="subsection-title">Overview</h3>
+
+        <p class="paragraph">
+          BOUND+ represents the yield-bearing asset of the BOUND protocol,
+          providing users with direct exposure to underlying yields generated
+          through the protocol's reserve deployment and infrastructure revenue.
+          The token functions as a yield-bearing instrument that captures and
+          distributes value created through systematic DeFi strategy deployment
+          and automated peg arbitrage operations. BOUND+ operates through a
+          straightforward exchange mechanism with BOUND tokens. Users exchange
+          BOUND for BOUND+ tokens initially at 1:1, with BOUND+ value
+          subsequently reflecting the protocol's earnings from underlying yield
+          generation and protocol-generated revenue streams.
+        </p>
+
+        <p class="paragraph">
+          The protocol generates revenue through two primary components:
+          tokenized DeFi yield strategies deployed through the Avantgarde DeFi
+          Yield Vault, and arbitrage profits generated through the automated peg
+          stability mechanism that maintains BOUND's stable value using USDC
+          reserves from the Liquidity Buffer.
+        </p>
+
+        <p class="paragraph">
+          When these revenue streams generate returns above baseline
+          requirements, BOUND+ tokens appreciate in BOUND-denominated terms.
+          This appreciation allows users to exchange their BOUND+ tokens back to
+          BOUND and receive more tokens than initially deposited, directly
+          capturing the value created through systematic yield generation and
+          peg arbitrage operations. Unlike traditional yield-bearing tokens that
+          rely on reward distribution mechanisms, BOUND+ captures value through
+          mathematical precision, providing verifiable access to underlying
+          yields through direct token appreciation.
+        </p>
+
+        <h3 class="subsection-title">BOUND+ Conversion Protocol</h3>
+
+        <p class="paragraph">
+          To access BOUND+ and gain exposure to protocol yield generation, users
+          must pay an exchange fee of 0.5867% (58.67 basis points) calculated on
+          the BOUND token value being converted. The protocol exchange fee
+          ensures sustainable operation while providing the exclusive gateway to
+          access BOUND+ yield exposure. Upon collection, fees paid in BOUND
+          tokens are automatically burned, creating additional
+          overcollateralization that enhances the protocol's competitive APY.
+          Users who choose to pay protocol exchange fees directly in BOUND Zero
+          tokens instead of BOUND receive a 25% fee reduction, lowering the
+          effective cost to 44 basis points of the transaction value. To utilize
+          this option during BOUND-to-BOUND+ exchanges, users must maintain a
+          sufficient BOUND Zero balance in their wallet to cover the protocol
+          fee amount.
+        </p>
+
+        <h3 class="subsection-title">Settlement Mechanism</h3>
+
+        <p class="paragraph">
+          The exchange mechanism operates in real-time, with BOUND+ value
+          calculated continuously based on the protocol's yield generation.
+          Users can initiate exchanges between BOUND and BOUND+ tokens at any
+          time at the current market rate, with a 7-day settlement period before
+          the exchanged tokens become claimable. When exchanging BOUND to
+          BOUND+, users submit their BOUND tokens and the exchange is executed
+          immediately at the current BOUND+ rate. The resulting BOUND+ tokens
+          are locked for 7 days before becoming claimable and transferable.
+          Similarly, when exchanging BOUND+ back to BOUND, the conversion occurs
+          immediately at the current rate, but the resulting BOUND tokens
+          require a 7-day waiting period before they can be claimed. This
+          settlement delay enhances protocol security by providing a buffer
+          period that prevents rapid arbitrage exploitation and protects against
+          potential flash loan attacks. During the waiting period, users
+          maintain their claim to the exchanged tokens but cannot access or
+          transfer them until the settlement period completes.
+        </p>
+
+        <h3 class="subsection-title">Token Characteristics</h3>
+
+        <p class="paragraph">
+          BOUND+ operates as a yield-bearing asset engineered to capture and
+          distribute underlying revenue generated by the protocol infrastructure
+          and reserve deployment strategies.
+        </p>
+
+        <div class="key-properties">
+          <h4>Key Properties:</h4>
+
+          <div class="property-item">
+            <div class="property-title">Yield-Bearing Asset</div>
+            <div class="property-description">
+              BOUND+ value increases directly with protocol underlying revenue,
+              measured through a mathematical framework that captures
+              yield-generating asset appreciation, providing transparent and
+              verifiable exposure to protocol earnings.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">Comprehensive Revenue Exposure</div>
+            <div class="property-description">
+              Every BOUND+ token provides proportional access to underlying
+              revenue generated through the automated deployment of USDC backing
+              in tokenized DeFi yield strategies and protocol infrastructure
+              operations.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">Exchange Mechanism Utility</div>
+            <div class="property-description">
+              Functions as the exclusive method for accessing protocol
+              underlying yields through a conversion mechanism that enables
+              users to exchange BOUND tokens for yield exposure and subsequently
+              exchange back to BOUND with appreciation.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">Mathematical Precision</div>
+            <div class="property-description">
+              Token value determined through algorithmic calculation that
+              eliminates subjective valuation, providing mathematically
+              verifiable pricing based on actual underlying yield metrics rather
+              than market speculation.
+            </div>
+          </div>
+
+          <div class="property-item">
+            <div class="property-title">Regulatory Compliance</div>
+            <div class="property-description">
+              Operates as a yield-bearing instrument that provides access to
+              protocol revenue through appreciation rather than direct yield
+              distribution, maintaining regulatory clarity through transparent
+              calculation methods and clear risk disclosure.
+            </div>
+          </div>
+        </div>
+
+        <h3 class="subsection-title">Market Access and Trading</h3>
+
+        <p class="paragraph">
+          BOUND+ is accessible to protocol participants exclusively through the
+          exchange mechanism within the protocol's smart contract system. Users
+          cannot acquire BOUND+ tokens directly through external markets or
+          exchanges, ensuring that all tokens are properly backed by reserves
+          and maintain integrity of the yield calculation system.
+        </p>
+
+        <p class="paragraph">
+          The exchange process requires users to first acquire BOUND tokens
+          through standard protocol minting or market purchase, then submit
+          these tokens to the protocol's exchange contract along with the
+          required exchange fee. The system immediately calculates in real-time
+          how many BOUND+ tokens the user will receive based on the current
+          yield ratio, which represents the BOUND+ value compared to BOUND at
+          that moment.
+        </p>
+
+        <h3 class="subsection-title">Dynamic Yield Calculation</h3>
+
+        <p class="paragraph">
+          The protocol continuously measures yield generation through a
+          sophisticated formula that captures revenue generated through DeFi
+          strategy deployment and peg arbitrage operations. This calculation
+          compares the current value of yield-generating assets to their initial
+          deployment value, capturing appreciation that flows directly into the
+          BOUND+ valuation.
+        </p>
+
+        <p class="paragraph">
+          The yield calculation measures the performance of reserves deployed in
+          yield-generating positions and peg arbitrage revenue. When
+          yield-generating positions appreciate from their initial value, this
+          appreciation flows directly into the BOUND+ token value, providing
+          holders with exposure to the protocol's underlying revenue streams.
+        </p>
+
+        <h3 class="subsection-title">Security Framework</h3>
+
+        <p class="paragraph">
+          BOUND+ token value reflects the performance of underlying
+          yield-generating strategies. The protocol deploys reserves across
+          carefully selected DeFi strategies designed to preserve capital while
+          generating returns. While the protocol cannot guarantee specific
+          performance outcomes, the underlying strategies are structured to
+          maintain value stability with upside potential from yield generation.
+        </p>
+
+        <p class="paragraph">
+          The BOUND+ token system operates through comprehensive smart contract
+          architecture that manages yield tracking, mathematical calculation
+          execution, and token exchange operations. The yield calculation
+          formula is implemented directly in smart contract code to ensure
+          consistent and verifiable execution.
+        </p>
+
+        <p class="paragraph">
+          Reserve positions are tracked through on-chain balance verification
+          for DeFi positions and trusted oracle feeds for asset valuations.
+          Exchange operations include security measures such as slippage
+          protection, maximum transaction limits, and multi-signature approval
+          requirements for protocol parameter changes. All governance operations
+          require multi-signature approval with time-delayed execution to
+          provide transparency and community oversight.
+        </p>
+
+        <h3 class="subsection-title">Innovation in Decentralized Finance</h3>
+
+        <p class="paragraph">
+          BOUND+ token represents a breakthrough innovation in decentralized
+          finance through the successful tokenization of protocol yield
+          generation. By providing direct mathematical exposure to underlying
+          revenue generated through systematic asset management, BOUND+ creates
+          a transparent and verifiable method for capturing protocol-level value
+          creation.
+        </p>
+
+        <p class="paragraph">
+          Through its focus on stable yield generation across DeFi protocols and
+          as the first project to implement automated peg arbitrage with profit
+          distribution to users, BOUND+ offers institutional-grade exposure to
+          underlying yields within a fully transparent and mathematically
+          precise framework. The token establishes a new standard for
+          yield-bearing instruments in decentralized finance.
+        </p>
+
+        <h2 class="section-title">BOUND ZERO Token</h2>
+
+        <h3 class="subsection-title">Overview</h3>
+
+        <div class="highlight-box">
+          <strong
+            >A governance asset tied to protocol performance and user
+            ownership</strong
+          >
+        </div>
+
+        <p class="paragraph">
+          The BOUND ZERO is the native governance and utility token of the
+          protocol, designed to redistribute power and ownership to the
+          community that helps build and support the protocol. It gives users
+          direct control over the protocol, and the authority over how that
+          value is managed and distributed.
+        </p>
+
+        <p class="paragraph">
+          BOUND ZERO follows a disinflationary emission model, where new tokens
+          are minted based on the protocol's real operational income. Emissions
+          are not arbitrary, they are governed by smart contracts that enforce a
+          strict link between protocol revenue and token creation. Every BOUND
+          ZERO token in circulation reflects earned economic value, not
+          speculative inflation.
+        </p>
+
+        <h3 class="subsection-title">Utility and Market Positioning</h3>
+
+        <p class="paragraph">
+          BOUND ZERO serves as the protocol's native utility token, providing
+          users with immediate cost savings for protocol access. The token's
+          primary utility creates direct economic value for holders through
+          reduced transaction costs and improved protocol economics.
+        </p>
+
+        <p class="paragraph">
+          The most significant utility feature is the 25% fee reduction on
+          protocol access. Users who pay exchange fees directly in BOUND ZERO
+          tokens instead of BOUND receive this substantial discount, lowering
+          the effective cost from 58.67 basis points to 44 basis points of the
+          transaction value. This creates immediate and measurable value for
+          BOUND ZERO holders on every exchange transaction.
+        </p>
+
+        <p class="paragraph">
+          Beyond fee reduction, BOUND ZERO holders gain access to enhanced
+          reward multipliers when locking BOUND+ tokens. Users who lock BOUND
+          ZERO alongside their BOUND+ positions can achieve up to maximum
+          multiplier benefits, significantly increasing their BOUND ZERO earning
+          potential. This dual-token locking mechanism creates sustained demand
+          for BOUND ZERO while rewarding long-term protocol participation.
+        </p>
+
+        <p class="paragraph">
+          The token also provides exclusive governance rights, granting holders
+          direct control over protocol parameters including fee structures,
+          revenue allocation decisions, and emergency protocol actions. This
+          governance utility ensures that BOUND ZERO holders maintain influence
+          over the protocol's economic policies and strategic direction.
+        </p>
+
+        <p class="paragraph">
+          BOUND ZERO's utility-driven design creates a sustainable demand model
+          where users acquire tokens not for speculative purposes, but for
+          tangible economic benefits including fee savings, enhanced rewards,
+          and governance participation. This positions BOUND ZERO as an
+          essential component for active protocol participants seeking to
+          optimize their interactions and influence within the BOUND ecosystem.
+        </p>
+
+        <h3 class="subsection-title">Emissions Tied to Real Yield</h3>
+
+        <p class="paragraph">
+          BOUND ZERO operates under a revenue-backed emission model, where new
+          tokens are minted in proportion to the protocol's actual income. This
+          establishes a direct correlation between token creation volume and the
+          revenue inflow in the protocol treasury.
+        </p>
+
+        <p class="paragraph">
+          This structure ensures that BOUND ZERO emissions are always capped by
+          actual protocol revenue rather than arbitrary token inflation. New
+          tokens are created proportionally to protocol income, with a minimum
+          baseline emission that ensures continuity during periods of low or no
+          revenue, creating a sustainable supply framework tied to performance.
+        </p>
+
+        <div class="note-box">
+          <strong>Note:</strong><br />
+          To ensure continuity and protect the system during periods of low or
+          no revenue, the protocol includes a minimum emission parameter
+          (R_min). This parameter guarantees a baseline level of BOUND ZERO
+          rewards, preventing total reward depletion and maintaining a minimum
+          APY for participants. It is designed to preserve protocol stability
+          and keep staking incentives active even under adverse market
+          conditions.
+        </div>
+
+        <div class="formula-box">
+          <h4 style="margin-bottom: 20px">Bound Distribution Formula:</h4>
+          <div style="font-size: 1.2rem; margin: 20px 0">
+            BOUND_daily = (d/365) × M_t × Supply_t^++ × P_t
+          </div>
+          <div style="font-size: 1rem; margin-top: 20px">
+            M_t = min[(M_0 × S_t × R_t)/γ_t, κ_t], κ_t = (M_0 × max(r_t,
+            r_min))/(r_0 × γ_t)
+          </div>
+        </div>
+
+        <h3 class="subsection-title">How BOUND ZERO is Earned</h3>
+
+        <p class="paragraph">
+          BOUND ZERO is distributed as rewards to users who lock BOUND+, the
+          yield bearing asset received when exchanging BOUND tokens. By locking
+          BOUND+ tokens, users contribute to the protocol's long-term capital
+          stability and begin earning BOUND ZERO rewards on a daily basis.
+        </p>
+
+        <h3 class="subsection-title">Penalty Fees</h3>
+
+        <p class="paragraph">
+          All locking and reward distribution mechanisms are executed on-chain
+          through audited smart contracts, ensuring full transparency and
+          automatic enforcement of terms. Users who commit to a fixed lock
+          duration begin receiving BOUND ZERO rewards on a daily basis for the
+          entire period, with rewards being fully claimable and transferable as
+          they accrue.
+        </p>
+
+        <p class="paragraph">
+          However, early unlocks are subject to a strict penalty model. If a
+          user decides to exit their lock before the agreed period ends, they
+          are required to pay a penalty fee equal to the total amount of BOUND
+          ZERO they would have earned had they completed the full lock duration.
+          This includes both claimed and unclaimed rewards. The penalty must be
+          settled in BOUND ZERO at the time of exit. This mechanism is designed
+          to reinforce long-term participation, prevent abuse of the reward
+          system, and maintain alignment between individual incentives and the
+          overall economic health of the protocol.
+        </p>
+
+        <h3 class="subsection-title">Bound Governance Power</h3>
+
+        <p class="paragraph">
+          BOUND ZERO also functions as the exclusive governance token of the
+          BOUND Protocol. Holding BOUND ZERO grants users the right to
+          participate in protocol decision-making, with direct influence over
+          how treasury funds are allocated and how core system parameters evolve
+          over time. Governance is conducted entirely on-chain, and all votes
+          are binding, ensuring that the protocol remains community-owned and
+          transparently directed.
+        </p>
+
+        <p class="paragraph">
+          BOUND ZERO holders may participate in voting processes related to the
+          following areas:
+        </p>
+
+        <div class="governance-areas">
+          <div class="governance-item">
+            <div class="governance-title">Fee Parameters</div>
+            <div class="governance-description">
+              Adjust the exchange fees applied to protocol-native transactions.
+            </div>
+          </div>
+
+          <div class="governance-item">
+            <div class="governance-title">Penalties Fee</div>
+            <div class="governance-description">
+              Propose changes to early unlock penalties or modify locking terms
+              to reflect market and protocol conditions.
+            </div>
+          </div>
+
+          <div class="governance-item">
+            <div class="governance-title">Treasury Funds Management</div>
+            <div class="governance-description">
+              Manage and allocate the protocol's treasury holdings, including
+              yield surplus and governance reserves. Proposals may include
+              deploying funds to strategic initiatives, covering operational
+              expenses, or reinvesting in ecosystem development. Governance
+              ensures transparent and efficient use of protocol capital.
+            </div>
+          </div>
+        </div>
+
+        <p class="paragraph">
+          Through these mechanisms, BOUND ZERO ensures that long-term
+          stakeholders are not only rewarded economically but also empowered to
+          shape the protocol's risk management, economic alignment, and overall
+          strategic direction.
+        </p>
+
+        <h3 class="subsection-title">
+          Adaptive Supply Cap and Revenue-Gated Issuance
+        </h3>
+
+        <p class="paragraph">
+          The total maximum supply of BOUND ZERO is capped at 10 billion tokens,
+          but this does not mean that all 10 billion tokens will necessarily
+          enter circulation. Unlike traditional token models, where the full
+          supply is pre-allocated or scheduled to be released over time
+          regardless of usage or demand, BOUND ZERO uses a revenue-gated
+          issuance model. In this system, tokens are only minted when the
+          protocol generates actual income. That income must first pass through
+          an on-chain allocation mechanism, which determines how much of it can
+          be used to issue new BOUND ZERO tokens.
+        </p>
+
+        <p class="paragraph">
+          Even more importantly, the community of BOUND ZERO holders governs the
+          emission logic. Through on-chain voting, the DAO can choose to reduce
+          or completely halt token issuance regardless of the unused supply
+          remaining in the emission pool. For instance, if the market price of
+          BOUND ZERO is underperforming, or if the circulating supply is
+          considered too high, the community may vote to allocate 100% of
+          protocol revenue to token burns rather than continuing to mint and
+          distribute new BOUND ZERO.
+        </p>
+
+        <p class="paragraph">
+          As a result, large portions of the 10 billion cap may remain
+          permanently unminted, effectively reducing the long-term total supply.
+          This introduces an adaptive supply ceiling that responds to market and
+          governance conditions while preserving the protocol's economic
+          sustainability. In essence, the 10 billion token cap is a hard upper
+          limit, not a supply target and the actual circulating supply may be
+          significantly lower, based entirely on real usage, governance
+          decisions, and protocol performance.
+        </p>
+
+        <h3 class="subsection-title">Token Distribution</h3>
+
+        <div class="distribution-grid">
+          <div class="distribution-item">
+            <div class="percentage">48.35%</div>
+            <div class="category">Rewards Distribution</div>
+            <div class="category-description">
+              Reserved for emission through protocol-generated revenue. Minting
+              is strictly tied to real earnings, and unused supply may remain
+              unminted indefinitely.
+            </div>
+          </div>
+
+          <div class="distribution-item">
+            <div class="percentage">0.55%</div>
+            <div class="category">Early Supporters</div>
+            <div class="category-description">
+              Allocated to airdrop recipients. Tokens are subject to a 12-month
+              cliff, followed by a 24-month linear vesting schedule.
+            </div>
+          </div>
+
+          <div class="distribution-item">
+            <div class="percentage">1.9%</div>
+            <div class="category">Liquidity Provision</div>
+            <div class="category-description">
+              Immediately vested and allocated to bootstrap liquidity on launch.
+            </div>
+          </div>
+
+          <div class="distribution-item">
+            <div class="percentage">9.2%</div>
+            <div class="category">Private Investors</div>
+            <div class="category-description">
+              Allocated with strategic vesting terms tailored to ensure
+              long-term alignment and protocol support.
+            </div>
+          </div>
+
+          <div class="distribution-item">
+            <div class="percentage">10%</div>
+            <div class="category">Core Team</div>
+            <div class="category-description">
+              Allocated to contributors with a 12-month cliff and 24-month
+              linear vesting.
+            </div>
+          </div>
+
+          <div class="distribution-item">
+            <div class="percentage">30%</div>
+            <div class="category">Protocol Treasury</div>
+            <div class="category-description">
+              Reserved for long-term protocol growth, with only 5% initially
+              unlocked and the rest subject to a 36-month linear vesting period.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
