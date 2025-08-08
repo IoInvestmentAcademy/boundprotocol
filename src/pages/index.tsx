@@ -281,26 +281,28 @@ export default function NewPage() {
       </nav> */}
 
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-[1000] px-6 sm:px-10 py-5 flex justify-between items-center bg-black/80 backdrop-blur-md">
-        <div className="flex items-center gap-3 text-2xl font-bold">
+      <header className="fixed top-0 left-0 right-0 z-[1000] px-4 sm:px-6 lg:px-10 py-4 sm:py-5 flex justify-between items-center bg-black/80 backdrop-blur-md">
+        <div className="flex items-center gap-2 sm:gap-3">
           <img
             src="/favicon.png"
             alt="BOUND Logo"
-            className="w-12 h-12 rounded-lg"
+            className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg"
           />
-          <span className="text-white">BOUND</span>
+          <span className="text-white text-xl sm:text-xl lg:text-2xl font-black block">
+            BOUND
+          </span>
         </div>
-        <nav className="flex gap-4 sm:gap-8 items-center">
+        <nav className="flex gap-2 sm:gap-4 lg:gap-8 items-center">
           <Link
             href="/litepapers"
-            className="text-white text-base hover:text-purple-500 transition-colors"
+            className="text-white text-sm sm:text-base hover:text-purple-500 transition-colors px-2 sm:px-3 py-1 sm:py-2 rounded"
           >
             Docs
           </Link>
           <Link
             href="https://app.boundprotocol.com"
             target="_blank"
-            className="bg-gradient-to-br from-purple-500 to-purple-600 px-6 py-3 rounded-full text-white font-medium transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30"
+            className="bg-gradient-to-br from-purple-500 to-purple-600 px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-full text-white text-sm sm:text-base font-medium transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30"
           >
             Launch App
           </Link>
@@ -309,24 +311,12 @@ export default function NewPage() {
 
       {/* Hero Section */}
       <section className="hero">
-        {/* <div className="hero-content">
-          <h1 className="hero-title">The DeFi Yield Stablecoin</h1>
-          <p className="hero-subtitle">
-            A professional-grade DeFi platform that transforms complex yield
-            strategies into seamless, automated returns.
-          </p>
-
-          <div className="apy-badge">
-            <div className="logo">💎 BOUND</div>
-            <div className="apy-text">18.44% APY</div>
-          </div>
-        </div> */}
-
         <div className="hero-content">
-          <h1 className="text-[clamp(3rem,8vw,6rem)] font-light leading-tight mb-8 bg-gradient-to-br from-white to-purple-500 bg-clip-text text-transparent">
-            The DeFi Yield Stablecoin
+          <h1 className="text-[clamp(2rem,6vw,6rem)] font-light leading-tight mb-6 sm:mb-8 bg-gradient-to-br from-white to-purple-500 bg-clip-text text-transparent">
+            The DeFi Yield
+            <br className="sm:hidden" /> Stablecoin
           </h1>
-          <p className="text-xl text-gray-400 leading-relaxed mb-10 max-w-2xl">
+          <p className="text-base sm:text-xl text-gray-400 leading-relaxed mb-8 sm:mb-10 max-w-2xl">
             A professional-grade DeFi platform that transforms complex yield
             strategies into seamless, automated returns.
           </p>
@@ -337,16 +327,11 @@ export default function NewPage() {
               alt="BOUND Token"
               className="w-8 h-8 rounded-full"
             />
-            <span className="text-white">BOUND</span>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 px-4 py-2 rounded-full font-bold text-lg">
+            <span className="text-white text-sm sm:text-base">BOUND</span>
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 px-3 sm:px-4 py-1 sm:py-2 rounded-full font-bold text-sm sm:text-lg">
               18.44% APY
             </div>
           </div>
-          {/* 
-          <div className="apy-badge">
-            <div className="logo">💎 BOUND</div>
-            <div className="apy-text">18.44% APY</div>
-          </div> */}
         </div>
 
         <div className="globe-container">
@@ -589,8 +574,9 @@ export default function NewPage() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           align-items: center;
-          padding: 0 4rem;
-          gap: 4rem;
+          padding: 0 2rem;
+          padding-top: 5rem;
+          gap: 2rem;
           position: relative;
         }
 
@@ -1108,15 +1094,25 @@ export default function NewPage() {
           .hero {
             grid-template-columns: 1fr;
             text-align: center;
-            padding: 2rem;
+            padding: 1.5rem;
+            padding-top: 6rem;
             gap: 2rem;
           }
 
-          .hero-title {
-            font-size: 3rem;
+          .hero-content {
+            order: 1;
+          }
+
+          .globe-container {
+            order: 2;
           }
 
           #globe-canvas {
+            width: 400px;
+            height: 400px;
+          }
+
+          .floating-icons {
             width: 400px;
             height: 400px;
           }
@@ -1132,24 +1128,43 @@ export default function NewPage() {
 
         @media (max-width: 768px) {
           .navbar {
-            padding: 1rem;
+            padding: 0.75rem 1rem;
           }
 
           .nav-links {
             display: none;
           }
 
-          .hero-title {
-            font-size: 2.5rem;
+          .hero {
+            padding: 1rem;
+            padding-top: 5rem;
+            gap: 1.5rem;
+            min-height: 90vh;
           }
 
-          .hero-subtitle {
-            font-size: 1.1rem;
+          .hero-content {
+            order: 1;
+            text-align: center;
+          }
+
+          .globe-container {
+            order: 2;
           }
 
           #globe-canvas {
-            width: 300px;
-            height: 300px;
+            width: 280px;
+            height: 280px;
+          }
+
+          .floating-icons {
+            width: 280px;
+            height: 280px;
+          }
+
+          .floating-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
           }
 
           .trusted-logos {
@@ -1164,6 +1179,30 @@ export default function NewPage() {
 
           .apy-text {
             font-size: 1.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero {
+            padding: 0.5rem;
+            padding-top: 4.5rem;
+            gap: 1rem;
+          }
+
+          #globe-canvas {
+            width: 240px;
+            height: 240px;
+          }
+
+          .floating-icons {
+            width: 240px;
+            height: 240px;
+          }
+
+          .floating-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
           }
         }
 
