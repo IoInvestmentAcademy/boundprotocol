@@ -1,1014 +1,524 @@
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 
-export default function NewPage() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const NewPage: React.FC = () => {
+  const [navbarScrolled, setNavbarScrolled] = useState(false);
 
   useEffect(() => {
-    // Create particles background
-    const createParticles = () => {
-      const particlesContainer = document.getElementById("particles");
-      if (!particlesContainer) return;
-
-      for (let i = 0; i < 50; i++) {
-        const particle = document.createElement("div");
-        particle.className = "particle";
-        particle.style.left = Math.random() * 100 + "%";
-        particle.style.top = Math.random() * 100 + "%";
-        particle.style.animationDelay = Math.random() * 6 + "s";
-        particle.style.animationDuration = 4 + Math.random() * 4 + "s";
-        particlesContainer.appendChild(particle);
-      }
+    const handleScroll = () => {
+      setNavbarScrolled(window.scrollY > 50);
     };
 
-    // Advanced 3D Globe Implementation with BOUND text
-    const initGlobe = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      // Set canvas size
-      const size = Math.min(500, window.innerWidth * 0.8);
-      canvas.width = size;
-      canvas.height = size;
-      canvas.style.width = size + "px";
-      canvas.style.height = size + "px";
-
-      const centerX = size / 2;
-      const centerY = size / 2;
-      const radius = size * 0.4;
-
-      // Globe state
-      let rotation = 0;
-      let time = 0;
-
-      // Generate points on sphere using Fibonacci sphere
-      interface Point {
-        x: number;
-        y: number;
-        z: number;
-        originalIntensity: number;
-      }
-
-      const points: Point[] = [];
-      const numPoints = 800;
-
-      for (let i = 0; i < numPoints; i++) {
-        const y = 1 - (i / (numPoints - 1)) * 2;
-        const radiusAtY = Math.sqrt(1 - y * y);
-        const theta = (i * 2.39996323) % (2 * Math.PI);
-
-        points.push({
-          x: Math.cos(theta) * radiusAtY,
-          y: y,
-          z: Math.sin(theta) * radiusAtY,
-          originalIntensity: Math.random() * 0.8 + 0.2,
-        });
-      }
-
-      function draw() {
-        if (!ctx) return;
-
-        // Clear canvas
-        ctx.clearRect(0, 0, size, size);
-
-        // Create gradient background for glow effect
-        const glowGradient = ctx.createRadialGradient(
-          centerX,
-          centerY,
-          radius * 0.3,
-          centerX,
-          centerY,
-          radius * 1.3
-        );
-        glowGradient.addColorStop(0, "rgba(139, 92, 246, 0.3)");
-        glowGradient.addColorStop(0.4, "rgba(139, 92, 246, 0.1)");
-        glowGradient.addColorStop(1, "rgba(139, 92, 246, 0)");
-
-        ctx.fillStyle = glowGradient;
-        ctx.fillRect(0, 0, size, size);
-
-        // Draw sphere outline
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(139, 92, 246, 0.4)";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Fill sphere with dark gradient
-        const sphereGradient = ctx.createRadialGradient(
-          centerX - radius * 0.3,
-          centerY - radius * 0.3,
-          0,
-          centerX,
-          centerY,
-          radius
-        );
-        sphereGradient.addColorStop(0, "rgba(30, 30, 60, 0.9)");
-        sphereGradient.addColorStop(1, "rgba(10, 10, 20, 0.95)");
-        ctx.fillStyle = sphereGradient;
-        ctx.fill();
-
-        // Transform and draw points (only outer edge)
-        const transformedPoints = points.map((point) => {
-          // Rotate around Y axis
-          const rotY = rotation;
-          const x = point.x * Math.cos(rotY) - point.z * Math.sin(rotY);
-          const z = point.x * Math.sin(rotY) + point.z * Math.cos(rotY);
-
-          return {
-            x: x,
-            y: point.y,
-            z: z,
-            originalIntensity: point.originalIntensity,
-          };
-        });
-
-        // Sort points by Z coordinate (back to front)
-        transformedPoints.sort((a, b) => a.z - b.z);
-
-        // Draw points only on the outer edge
-        transformedPoints.forEach((point) => {
-          if (point.z > 0.2) {
-            // Only draw front-facing points on the surface
-            const screenX = centerX + point.x * radius;
-            const screenY = centerY + point.y * radius;
-
-            // Check if point is within sphere bounds
-            const distFromCenter = Math.sqrt(
-              Math.pow(screenX - centerX, 2) + Math.pow(screenY - centerY, 2)
-            );
-
-            if (distFromCenter <= radius && distFromCenter >= radius * 0.95) {
-              // Calculate intensity based on Z position and time
-              const depthFactor = (point.z + 1) / 2;
-              const timeFactor =
-                Math.sin(time + point.originalIntensity * 10) * 0.3 + 0.7;
-              const intensity =
-                point.originalIntensity * depthFactor * timeFactor;
-
-              // Draw point
-              ctx.beginPath();
-              const pointRadius = 1 + intensity * 1.5;
-              ctx.arc(screenX, screenY, pointRadius, 0, Math.PI * 2);
-
-              // Color based on intensity and position
-              const alpha = intensity * 0.6;
-              const hue = 270 + intensity * 20;
-              ctx.fillStyle = `hsla(${hue}, 70%, 70%, ${alpha})`;
-              ctx.fill();
-            }
-          }
-        });
-
-        // Draw BOUND text in the center
-        ctx.save();
-        ctx.font = `bold ${
-          size * 0.12
-        }px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        // Create text gradient
-        const textGradient = ctx.createLinearGradient(
-          centerX - size * 0.1,
-          centerY - size * 0.05,
-          centerX + size * 0.1,
-          centerY + size * 0.05
-        );
-        textGradient.addColorStop(0, "#8b5cf6");
-        textGradient.addColorStop(0.5, "#a855f7");
-        textGradient.addColorStop(1, "#c084fc");
-
-        // Add text shadow
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = "rgba(139, 92, 246, 0.5)";
-
-        ctx.fillStyle = textGradient;
-        ctx.fillText("BOUND", centerX, centerY);
-
-        // Add subtle pulse effect to text
-        const pulseScale = 1 + Math.sin(time * 2) * 0.02;
-        ctx.scale(pulseScale, pulseScale);
-        ctx.restore();
-
-        // Update rotation and time
-        rotation += 0.005;
-        time += 0.02;
-
-        requestAnimationFrame(draw);
-      }
-
-      draw();
-    };
-
-    // Mobile menu functionality
-    const mobileMenu = document.querySelector(".mobile-menu");
-    const navLinks = document.querySelector(".nav-links");
-
-    if (mobileMenu && navLinks) {
-      mobileMenu.addEventListener("click", function () {
-        const navLinksElement = navLinks as HTMLElement;
-        navLinksElement.style.display =
-          navLinksElement.style.display === "flex" ? "none" : "flex";
-      });
-    }
-
-    // Initialize everything
-    createParticles();
-    initGlobe();
-
-    // Handle window resize
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        initGlobe();
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute("href");
+    if (href && href.startsWith("#")) {
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+  };
 
   return (
     <>
       <Head>
-        <title>The DeFi Yield Stablecoin</title>
+        <title>BOUND - The Professional DeFi Yield Platform</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           name="description"
-          content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
+          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+          name="keywords"
+          content="DeFi, yield, stablecoin, BOUND, cryptocurrency, blockchain, investment, APY"
+        />
+        <meta name="author" content="BOUND" />
+        <meta
+          property="og:title"
+          content="BOUND - The Professional DeFi Yield Platform"
+        />
+        <meta
+          property="og:description"
+          content="Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://boundprotocol.com" />
+        <meta property="og:image" content="/favicon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="BOUND - The Professional DeFi Yield Platform"
+        />
+        <meta
+          name="twitter:description"
+          content="Diversified exposure to professional yield strategies across premium stablecoins."
+        />
+        <meta name="twitter:image" content="/favicon.png" />
+        <link rel="icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="canonical" href="https://boundprotocol.com" />
       </Head>
 
-      {/* Animated Background Particles */}
-      <div className="particles" id="particles"></div>
-
-      {/* Background Image */}
-      <div className="fixed inset-0 z-[0] overflow-hidden">
-        <img
-          src="/backgroundimage.png"
-          alt="Background"
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
-          style={{ filter: "blur(1px)" }}
-        />
-        <div className="absolute inset-0 bg-black/20"></div>
-      </div>
-
-      {/* Navigation */}
-      {/* <nav className="navbar">
-        <div className="logo">BOUND</div>
-        <div className="nav-links">
-          <Link href="#" className="nav-link">
-            Docs
-          </Link>
-          <Link href="#" className="nav-link">
-            About
-          </Link>
-          <Link href="#" className="nav-link">
-            Community
-          </Link>
-        </div>
-        <Link href="#" className="launch-btn">
-          Launch App
-        </Link>
-        <button className="mobile-menu">☰</button>
-      </nav> */}
-
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-[1000] px-4 sm:px-6 lg:px-10 py-4 sm:py-5 flex justify-between items-center bg-black/80 backdrop-blur-md">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <img
-            src="/favicon.png"
-            alt="BOUND Logo"
-            className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg"
-          />
-          <span className="text-white text-xl sm:text-xl lg:text-2xl font-black block">
-            BOUND
-          </span>
-        </div>
-        <nav className="flex gap-2 sm:gap-4 lg:gap-8 items-center">
-          <Link
-            href="/litepapers"
-            className="text-white text-sm sm:text-base hover:text-purple-500 transition-colors px-2 sm:px-3 py-1 sm:py-2 rounded"
-          >
-            Docs
-          </Link>
-          <Link
-            href="https://app.boundprotocol.com"
-            target="_blank"
-            className="bg-gradient-to-br from-purple-500 to-purple-600 px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-full text-white text-sm sm:text-base font-medium transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-purple-500/30"
-          >
-            Launch App
-          </Link>
-        </nav>
-      </header>
-
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-content">
-          <h1 className="text-[clamp(2rem,6vw,6rem)] font-light leading-tight mb-6 sm:mb-8 bg-gradient-to-br from-white to-purple-500 bg-clip-text text-transparent">
-            The DeFi Yield
-            <br className="sm:hidden" /> Stablecoin
-          </h1>
-          <p className="text-base sm:text-xl text-gray-400 leading-relaxed mb-8 sm:mb-10 max-w-2xl">
-            A professional-grade DeFi platform that transforms complex yield
-            strategies into seamless, automated returns.
-          </p>
-
-          <div className="inline-flex items-center gap-3 bg-purple-500/10 border border-purple-500/30 px-6 py-4 rounded-full">
-            <img
-              src="/boundlogo.png"
-              alt="BOUND Token"
-              className="w-8 h-8 rounded-full"
-            />
-            <span className="text-white text-sm sm:text-base">BOUND</span>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 px-3 sm:px-4 py-1 sm:py-2 rounded-full font-bold text-sm sm:text-lg">
-              18.44% APY
-            </div>
-          </div>
-        </div>
-
-        <div className="globe-container">
-          <canvas ref={canvasRef} id="globe-canvas"></canvas>
-
-          {/* Floating DeFi Icons Around Globe */}
-          <div className="floating-icons">
-            <div className="floating-icon gray-dollar-icon">
-              <div className="gray-dollar">$</div>
-              <div className="dashed-circle"></div>
-            </div>
-            <div className="floating-icon yearn-icon">
-              <div className="yearn-symbol">
-                <div className="yearn-branch yearn-left"></div>
-                <div className="yearn-branch yearn-center"></div>
-                <div className="yearn-branch yearn-right"></div>
-              </div>
-            </div>
-            <div className="floating-icon dai-icon">
-              <div className="dai-symbol">
-                <div className="dai-d">D</div>
-                <div className="dai-lines">
-                  <div className="dai-line-top"></div>
-                  <div className="dai-line-bottom"></div>
-                </div>
-              </div>
-            </div>
-            <div className="floating-icon green-dollar-icon">
-              <div className="green-circle">
-                <div className="green-dollar">$</div>
-              </div>
-            </div>
-            <div className="floating-icon tether-icon">
-              <div className="tether-symbol">₮</div>
-            </div>
-            <div className="floating-icon frax-icon">
-              <div className="frax-arrows">
-                <div className="arrow-left"></div>
-                <div className="arrow-right"></div>
-              </div>
-            </div>
-            <div className="floating-icon dollar-circle-icon">
-              <div className="dollar-symbol">$</div>
-              <div className="circle-brackets">
-                <div className="bracket-left"></div>
-                <div className="bracket-right"></div>
-              </div>
-            </div>
-            <div className="floating-icon usdc-icon">
-              <div className="usdc-dollar">$</div>
-              <div className="usdc-brackets">
-                <div className="usdc-bracket-left"></div>
-                <div className="usdc-bracket-right"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trusted By Section */}
-      {/* <div className="trusted-by">
-        <div className="trusted-text">Trusted by</div>
-        <div className="trusted-logos">
-          <div className="trusted-logo">enzyme</div>
-          <div className="trusted-logo">Microsoft</div>
-          <div className="trusted-logo">AVANTGARDE</div>
-          <div className="trusted-logo">Chainlink</div>
-          <div className="trusted-logo">yard[hub]</div>
-        </div>
-      </div> */}
-
-      <section className="py-20 px-6 sm:px-10 text-center relative z-[2]">
-        <h2 className="text-lg text-gray-400 mb-10 font-normal">Trusted by</h2>
-        <div className="flex justify-center items-center gap-8 sm:gap-16 flex-wrap max-w-6xl mx-auto">
-          <a
-            href="https://enzyme.finance/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/enzyme.png"
-              alt="Enzyme"
-              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-            />
-          </a>
-          <a
-            href="https://www.microsoft.com/en-us/startups"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/microsoft.png"
-              alt="Microsoft"
-              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-            />
-          </a>
-          <a
-            href="https://avantgarde.finance/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/avantgarde.png"
-              alt="Avantgarde"
-              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-            />
-          </a>
-          <a
-            href="https://www.base.org/build"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/chain.png"
-              alt="Base"
-              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-            />
-          </a>
-          <a
-            href="https://yardhub.tech/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="/yardhub.png"
-              alt="yard[hub]"
-              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
-            />
-          </a>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-16 px-6 sm:px-10 border-t border-white/10 relative z-[2]">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-5 max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 text-base text-gray-400">
-            <img
-              src="/ioicon.png"
-              alt="BOUND Logo"
-              className="w-6 h-6 rounded-lg"
-            />
-            <span>powered by IO INVESTMENT</span>
-          </div>
-          <div className="flex items-center gap-5">
-            <span className="text-gray-600">
-              © 2025 BOUND. All rights reserved.
-            </span>
-            <Link
-              href="#"
-              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white transition-all hover:bg-purple-500/30 hover:-translate-y-0.5"
-            >
-              𝕏
-            </Link>
-          </div>
-        </div>
-      </footer>
-
-      <style jsx>{`
-        // * {
-        //   margin: 0;
-        //   padding: 0;
-        //   box-sizing: border-box;
-        // }
+      <style jsx global>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
 
         body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Oxygen, Ubuntu, Cantarell, sans-serif;
-          background: linear-gradient(
-            135deg,
-            #0a0a0f 0%,
-            #1a1a2e 50%,
-            #16213e 100%
-          );
-          color: white;
+            "Inter", sans-serif;
+          background: #ffffff;
+          color: #1a1a1a;
+          line-height: 1.6;
           overflow-x: hidden;
-          min-height: 100vh;
         }
 
+        /* Navigation */
         .navbar {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           padding: 1rem 2rem;
-          backdrop-filter: blur(10px);
-          background: rgba(10, 10, 15, 0.8);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid #f0f0f0;
           z-index: 1000;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+          transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+          background: rgba(255, 255, 255, 0.98);
+          border-color: #e2e8f0;
         }
 
         .logo {
-          font-size: 1.8rem;
+          font-size: 1.5rem;
           font-weight: 700;
-          background: linear-gradient(135deg, #8b5cf6, #a855f7);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #6366f1;
+          letter-spacing: -0.02em;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .logo-text {
+          display: none;
+        }
+
+        .logo-icon {
+          width: 50px;
+          height: 50px;
+          object-fit: contain;
         }
 
         .nav-links {
           display: flex;
           gap: 2rem;
+          align-items: center;
         }
 
         .nav-link {
-          color: rgba(255, 255, 255, 0.8);
+          color: #64748b;
           text-decoration: none;
-          transition: color 0.3s ease, transform 0.2s ease;
-          padding: 0.5rem 1rem;
-          border-radius: 6px;
+          font-weight: 500;
+          transition: color 0.3s ease;
+          font-size: 0.95rem;
         }
 
         .nav-link:hover {
-          color: #a855f7;
-          transform: translateY(-1px);
-          background: rgba(139, 92, 246, 0.1);
+          color: #6366f1;
         }
 
         .launch-btn {
-          background: linear-gradient(135deg, #8b5cf6, #a855f7);
-          padding: 0.7rem 1.5rem;
+          background: #6366f1;
+          color: white;
+          padding: 0.75rem 1.5rem;
           border-radius: 8px;
           text-decoration: none;
-          color: white;
           font-weight: 600;
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+          font-size: 0.9rem;
+          transition: all 0.3s ease;
+          border: none;
+          cursor: pointer;
         }
 
         .launch-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+          background: #5855eb;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
+        /* Hero Section */
         .hero {
           min-height: 100vh;
           display: grid;
           grid-template-columns: 1fr 1fr;
           align-items: center;
-          padding: 0 2rem;
-          padding-top: 5rem;
-          gap: 2rem;
-          position: relative;
+          padding: 6rem 2rem 2rem;
+          max-width: 1200px;
+          margin: 0 auto;
+          gap: 3rem;
         }
 
         .hero-content {
-          z-index: 2;
+          max-width: 600px;
+        }
+
+        .hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          padding: 0.5rem 1rem;
+          border-radius: 50px;
+          font-size: 0.85rem;
+          color: #64748b;
+          margin-bottom: 1rem;
+          font-weight: 500;
         }
 
         .hero-title {
-          font-size: 4rem;
+          font-size: 3.5rem;
           font-weight: 800;
           line-height: 1.1;
           margin-bottom: 1.5rem;
-          background: linear-gradient(135deg, #ffffff, #e5e7eb);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: fadeInUp 1s ease-out;
+          color: #0f172a;
+          letter-spacing: -0.03em;
         }
 
         .hero-subtitle {
           font-size: 1.25rem;
-          color: rgba(255, 255, 255, 0.8);
-          margin-bottom: 2rem;
-          line-height: 1.6;
-          animation: fadeInUp 1s ease-out 0.2s both;
-        }
-
-        .apy-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 1rem;
-          background: rgba(139, 92, 246, 0.2);
-          border: 1px solid rgba(139, 92, 246, 0.3);
-          padding: 1rem 2rem;
-          border-radius: 50px;
+          color: #64748b;
           margin-bottom: 3rem;
-          backdrop-filter: blur(10px);
-          animation: fadeInUp 1s ease-out 0.4s both,
-            pulse 2s ease-in-out infinite;
+          line-height: 1.6;
+          font-weight: 400;
         }
 
-        .apy-text {
+        .cta-section {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+          margin-bottom: 3rem;
+        }
+
+        .cta-primary {
+          background: #6366f1;
+          color: white;
+          padding: 1rem 2rem;
+          border-radius: 12px;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          border: none;
+          cursor: pointer;
+        }
+
+        .cta-primary:hover {
+          background: #5855eb;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .cta-secondary {
+          color: #64748b;
+          text-decoration: none;
+          font-weight: 500;
+          padding: 1rem 1.5rem;
+          border-radius: 12px;
+          transition: all 0.3s ease;
+          border: 1px solid #e2e8f0;
+          background: #ffffff;
+        }
+
+        .cta-secondary:hover {
+          color: #6366f1;
+          border-color: #6366f1;
+          background: #f8fafc;
+        }
+
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 2rem;
+          padding: 2rem 0;
+          border-top: 1px solid #f1f5f9;
+        }
+
+        .stat-item {
+          text-align: center;
+        }
+
+        .stat-value {
           font-size: 2rem;
           font-weight: 700;
-          color: #a855f7;
+          color: #6366f1;
+          margin-bottom: 0.5rem;
         }
 
-        .globe-container {
+        .stat-label {
+          font-size: 0.9rem;
+          color: #64748b;
+          font-weight: 500;
+        }
+
+        /* Visual Section */
+        .visual-container {
           position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
-          animation: fadeIn 1.5s ease-out 0.6s both;
+          min-height: 500px;
         }
 
-        .floating-icons {
+        .central-orb {
+          width: 320px;
+          height: 320px;
+          background: transparent;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2.5rem;
+          font-weight: 800;
+          color: transparent;
+          position: relative;
+          box-shadow: none;
+          animation: none;
+        }
+
+        .logo-container {
+          position: relative;
+          z-index: 10;
+        }
+
+        .bound-logo {
+          width: 400px;
+          height: 400px;
+          object-fit: contain;
+        }
+
+        .logo-container::after {
+          content: "BOUND";
           position: absolute;
-          width: 600px;
-          height: 600px;
-          top: 50%;
+          bottom: 1rem;
           left: 50%;
-          transform: translate(-50%, -50%);
-          pointer-events: none;
+          transform: translateX(-50%);
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #6366f1;
+          letter-spacing: -0.02em;
+          white-space: nowrap;
         }
 
-        .floating-icon {
+        .orb-ring {
+          position: absolute;
+          border: 2px solid rgba(99, 102, 241, 0.2);
+          border-radius: 50%;
+          animation: rotate 20s linear infinite;
+        }
+
+        .ring-1 {
+          width: 400px;
+          height: 400px;
+          top: -40px;
+          left: -40px;
+        }
+
+        .ring-2 {
+          width: 480px;
+          height: 480px;
+          top: -80px;
+          left: -80px;
+          animation-duration: 30s;
+          animation-direction: reverse;
+        }
+
+        .floating-token {
           position: absolute;
           width: 60px;
           height: 60px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 30px;
-          animation: floatIcon 4s ease-in-out infinite;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-          backdrop-filter: blur(10px);
-          border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .floating-icon.gray-dollar-icon {
-          background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-          top: 10%;
-          right: 15%;
-          animation-delay: 0s;
-          position: absolute;
-          border: 2px solid #dee2e6;
-        }
-
-        .gray-dollar {
-          color: #212529;
-          font-size: 28px;
-          font-weight: bold;
-          text-shadow: none;
-          z-index: 2;
-          position: relative;
-        }
-
-        .dashed-circle {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 50px;
-          height: 50px;
-          border: 3px dashed #212529;
-          border-radius: 50%;
-          opacity: 0.8;
-        }
-
-        .floating-icon.yearn-icon {
-          background: linear-gradient(135deg, #1f2937, #111827);
-          top: 30%;
-          left: 10%;
-          animation-delay: 0.5s;
-          position: absolute;
-        }
-
-        .yearn-symbol {
-          position: relative;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .yearn-branch {
-          position: absolute;
-          width: 4px;
-          height: 16px;
-          border-radius: 2px;
-          background: linear-gradient(180deg, #f97316, #fed7aa);
-        }
-
-        .yearn-left {
-          left: 6px;
-          top: 8px;
-          transform: rotate(-30deg);
-          background: linear-gradient(180deg, #f97316, #fde68a);
-        }
-
-        .yearn-center {
-          left: 14px;
-          top: 4px;
-          transform: rotate(0deg);
-          background: linear-gradient(180deg, #f97316, #ffffff);
-        }
-
-        .yearn-right {
-          right: 6px;
-          top: 8px;
-          transform: rotate(30deg);
-          background: linear-gradient(180deg, #f97316, #fde68a);
-        }
-
-        .floating-icon.dai-icon {
-          background: linear-gradient(135deg, #ffb000, #ff8f00);
-          top: 35%;
-          right: 8%;
-          animation-delay: 1s;
-          position: absolute;
-        }
-
-        .dai-symbol {
-          position: relative;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .dai-d {
-          color: white;
-          font-size: 28px;
-          font-weight: bold;
-          font-family: Arial, sans-serif;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-          z-index: 2;
-          position: relative;
-        }
-
-        .dai-lines {
-          position: absolute;
-          width: 32px;
-          height: 32px;
-          top: 0;
-          left: 0;
-        }
-
-        .dai-line-top,
-        .dai-line-bottom {
-          position: absolute;
-          width: 28px;
-          height: 3px;
           background: white;
-          left: 2px;
-        }
-
-        .dai-line-top {
-          top: 12px;
-        }
-
-        .dai-line-bottom {
-          bottom: 12px;
-        }
-
-        .floating-icon.green-dollar-icon {
-          background: linear-gradient(135deg, #22c55e, #16a34a);
-          bottom: 15%;
-          left: 20%;
-          animation-delay: 1.5s;
-          position: absolute;
-          border: 3px solid #dcfce7;
-        }
-
-        .green-circle {
-          position: relative;
-          width: 40px;
-          height: 40px;
-          background: #22c55e;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 2px solid white;
+          font-weight: 700;
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+          animation: float 3s ease-in-out infinite;
+          border: 2px solid #f1f5f9;
         }
 
-        .green-dollar {
-          color: white;
-          font-size: 24px;
-          font-weight: bold;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        .token-1 {
+          top: 20%;
+          left: 10%;
+          color: #000000;
+          animation-delay: 0s;
         }
 
-        .floating-icon.tether-icon {
-          background: linear-gradient(135deg, #26a69a, #00897b);
-          top: 5%;
-          left: 40%;
+        .token-2 {
+          top: 10%;
+          right: 20%;
+          color: #3b82f6;
+          animation-delay: 1s;
+        }
+
+        .token-3 {
+          bottom: 20%;
+          left: 15%;
+          color: #f59e0b;
           animation-delay: 2s;
-          position: absolute;
         }
 
-        .tether-symbol {
-          color: white;
-          font-size: 30px;
-          font-weight: bold;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        .token-4 {
+          bottom: 15%;
+          right: 10%;
+          color: #10b981;
+          animation-delay: 0.5s;
         }
 
-        .floating-icon.frax-icon {
-          background: linear-gradient(135deg, #26a69a, #00897b);
-          bottom: 5%;
-          right: 35%;
-          animation-delay: 2.5s;
-          position: absolute;
-        }
-
-        .frax-arrows {
-          position: relative;
-          width: 30px;
-          height: 20px;
-        }
-
-        .arrow-left,
-        .arrow-right {
-          position: absolute;
-          width: 0;
-          height: 0;
-          border-style: solid;
-        }
-
-        .arrow-left {
-          border-right: 12px solid white;
-          border-top: 6px solid transparent;
-          border-bottom: 6px solid transparent;
-          left: 0;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-
-        .arrow-right {
-          border-left: 12px solid white;
-          border-top: 6px solid transparent;
-          border-bottom: 6px solid transparent;
-          right: 0;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-
-        .floating-icon.dollar-circle-icon {
-          background: linear-gradient(135deg, #424242, #212121);
+        .token-5 {
           top: 50%;
           left: 5%;
-          animation-delay: 3s;
-          position: absolute;
+          color: #ef4444;
+          animation-delay: 1.5s;
         }
 
-        .dollar-symbol {
-          color: #ffd700;
-          font-size: 24px;
-          font-weight: bold;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .circle-brackets {
-          position: absolute;
+        .token-6 {
           top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 42px;
-          height: 42px;
+          right: 5%;
+          color: #06b6d4;
+          animation-delay: 2.5s;
         }
 
-        .bracket-left,
-        .bracket-right {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          border: 3px solid #ffd700;
-          top: 50%;
-          transform: translateY(-50%);
+        /* Features Section */
+        .features {
+          padding: 6rem 2rem;
+          background: #f8fafc;
         }
 
-        .bracket-left {
-          left: 2px;
-          border-right: none;
-          border-top: none;
-          border-bottom: none;
-          border-left: 3px solid #ffd700;
-          border-radius: 20px 0 0 20px;
-        }
-
-        .bracket-right {
-          right: 2px;
-          border-left: none;
-          border-top: none;
-          border-bottom: none;
-          border-right: 3px solid #ffd700;
-          border-radius: 0 20px 20px 0;
-        }
-
-        .floating-icon.usdc-icon {
-          background: linear-gradient(135deg, #2775ca, #1e5f99);
-          bottom: 20%;
-          right: 10%;
-          animation-delay: 3.5s;
-          position: absolute;
-        }
-
-        .usdc-dollar {
-          color: white;
-          font-size: 28px;
-          font-weight: bold;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .usdc-brackets {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 42px;
-          height: 42px;
-        }
-
-        .usdc-bracket-left,
-        .usdc-bracket-right {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          border: 3px solid white;
-          border-radius: 50%;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-
-        .usdc-bracket-left {
-          left: 2px;
-          border-right: none;
-          border-top: none;
-          border-bottom: none;
-          border-left: 3px solid white;
-          border-radius: 20px 0 0 20px;
-        }
-
-        .usdc-bracket-right {
-          right: 2px;
-          border-left: none;
-          border-top: none;
-          border-bottom: none;
-          border-right: 3px solid white;
-          border-radius: 0 20px 20px 0;
-        }
-
-        @keyframes floatIcon {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-            opacity: 0.8;
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-            opacity: 1;
-          }
-        }
-
-        #globe-canvas {
-          width: 500px;
-          height: 500px;
-          border-radius: 50%;
-          box-shadow: 0 0 100px rgba(139, 92, 246, 0.3),
-            0 0 200px rgba(139, 92, 246, 0.1);
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .trusted-by {
-          position: absolute;
-          bottom: 2rem;
-          left: 4rem;
-          right: 4rem;
+        .features-container {
+          max-width: 1200px;
+          margin: 0 auto;
           text-align: center;
-          animation: fadeIn 2s ease-out 1s both;
         }
 
-        .trusted-text {
-          color: rgba(255, 255, 255, 0.6);
+        .features-title {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 1rem;
+          letter-spacing: -0.02em;
+        }
+
+        .features-subtitle {
+          font-size: 1.1rem;
+          color: #64748b;
+          margin-bottom: 4rem;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .features-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 2rem;
+          margin-top: 3rem;
+        }
+
+        .feature-card {
+          background: white;
+          padding: 2.5rem;
+          border-radius: 16px;
+          border: 1px solid #e2e8f0;
+          transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          border-color: #6366f1;
+        }
+
+        .feature-icon {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, #6366f1, #8b5cf6);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 1.5rem;
+          font-size: 1.5rem;
+        }
+
+        .feature-title {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #0f172a;
+          margin-bottom: 1rem;
+        }
+
+        .feature-description {
+          color: #64748b;
+          line-height: 1.6;
+        }
+
+        /* Powered By Element */
+        .powered-by {
+          position: fixed;
+          bottom: 2rem;
+          left: 2rem;
+          background: rgba(71, 85, 105, 0.9);
+          color: white;
+          padding: 0.75rem 1.25rem;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 500;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(148, 163, 184, 0.2);
+          z-index: 100;
+          transition: all 0.3s ease;
+        }
+
+        .powered-by:hover {
+          background: rgba(71, 85, 105, 1);
+          transform: translateY(-1px);
+        }
+
+        .trusted {
+          padding: 3rem 2rem;
+          text-align: center;
+          background: #f8fafc;
+          border-top: 1px solid #f1f5f9;
+        }
+
+        .trusted-container {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+
+        .trusted-title {
+          color: #94a3b8;
           margin-bottom: 2rem;
+          font-weight: 500;
           font-size: 0.9rem;
-          text-transform: uppercase;
-          letter-spacing: 2px;
         }
 
         .trusted-logos {
@@ -1016,77 +526,125 @@ export default function NewPage() {
           justify-content: center;
           align-items: center;
           gap: 3rem;
-          opacity: 0.7;
+          flex-wrap: wrap;
         }
 
         .trusted-logo {
-          color: rgba(255, 255, 255, 0.6);
+          color: #cbd5e1;
           font-weight: 600;
-          transition: color 0.3s ease, transform 0.3s ease;
-          cursor: pointer;
+          font-size: 1.1rem;
+          transition: color 0.3s ease;
         }
 
         .trusted-logo:hover {
-          color: #a855f7;
-          transform: scale(1.05);
+          color: #6366f1;
         }
 
-        .particles {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 1;
+        /* Footer */
+        .footer {
+          padding: 4rem 2rem;
+          border-top: 1px solid #e2e8f0;
+          background: #f8fafc;
         }
 
-        .particle {
-          position: absolute;
-          width: 2px;
-          height: 2px;
-          background: rgba(139, 92, 246, 0.5);
+        .footer-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 2rem;
+        }
+
+        .footer-left {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .footer-logo {
+          width: 24px;
+          height: 24px;
+          border-radius: 8px;
+        }
+
+        .footer-text {
+          color: #64748b;
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+
+        .footer-right {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+        }
+
+        .copyright {
+          color: #64748b;
+          font-size: 0.9rem;
+        }
+
+        .social-link {
+          width: 40px;
+          height: 40px;
           border-radius: 50%;
-          animation: float 6s ease-in-out infinite;
+          background: rgba(99, 102, 241, 0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6366f1;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.3s ease;
         }
 
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
+        .social-link:hover {
+          background: rgba(99, 102, 241, 0.2);
+          transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+          0%,
+          100% {
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.3),
+              0 20px 40px rgba(99, 102, 241, 0.2);
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+          50% {
+            box-shadow: 0 0 80px rgba(99, 102, 241, 0.4),
+              0 25px 50px rgba(99, 102, 241, 0.3);
           }
         }
 
-        @keyframes fadeIn {
+        @keyframes rotate {
           from {
-            opacity: 0;
+            transform: rotate(0deg);
           }
           to {
-            opacity: 1;
+            transform: rotate(360deg);
           }
         }
 
         @keyframes float {
           0%,
           100% {
-            transform: translateY(0px) rotate(0deg);
+            transform: translateY(0px);
           }
           50% {
-            transform: translateY(-20px) rotate(1deg);
+            transform: translateY(-10px);
           }
         }
 
-        @keyframes pulse {
-          0%,
-          100% {
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+          .hero {
+            padding: 6rem 3rem 2rem;
+            gap: 3rem;
           }
-          50% {
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+
+          .navbar {
+            padding: 1rem 3rem;
           }
         }
 
@@ -1094,133 +652,593 @@ export default function NewPage() {
           .hero {
             grid-template-columns: 1fr;
             text-align: center;
-            padding: 1.5rem;
-            padding-top: 6rem;
-            gap: 2rem;
+            gap: 3rem;
+            padding: 6rem 2rem 2rem;
           }
 
           .hero-content {
             order: 1;
           }
 
-          .globe-container {
+          .visual-container {
             order: 2;
           }
 
-          #globe-canvas {
-            width: 400px;
-            height: 400px;
+          .hero-title {
+            font-size: 3rem;
           }
 
-          .floating-icons {
-            width: 400px;
-            height: 400px;
+          .central-orb {
+            width: 280px;
+            height: 280px;
+            font-size: 2rem;
           }
 
-          .trusted-by {
-            position: relative;
-            margin-top: 4rem;
-            left: auto;
-            right: auto;
-            bottom: auto;
+          .bound-logo {
+            width: 320px;
+            height: 320px;
+          }
+
+          .logo-container::after {
+            font-size: 1.3rem;
+            bottom: -2.5rem;
+          }
+
+          .ring-1 {
+            width: 360px;
+            height: 360px;
+            top: -40px;
+            left: -40px;
+          }
+
+          .ring-2 {
+            width: 440px;
+            height: 440px;
+            top: -80px;
+            left: -80px;
+          }
+
+          .features-grid {
+            grid-template-columns: repeat(2, 1fr);
           }
         }
 
         @media (max-width: 768px) {
           .navbar {
-            padding: 0.75rem 1rem;
+            padding: 1rem 1.5rem;
+            flex-wrap: nowrap;
           }
 
           .nav-links {
             display: none;
           }
 
-          .hero {
-            padding: 1rem;
-            padding-top: 5rem;
+          .logo {
+            font-size: 1.3rem;
+          }
+
+          .logo-text {
+            display: block;
+          }
+
+          .logo-icon {
+            width: 20px;
+            height: 20px;
+          }
+
+          .footer {
+            padding: 3rem 1.5rem;
+          }
+
+          .footer-container {
+            flex-direction: column;
+            text-align: center;
             gap: 1.5rem;
-            min-height: 90vh;
+          }
+
+          .footer-left {
+            justify-content: center;
+          }
+
+          .footer-right {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+          }
+
+          .launch-btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+          }
+
+          .hero-badge {
+            display: none;
           }
 
           .hero-content {
             order: 1;
-            text-align: center;
           }
 
-          .globe-container {
+          .visual-container {
             order: 2;
+            margin-bottom: 1rem;
           }
 
-          #globe-canvas {
-            width: 280px;
-            height: 280px;
+          .hero {
+            padding: 9rem 1.5rem 2rem;
+            gap: 3rem;
           }
 
-          .floating-icons {
-            width: 280px;
-            height: 280px;
+          .hero-title {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 2rem;
           }
 
-          .floating-icon {
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
+          .hero-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+          }
+
+          .cta-section {
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 3rem;
+          }
+
+          .cta-primary,
+          .cta-secondary {
+            width: 100%;
+            text-align: center;
+            padding: 1rem 1.5rem;
+          }
+
+          .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 2rem 0;
+          }
+
+          .stat-value {
+            font-size: 1.8rem;
+          }
+
+          .central-orb {
+            width: 240px;
+            height: 240px;
+            font-size: 1.8rem;
+          }
+
+          .bound-logo {
+            width: 260px;
+            height: 260px;
+          }
+
+          .logo-container::after {
+            font-size: 1.1rem;
+            bottom: -2rem;
+          }
+
+          .ring-1 {
+            width: 300px;
+            height: 300px;
+            top: -30px;
+            left: -30px;
+          }
+
+          .ring-2 {
+            width: 360px;
+            height: 360px;
+            top: -60px;
+            left: -60px;
+          }
+
+          .floating-token {
+            width: 45px;
+            height: 45px;
+            font-size: 0.8rem;
+            font-weight: 600;
+          }
+
+          .trusted {
+            padding: 3rem 1.5rem;
           }
 
           .trusted-logos {
-            flex-wrap: wrap;
             gap: 1.5rem;
+            justify-content: center;
           }
 
-          .apy-badge {
-            padding: 0.8rem 1.5rem;
-            gap: 0.8rem;
+          .trusted-logo {
+            font-size: 1rem;
           }
 
-          .apy-text {
-            font-size: 1.5rem;
+          .powered-by {
+            left: 1.5rem;
+            bottom: 1.5rem;
+            font-size: 0.8rem;
+            padding: 0.6rem 1rem;
           }
         }
 
         @media (max-width: 480px) {
+          .navbar {
+            padding: 0.8rem 1rem;
+          }
+
+          .logo {
+            font-size: 1.2rem;
+          }
+
+          .logo-icon {
+            width: 18px;
+            height: 18px;
+          }
+
+          .footer {
+            padding: 2.5rem 1rem;
+          }
+
+          .footer-container {
+            gap: 1.25rem;
+          }
+
+          .footer-text {
+            font-size: 0.85rem;
+          }
+
+          .copyright {
+            font-size: 0.85rem;
+          }
+
+          .social-link {
+            width: 36px;
+            height: 36px;
+          }
+
+          .launch-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+          }
+
           .hero {
-            padding: 0.5rem;
-            padding-top: 4.5rem;
+            padding: 4rem 1rem 1.5rem;
+            gap: 2rem;
+          }
+
+          .hero-title {
+            font-size: 2rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+          }
+
+          .hero-subtitle {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+          }
+
+          .hero-badge {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+            margin-bottom: 1rem;
+          }
+
+          .cta-section {
+            margin-bottom: 2rem;
+          }
+
+          .cta-primary,
+          .cta-secondary {
+            padding: 0.9rem 1.2rem;
+            font-size: 0.9rem;
+          }
+
+          .stats-grid {
+            gap: 1rem;
+            padding: 1rem 0;
+          }
+
+          .stat-value {
+            font-size: 1.5rem;
+          }
+
+          .stat-label {
+            font-size: 0.8rem;
+          }
+
+          .visual-container {
+            min-height: 350px;
+          }
+
+          .central-orb {
+            width: 200px;
+            height: 200px;
+            font-size: 1.5rem;
+          }
+
+          .bound-logo {
+            width: 200px;
+            height: 200px;
+          }
+
+          .logo-container::after {
+            font-size: 1rem;
+            bottom: -1.5rem;
+          }
+
+          .ring-1 {
+            width: 260px;
+            height: 260px;
+            top: -30px;
+            left: -30px;
+          }
+
+          .ring-2 {
+            width: 320px;
+            height: 320px;
+            top: -60px;
+            left: -60px;
+          }
+
+          .floating-token {
+            width: 35px;
+            height: 35px;
+            font-size: 0.7rem;
+            font-weight: 600;
+          }
+
+          .features {
+            padding: 3rem 1rem;
+          }
+
+          .features-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+          }
+
+          .features-subtitle {
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+          }
+
+          .feature-card {
+            padding: 1.8rem 1.2rem;
+          }
+
+          .feature-icon {
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+          }
+
+          .feature-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+          }
+
+          .feature-description {
+            font-size: 0.9rem;
+            line-height: 1.5;
+          }
+
+          .trusted {
+            padding: 2.5rem 1rem;
+          }
+
+          .trusted-title {
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+          }
+
+          .trusted-logos {
             gap: 1rem;
           }
 
-          #globe-canvas {
-            width: 240px;
-            height: 240px;
-          }
-
-          .floating-icons {
-            width: 240px;
-            height: 240px;
-          }
-
-          .floating-icon {
-            width: 35px;
-            height: 35px;
-            font-size: 18px;
+          .trusted-logo {
+            font-size: 0.9rem;
           }
         }
 
-        .mobile-menu {
-          display: none;
-          background: none;
-          border: none;
-          color: white;
-          font-size: 1.5rem;
-          cursor: pointer;
-        }
+        @media (max-width: 360px) {
+          .hero-title {
+            font-size: 1.8rem;
+          }
 
-        @media (max-width: 768px) {
-          .mobile-menu {
-            display: block;
+          .central-orb {
+            width: 180px;
+            height: 180px;
+            font-size: 1.3rem;
+          }
+
+          .bound-logo {
+            width: 160px;
+            height: 160px;
+          }
+
+          .logo-container::after {
+            font-size: 0.9rem;
+            bottom: -1.2rem;
+          }
+
+          .ring-1 {
+            width: 220px;
+            height: 220px;
+            top: -20px;
+            left: -20px;
+          }
+
+          .ring-2 {
+            width: 260px;
+            height: 260px;
+            top: -40px;
+            left: -40px;
+          }
+
+          .floating-token {
+            width: 30px;
+            height: 30px;
+            font-size: 0.6rem;
+          }
+
+          .features-title {
+            font-size: 1.6rem;
+          }
+
+          .trusted-logos {
+            flex-direction: column;
+            gap: 0.8rem;
           }
         }
       `}</style>
+
+      {/* Navigation */}
+      <nav className={`navbar ${navbarScrolled ? "scrolled" : ""}`}>
+        <div className="logo">
+          <img src="/favicon.png" alt="BOUND" className="logo-icon" />
+          <span className="logo-text">BOUND</span>
+        </div>
+        <div className="nav-links"></div>
+        <a
+          target="_blank"
+          href="https://app.boundprotocol.com"
+          className="launch-btn"
+        >
+          Launch App
+        </a>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-content">
+          <div className="hero-badge">
+            <span>The DeFi Yield Stablecoin</span>
+          </div>
+
+          <h1 className="hero-title">
+            The Future of Yield Strategies on Stables
+          </h1>
+          <p className="hero-subtitle">
+            Diversified exposure to professional yield strategies across premium
+            stablecoins. One token, complete coverage of the stable yield
+            market.
+          </p>
+
+          <div className="cta-section">
+            <a
+              target="_blank"
+              href="https://app.boundprotocol.com"
+              className="cta-primary"
+            >
+              Start Earning
+            </a>
+            <Link href="/litepapers" className="cta-secondary">
+              Docs
+            </Link>
+          </div>
+
+          <div className="stats-grid">
+            <div className="stat-item">
+              <div className="stat-value">18.44%</div>
+              <div className="stat-label">Current APY</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value">$2.1B</div>
+              <div className="stat-label">Total Value Locked</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value">45K+</div>
+              <div className="stat-label">Active Users</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="visual-container">
+          <div className="central-orb">
+            <div className="logo-container">
+              <img
+                src="/BNDTlogo.png"
+                alt="BOUND Logo"
+                className="bound-logo"
+              />
+            </div>
+            <div className="orb-ring ring-1"></div>
+            <div className="orb-ring ring-2"></div>
+          </div>
+
+          {/* Floating Tokens */}
+          <div className="floating-token token-1">USDe</div>
+          <div className="floating-token token-2">USDC</div>
+          <div className="floating-token token-3">USDS</div>
+          <div className="floating-token token-4">USD0</div>
+          <div className="floating-token token-5">$</div>
+          <div className="floating-token token-6">$</div>
+        </div>
+      </section>
+
+      {/* Trusted By Section */}
+      <section className="trusted">
+        <div className="trusted-container">
+          <div className="trusted-title">Trusted by</div>
+          <div className="trusted-logos">
+            <a
+              href="https://enzyme.finance"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="trusted-logo">Enzyme</div>
+            </a>
+            <a
+              href="https://microsoft.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="trusted-logo">Microsoft</div>
+            </a>
+            <a
+              href="https://avantgarde.finance"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="trusted-logo">Avantgarde</div>
+            </a>
+            <a
+              href="https://base.org"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="trusted-logo">Base</div>
+            </a>
+            <a
+              href="https://yardhub.tech"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className="trusted-logo">YardHub</div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="footer-container">
+          <div className="footer-left">
+            <img src="/ioicon.png" alt="BOUND Logo" className="footer-logo" />
+            <span className="footer-text">powered by IO INVESTMENT</span>
+          </div>
+          <div className="footer-right">
+            <span className="copyright">
+              © 2025 BOUND. All rights reserved.
+            </span>
+            <Link href="#" className="social-link">
+              𝕏
+            </Link>
+          </div>
+        </div>
+      </footer>
     </>
   );
-}
+};
+
+export default NewPage;
