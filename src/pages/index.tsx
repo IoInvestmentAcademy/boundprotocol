@@ -197,6 +197,7 @@ const NewPage: React.FC = () => {
           font-size: 3.5rem;
           font-weight: 800;
           line-height: 1.1;
+
           margin-bottom: 1.5rem;
           color: #0f172a;
           letter-spacing: -0.03em;
@@ -910,6 +911,7 @@ const NewPage: React.FC = () => {
             font-size: 2rem;
             line-height: 1.2;
             margin-bottom: 1rem;
+            margin-top: 30px;
           }
 
           .hero-subtitle {
