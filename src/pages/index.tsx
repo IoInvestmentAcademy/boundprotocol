@@ -56,7 +56,7 @@ const NewPage: React.FC = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="BOUND - The Professional DeFi Yield Platform"
+          content="BOUND - Decentralized Stablecoin Infrastructure"
         />
         <meta
           name="twitter:description"
@@ -109,7 +109,7 @@ const NewPage: React.FC = () => {
         .logo {
           font-size: 1.5rem;
           font-weight: 700;
-          color: #6366f1;
+          color:rgb(110, 57, 157);
           letter-spacing: -0.02em;
           display: flex;
           align-items: center;
@@ -315,7 +315,7 @@ const NewPage: React.FC = () => {
         }
 
         .logo-container::after {
-          content: "BOUND";
+          content: "DFY Stablecoin";
           position: absolute;
           bottom: 1rem;
           left: 50%;
@@ -1134,14 +1134,14 @@ const NewPage: React.FC = () => {
             >
               Start Earning
             </a>
-            <Link href="/litepapers" className="cta-secondary">
+            <Link target="_blank" href="https://whitepaper.boundprotocol.com/" className="cta-secondary">
               Docs
             </Link>
           </div>
 
           <div className="stats-grid">
             <div className="stat-item">
-              <div className="stat-value">18.44%</div>
+              <div className="stat-value">11.39%</div>
               <div className="stat-label">Current APY</div>
             </div>
             <div className="stat-item">
