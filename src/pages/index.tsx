@@ -1145,7 +1145,7 @@ const NewPage: React.FC = () => {
 
           <div className="stats-grid">
             <div className="stat-item">
-              <div className="stat-value">11.39%</div>
+              <div className="stat-value">13.83%</div>
               <div className="stat-label">Current APY</div>
             </div>
             <div className="stat-item">
