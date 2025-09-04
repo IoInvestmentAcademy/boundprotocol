@@ -27,7 +27,7 @@ export default function Document() {
           property="og:description"
           content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
         />
-        <meta property="og:image" content="/BND.png" />
+        <meta property="og:image" content="/boundlogo.png" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
@@ -40,7 +40,7 @@ export default function Document() {
           property="twitter:description"
           content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
         />
-        <meta property="twitter:image" content="/BND.png" />
+        <meta property="twitter:image" content="/boundlogo.png" />
 
         {/* Favicon and App Icons */}
         {/* <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

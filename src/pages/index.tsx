@@ -35,7 +35,7 @@ const NewPage: React.FC = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           name="description"
-          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
+          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins."
         />
         <meta
           name="keywords"
@@ -44,7 +44,7 @@ const NewPage: React.FC = () => {
         <meta name="author" content="BOUND" />
         <meta
           property="og:title"
-          content="BOUND - The Professional DeFi Yield Platform"
+          content="BOUND - Decentralized Stablecoin Infrastructure"
         />
         <meta
           property="og:description"
@@ -109,7 +109,7 @@ const NewPage: React.FC = () => {
         .logo {
           font-size: 1.5rem;
           font-weight: 700;
-          color:rgb(110, 57, 157);
+          color: rgb(110, 57, 157);
           letter-spacing: -0.02em;
           display: flex;
           align-items: center;
@@ -1118,12 +1118,12 @@ const NewPage: React.FC = () => {
           </div>
 
           <h1 className="hero-title">
-            The Future of Yield Strategies on Stables
+            Institutional Grade Yields for DeFi Users
           </h1>
           <p className="hero-subtitle">
-            Diversified exposure to professional yield strategies across premium
-            stablecoins. One token, complete coverage of the stable yield
-            market.
+            The first yield-bearing stablecoin, backed by tokenized yield
+            strategies that provide passive exposure to institutional-grade
+            stable yields across blue-chip protocols
           </p>
 
           <div className="cta-section">
@@ -1134,7 +1134,11 @@ const NewPage: React.FC = () => {
             >
               Start Earning
             </a>
-            <Link target="_blank" href="https://whitepaper.boundprotocol.com/" className="cta-secondary">
+            <Link
+              target="_blank"
+              href="https://whitepaper.boundprotocol.com/"
+              className="cta-secondary"
+            >
               Docs
             </Link>
           </div>
