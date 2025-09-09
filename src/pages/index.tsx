@@ -35,17 +35,20 @@ const NewPage: React.FC = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           name="description"
-          content="Diversified exposure to professional yield strategies across premium stablecoins."
+          content="Diversified exposure to professional yield strategies across blue-chip protocols"
         />
         <meta
           name="keywords"
           content="DeFi, yield, stablecoin, BOUND, cryptocurrency, blockchain, investment, APY"
         />
         <meta name="author" content="BOUND" />
-        <meta property="og:title" content="BOUND - The DeFi Yield Stablecoin" />
+        <meta
+          property="og:title"
+          content="BOUND - Decentralized Stablecoin Protocol"
+        />
         <meta
           property="og:description"
-          content="Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
+          content="Diversified exposure to professional yield strategies across blue-chip protocols"
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://boundprotocol.com" />
@@ -53,11 +56,11 @@ const NewPage: React.FC = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
-          content="BOUND - Decentralized Stablecoin Infrastructure"
+          content="BOUND - Decentralized Stablecoin Protocol"
         />
         <meta
           name="twitter:description"
-          content="Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
+          content="Diversified exposure to professional yield strategies across blue-chip protocols"
         />
         <meta
           name="twitter:image"
