@@ -35,7 +35,7 @@ const NewPage: React.FC = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           name="description"
-          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins."
+          content="The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins."
         />
         <meta
           name="keywords"
@@ -45,7 +45,7 @@ const NewPage: React.FC = () => {
         <meta property="og:title" content="BOUND - The DeFi Yield Stablecoin" />
         <meta
           property="og:description"
-          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
+          content="The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://boundprotocol.com" />
@@ -57,7 +57,7 @@ const NewPage: React.FC = () => {
         />
         <meta
           name="twitter:description"
-          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
+          content="The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
         />
         <meta
           name="twitter:image"
