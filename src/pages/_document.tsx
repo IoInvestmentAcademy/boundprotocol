@@ -11,7 +11,7 @@ export default function Document() {
         <meta name="theme-color" content="#000000" />
         <meta
           name="description"
-          content="The DeFi Yield Stablecoin. A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
+          content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
         />
         <meta
           name="keywords"
@@ -26,7 +26,7 @@ export default function Document() {
         <meta property="og:title" content="BOUND - The DeFi Yield Stablecoin" />
         <meta
           property="og:description"
-          content="The DeFi Yield Stablecoin. A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
+          content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
         />
         <meta property="og:image" content="https://boundprotocol.com/BND.png" />
 
@@ -39,7 +39,7 @@ export default function Document() {
         />
         <meta
           property="twitter:description"
-          content="The DeFi Yield Stablecoin. A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
+          content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
         />
         <meta
           property="twitter:image"
