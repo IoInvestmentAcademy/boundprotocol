@@ -22,26 +22,29 @@ export default function Document() {
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://bound.land/" />
+        <meta property="og:url" content="https://boundprotocol.com" />
         <meta property="og:title" content="BOUND - The DeFi Yield Stablecoin" />
         <meta
           property="og:description"
-          content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
+          content="BOUND - The DeFi Yield Stablecoin. A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
         />
-        <meta property="og:image" content="/boundlogo.png" />
+        <meta property="og:image" content="https://boundprotocol.com/BND.png" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://bound.land/" />
+        <meta property="twitter:url" content="https://boundprotocol.com" />
         <meta
           property="twitter:title"
           content="BOUND - The DeFi Yield Stablecoin"
         />
         <meta
           property="twitter:description"
-          content="A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
+          content="BOUND - The DeFi Yield Stablecoin. A professional-grade DeFi platform that transforms complex yield strategies into seamless, automated returns."
         />
-        <meta property="twitter:image" content="/boundlogo.png" />
+        <meta
+          property="twitter:image"
+          content="https://boundprotocol.com/BND.png"
+        />
 
         {/* Favicon and App Icons */}
         {/* <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

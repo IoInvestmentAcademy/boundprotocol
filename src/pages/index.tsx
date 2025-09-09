@@ -42,17 +42,14 @@ const NewPage: React.FC = () => {
           content="DeFi, yield, stablecoin, BOUND, cryptocurrency, blockchain, investment, APY"
         />
         <meta name="author" content="BOUND" />
-        <meta
-          property="og:title"
-          content="BOUND - Decentralized Stablecoin Infrastructure"
-        />
+        <meta property="og:title" content="BOUND - The DeFi Yield Stablecoin" />
         <meta
           property="og:description"
-          content="Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
+          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://boundprotocol.com" />
-        <meta property="og:image" content="/favicon.png" />
+        <meta property="og:image" content="https://boundprotocol.com/BND.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
@@ -60,11 +57,14 @@ const NewPage: React.FC = () => {
         />
         <meta
           name="twitter:description"
-          content="Diversified exposure to professional yield strategies across premium stablecoins."
+          content="BOUND - The DeFi Yield Stablecoin. Diversified exposure to professional yield strategies across premium stablecoins. One token, complete coverage of the stable yield market."
         />
-        <meta name="twitter:image" content="/favicon.png" />
+        <meta
+          name="twitter:image"
+          content="https://boundprotocol.com/BND.png"
+        />
         <link rel="icon" href="/favicon.png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="https://boundprotocol.com/BND.png" />
         <link rel="canonical" href="https://boundprotocol.com" />
       </Head>
 
