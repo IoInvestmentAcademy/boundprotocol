@@ -256,11 +256,58 @@ const NewPage: React.FC = () => {
           background: #f8fafc;
         }
 
+        .testnet-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(34, 197, 94, 0.1);
+          border: 1px solid rgba(34, 197, 94, 0.2);
+          padding: 0.5rem 1rem;
+          border-radius: 50px;
+          margin-top: 1.5rem;
+        }
+
+        .testnet-dot {
+          width: 8px;
+          height: 8px;
+          background: #22c55e;
+          border-radius: 50%;
+          display: inline-block;
+          animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+          0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+          }
+
+          70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+          }
+
+          100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+          }
+        }
+
+        .testnet-badge span:last-child {
+          color: #16a34a;
+          font-size: 0.85rem;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+        }
+
         .stats-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
           padding: 2rem 0;
+        }
+
+        .stats-container {
           border-top: 1px solid #f1f5f9;
         }
 
@@ -1145,19 +1192,25 @@ const NewPage: React.FC = () => {
               Docs
             </Link>
           </div>
+          <div className="stats-container">
+            <div className="testnet-badge">
+              <span className="testnet-dot"></span>
+              <span>TESTNET</span>
+            </div>
 
-          <div className="stats-grid">
-            <div className="stat-item">
-              <div className="stat-value">13.83%</div>
-              <div className="stat-label">Current APY</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value">$2.1B</div>
-              <div className="stat-label">Total Value Locked</div>
-            </div>
-            <div className="stat-item">
-              <div className="stat-value">45K+</div>
-              <div className="stat-label">Active Users</div>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <div className="stat-value">13.83%</div>
+                <div className="stat-label">Current APY</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-value">$108M</div>
+                <div className="stat-label">Total Value Locked</div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-value">45K+</div>
+                <div className="stat-label">Active Users</div>
+              </div>
             </div>
           </div>
         </div>
