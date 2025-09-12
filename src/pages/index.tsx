@@ -1209,7 +1209,7 @@ const NewPage: React.FC = () => {
               </div>
               <div className="stat-item">
                 <div className="stat-value">45K+</div>
-                <div className="stat-label">Active Users</div>
+                <div className="stat-label">Transactions</div>
               </div>
             </div>
           </div>
