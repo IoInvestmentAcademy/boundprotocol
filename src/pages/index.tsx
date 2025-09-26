@@ -1293,7 +1293,7 @@ const NewPage: React.FC = () => {
             <span className="copyright">
               © 2025 BOUND. All rights reserved.
             </span>
-            <Link href="#" className="social-link">
+            <Link target="_blank" href="https://x.com/Bound_Protocol" className="social-link">
               𝕏
             </Link>
           </div>
