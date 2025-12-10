@@ -335,69 +335,59 @@ const NewPage: React.FC = () => {
           justify-content: center;
           align-items: center;
           min-height: 500px;
+          width: 100%;
         }
 
         .central-orb {
-          width: 320px;
-          height: 320px;
-          background: transparent;
-          border-radius: 50%;
+          position: relative;
+          width: 100%;
+          height: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 2.5rem;
-          font-weight: 800;
-          color: transparent;
-          position: relative;
-          box-shadow: none;
-          animation: none;
         }
 
         .logo-container {
-          position: relative;
-          z-index: 10;
-        }
-
-        .bound-logo {
-          width: 400px;
-          height: 400px;
-          object-fit: contain;
-        }
-
-        .logo-container::after {
-          content: "DFY Stablecoin";
           position: absolute;
-          bottom: 1rem;
-          left: 50%;
-          transform: translateX(-50%);
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #6366f1;
-          letter-spacing: -0.02em;
-          white-space: nowrap;
+          top: 50%;
+          left: 36%;
+          transform: translate(-45%, -50%);
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .center-image {
+          width: 335px;
+          height: auto;
+          object-fit: contain;
+          display: block;
+          background: transparent;
+          z-index: 15;
+          position: relative;
         }
 
         .orb-ring {
           position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
           border: 2px solid rgba(99, 102, 241, 0.2);
           border-radius: 50%;
-          animation: rotate 20s linear infinite;
+          animation: none;
+          z-index: 1;
         }
 
         .ring-1 {
-          width: 400px;
-          height: 400px;
-          top: -40px;
-          left: -40px;
+          width: 300px;
+          height: 300px;
         }
 
         .ring-2 {
-          width: 480px;
-          height: 480px;
-          top: -80px;
-          left: -80px;
-          animation-duration: 30s;
-          animation-direction: reverse;
+          width: 360px;
+          height: 360px;
+          animation: none;
         }
 
         .floating-token {
@@ -411,7 +401,7 @@ const NewPage: React.FC = () => {
           justify-content: center;
           font-weight: 700;
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-          animation: float 3s ease-in-out infinite;
+          animation: none;
           border: 2px solid #f1f5f9;
         }
 
@@ -719,34 +709,18 @@ const NewPage: React.FC = () => {
             font-size: 3rem;
           }
 
-          .central-orb {
-            width: 280px;
-            height: 280px;
-            font-size: 2rem;
-          }
-
-          .bound-logo {
+          .center-image {
             width: 320px;
-            height: 320px;
-          }
-
-          .logo-container::after {
-            font-size: 1.3rem;
-            bottom: -2.5rem;
           }
 
           .ring-1 {
-            width: 360px;
-            height: 360px;
-            top: -40px;
-            left: -40px;
+            width: 270px;
+            height: 270px;
           }
 
           .ring-2 {
-            width: 440px;
-            height: 440px;
-            top: -80px;
-            left: -80px;
+            width: 330px;
+            height: 330px;
           }
 
           .features-grid {
@@ -854,34 +828,18 @@ const NewPage: React.FC = () => {
             font-size: 1.8rem;
           }
 
-          .central-orb {
-            width: 240px;
-            height: 240px;
-            font-size: 1.8rem;
-          }
-
-          .bound-logo {
-            width: 260px;
-            height: 260px;
-          }
-
-          .logo-container::after {
-            font-size: 1.1rem;
-            bottom: -2rem;
+          .center-image {
+            width: 270px;
           }
 
           .ring-1 {
-            width: 300px;
-            height: 300px;
-            top: -30px;
-            left: -30px;
+            width: 225px;
+            height: 225px;
           }
 
           .ring-2 {
-            width: 360px;
-            height: 360px;
-            top: -60px;
-            left: -60px;
+            width: 270px;
+            height: 270px;
           }
 
           .floating-token {
@@ -1002,34 +960,18 @@ const NewPage: React.FC = () => {
             min-height: 350px;
           }
 
-          .central-orb {
-            width: 200px;
-            height: 200px;
-            font-size: 1.5rem;
-          }
-
-          .bound-logo {
-            width: 200px;
-            height: 200px;
-          }
-
-          .logo-container::after {
-            font-size: 1rem;
-            bottom: -1.5rem;
+          .center-image {
+            width: 235px;
           }
 
           .ring-1 {
-            width: 260px;
-            height: 260px;
-            top: -30px;
-            left: -30px;
+            width: 195px;
+            height: 195px;
           }
 
           .ring-2 {
-            width: 320px;
-            height: 320px;
-            top: -60px;
-            left: -60px;
+            width: 240px;
+            height: 240px;
           }
 
           .floating-token {
@@ -1097,34 +1039,18 @@ const NewPage: React.FC = () => {
             font-size: 1.8rem;
           }
 
-          .central-orb {
-            width: 180px;
-            height: 180px;
-            font-size: 1.3rem;
-          }
-
-          .bound-logo {
-            width: 160px;
-            height: 160px;
-          }
-
-          .logo-container::after {
-            font-size: 0.9rem;
-            bottom: -1.2rem;
+          .center-image {
+            width: 200px;
           }
 
           .ring-1 {
-            width: 220px;
-            height: 220px;
-            top: -20px;
-            left: -20px;
+            width: 165px;
+            height: 165px;
           }
 
           .ring-2 {
-            width: 260px;
-            height: 260px;
-            top: -40px;
-            left: -40px;
+            width: 195px;
+            height: 195px;
           }
 
           .floating-token {
@@ -1168,12 +1094,10 @@ const NewPage: React.FC = () => {
           </div>
 
           <h1 className="hero-title">
-            Institutional Grade Yields for DeFi Users
+          Making Institutional Yields Mainstream
           </h1>
           <p className="hero-subtitle">
-            The first yield-bearing stablecoin, backed by tokenized yield
-            strategies that provide passive exposure to institutional-grade
-            stable yields across blue-chip protocols
+          Aggregating professional stablecoin and RWA yields into one unified, passive solution accessible through a simple DeFi app.
           </p>
 
           <div className="cta-section">
@@ -1219,9 +1143,9 @@ const NewPage: React.FC = () => {
           <div className="central-orb">
             <div className="logo-container">
               <img
-                src="/BNDTlogo.png"
-                alt="BOUND Logo"
-                className="bound-logo"
+                src="/center-image.png"
+                alt="BOUND App Preview"
+                className="center-image"
               />
             </div>
             <div className="orb-ring ring-1"></div>
@@ -1229,12 +1153,12 @@ const NewPage: React.FC = () => {
           </div>
 
           {/* Floating Tokens */}
-          <div className="floating-token token-1">USDe</div>
+          {/* <div className="floating-token token-1">USDe</div>
           <div className="floating-token token-2">USDC</div>
           <div className="floating-token token-3">USDS</div>
           <div className="floating-token token-4">USD0</div>
           <div className="floating-token token-5">$</div>
-          <div className="floating-token token-6">$</div>
+          <div className="floating-token token-6">$</div> */}
         </div>
       </section>
 
