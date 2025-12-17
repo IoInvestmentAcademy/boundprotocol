@@ -1089,15 +1089,14 @@ const NewPage: React.FC = () => {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <div className="hero-badge">
+          {/* <div className="hero-badge">
             <span>The DeFi Yield Stablecoin</span>
-          </div>
+          </div> */}
 
-          <h1 className="hero-title">
-          Making Institutional Yields Mainstream
-          </h1>
+          <h1 className="hero-title">Grow Your Savings with Better Rates</h1>
           <p className="hero-subtitle">
-          Aggregating professional stablecoin and RWA yields into one unified, passive solution accessible through a simple DeFi app.
+            Access better savings rates through a simple savings app powered by
+            on-chain financial markets.
           </p>
 
           <div className="cta-section">
@@ -1118,11 +1117,11 @@ const NewPage: React.FC = () => {
           </div>
           <div className="stats-container">
             <div className="testnet-badge">
-              <span className="testnet-dot"></span>
-              <span>TESTNET</span>
+              {/* <span className="testnet-dot"></span> */}
+              <span>BOUND Savings Rate: 18.83%</span>
             </div>
 
-            <div className="stats-grid">
+            {/* <div className="stats-grid">
               <div className="stat-item">
                 <div className="stat-value">13.83%</div>
                 <div className="stat-label">Current APY</div>
@@ -1135,7 +1134,7 @@ const NewPage: React.FC = () => {
                 <div className="stat-value">45K+</div>
                 <div className="stat-label">Transactions</div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -1217,7 +1216,11 @@ const NewPage: React.FC = () => {
             <span className="copyright">
               © 2025 BOUND. All rights reserved.
             </span>
-            <Link target="_blank" href="https://x.com/Bound_Protocol" className="social-link">
+            <Link
+              target="_blank"
+              href="https://x.com/Bound_Protocol"
+              className="social-link"
+            >
               𝕏
             </Link>
           </div>
