@@ -23,9 +23,10 @@ function Partners() {
     { name: "Morpho", src: "/partners/Morpho logo.svg", alt: "M" },
   ];
 
-  // Duplicate arrays for seamless infinite scroll
-  const topRowDuplicated = [...topRowLogos, ...topRowLogos];
-  const bottomRowDuplicated = [...bottomRowLogos, ...bottomRowLogos];
+  // Duplicate arrays multiple times for seamless infinite scroll
+  // Using 3 copies ensures seamless looping - when one set scrolls out, the next identical set continues
+  const topRowDuplicated = [...topRowLogos, ...topRowLogos, ...topRowLogos];
+  const bottomRowDuplicated = [...bottomRowLogos, ...bottomRowLogos, ...bottomRowLogos];
 
   return (
     <motion.section
@@ -56,25 +57,12 @@ function Partners() {
 
         {/* Logos Scrolling Container */}
         <div className="flex flex-col gap-6 lg:gap-8">
-          {/* Top Row - Scrolls Left */}
-          <div className="overflow-hidden relative">
-            <motion.div
-              className="flex items-center gap-8 lg:gap-12 xl:gap-16"
-              animate={{
-                x: ["0%", "-50%"],
-              }}
-              transition={{
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 25,
-                  ease: "linear",
-                },
-              }}
-            >
+          {/* Top Row - Scrolls Left to Right */}
+          <div className="overflow-hidden relative w-full">
+            <div className="flex items-center gap-8 lg:gap-12 xl:gap-16 animate-scroll-left">
               {topRowDuplicated.map((logo, index) => (
                 <div
-                  key={`${logo.name}-${index}`}
+                  key={`top-${logo.name}-${index}`}
                   className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
                 >
                   <img
@@ -90,28 +78,15 @@ function Partners() {
                   />
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
-          {/* Bottom Row - Scrolls Right */}
-          <div className="overflow-hidden relative">
-            <motion.div
-              className="flex items-center gap-8 lg:gap-12 xl:gap-16"
-              animate={{
-                x: ["-50%", "0%"],
-              }}
-              transition={{
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 30,
-                  ease: "linear",
-                },
-              }}
-            >
+          {/* Bottom Row - Scrolls Right to Left */}
+          <div className="overflow-hidden relative w-full">
+            <div className="flex items-center gap-8 lg:gap-12 xl:gap-16 animate-scroll-right">
               {bottomRowDuplicated.map((logo, index) => (
                 <div
-                  key={`${logo.name}-${index}`}
+                  key={`bottom-${logo.name}-${index}`}
                   className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
                 >
                   <img
@@ -127,7 +102,7 @@ function Partners() {
                   />
                 </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

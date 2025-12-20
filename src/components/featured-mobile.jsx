@@ -263,7 +263,7 @@ function FeaturedMobile() {
                 <div className="w-1 h-28 left-[307.73px] top-[14.26px] absolute bg-white" />
                 <div className="p-2 left-[241px] top-[3px] absolute bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
                   <div className="w-12 h-12 relative">
-                    <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950" />
+                    <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950" style={{ borderRadius: '50%' }} />
                     <img
                       className="w-10 h-10 left-[5px] top-[5px] absolute"
                       src="/new-file1.svg"
@@ -281,10 +281,11 @@ function FeaturedMobile() {
                 </div>
                 <div className="p-2 left-[163px] top-[3px] absolute bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
                   <div className="w-12 h-12 relative">
-                    <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950" />
+                    <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950" style={{ borderRadius: '50%' }} />
                     <img
                       className="w-8 h-7 left-[9.41px] top-[10.30px] absolute"
                       src="/new-file2.svg"
+                      
                     />
                   </div>
                 </div>

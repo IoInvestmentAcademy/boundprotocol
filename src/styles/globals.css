@@ -4,18 +4,6 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap");
 
-:root {
-  --background: #000000;
-  --foreground: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --foreground: #ffffff;
-  }
-}
-
 @layer base {
   * {
     margin: 0;
@@ -32,7 +20,6 @@
     background: white;
     min-height: 100vh;
     overflow-x: hidden;
-    color: var(--foreground);
   }
 }
 
@@ -95,22 +82,33 @@
   letter-spacing: -2.01%;
 }
 
-/* Custom animations for the globe */
-@keyframes rotate {
+/* Seamless infinite scroll animations */
+@keyframes scroll-left {
   from {
-    transform: translateY(-50%) rotate(0deg);
+    transform: translateX(0);
   }
   to {
-    transform: translateY(-50%) rotate(360deg);
+    transform: translateX(-33.333%);
   }
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.3;
+@keyframes scroll-right {
+  from {
+    transform: translateX(-33.333%);
   }
-  50% {
-    opacity: 0.8;
+  to {
+    transform: translateX(0);
   }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 25s linear infinite;
+  will-change: transform;
+  width: max-content;
+}
+
+.animate-scroll-right {
+  animation: scroll-right 30s linear infinite;
+  will-change: transform;
+  width: max-content;
 }

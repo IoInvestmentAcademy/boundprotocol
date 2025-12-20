@@ -1,18 +1,8 @@
 import { motion } from "framer-motion";
-import {
-  textReveal,
-  cardHover,
-  imageReveal,
-  staggerContainer,
-  staggerItem,
-} from "../utils/animations";
 
 function Team() {
   return (
-    <motion.section
-      className="w-full min-h-screen py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#F7F6FE]"
-      {...textReveal}
-    >
+    <section className="w-full min-h-screen py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#F7F6FE]">
       {/* Background image */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         <img
@@ -27,45 +17,32 @@ function Team() {
         {/* Header Section */}
         <motion.div
           className="flex flex-col items-center gap-4 mb-12 lg:mb-16"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <motion.h2
-            className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          <h2 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
             Team Presentation
-          </motion.h2>
-          <motion.p
-            className="text-base lg:text-lg font-normal leading-6 lg:leading-7 text-center text-neutral-400 font-['Hanken_Grotesk'] max-w-[838px]"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          </h2>
+          <p className="text-base lg:text-lg font-normal leading-6 lg:leading-7 text-center text-neutral-400 font-['Hanken_Grotesk'] max-w-[838px]">
             Our team and partners is a blend of innovative thinkers, experienced
             investors, and blockchain enthusiasts united by a common mission: to
             redefine the way the world invests. Together, we're creating a
             secure, transparent, and scalable platform that empowers users to
             achieve their financial goals.
-          </motion.p>
+          </p>
         </motion.div>
         {/* Team Image Section */}
         <motion.div
           className="w-full mb-12 lg:mb-16 flex justify-center"
-          {...imageReveal}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <div className="w-full max-w-[1136px] h-auto lg:h-[700px] relative">
-            <motion.div
-              className="w-full h-[400px] lg:h-[650px] relative bg-neutral-200 rounded-[20px] overflow-hidden"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
+            <div className="w-full h-[400px] lg:h-[650px] relative bg-neutral-200 rounded-[20px] overflow-hidden">
               <img
                 className="w-full h-full object-cover"
                 src="/team-video-image.png"
@@ -73,44 +50,35 @@ function Team() {
               />
               <motion.div
                 className="w-24 h-24 lg:w-32 lg:h-32 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute bg-white/30 rounded-full border-4 border-zinc-500 backdrop-blur-lg cursor-pointer"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
               >
                 <img src="/play-video.svg" alt="Play icon" />
               </motion.div>
-            </motion.div>
+            </div>
           </div>
         </motion.div>
 
         {/* Executive Members Section */}
         <motion.div
           className="flex flex-col items-center gap-10"
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <motion.h3
-            className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
+          <h3 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
             Executive Members
-          </motion.h3>
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 w-full max-w-[1200px]"
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-50px" }}
-          >
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 w-full max-w-[1200px]">
             {/* Member 1 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              variants={staggerItem}
-              {...cardHover}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -145,8 +113,11 @@ function Team() {
             {/* Member 2 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              variants={staggerItem}
-              {...cardHover}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -181,8 +152,11 @@ function Team() {
             {/* Member 3 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              variants={staggerItem}
-              {...cardHover}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
+              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -217,8 +191,11 @@ function Team() {
             {/* Member 4 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              variants={staggerItem}
-              {...cardHover}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, ease: "easeOut", delay: 0.3 }}
+              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -250,10 +227,10 @@ function Team() {
                 </div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 

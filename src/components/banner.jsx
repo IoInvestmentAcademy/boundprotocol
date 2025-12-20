@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 function Banner() {
   return (
     <section className="w-full bg-[#F7F6FE] py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20">
@@ -1197,7 +1199,13 @@ function Banner() {
               </svg>
             </div>
           </div>
-          <div className="w-full lg:w-[580px] relative z-10 flex flex-col justify-start items-center lg:items-start gap-6 lg:gap-7">
+          <motion.div
+            className="w-full lg:w-[580px] relative z-10 flex flex-col justify-start items-center lg:items-start gap-6 lg:gap-7"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
             <div className="w-full lg:w-[660px] flex flex-col justify-start items-center lg:items-start gap-3">
               <div className="w-full text-center lg:text-left justify-start text-white text-2xl sm:text-3xl lg:text-4xl font-semibold font-['Hanken_Grotesk'] leading-tight lg:leading-10">
                 Start Earning Better on Your Savings
@@ -1211,12 +1219,16 @@ function Banner() {
                 your money grow over time.
               </div>
             </div>
-            <div className="w-full lg:w-auto p-4 bg-white rounded-lg flex justify-center items-center gap-2">
+            <motion.div
+              className="w-full lg:w-auto p-4 bg-white rounded-lg flex justify-center items-center gap-2 cursor-pointer"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
               <div className="justify-start text-violet-600 text-sm font-bold font-['Hanken_Grotesk'] leading-5">
                 Start Investing Now
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
           <div className="hidden lg:block w-96 self-stretch relative" />
         </div>
       </div>
