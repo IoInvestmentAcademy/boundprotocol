@@ -68,11 +68,7 @@ function Step() {
       </div>
 
       <div
-        className="relative z-[2] w-full flex justify-center items-center"
-        style={{
-          marginBottom: "20px",
-          padding: "100px 80px"
-        }}
+        className="relative z-[2] w-full flex justify-center items-center mb-5 px-5 py-10 lg:px-20 lg:py-[100px]"
       >
         <div className="max-w-[1280px] w-full overflow-hidden flex flex-col justify-start items-center gap-20 lg:gap-40">
           {/* Mobile Header Section */}
