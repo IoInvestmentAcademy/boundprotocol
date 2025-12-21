@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { textReveal } from "../utils/animations";
 
 function Partners() {
   // Top row logos - duplicate for seamless loop
@@ -29,9 +28,8 @@ function Partners() {
   const bottomRowDuplicated = [...bottomRowLogos, ...bottomRowLogos, ...bottomRowLogos];
 
   return (
-    <motion.section
+    <section
       className="w-full bg-white py-10 lg:py-12 px-8 lg:px-10 xl:px-16 overflow-hidden"
-      {...textReveal}
     >
       <div className=" mx-auto">
         {/* Header */}
@@ -40,7 +38,7 @@ function Partners() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.4 }}
         >
           <motion.h2
             className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
@@ -73,6 +71,12 @@ function Partners() {
                 <div
                   key={`top-${logo.name}-${index}`}
                   className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                    transform: "translateZ(0)",
+                    WebkitTransform: "translateZ(0)"
+                  }}
                 >
                   <img
                     src={logo.src}
@@ -82,8 +86,11 @@ function Partners() {
                       height: "48px", 
                       width: "auto",
                       maxWidth: "none",
-                      display: "block"
+                      display: "block",
+                      backfaceVisibility: "hidden",
+                      WebkitBackfaceVisibility: "hidden"
                     }}
+                    loading="lazy"
                   />
                 </div>
               ))}
@@ -97,6 +104,12 @@ function Partners() {
                 <div
                   key={`bottom-${logo.name}-${index}`}
                   className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                    transform: "translateZ(0)",
+                    WebkitTransform: "translateZ(0)"
+                  }}
                 >
                   <img
                     src={logo.src}
@@ -106,8 +119,11 @@ function Partners() {
                       height: "48px", 
                       width: "auto",
                       maxWidth: "none",
-                      display: "block"
+                      display: "block",
+                      backfaceVisibility: "hidden",
+                      WebkitBackfaceVisibility: "hidden"
                     }}
+                    loading="lazy"
                   />
                 </div>
               ))}
@@ -115,7 +131,7 @@ function Partners() {
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 

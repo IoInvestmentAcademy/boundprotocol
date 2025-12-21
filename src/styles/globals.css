@@ -103,12 +103,35 @@
 
 .animate-scroll-left {
   animation: scroll-left 25s linear infinite;
-  will-change: transform;
   width: max-content;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .animate-scroll-right {
   animation: scroll-right 30s linear infinite;
-  will-change: transform;
   width: max-content;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .animate-scroll-left,
+  .animate-scroll-right {
+    animation-play-state: running;
+    will-change: transform;
+  }
+  
+  .animate-scroll-left {
+    animation-duration: 20s;
+  }
+  
+  .animate-scroll-right {
+    animation-duration: 25s;
+  }
 }
