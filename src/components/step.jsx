@@ -294,9 +294,9 @@ function Step() {
                 {/* Main Step Image */}
                 <img
                   style={{
-                    width: "92%",
+                    width: "100%",
                     height: "1100px",
-                    left: "-159px",
+                    left: "-181px",
                     top: "-76.76px",
                     position: "absolute",
                   }}

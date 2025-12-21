@@ -123,7 +123,7 @@ function NewsLetter() {
         transition={{ duration: 0.6 }}
       >
         <motion.div
-          className="w-full lg:w-72 flex flex-col justify-start items-start gap-4"
+          className="w-full flex flex-col justify-start items-start gap-4"
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}

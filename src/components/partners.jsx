@@ -46,6 +46,15 @@ function Partners() {
             className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
             font-semibold leading-[1.2] text-center
             text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
+              style={{ color: "#908686",
+              textAlign: "center",
+              fontFeatureSettings: "'liga' off, 'clig' off",
+              fontFamily: "Hanken Grotesk",
+              fontSize: "20px",
+              fontStyle: "normal",
+              fontWeight: "400",
+              lineHeight: "120%",
+              letterSpacing: "-0.2px", }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

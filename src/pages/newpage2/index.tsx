@@ -298,12 +298,14 @@ function App() {
               >
                 Start Earning
               </button>
+              {/* add border */}
               <button
                 className="btn-base bg-transparent text-[#4D4D4D] border-0 lg:border lg:border-[#E5EAF2] lg:bg-white
               w-full lg:w-auto
               px-6 py-3 lg:px-7 lg:py-4
               text-base font-medium
               hover:text-[#6D5EED] lg:hover:text-[#738095]"
+              style={{ border: "1px solid #E5EAF2" }}
               >
                 Docs
               </button>

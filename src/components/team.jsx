@@ -87,6 +87,7 @@ function Team() {
                   alt="Georgian Ionita"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
+                  <a href="https://www.linkedin.com/in/georgian-ioni%C8%9B%C4%83-ab994b242/" target="_blank" rel="noopener noreferrer">
                   <svg
                     width="44"
                     height="44"
@@ -99,6 +100,7 @@ function Team() {
                       fill="#CBCBCB"
                     />
                   </svg>
+                  </a>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2 w-full">
@@ -126,6 +128,7 @@ function Team() {
                   alt="Joshua Oloma"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
+                  <a href="https://www.linkedin.com/in/joshua-oloma-8a7319105/" target="_blank" rel="noopener noreferrer">
                   <svg
                     width="44"
                     height="44"
@@ -138,6 +141,7 @@ function Team() {
                       fill="#CBCBCB"
                     />
                   </svg>
+                  </a>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2 w-full">
@@ -165,6 +169,7 @@ function Team() {
                   alt="Mona El Isa"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
+                  <a href="https://www.linkedin.com/in/monaelisa/" target="_blank" rel="noopener noreferrer">
                   <svg
                     width="44"
                     height="44"
@@ -177,6 +182,7 @@ function Team() {
                       fill="#CBCBCB"
                     />
                   </svg>
+                  </a>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2 w-full">
@@ -204,6 +210,7 @@ function Team() {
                   alt="Frances Edwards"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
+                  <a href="https://www.linkedin.com/in/francesedwards/" target="_blank" rel="noopener noreferrer">
                   <svg
                     width="44"
                     height="44"
@@ -216,6 +223,7 @@ function Team() {
                       fill="#CBCBCB"
                     />
                   </svg>
+                  </a>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2 w-full">
