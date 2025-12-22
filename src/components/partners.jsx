@@ -129,6 +129,41 @@ function Partners() {
               ))}
             </div>
           </div>
+
+          {/* last part only shows on mobile */}
+          <div className="block lg:hidden">
+          <div className="overflow-hidden relative w-full">
+            <div className="flex items-center gap-8 lg:gap-12 xl:gap-16 animate-scroll-left">
+              {topRowDuplicated.map((logo, index) => (
+                <div
+                  key={`top-${logo.name}-${index}`}
+                  className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
+                  style={{
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                    transform: "translateZ(0)",
+                    WebkitTransform: "translateZ(0)"
+                  }}
+                >
+                  <img
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="object-contain"
+                    style={{ 
+                      height: "48px", 
+                      width: "auto",
+                      maxWidth: "none",
+                      display: "block",
+                      backfaceVisibility: "hidden",
+                      WebkitBackfaceVisibility: "hidden"
+                    }}
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          </div>
         </div>
       </div>
     </section>

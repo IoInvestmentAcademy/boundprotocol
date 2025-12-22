@@ -12,7 +12,7 @@ function FeaturedMobile() {
       </div>
       {/* Background wavy pattern */}
       <div className="absolute inset-0 w-full h-full z-[1] pointer-events-none opacity-30">
-        <svg
+        {/* <svg
           className="w-full h-full"
           viewBox="0 0 1440 800"
           preserveAspectRatio="none"
@@ -26,7 +26,7 @@ function FeaturedMobile() {
             fill="#E8E5FF"
             opacity="0.5"
           />
-        </svg>
+        </svg> */}
       </div>
 
       <div className="max-w-[1280px] mx-auto relative z-[2]">

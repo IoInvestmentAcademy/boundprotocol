@@ -1201,10 +1201,10 @@ function Banner() {
           </div>
           <motion.div
             className="w-full lg:w-[580px] relative z-10 flex flex-col justify-start items-center lg:items-start gap-6 lg:gap-7"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ duration: 0.25, ease: "linear" }}
           >
             <div className="w-full lg:w-[660px] flex flex-col justify-start items-center lg:items-start gap-3">
               <div className="w-full text-center lg:text-left justify-start text-white text-2xl sm:text-3xl lg:text-4xl font-semibold font-['Hanken_Grotesk'] leading-tight lg:leading-10">
@@ -1222,7 +1222,7 @@ function Banner() {
             <motion.div
               className="w-full lg:w-auto p-4 bg-white rounded-lg flex justify-center items-center gap-2 cursor-pointer"
               whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.1 }}
             >
               <div className="justify-start text-violet-600 text-sm font-bold font-['Hanken_Grotesk'] leading-5">
                 Start Investing Now

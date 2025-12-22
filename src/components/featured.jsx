@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import FeaturedMobile from "./featured-mobile";
 import {
-  textReveal,
   cardHover,
   staggerContainer,
   staggerItem,
@@ -16,9 +15,8 @@ function Featured() {
       </div>
 
       {/* Desktop Version */}
-      <motion.section
+      <section
         className="hidden lg:block w-full bg-[#F7F6FE] py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden"
-        {...textReveal}
       >
         {/* Background image */}
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
@@ -52,29 +50,29 @@ function Featured() {
           {/* Header Section */}
           <motion.div
             className="flex flex-col items-center gap-4 mb-12 lg:mb-16"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ duration: 0.25, ease: "linear" }}
           >
             <motion.h2
               className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
             font-semibold leading-[1.2] text-center
             text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              transition={{ duration: 0.25, ease: "linear" }}
             >
               Built to Handle Your Savings With Care
             </motion.h2>
             <motion.p
               className="text-base lg:text-lg font-normal leading-6 lg:leading-7 text-center
             text-[#4D4D4D] max-w-[820px]"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.25, ease: "linear" }}
             >
               A professional, end-to-end approach built to grow your savings
               smartly and responsibly.
@@ -87,7 +85,7 @@ function Featured() {
             variants={staggerContainer}
             initial="initial"
             whileInView="animate"
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: true, margin: "-20px" }}
           >
             {/* Card 1: Where Your Savings Are Invested */}
             <motion.div
@@ -1402,7 +1400,7 @@ function Featured() {
             </motion.div>
           </motion.div>
         </div>
-      </motion.section>
+      </section>
     </>
   );
 }

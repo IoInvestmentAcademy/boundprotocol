@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import {
-  textReveal,
   stepReveal,
   imageReveal,
   staggerContainer,
@@ -45,7 +44,7 @@ function Step() {
   ];
 
   return (
-    <motion.section className="relative w-full overflow-hidden" {...textReveal}>
+    <section className="relative w-full overflow-hidden">
       {/* Background Images */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         {/* Mobile Background Image */}
@@ -74,18 +73,18 @@ function Step() {
           {/* Mobile Header Section */}
           <motion.div
             className="lg:hidden w-full flex flex-col justify-start items-center gap-5"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ duration: 0.25, ease: "linear" }}
           >
             <motion.h2
               className="w-full text-center text-[#282828] text-[28px] 
               font-semibold font-sans leading-[33.6px] break-words"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              transition={{ duration: 0.25, ease: "linear" }}
             >
               Built to Handle Your Savings With Care
               <br />
@@ -96,10 +95,10 @@ function Step() {
             <motion.p
               className="w-full text-center text-[#A8A8A8] text-base 
               font-normal font-sans leading-6 break-words"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.25, ease: "linear" }}
             >
               Experience a simpler, smarter way to earn better rates with DeFi
               powered professional returns.
@@ -109,18 +108,18 @@ function Step() {
           {/* Desktop Header Section */}
           <motion.div
             className="hidden lg:flex w-full flex flex-col justify-start items-center gap-5"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ duration: 0.25, ease: "linear" }}
           >
             <motion.h2
               className="w-full text-center text-[#282828] text-[48px] 
               font-semibold font-sans leading-[57.6px] break-words"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
+              transition={{ duration: 0.25, ease: "linear" }}
             >
               How to Grow Your Wealth with
               <br />
@@ -129,10 +128,10 @@ function Step() {
             <motion.p
               className="w-full max-w-[820px] text-center text-[#6B6767] text-lg 
               font-normal font-sans leading-[27px] break-words"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.25, ease: "linear" }}
             >
               Experience a simpler, smarter way to earn better rates with
               On-Chain powered professional returns.
@@ -358,7 +357,7 @@ function Step() {
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
