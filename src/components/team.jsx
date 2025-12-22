@@ -17,10 +17,10 @@ function Team() {
         {/* Header Section */}
         <motion.div
           className="flex flex-col items-center gap-4 mb-12 lg:mb-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.25, ease: "linear" }}
         >
           <h2 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
             Team Presentation
@@ -39,7 +39,7 @@ function Team() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.25, ease: "linear" }}
         >
           <div className="w-full max-w-[1136px] h-auto lg:h-[700px] relative">
             <div className="w-full h-[400px] lg:h-[650px] relative bg-neutral-200 rounded-[20px] overflow-hidden">

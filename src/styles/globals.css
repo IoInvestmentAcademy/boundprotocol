@@ -82,6 +82,32 @@
   letter-spacing: -2.01%;
 }
 
+/* Performance optimizations for framer-motion */
+[data-framer-component],
+[data-framer-name] {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Optimize motion components */
+[data-framer-component] * {
+  will-change: auto;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Seamless infinite scroll animations */
 @keyframes scroll-left {
   from {
