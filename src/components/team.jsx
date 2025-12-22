@@ -62,10 +62,10 @@ function Team() {
         {/* Executive Members Section */}
         <motion.div
           className="flex flex-col items-center gap-10"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          viewport={{ once: true, margin: "-20px" }}
+          transition={{ duration: 0.25, ease: "linear" }}
         >
           <h3 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
             Executive Members
@@ -74,10 +74,10 @@ function Team() {
             {/* Member 1 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.25, ease: "linear" }}
               whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
@@ -115,10 +115,10 @@ function Team() {
             {/* Member 2 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.25, ease: "linear" }}
               whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
@@ -156,10 +156,10 @@ function Team() {
             {/* Member 3 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.25, ease: "linear" }}
               whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
@@ -197,10 +197,10 @@ function Team() {
             {/* Member 4 */}
             <motion.div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, ease: "easeOut", delay: 0.3 }}
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.25, ease: "linear" }}
               whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
