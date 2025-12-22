@@ -1201,10 +1201,10 @@ function Banner() {
           </div>
           <motion.div
             className="w-full lg:w-[580px] relative z-10 flex flex-col justify-start items-center lg:items-start gap-6 lg:gap-7"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ x: -20 }}
+            whileInView={{ x: 0 }}
             viewport={{ once: true, margin: "-20px" }}
-            transition={{ duration: 0.25, ease: "linear" }}
+            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <div className="w-full lg:w-[660px] flex flex-col justify-start items-center lg:items-start gap-3">
               <div className="w-full text-center lg:text-left justify-start text-white text-2xl sm:text-3xl lg:text-4xl font-semibold font-['Hanken_Grotesk'] leading-tight lg:leading-10">
