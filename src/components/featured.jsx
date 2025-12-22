@@ -248,7 +248,7 @@ function Featured() {
                   </div>
                 </div>
                 <div className="self-stretch flex-1 relative">
-                  <div className="w-96 h-72 relative bg-white rounded-[20px] shadow-[0px_-4px_20px_0px_rgba(19,13,80,0.15)] outline outline-1 outline-offset-[-1px] outline-indigo-950 overflow-hidden">
+                  <div className="w-[100%] h-72 relative bg-white rounded-[20px] shadow-[0px_-4px_20px_0px_rgba(19,13,80,0.15)] outline outline-1 outline-offset-[-1px] outline-indigo-950 overflow-hidden">
                     <div
                       data-svg-wrapper
                       className="left-[-103px] top-[44.73px] absolute"
@@ -1300,7 +1300,7 @@ function Featured() {
               variants={staggerItem}
               {...cardHover}
             >
-              <div className="w-[100%] h-[400px] p-10 bg-gradient-to-b from-white to-[#e0e2ff] rounded-3xl  inline-flex flex-col justify-center items-start gap-5 overflow-hidden">
+              <div className="w-[100%] h-[398px] p-10 bg-gradient-to-b from-white to-[#e0e2ff] rounded-3xl  inline-flex flex-col justify-center items-start gap-5 overflow-hidden">
                 <div className="self-stretch flex flex-col justify-start items-start gap-7">
                   <div className="self-stretch flex flex-col justify-start items-center gap-3">
                     <div className="self-stretch text-center justify-start text-[#272727] text-[28px] font-semibold font-['Hanken_Grotesk'] leading-[33.60px]">
