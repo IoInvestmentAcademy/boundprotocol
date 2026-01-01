@@ -43,7 +43,7 @@ function Comparison() {
       className="w-full bg-white py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20"
       {...textReveal}
     >
-      <div className="max-w-[1280px] mx-auto overflow-hidden">
+      <div className="max-w-[1280px] mx-auto">
         {/* Header Section */}
         <motion.div 
           className="flex flex-col items-center gap-5 mb-12 lg:mb-14"

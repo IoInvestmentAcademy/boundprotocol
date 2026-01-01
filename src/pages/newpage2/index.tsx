@@ -230,7 +230,7 @@ function App() {
             font-semibold leading-[1.2] sm:leading-[1.15] lg:leading-[1.15] 
             mb-4 sm:mb-4 lg:mb-5 text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
             >
-              Grow Your Savings{"\u00A0"}
+              Grow Your Savings
               <br className="hidden lg:block" />
               <span className="lg:block">with Better Rates</span>
             </h1>
@@ -319,7 +319,7 @@ function App() {
       </div>
       {/* About Us Section */}
       <div id="mission">
-        <AboutUs />
+        <AboutUs /> 
       </div>
 
       {/* Comparison Section */}
