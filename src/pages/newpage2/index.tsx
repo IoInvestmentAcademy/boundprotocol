@@ -83,6 +83,7 @@ function App() {
               src="/boundprotocollogo.png"
               alt="BOUND PROTOCOL"
               className="h-10 sm:h-[50px] md:h-[65px] w-auto"
+              loading="lazy"
             />
           </div>
 

@@ -11,6 +11,8 @@ function Partners() {
     { name: "Yard Hub", src: "/partners/yard hub.svg", alt: "ya" },
   ];
 
+
+
   // Bottom row logos - duplicate for seamless loop
   const bottomRowLogos = [
     { name: "Goldfinch", src: "/partners/Goldfinch.svg", alt: "dfinch" },
@@ -21,6 +23,16 @@ function Partners() {
     { name: "Pendle", src: "/partners/Pendle.svg", alt: "PENDLE" },
     { name: "Morpho", src: "/partners/Morpho logo.svg", alt: "M" },
   ];
+
+  const mobileRowLogos = [
+    { name: "Aave", src: "/partners/Aave.svg", alt: "Aave" },
+    { name: "Yard Hub", src: "/partners/yard hub.svg", alt: "ya" },
+    { name: "Microsoft", src: "/partners/Microsoft.svg", alt: "Microsoft" },
+    { name: "Sumsub", src: "/partners/Sumsub.svg", alt: "Sumsub" },
+    { name: "Avantgarde", src: "/partners/Avantgarde.svg", alt: "AVANTGARDE" },
+    { name: "Uniswap", src: "/partners/Uniswap.svg", alt: "UNISWAP" },
+  ];
+  
 
   // Duplicate arrays multiple times for seamless infinite scroll
   // Using 3 copies ensures seamless looping - when one set scrolls out, the next identical set continues
@@ -70,12 +82,17 @@ function Partners() {
               {topRowDuplicated.map((logo, index) => (
                 <div
                   key={`top-${logo.name}-${index}`}
-                  className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
+                  className="flex items-center justify-center flex-shrink-0 opacity-60 px-2"
                   style={{
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                     transform: "translateZ(0)",
-                    WebkitTransform: "translateZ(0)"
+                    WebkitTransform: "translateZ(0)",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                    MozUserSelect: "none",
+                    msUserSelect: "none"
                   }}
                 >
                   <img
@@ -88,9 +105,16 @@ function Partners() {
                       maxWidth: "none",
                       display: "block",
                       backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden"
+                      WebkitBackfaceVisibility: "hidden",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                      WebkitUserSelect: "none",
+                      MozUserSelect: "none",
+                      msUserSelect: "none",
+                      WebkitTouchCallout: "none"
                     }}
                     loading="lazy"
+                    draggable="false"
                   />
                 </div>
               ))}
@@ -103,12 +127,17 @@ function Partners() {
               {bottomRowDuplicated.map((logo, index) => (
                 <div
                   key={`bottom-${logo.name}-${index}`}
-                  className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
+                  className="flex items-center justify-center flex-shrink-0 opacity-60 px-2"
                   style={{
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                     transform: "translateZ(0)",
-                    WebkitTransform: "translateZ(0)"
+                    WebkitTransform: "translateZ(0)",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                    MozUserSelect: "none",
+                    msUserSelect: "none"
                   }}
                 >
                   <img
@@ -121,9 +150,16 @@ function Partners() {
                       maxWidth: "none",
                       display: "block",
                       backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden"
+                      WebkitBackfaceVisibility: "hidden",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                      WebkitUserSelect: "none",
+                      MozUserSelect: "none",
+                      msUserSelect: "none",
+                      WebkitTouchCallout: "none"
                     }}
                     loading="lazy"
+                    draggable="false"
                   />
                 </div>
               ))}
@@ -134,15 +170,20 @@ function Partners() {
           <div className="block lg:hidden">
           <div className="overflow-hidden relative w-full">
             <div className="flex items-center gap-8 lg:gap-12 xl:gap-16 animate-scroll-left">
-              {topRowDuplicated.map((logo, index) => (
+              {mobileRowLogos.map((logo, index) => (
                 <div
                   key={`top-${logo.name}-${index}`}
-                  className="flex items-center justify-center flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity duration-300 px-2"
+                  className="flex items-center justify-center flex-shrink-0 opacity-60 px-2"
                   style={{
                     backfaceVisibility: "hidden",
                     WebkitBackfaceVisibility: "hidden",
                     transform: "translateZ(0)",
-                    WebkitTransform: "translateZ(0)"
+                    WebkitTransform: "translateZ(0)",
+                    pointerEvents: "none",
+                    userSelect: "none",
+                    WebkitUserSelect: "none",
+                    MozUserSelect: "none",
+                    msUserSelect: "none"
                   }}
                 >
                   <img
@@ -155,9 +196,16 @@ function Partners() {
                       maxWidth: "none",
                       display: "block",
                       backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden"
+                      WebkitBackfaceVisibility: "hidden",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                      WebkitUserSelect: "none",
+                      MozUserSelect: "none",
+                      msUserSelect: "none",
+                      WebkitTouchCallout: "none"
                     }}
                     loading="lazy"
+                    draggable="false"
                   />
                 </div>
               ))}

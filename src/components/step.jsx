@@ -53,6 +53,7 @@ function Step() {
           alt=""
           className="block lg:hidden w-full h-full object-cover object-center"
           aria-hidden="true"
+          loading="lazy"
         />
         {/* Desktop Background Image with shadow opacity */}
         <img
@@ -60,6 +61,7 @@ function Step() {
           alt=""
           className="hidden lg:block w-full h-full object-cover object-center"
           aria-hidden="true"
+          loading="lazy"
           style={{     position: "absolute",
             top: "-250px",
             opacity: "0.5" }}
@@ -185,6 +187,7 @@ function Step() {
                   }}
                   src="/step-image.png"
                   alt="BOUND App Steps"
+                  loading="lazy"
                 />
                 <div
                   style={{
@@ -219,6 +222,7 @@ function Step() {
                       alt=""
                       className="w-7 h-7"
                       aria-hidden="true"
+                      loading="lazy"
                     />
                   </div>
                   <div className="flex-1 flex flex-col justify-start items-start gap-1">
@@ -300,6 +304,7 @@ function Step() {
                     position: "absolute",
                   }}
                   src="/step-image.png"
+                  loading="lazy"
                   alt="BOUND App Steps"
                 />
                 {/* Empty overlay div */}
@@ -337,6 +342,7 @@ function Step() {
                       alt=""
                       className="w-8 h-8"
                       aria-hidden="true"
+                      loading="lazy"
                     />
                   </div>
                   <div className="flex-1 flex flex-col justify-start items-start gap-1">

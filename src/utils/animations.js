@@ -68,10 +68,11 @@ export const staggerItem = {
 };
 
 // Scroll reveal animation - minimal movement and faster
+// Increased margin to reduce observer firing frequency
 export const scrollReveal = {
   initial: { opacity: 0, y: 15 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-20px" },
+  viewport: { once: true, margin: "-100px" },
   transition: { duration: MEDIUM_DURATION, ease: LINEAR }
 };
 
@@ -98,6 +99,7 @@ export const buttonHover = {
 };
 
 // Card animations - minimal movement
+// Increased margin to reduce observer firing frequency
 export const cardHover = {
   whileHover: { 
     y: -8,
@@ -106,34 +108,37 @@ export const cardHover = {
   },
   initial: { opacity: 0, y: 15 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-20px" },
+  viewport: { once: true, margin: "-100px" },
   transition: { duration: MEDIUM_DURATION, ease: LINEAR }
 };
 
 // Image animations - minimal scale change
+// Increased margin to reduce observer firing frequency
 export const imageReveal = {
   initial: { opacity: 0, scale: 1.02 },
   whileInView: { opacity: 1, scale: 1 },
-  viewport: { once: true, margin: "-20px" },
+  viewport: { once: true, margin: "-100px" },
   transition: { duration: SLOW_DURATION, ease: LINEAR }
 };
 
 // Text reveal animation - minimal movement
+// Increased margin to reduce observer firing frequency
 export const textReveal = {
   initial: { opacity: 0, y: 10 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-20px" },
+  viewport: { once: true, margin: "-100px" },
   transition: { duration: MEDIUM_DURATION, ease: LINEAR }
 };
 
 // Sequential reveal for steps - minimal delays
+// Increased margin to reduce observer firing frequency
 export const stepReveal = (index) => ({
   initial: { opacity: 0, x: -15 },
   whileInView: { opacity: 1, x: 0 },
-  viewport: { once: true, margin: "-20px" },
+  viewport: { once: true, margin: "-100px" },
   transition: { 
     duration: MEDIUM_DURATION, 
-    delay: index * 0.05,
+    delay: index * 0.03,
     ease: LINEAR 
   }
 });

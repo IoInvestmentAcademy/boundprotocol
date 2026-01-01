@@ -25,6 +25,7 @@ function Featured() {
             alt=""
             className="w-full h-full object-cover"
             aria-hidden="true"
+            loading="lazy"
           />
         </div>
         {/* Background wavy pattern */}
@@ -112,14 +113,17 @@ function Featured() {
                   <img
                     className="w-12 h-12 left-[47px] top-[95px] absolute"
                     src="/sUSDS_Coin.svg"
+                    loading="lazy"
                   />
                   <img
                     className="w-12 h-12 left-[80px] top-[95px] absolute"
                     src="/aUSDC.svg"
+                    loading="lazy"
                   />
                   <img
                     className="w-12 h-12 left-[113px] top-[95px] absolute"
                     src="usdcsign.svg"
+                    loading="lazy"
                   />
                   <div className="w-40 h-40 left-[25px] top-[51px] absolute rounded-full border-[3px] border-indigo-100" />
                   <div className="left-[15px] top-[16px] absolute text-center justify-start text-black text-base font-medium font-['Hanken_Grotesk'] leading-7">
@@ -131,10 +135,12 @@ function Featured() {
                   <img
                     className="w-12 h-12 left-[288px] top-[94px] absolute"
                     src="/sUSDS_Coin1.svg"
+                    loading="lazy"
                   />
                   <img
                     className="w-12 h-12 left-[321px] top-[94px] absolute"
                     src="/ondo.svg"
+                    loading="lazy"
                   />
                   <div className="w-40 h-40 left-[250px] top-[51px] absolute rounded-full border-[3px] border-indigo-100" />
                   <div className="left-[266px] top-[16px] absolute text-center justify-start text-black text-base font-medium font-['Hanken_Grotesk'] leading-7">
@@ -171,7 +177,7 @@ function Featured() {
                         </div>
                       </div>
                       <div data-svg-wrapper>
-                        <img src="/rate1.svg" alt="" />
+                        <img src="/rate1.svg" alt="" loading="lazy" />
                       </div>
                       <div className="inline-flex flex-col justify-center items-end">
                         <div className="w-[109.20px] text-right justify-start text-[#272727] text-xl font-normal font-['Hanken_Grotesk'] leading-[28.80px]">
@@ -191,7 +197,7 @@ function Featured() {
                         </div>
                       </div>
                       <div data-svg-wrapper>
-                        <img src="/rate2.svg" alt="" />
+                        <img src="/rate2.svg" alt="" loading="lazy" />
                       </div>
                       <div className="inline-flex flex-col justify-center items-end">
                         <div className="w-[131.04px] text-right justify-start text-[#272727] text-2xl font-normal font-['Hanken_Grotesk'] leading-[34.56px]">
@@ -212,7 +218,7 @@ function Featured() {
                         </div>
                       </div>
                       <div data-svg-wrapper>
-                        <img src="/rate3.svg" alt="" />
+                        <img src="/rate3.svg" alt="" loading="lazy" />
                       </div>
                       <div className="inline-flex flex-col justify-center items-end">
                         <div className="justify-start text-[#272727] text-2xl font-normal font-['Hanken_Grotesk'] leading-[34.56px]">
@@ -1287,7 +1293,7 @@ function Featured() {
                       data-svg-wrapper
                       className="left-[29px] top-[16px] absolute"
                     >
-                      <img src="/new-file.svg" alt="" />
+                      <img src="/new-file.svg" alt="" loading="lazy" />
                     </div>
                   </div>
                 </div>
@@ -1347,7 +1353,7 @@ function Featured() {
                         data-svg-wrapper
                         className="left-[13px] top-[12.50px] absolute"
                       >
-                        <img src="/new-file1.svg" alt="" />
+                        <img src="/new-file1.svg" alt="" loading="lazy" />
                       </div>
                     </div>
                   </div>
@@ -1357,6 +1363,7 @@ function Featured() {
                       <img
                         className="w-[86px] h-[86px] left-0 top-[-0.50px] absolute"
                         src="/new-file5.svg"
+                        loading="lazy"
                       />
                     </div>
                   </div>
@@ -1380,7 +1387,7 @@ function Featured() {
                         data-svg-wrapper
                         className="left-[16px] top-[17.50px] absolute"
                       >
-                        <img src="/new-file2.svg" alt="" />
+                        <img src="/new-file2.svg" alt="" loading="lazy" />
                       </div>
                     </div>
                   </div>
@@ -1391,7 +1398,7 @@ function Featured() {
                         data-svg-wrapper
                         className="left-[16px] top-[15.50px] absolute"
                       >
-                        <img src="/new-file4.svg" alt="" />
+                        <img src="/new-file4.svg" alt="" loading="lazy" />
                       </div>
                     </div>
                   </div>

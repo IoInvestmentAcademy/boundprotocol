@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
 function Team() {
+  const prefersReducedMotion = useReducedMotion();
   return (
     <section className="w-full min-h-screen py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#F7F6FE]">
       {/* Background image */}
@@ -10,6 +12,7 @@ function Team() {
           alt=""
           className="w-full h-full object-cover"
           aria-hidden="true"
+          loading="lazy"
         />
       </div>
 
@@ -17,10 +20,14 @@ function Team() {
         {/* Header Section */}
         <motion.div
           className="flex flex-col items-center gap-4 mb-12 lg:mb-16"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.25, ease: "linear" }}
+          {...(prefersReducedMotion
+            ? {}
+            : {
+                initial: { opacity: 0, y: 10 },
+                whileInView: { opacity: 1, y: 0 },
+                viewport: { once: true, margin: "-100px" },
+                transition: { duration: 0.25, ease: "linear" },
+              })}
         >
           <h2 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
             Team Presentation
@@ -36,10 +43,14 @@ function Team() {
         {/* Team Image Section */}
         <motion.div
           className="w-full mb-12 lg:mb-16 flex justify-center"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.25, ease: "linear" }}
+          {...(prefersReducedMotion
+            ? {}
+            : {
+                initial: { opacity: 0 },
+                whileInView: { opacity: 1 },
+                viewport: { once: true, margin: "-100px" },
+                transition: { duration: 0.25, ease: "linear" },
+              })}
         >
           <div className="w-full max-w-[1136px] h-auto lg:h-[700px] relative">
             <div className="w-full h-[400px] lg:h-[650px] relative bg-neutral-200 rounded-[20px] overflow-hidden">
@@ -47,13 +58,14 @@ function Team() {
                 className="w-full h-full object-cover"
                 src="/team-video-image.png"
                 alt="Team presentation"
+                loading="lazy"
               />
               <motion.div
                 className="w-24 h-24 lg:w-32 lg:h-32 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute bg-white/30 rounded-full border-4 border-zinc-500 backdrop-blur-lg cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                <img src="/play-video.svg" alt="Play icon" />
+                <img src="/play-video.svg" alt="Play icon" loading="lazy" />
               </motion.div>
             </div>
           </div>
@@ -85,6 +97,7 @@ function Team() {
                   className="w-full h-full object-cover"
                   src="/george.png"
                   alt="Georgian Ionita"
+                  loading="lazy"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
                   <a href="https://www.linkedin.com/in/georgian-ioni%C8%9B%C4%83-ab994b242/" target="_blank" rel="noopener noreferrer">
@@ -126,6 +139,7 @@ function Team() {
                   className="w-full h-full object-cover"
                   src="/joshua.png"
                   alt="Joshua Oloma"
+                  loading="lazy"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
                   <a href="https://www.linkedin.com/in/joshua-oloma-8a7319105/" target="_blank" rel="noopener noreferrer">
@@ -167,6 +181,7 @@ function Team() {
                   className="w-full h-full object-cover"
                   src="/monalisa.png"
                   alt="Mona El Isa"
+                  loading="lazy"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
                   <a href="https://www.linkedin.com/in/monaelisa/" target="_blank" rel="noopener noreferrer">
@@ -208,6 +223,7 @@ function Team() {
                   className="w-full h-full object-cover"
                   src="/frances.png"
                   alt="Frances Edwards"
+                  loading="lazy"
                 />
                 <div data-svg-wrapper className="absolute bottom-4 right-4">
                   <a href="https://www.linkedin.com/in/francesedwards/" target="_blank" rel="noopener noreferrer">

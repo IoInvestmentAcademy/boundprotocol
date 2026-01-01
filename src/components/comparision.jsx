@@ -117,6 +117,7 @@ function Comparison() {
                       alt="" 
                       className="w-10 h-10"
                       aria-hidden="true"
+                      loading="lazy"
                     />
                   </div>
                   <div className="flex-1 flex flex-col items-start lg:items-end gap-2 order-2 lg:order-1">
@@ -142,6 +143,7 @@ function Comparison() {
                 src="/comparision-image.png" 
                 alt="Comparison" 
                 className="w-full h-auto object-contain"
+                loading="lazy"
               />
             </div>
           </motion.div>
@@ -186,6 +188,7 @@ function Comparison() {
                       alt="" 
                       className="w-10 h-10"
                       aria-hidden="true"
+                      loading="lazy"
                     />
                   </div>
                   <div className="flex-1 flex flex-col items-start gap-2">

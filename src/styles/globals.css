@@ -91,11 +91,30 @@
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+  contain: layout style paint;
 }
 
 /* Optimize motion components */
 [data-framer-component] * {
   will-change: auto;
+}
+
+/* Optimize sections with animations */
+section[class*="motion"] {
+  contain: layout style paint;
+}
+
+/* Optimize Banner component with many SVGs */
+section:has([data-svg-wrapper]) {
+  contain: layout style paint;
+  transform: translateZ(0);
+  will-change: auto;
+}
+
+/* Optimize SVG containers */
+[data-svg-wrapper] {
+  contain: layout style paint;
+  transform: translateZ(0);
 }
 
 /* Reduce motion for users who prefer it */

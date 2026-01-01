@@ -15,6 +15,7 @@ function AboutUs() {
           alt=""
           className="block lg:hidden w-full h-full object-cover object-center opacity-100"
           aria-hidden="true"
+          loading="lazy"
         />
         {/* Desktop Background Image */}
         <img
@@ -24,6 +25,7 @@ function AboutUs() {
           aria-hidden="true"
           style={{ width: "100%", height: "100%",     position: "absolute",
             bottom: "-313px" }}
+          loading="lazy"
         />
       </div>
 
@@ -43,6 +45,7 @@ function AboutUs() {
                   className="w-full h-full object-cover"
                   src="/about-Image.png"
                   alt="About BOUND Protocol"
+                  loading="lazy"
                 />
               </motion.div>
             </div>

@@ -6,8 +6,10 @@ import {
   buttonHover,
   fadeInUp,
 } from "../utils/animations";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
 function NewsLetter() {
+  const prefersReducedMotion = useReducedMotion();
   // Map company links to section IDs
   const getSectionId = (link) => {
     const sectionMap = {
@@ -39,56 +41,36 @@ function NewsLetter() {
     }
   };
 
+  // Disable animations if user prefers reduced motion
+  const animationProps = prefersReducedMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 20 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-100px" },
+        transition: { duration: 0.25, ease: "linear" },
+      };
+
   return (
-    <motion.section
+    <section
       className="w-full bg-[#19174F] py-12 lg:py-20 xl:py-20 px-5 lg:px-10 xl:px-[10rem] mx-auto"
-      {...textReveal}
     >
       <motion.div
         className="w-[100%] flex flex-col lg:inline-flex lg:flex-row justify-between items-center lg:items-center gap-8 lg:gap-0"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.6 }}
+        {...animationProps}
       >
-        <motion.div
-          className="w-full lg:w-[480px] flex flex-col justify-start items-start gap-3"
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          <motion.div
-            className="self-stretch justify-start text-white text-2xl sm:text-3xl lg:text-4xl font-semibold font-['Hanken_Grotesk'] leading-tight lg:leading-[52px]"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+        <div className="w-full lg:w-[480px] flex flex-col justify-start items-start gap-3">
+          <div className="self-stretch justify-start text-white text-2xl sm:text-3xl lg:text-4xl font-semibold font-['Hanken_Grotesk'] leading-tight lg:leading-[52px]">
             Stay Ahead in the Investment Game
-          </motion.div>
-          <motion.div
-            className="self-stretch justify-start text-stone-300 text-base sm:text-lg lg:text-xl font-medium font-['Hanken_Grotesk'] leading-6 lg:leading-8"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
+          </div>
+          <div className="self-stretch justify-start text-stone-300 text-base sm:text-lg lg:text-xl font-medium font-['Hanken_Grotesk'] leading-6 lg:leading-8">
             Subscribe to our newsletter for exclusive insights, updates, and
             opportunities in decentralized finance.
-          </motion.div>
-        </motion.div>
-        <motion.div
-          className="w-full lg:w-auto flex flex-col justify-center items-start gap-6"
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <motion.div
+          </div>
+        </div>
+        <div className="w-full lg:w-auto flex flex-col justify-center items-start gap-6">
+          <div
             className="w-full lg:w-96 px-6 py-5 bg-white/10 rounded-lg outline outline-1 outline-offset-[-1px] outline-white/25 flex justify-center items-center gap-3"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
           >
             <div className="flex-shrink-0">
               <img
@@ -96,6 +78,7 @@ function NewsLetter() {
                 alt=""
                 className="w-5 h-5"
                 aria-hidden="true"
+                loading="lazy"
               />
             </div>
             <input
@@ -103,46 +86,31 @@ function NewsLetter() {
               placeholder="Enter your email"
               className="w-full bg-transparent text-white placeholder-white/70 outline-none text-base font-normal font-['Hanken_Grotesk']"
             />
-          </motion.div>
+          </div>
           <motion.div
             className="p-4 bg-white rounded-lg outline outline-1 outline-offset-[-1px] inline-flex justify-center items-center gap-1 cursor-pointer"
-            {...buttonHover}
+            {...(prefersReducedMotion ? {} : buttonHover)}
           >
             <div className="justify-start text-violet-600 text-lg font-semibold font-['Hanken_Grotesk'] leading-5">
               Subscribe Now
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       </motion.div>
 
       <motion.div
         className="w-[100%] flex flex-col lg:inline-flex lg:flex-row justify-between items-start gap-8 lg:gap-0 mt-12 lg:mt-40"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.6 }}
+        {...animationProps}
       >
-        <motion.div
-          className="w-full flex flex-col justify-start items-start gap-4"
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
+        <div className="w-full flex flex-col justify-start items-start gap-4">
           <div className="self-stretch flex flex-col justify-start items-start gap-2">
             <div className="w-full lg:w-96 justify-start text-white/80 text-sm sm:text-base font-normal font-['Hanken_Grotesk'] leading-6">
               BOUND combines blockchain innovation with traditional finance to
               provide secure, scalable, and transparent investment solutions.
             </div>
           </div>
-        </motion.div>
-        <motion.div
-          className="w-full lg:w-auto flex flex-col lg:flex-row justify-start items-start gap-8 lg:gap-16"
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true, margin: "-50px" }}
-        >
+        </div>
+        <div className="w-full lg:w-auto flex flex-col lg:flex-row justify-start items-start gap-8 lg:gap-16">
           {/* COMPANY and CONTACT US - Side by side on mobile */}
           <div className="w-full lg:w-auto flex flex-row justify-start items-start gap-6 sm:gap-8 lg:gap-16">
             <div className="flex flex-col justify-start items-start gap-4 flex-1">
@@ -238,56 +206,29 @@ function NewsLetter() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
 
       <motion.div
         className="w-[100%] flex flex-col-reverse lg:flex-row justify-between items-center gap-4 lg:gap-0 mt-12 lg:mt-20"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.6 }}
+        {...animationProps}
       >
-        <motion.div
-          className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] text-center lg:text-left"
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-        >
+        <div className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] text-center lg:text-left">
           © 2026 BOUND Protocol. All Rights Reserved.
-        </motion.div>
-        <motion.div
-          className="flex flex-col sm:flex-row justify-center lg:justify-start items-center sm:items-start gap-4 sm:gap-6 lg:gap-10"
-          variants={staggerContainer}
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-        >
-          <motion.div
-            className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] cursor-pointer hover:text-white transition-colors"
-            variants={staggerItem}
-            whileHover={{ scale: 1.05 }}
-          >
+        </div>
+        <div className="flex flex-col sm:flex-row justify-center lg:justify-start items-center sm:items-start gap-4 sm:gap-6 lg:gap-10">
+          <div className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] cursor-pointer hover:text-white transition-colors">
             Terms of Service
-          </motion.div>
-          <motion.div
-            className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] cursor-pointer hover:text-white transition-colors"
-            variants={staggerItem}
-            whileHover={{ scale: 1.05 }}
-          >
+          </div>
+          <div className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] cursor-pointer hover:text-white transition-colors">
             Privacy{" "}
-          </motion.div>
-          <motion.div
-            className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] cursor-pointer hover:text-white transition-colors"
-            variants={staggerItem}
-            whileHover={{ scale: 1.05 }}
-          >
+          </div>
+          <div className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] cursor-pointer hover:text-white transition-colors">
             Disclaimer & Risk Disclosure
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </motion.div>
-    </motion.section>
+    </section>
   );
 }
 
