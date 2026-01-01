@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 function Partners() {
   // Top row logos - duplicate for seamless loop
   const topRowLogos = [
@@ -10,8 +8,6 @@ function Partners() {
     { name: "Avantgarde", src: "/partners/Avantgarde.svg", alt: "AVANTGARDE" },
     { name: "Yard Hub", src: "/partners/yard hub.svg", alt: "ya" },
   ];
-
-
 
   // Bottom row logos - duplicate for seamless loop
   const bottomRowLogos = [
@@ -32,31 +28,27 @@ function Partners() {
     { name: "Avantgarde", src: "/partners/Avantgarde.svg", alt: "AVANTGARDE" },
     { name: "Uniswap", src: "/partners/Uniswap.svg", alt: "UNISWAP" },
   ];
-  
 
   // Duplicate arrays multiple times for seamless infinite scroll
   // Using 3 copies ensures seamless looping - when one set scrolls out, the next identical set continues
   const topRowDuplicated = [...topRowLogos, ...topRowLogos, ...topRowLogos];
-  const bottomRowDuplicated = [...bottomRowLogos, ...bottomRowLogos, ...bottomRowLogos];
+  const bottomRowDuplicated = [
+    ...bottomRowLogos,
+    ...bottomRowLogos,
+    ...bottomRowLogos,
+  ];
 
   return (
-    <section
-      className="w-full bg-white py-10 lg:py-12 px-8 lg:px-10 xl:px-16 overflow-hidden"
-    >
+    <section className="w-full bg-white py-10 lg:py-12 px-8 lg:px-10 xl:px-16 overflow-hidden">
       <div className=" mx-auto">
         {/* Header */}
-        <motion.div
-          className="flex flex-col items-center gap-4 mb-8 lg:mb-10"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.4 }}
-        >
-          <motion.h2
+        <div className="flex flex-col items-center gap-4 mb-8 lg:mb-10">
+          <h2
             className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
             font-semibold leading-[1.2] text-center
             text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
-              style={{ color: "#908686",
+            style={{
+              color: "#908686",
               textAlign: "center",
               fontFeatureSettings: "'liga' off, 'clig' off",
               fontFamily: "Hanken Grotesk",
@@ -64,15 +56,12 @@ function Partners() {
               fontStyle: "normal",
               fontWeight: "400",
               lineHeight: "120%",
-              letterSpacing: "-0.2px", }}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+              letterSpacing: "-0.2px",
+            }}
           >
             Trusted by Industry Leaders
-          </motion.h2>
-        </motion.div>
+          </h2>
+        </div>
 
         {/* Logos Scrolling Container */}
         <div className="flex flex-col gap-6 lg:gap-8">
@@ -92,15 +81,15 @@ function Partners() {
                     userSelect: "none",
                     WebkitUserSelect: "none",
                     MozUserSelect: "none",
-                    msUserSelect: "none"
+                    msUserSelect: "none",
                   }}
                 >
                   <img
                     src={logo.src}
                     alt={logo.alt}
                     className="object-contain"
-                    style={{ 
-                      height: "48px", 
+                    style={{
+                      height: "48px",
                       width: "auto",
                       maxWidth: "none",
                       display: "block",
@@ -111,7 +100,7 @@ function Partners() {
                       WebkitUserSelect: "none",
                       MozUserSelect: "none",
                       msUserSelect: "none",
-                      WebkitTouchCallout: "none"
+                      WebkitTouchCallout: "none",
                     }}
                     loading="lazy"
                     draggable="false"
@@ -137,15 +126,15 @@ function Partners() {
                     userSelect: "none",
                     WebkitUserSelect: "none",
                     MozUserSelect: "none",
-                    msUserSelect: "none"
+                    msUserSelect: "none",
                   }}
                 >
                   <img
                     src={logo.src}
                     alt={logo.alt}
                     className="object-contain"
-                    style={{ 
-                      height: "48px", 
+                    style={{
+                      height: "48px",
                       width: "auto",
                       maxWidth: "none",
                       display: "block",
@@ -156,7 +145,7 @@ function Partners() {
                       WebkitUserSelect: "none",
                       MozUserSelect: "none",
                       msUserSelect: "none",
-                      WebkitTouchCallout: "none"
+                      WebkitTouchCallout: "none",
                     }}
                     loading="lazy"
                     draggable="false"
@@ -168,49 +157,49 @@ function Partners() {
 
           {/* last part only shows on mobile */}
           <div className="block lg:hidden">
-          <div className="overflow-hidden relative w-full">
-            <div className="flex items-center gap-8 lg:gap-12 xl:gap-16 animate-scroll-left">
-              {mobileRowLogos.map((logo, index) => (
-                <div
-                  key={`top-${logo.name}-${index}`}
-                  className="flex items-center justify-center flex-shrink-0 opacity-60 px-2"
-                  style={{
-                    backfaceVisibility: "hidden",
-                    WebkitBackfaceVisibility: "hidden",
-                    transform: "translateZ(0)",
-                    WebkitTransform: "translateZ(0)",
-                    pointerEvents: "none",
-                    userSelect: "none",
-                    WebkitUserSelect: "none",
-                    MozUserSelect: "none",
-                    msUserSelect: "none"
-                  }}
-                >
-                  <img
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="object-contain"
-                    style={{ 
-                      height: "48px", 
-                      width: "auto",
-                      maxWidth: "none",
-                      display: "block",
+            <div className="overflow-hidden relative w-full">
+              <div className="flex items-center gap-8 lg:gap-12 xl:gap-16 animate-scroll-left">
+                {mobileRowLogos.map((logo, index) => (
+                  <div
+                    key={`top-${logo.name}-${index}`}
+                    className="flex items-center justify-center flex-shrink-0 opacity-60 px-2"
+                    style={{
                       backfaceVisibility: "hidden",
                       WebkitBackfaceVisibility: "hidden",
+                      transform: "translateZ(0)",
+                      WebkitTransform: "translateZ(0)",
                       pointerEvents: "none",
                       userSelect: "none",
                       WebkitUserSelect: "none",
                       MozUserSelect: "none",
                       msUserSelect: "none",
-                      WebkitTouchCallout: "none"
                     }}
-                    loading="lazy"
-                    draggable="false"
-                  />
-                </div>
-              ))}
+                  >
+                    <img
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="object-contain"
+                      style={{
+                        height: "48px",
+                        width: "auto",
+                        maxWidth: "none",
+                        display: "block",
+                        backfaceVisibility: "hidden",
+                        WebkitBackfaceVisibility: "hidden",
+                        pointerEvents: "none",
+                        userSelect: "none",
+                        WebkitUserSelect: "none",
+                        MozUserSelect: "none",
+                        msUserSelect: "none",
+                        WebkitTouchCallout: "none",
+                      }}
+                      loading="lazy"
+                      draggable="false"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>

@@ -1,15 +1,4 @@
-import { motion } from "framer-motion";
-import {
-  textReveal,
-  staggerContainer,
-  staggerItem,
-  buttonHover,
-  fadeInUp,
-} from "../utils/animations";
-import { useReducedMotion } from "../hooks/useReducedMotion";
-
 function NewsLetter() {
-  const prefersReducedMotion = useReducedMotion();
   // Map company links to section IDs
   const getSectionId = (link) => {
     const sectionMap = {
@@ -41,23 +30,12 @@ function NewsLetter() {
     }
   };
 
-  // Disable animations if user prefers reduced motion
-  const animationProps = prefersReducedMotion
-    ? {}
-    : {
-        initial: { opacity: 0, y: 20 },
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "-100px" },
-        transition: { duration: 0.25, ease: "linear" },
-      };
-
   return (
     <section
       className="w-full bg-[#19174F] py-12 lg:py-20 xl:py-20 px-5 lg:px-10 xl:px-[10rem] mx-auto"
     >
-      <motion.div
+      <div
         className="w-[100%] flex flex-col lg:inline-flex lg:flex-row justify-between items-center lg:items-center gap-8 lg:gap-0"
-        {...animationProps}
       >
         <div className="w-full lg:w-[480px] flex flex-col justify-start items-start gap-3">
           <div className="self-stretch justify-start text-white text-2xl sm:text-3xl lg:text-4xl font-semibold font-['Hanken_Grotesk'] leading-tight lg:leading-[52px]">
@@ -87,20 +65,18 @@ function NewsLetter() {
               className="w-full bg-transparent text-white placeholder-white/70 outline-none text-base font-normal font-['Hanken_Grotesk']"
             />
           </div>
-          <motion.div
+          <div
             className="p-4 bg-white rounded-lg outline outline-1 outline-offset-[-1px] inline-flex justify-center items-center gap-1 cursor-pointer"
-            {...(prefersReducedMotion ? {} : buttonHover)}
           >
             <div className="justify-start text-violet-600 text-lg font-semibold font-['Hanken_Grotesk'] leading-5">
               Subscribe Now
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
+      <div
         className="w-[100%] flex flex-col lg:inline-flex lg:flex-row justify-between items-start gap-8 lg:gap-0 mt-12 lg:mt-40"
-        {...animationProps}
       >
         <div className="w-full flex flex-col justify-start items-start gap-4">
           <div className="self-stretch flex flex-col justify-start items-start gap-2">
@@ -207,11 +183,10 @@ function NewsLetter() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
+      <div
         className="w-[100%] flex flex-col-reverse lg:flex-row justify-between items-center gap-4 lg:gap-0 mt-12 lg:mt-20"
-        {...animationProps}
       >
         <div className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] text-center lg:text-left">
           © 2026 BOUND Protocol. All Rights Reserved.
@@ -227,7 +202,7 @@ function NewsLetter() {
             Disclaimer & Risk Disclosure
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

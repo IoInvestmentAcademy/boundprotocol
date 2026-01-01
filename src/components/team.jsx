@@ -1,8 +1,4 @@
-import { motion } from "framer-motion";
-import { useReducedMotion } from "../hooks/useReducedMotion";
-
 function Team() {
-  const prefersReducedMotion = useReducedMotion();
   return (
     <section className="w-full min-h-screen py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#F7F6FE]">
       {/* Background image */}
@@ -18,16 +14,8 @@ function Team() {
 
       <div className="max-w-[1280px] mx-auto relative z-[2]">
         {/* Header Section */}
-        <motion.div
+        <div
           className="flex flex-col items-center gap-4 mb-12 lg:mb-16"
-          {...(prefersReducedMotion
-            ? {}
-            : {
-                initial: { opacity: 0, y: 10 },
-                whileInView: { opacity: 1, y: 0 },
-                viewport: { once: true, margin: "-100px" },
-                transition: { duration: 0.25, ease: "linear" },
-              })}
         >
           <h2 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
             Team Presentation
@@ -39,18 +27,10 @@ function Team() {
             secure, transparent, and scalable platform that empowers users to
             achieve their financial goals.
           </p>
-        </motion.div>
+        </div>
         {/* Team Image Section */}
-        <motion.div
+        <div
           className="w-full mb-12 lg:mb-16 flex justify-center"
-          {...(prefersReducedMotion
-            ? {}
-            : {
-                initial: { opacity: 0 },
-                whileInView: { opacity: 1 },
-                viewport: { once: true, margin: "-100px" },
-                transition: { duration: 0.25, ease: "linear" },
-              })}
         >
           <div className="w-full max-w-[1136px] h-auto lg:h-[700px] relative">
             <div className="w-full h-[400px] lg:h-[650px] relative bg-neutral-200 rounded-[20px] overflow-hidden">
@@ -60,37 +40,26 @@ function Team() {
                 alt="Team presentation"
                 loading="lazy"
               />
-              <motion.div
+              <div
                 className="w-24 h-24 lg:w-32 lg:h-32 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute bg-white/30 rounded-full border-4 border-zinc-500 backdrop-blur-lg cursor-pointer"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
               >
                 <img src="/play-video.svg" alt="Play icon" loading="lazy" />
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Executive Members Section */}
-        <motion.div
+        <div
           className="flex flex-col items-center gap-10"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-20px" }}
-          transition={{ duration: 0.25, ease: "linear" }}
         >
           <h3 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
             Executive Members
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 w-full max-w-[1200px]">
             {/* Member 1 */}
-            <motion.div
+            <div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.25, ease: "linear" }}
-              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -124,15 +93,10 @@ function Team() {
                   CEO BOUND Protocol
                 </div>
               </div>
-            </motion.div>
+            </div>
             {/* Member 2 */}
-            <motion.div
+            <div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.25, ease: "linear" }}
-              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -166,15 +130,10 @@ function Team() {
                   CTO BOUND Protocol
                 </div>
               </div>
-            </motion.div>
+            </div>
             {/* Member 3 */}
-            <motion.div
+            <div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.25, ease: "linear" }}
-              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -208,15 +167,10 @@ function Team() {
                   CEO Avantgarde Asset Management Partner
                 </div>
               </div>
-            </motion.div>
+            </div>
             {/* Member 4 */}
-            <motion.div
+            <div
               className="flex flex-col items-center gap-5"
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.25, ease: "linear" }}
-              whileHover={{ y: -5 }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -250,9 +204,9 @@ function Team() {
                   COO Avantgarde Asset Management Partner
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

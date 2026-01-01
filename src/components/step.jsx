@@ -1,11 +1,3 @@
-import { motion } from "framer-motion";
-import {
-  stepReveal,
-  imageReveal,
-  staggerContainer,
-  staggerItem,
-} from "../utils/animations";
-
 function Step() {
   const steps = [
     {
@@ -62,83 +54,51 @@ function Step() {
           className="hidden lg:block w-full h-full object-cover object-center"
           aria-hidden="true"
           loading="lazy"
-          style={{     position: "absolute",
-            top: "-250px",
-            opacity: "0.5" }}
+          style={{ position: "absolute", top: "-250px", opacity: "0.5" }}
         />
       </div>
 
-      <div
-        className="relative z-[2] w-full flex justify-center items-center mb-5 px-5 py-10 lg:px-20 lg:py-[100px]"
-      >
+      <div className="relative z-[2] w-full flex justify-center items-center mb-5 px-5 py-10 lg:px-20 lg:py-[100px]">
         <div className="max-w-[1280px] w-full overflow-hidden flex flex-col justify-start items-center gap-20 lg:gap-40">
           {/* Mobile Header Section */}
-          <motion.div
-            className="lg:hidden w-full flex flex-col justify-start items-center gap-5"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-20px" }}
-            transition={{ duration: 0.25, ease: "linear" }}
-          >
-            <motion.h2
+          <div className="lg:hidden w-full flex flex-col justify-start items-center gap-5">
+            <h2
               className="w-full text-center text-[#282828] text-[28px] 
               font-semibold font-sans leading-[33.6px] break-words"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.25, ease: "linear" }}
             >
               Built to Handle Your Savings With Care
               <br />
               Wealth with BOUND App
               <br />
               in 4 Easy Steps
-            </motion.h2>
-            <motion.p
+            </h2>
+            <p
               className="w-full text-center text-[#A8A8A8] text-base 
               font-normal font-sans leading-6 break-words"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.25, ease: "linear" }}
             >
               Experience a simpler, smarter way to earn better rates with DeFi
               powered professional returns.
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
           {/* Desktop Header Section */}
-          <motion.div
-            className="hidden lg:flex w-full flex flex-col justify-start items-center gap-5"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-20px" }}
-            transition={{ duration: 0.25, ease: "linear" }}
-          >
-            <motion.h2
+          <div className="hidden lg:flex w-full flex flex-col justify-start items-center gap-5">
+            <h2
               className="w-full text-center text-[#282828] text-[48px] 
               font-semibold font-sans leading-[57.6px] break-words"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.25, ease: "linear" }}
             >
               How to Grow Your Wealth with
               <br />
               BOUND App in 4 Easy Steps
-            </motion.h2>
-            <motion.p
+            </h2>
+            <p
               className="w-full max-w-[820px] text-center text-[#6B6767] text-lg 
               font-normal font-sans leading-[27px] break-words"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.25, ease: "linear" }}
             >
               Experience a simpler, smarter way to earn better rates with
               On-Chain powered professional returns.
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
           {/* Mobile Steps Content Section - Different structure for mobile */}
           <div
@@ -202,19 +162,11 @@ function Step() {
             </div>
 
             {/* Mobile Steps List */}
-            <motion.div
-              className="w-full flex flex-col justify-start items-start gap-6"
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-            >
+            <div className="w-full flex flex-col justify-start items-start gap-6">
               {steps.map((step, index) => (
-                <motion.div
+                <div
                   key={index}
                   className="w-full flex justify-start items-center gap-5"
-                  variants={staggerItem}
-                  {...stepReveal(index)}
                 >
                   <div className="relative flex-shrink-0">
                     <img
@@ -237,9 +189,9 @@ function Step() {
                       {step.description}
                     </p>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Desktop Steps Content Section - Keep existing desktop code */}
@@ -321,20 +273,11 @@ function Step() {
             </div>
 
             {/* Steps List */}
-            <motion.div
-              className="w-full lg:w-[450px] flex flex-col justify-start items-start gap-6 order-1 lg:order-2"
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-            >
+            <div className="w-full lg:w-[450px] flex flex-col justify-start items-start gap-6 order-1 lg:order-2">
               {steps.map((step, index) => (
-                <motion.div
+                <div
                   key={index}
                   className="w-full flex justify-start items-center gap-5"
-                  variants={staggerItem}
-                  {...stepReveal(index)}
-                  whileHover={{ x: 5 }}
                 >
                   <div className="relative flex-shrink-0">
                     <img
@@ -357,9 +300,9 @@ function Step() {
                       {step.description}
                     </p>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

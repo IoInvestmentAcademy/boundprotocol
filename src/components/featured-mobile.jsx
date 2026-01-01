@@ -235,8 +235,8 @@ function FeaturedMobile() {
           </div>
 
           {/* Card 4: How Your Funds Are Protected */}
-          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-sm border border-[#E5EAF2] shadow-[0px_8px_60px_0px_rgba(19,13,80,0.30)] outline outline-2 outline-offset-[-2px] outline-[#130d50] lg:col-span-3">
-            <div className="h-60 p-4 relative bg-gradient-to-b from-white to-indigo-100 rounded-xl shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] outline outline-[0.69px] outline-offset-[-0.69px] outline-indigo-950 inline-flex flex-col justify-start items-center gap-5 overflow-hidden">
+          <div className="bg-white rounded-2xl lg:rounded-3xl shadow-sm border border-[#E5EAF2] lg:col-span-2">
+            <div className="h-60 p-4 w-full relative bg-gradient-to-b from-white to-indigo-100 rounded-xl shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] outline outline-[0.69px] outline-offset-[-0.69px] outline-indigo-950 inline-flex flex-col justify-start items-center gap-5 overflow-hidden">
               <div className="self-stretch flex flex-col justify-start items-start gap-2">
                 <div className="self-stretch text-center justify-start text-zinc-800 text-base font-semibold font-['Hanken_Grotesk'] leading-5">
                   How Your Funds Are Protected
@@ -261,16 +261,21 @@ function FeaturedMobile() {
                 <div className="w-1 h-28 left-[86.52px] top-[76.69px] absolute bg-white" />
                 <div className="w-1 h-28 left-[27.53px] top-[73.74px] absolute bg-white" />
                 <div className="w-1 h-28 left-[307.73px] top-[14.26px] absolute bg-white" />
-                <div className="p-2 left-[241px] top-[3px] absolute bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
+              </div>
+              <div className="flex justify-center items-center gap-6 height-[inherit] w-full h-[inherit]">
+                <div className="p-2 left-[241px] top-[3px]  bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
                   <div className="w-12 h-12 relative">
-                    <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950" style={{ borderRadius: '50%' }} />
+                    <div
+                      className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950"
+                      style={{ borderRadius: "50%" }}
+                    />
                     <img
                       className="w-10 h-10 left-[5px] top-[5px] absolute"
                       src="/new-file1.svg"
                     />
                   </div>
                 </div>
-                <div className="p-2 left-[7px] top-[3px] absolute bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
+                <div className="p-2 left-[7px] top-[3px]  bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
                   <div className="w-12 h-12 relative">
                     <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950 rounded-full" />
                     <img
@@ -279,17 +284,19 @@ function FeaturedMobile() {
                     />
                   </div>
                 </div>
-                <div className="p-2 left-[163px] top-[3px] absolute bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
+                <div className="p-2 left-[163px] top-[3px]  bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
                   <div className="w-12 h-12 relative">
-                    <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950" style={{ borderRadius: '50%' }} />
+                    <div
+                      className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950"
+                      style={{ borderRadius: "50%" }}
+                    />
                     <img
                       className="w-8 h-7 left-[9.41px] top-[10.30px] absolute"
                       src="/new-file2.svg"
-                      
                     />
                   </div>
                 </div>
-                <div className="p-2 left-[85px] top-[3px] absolute bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
+                <div className="p-2 left-[85px] top-[3px]  bg-white rounded-[999px] shadow-[0px_4px_20px_0px_rgba(19,13,80,0.25)] inline-flex justify-center items-center gap-1">
                   <div className="w-12 h-12 relative">
                     <div className="w-14 h-14 left-[-3px] top-[-3px] absolute bg-indigo-950 rounded-full" />
                     <img
