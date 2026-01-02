@@ -64,11 +64,85 @@ function FeaturedMobile() {
                 </div>
               </div>
               <div className="self-stretch flex-1 relative">
+                <div className="w-36 h-28 px-5 py-4 left-[171px] top-[-1px] absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
+                {/* <div className="w-36 h-28 left-[171px] top-[-1px] absolute bg-zinc-300 rounded-[19px]" /> */}
+                <div className="w-9 h-9 left-[216px] top-[65px] absolute bg-indigo-100 rounded-full border-2 border-stone-300" />
                 <img
-                  className="w-80 h-28 left-0 top-[-11px] absolute"
-                  src="/Content 1.svg"
+                  className="w-9 h-9 left-[216.62px] top-[65px] absolute"
+                  src="/sUSDS_Coin1.svg"
+                  loading="lazy"
                 />
+                <img
+                  className="w-9 h-9 left-[240.80px] top-[65px] absolute"
+                  src="/ondo.svg"
+                  loading="lazy"
+                />
+                <div className="w-28 h-28 left-[186.34px] top-[36.36px] absolute rounded-full border-[3px] border-indigo-100" />
+                <div className="left-[200px] top-[6px] absolute text-center justify-start text-black text-xs font-medium font-['Hanken_Grotesk'] leading-7">
+                  Real World Assets
+                </div>
+                <div className="w-36 h-28 px-5 py-4 left-0 top-[-1px] absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
+                {/* <div className="w-36 h-28 left-0 top-[-1px] absolute bg-zinc-300 rounded-[19px]" /> */}
+                <img
+                  className="w-9 h-9 left-[33px] top-[65.83px] absolute"
+                  src="/sUSDS_Coin.svg"
+                  loading="lazy"
+                />
+                <img
+                  className="w-9 h-9 left-[56.76px] top-[65.83px] absolute"
+                  src="/aUSDC.svg"
+                  loading="lazy"
+                />
+                <img
+                  className="w-9 h-9 left-[80.52px] top-[65.83px] absolute"
+                  src="usdcsign.svg"
+                  loading="lazy"
+                />
+                <div className="w-28 h-28 left-[15.34px] top-[36.36px] absolute rounded-full border-[3px] border-indigo-100" />
+                <div className="left-[10px] top-[6px] absolute text-center justify-start text-black text-xs font-medium font-['Hanken_Grotesk'] leading-7">
+                  Yield Bearing Stablecoins
+                </div>
               </div>
+              {/* <div className="self-stretch flex-1 relative">
+                <div className="w-20 h-40 px-5 py-4 left-0 top-0 absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
+                <div className="w-20 h-40 left-0 top-0 absolute rounded-[19px]" />
+                <img
+                  className="w-8 h-8 left-[47px] top-[95px] absolute"
+                  src="/sUSDS_Coin.svg"
+                  loading="lazy"
+                />
+                <img
+                  className="w-12 h-12 left-[80px] top-[95px] absolute"
+                  src="/aUSDC.svg"
+                  loading="lazy"
+                />
+                <img
+                  className="w-12 h-12 left-[113px] top-[95px] absolute"
+                  src="usdcsign.svg"
+                  loading="lazy"
+                />
+                <div className="w-40 h-40 left-[25px] top-[51px] absolute rounded-full border-[3px] border-indigo-100" />
+                <div className="left-[15px] top-[16px] absolute text-center justify-start text-black text-base font-medium font-['Hanken_Grotesk'] leading-7">
+                  Yield Bearing Stablecoins
+                </div>
+                <div className="w-52 h-40 px-5 py-4 left-[225px] top-0 absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
+                <div className="w-52 h-40 left-[225px] top-0 absolute rounded-[19px]" />
+                <div className="w-12 h-12 left-[288px] top-[94px] absolute bg-indigo-100 rounded-full border-2 border-stone-300" />
+                <img
+                  className="w-12 h-12 left-[288px] top-[94px] absolute"
+                  src="/sUSDS_Coin1.svg"
+                  loading="lazy"
+                />
+                <img
+                  className="w-12 h-12 left-[321px] top-[94px] absolute"
+                  src="/ondo.svg"
+                  loading="lazy"
+                />
+                <div className="w-40 h-40 left-[250px] top-[51px] absolute rounded-full border-[3px] border-indigo-100" />
+                <div className="left-[266px] top-[16px] absolute text-center justify-start text-black text-base font-medium font-['Hanken_Grotesk'] leading-7">
+                  Real World Assets
+                </div>
+              </div> */}
             </div>
           </div>
 

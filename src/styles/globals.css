@@ -172,12 +172,39 @@ section:has([data-svg-wrapper]) {
     animation-play-state: running;
     will-change: transform;
   }
-  
+
   .animate-scroll-left {
     animation-duration: 20s;
   }
-  
+
   .animate-scroll-right {
     animation-duration: 25s;
   }
+}
+
+/* Team section performance optimizations */
+section:has([id="leadership"]) {
+  contain: layout style paint;
+  transform: translateZ(0);
+  will-change: auto;
+}
+
+/* Optimize team member images */
+section:has([id="leadership"]) img {
+  will-change: auto;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Optimize aspect-square containers */
+section:has([id="leadership"]) [class*="aspect-square"] {
+  contain: layout style paint;
+  will-change: auto;
+}
+
+/* Prevent layout shifts during fast scrolling */
+section:has([id="leadership"]) [class*="relative"] {
+  contain: layout style paint;
 }
