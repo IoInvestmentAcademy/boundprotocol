@@ -1,3 +1,6 @@
+import { motion } from "framer-motion";
+import { fadeInUp, getHeaderAnimation } from "../utils/scrollAnimations";
+
 function Partners() {
   // Top row logos - duplicate for seamless loop
   const topRowLogos = [
@@ -39,11 +42,21 @@ function Partners() {
   ];
 
   return (
-    <section className="w-full bg-white py-10 lg:py-12 px-8 lg:px-10 xl:px-16 overflow-hidden">
+    <motion.section 
+      className="w-full bg-white py-10 lg:py-12 px-8 lg:px-10 xl:px-16 overflow-hidden"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      variants={fadeInUp}
+    >
       <div className=" mx-auto">
         {/* Header */}
-        <div className="flex flex-col items-center gap-4 mb-8 lg:mb-10">
-          <h2
+        <motion.div 
+          className="flex flex-col items-center gap-4 mb-8 lg:mb-10"
+          {...getHeaderAnimation()}
+        >
+          <motion.h2
             className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
             font-semibold leading-[1.2] text-center
             text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
@@ -60,8 +73,8 @@ function Partners() {
             }}
           >
             Trusted by Industry Leaders
-          </h2>
-        </div>
+          </motion.h2>
+        </motion.div>
 
         {/* Logos Scrolling Container */}
         <div className="flex flex-col gap-6 lg:gap-8">
@@ -203,7 +216,7 @@ function Partners() {
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

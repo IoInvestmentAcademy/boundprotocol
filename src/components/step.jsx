@@ -1,3 +1,13 @@
+import { motion } from "framer-motion";
+import {
+  fadeIn,
+  fadeInUp,
+  getHeaderAnimation,
+  getContentAnimation,
+  staggerContainer,
+  staggerItem,
+} from "../utils/scrollAnimations";
+
 function Step() {
   const steps = [
     {
@@ -36,7 +46,14 @@ function Step() {
   ];
 
   return (
-    <section className="relative w-full overflow-hidden">
+    <motion.section
+      className="relative w-full overflow-hidden"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      variants={fadeIn}
+    >
       {/* Background Images */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         {/* Mobile Background Image */}
@@ -61,44 +78,54 @@ function Step() {
       <div className="relative z-[2] w-full flex justify-center items-center mb-5 px-5 py-10 lg:px-20 lg:py-[100px]">
         <div className="max-w-[1280px] w-full overflow-hidden flex flex-col justify-start items-center gap-20 lg:gap-40">
           {/* Mobile Header Section */}
-          <div className="lg:hidden w-full flex flex-col justify-start items-center gap-5">
-            <h2
+          <motion.div
+            className="lg:hidden w-full flex flex-col justify-start items-center gap-5"
+            {...getHeaderAnimation()}
+          >
+            <motion.h2
               className="w-full text-center text-[#282828] text-[28px] 
               font-semibold font-sans leading-[33.6px] break-words"
+              variants={fadeInUp}
             >
               Built to Handle Your Savings With Care
               <br />
               Wealth with BOUND App
               <br />
               in 4 Easy Steps
-            </h2>
-            <p
+            </motion.h2>
+            <motion.p
               className="w-full text-center text-[#A8A8A8] text-base 
               font-normal font-sans leading-6 break-words"
+              {...getContentAnimation(0.2)}
             >
               Experience a simpler, smarter way to earn better rates with DeFi
               powered professional returns.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Desktop Header Section */}
-          <div className="hidden lg:flex w-full flex flex-col justify-start items-center gap-5">
-            <h2
+          <motion.div
+            className="hidden lg:flex w-full flex flex-col justify-start items-center gap-5"
+            {...getHeaderAnimation()}
+          >
+            <motion.h2
               className="w-full text-center text-[#282828] text-[48px] 
               font-semibold font-sans leading-[57.6px] break-words"
+              variants={fadeInUp}
             >
               How to Grow Your Wealth with
               <br />
               BOUND App in 4 Easy Steps
-            </h2>
-            <p
+            </motion.h2>
+            <motion.p
               className="w-full max-w-[820px] text-center text-[#6B6767] text-lg 
               font-normal font-sans leading-[27px] break-words"
+              {...getContentAnimation(0.2)}
             >
               Experience a simpler, smarter way to earn better rates with
               On-Chain powered professional returns.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Mobile Steps Content Section - Different structure for mobile */}
           <div
@@ -273,11 +300,19 @@ function Step() {
             </div>
 
             {/* Steps List */}
-            <div className="w-full lg:w-[450px] flex flex-col justify-start items-start gap-6 order-1 lg:order-2">
+            <motion.div
+              className="w-full lg:w-[450px] flex flex-col justify-start items-start gap-6 order-1 lg:order-2"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {steps.map((step, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="w-full flex justify-start items-center gap-5"
+                  variants={staggerItem}
+                  whileHover={{ x: 5, transition: { duration: 0.2 } }}
                 >
                   <div className="relative flex-shrink-0">
                     <img
@@ -300,13 +335,13 @@ function Step() {
                       {step.description}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

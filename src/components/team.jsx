@@ -1,6 +1,24 @@
+import { motion } from "framer-motion";
+import {
+  fadeIn,
+  fadeInUp,
+  getHeaderAnimation,
+  getContentAnimation,
+  getImageAnimation,
+  staggerContainer,
+  staggerItem,
+} from "../utils/scrollAnimations";
+
 function Team() {
   return (
-    <section className="w-full py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#F7F6FE]">
+    <motion.section
+      className="w-full py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#F7F6FE]"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      variants={fadeIn}
+    >
       {/* Background image */}
       {/* <div
         className="absolute inset-0 w-full h-full z-0 pointer-events-none"
@@ -19,20 +37,32 @@ function Team() {
 
       <div className="max-w-[1280px] mx-auto relative z-[2]">
         {/* Header Section */}
-        <div className="flex flex-col items-center gap-4 mb-12 lg:mb-16">
-          <h2 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
+        <motion.div
+          className="flex flex-col items-center gap-4 mb-12 lg:mb-16"
+          {...getHeaderAnimation()}
+        >
+          <motion.h2
+            className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]"
+            variants={fadeInUp}
+          >
             Team Presentation
-          </h2>
-          <p className="text-base lg:text-lg font-normal leading-6 lg:leading-7 text-center text-neutral-400 font-['Hanken_Grotesk'] max-w-[838px]">
+          </motion.h2>
+          <motion.p
+            className="text-base lg:text-lg font-normal leading-6 lg:leading-7 text-center text-neutral-400 font-['Hanken_Grotesk'] max-w-[838px]"
+            {...getContentAnimation(0.2)}
+          >
             Our team and partners is a blend of innovative thinkers, experienced
             investors, and blockchain enthusiasts united by a common mission: to
             redefine the way the world invests. Together, we're creating a
             secure, transparent, and scalable platform that empowers users to
             achieve their financial goals.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
         {/* Team Image Section */}
-        <div className="w-full mb-12 lg:mb-16 flex justify-center">
+        <motion.div
+          className="w-full mb-12 lg:mb-16 flex justify-center"
+          {...getImageAnimation()}
+        >
           <div className="w-full max-w-[1136px] h-auto lg:h-[700px] relative">
             <div
               className="w-full h-[400px] lg:h-[650px] relative bg-neutral-200 rounded-[20px] overflow-hidden"
@@ -65,18 +95,32 @@ function Team() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Executive Members Section */}
-        <div className="flex flex-col items-center gap-10">
-          <h3 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]">
+        <motion.div
+          className="flex flex-col items-center gap-10"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <motion.h3
+            className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px] font-semibold leading-[1.2] text-center text-zinc-800 font-['Hanken_Grotesk'] tracking-[-0.5px] lg:tracking-[-1px]"
+            {...getHeaderAnimation()}
+          >
             Executive Members
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 w-full max-w-[1200px]">
+          </motion.h3>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 w-full max-w-[1200px]"
+            variants={staggerContainer}
+          >
             {/* Member 1 */}
-            <div
+            <motion.div
               className="flex flex-col items-center gap-5"
               style={{ contain: "layout style paint" }}
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -116,11 +160,13 @@ function Team() {
                   CEO BOUND Protocol
                 </div>
               </div>
-            </div>
+            </motion.div>
             {/* Member 2 */}
-            <div
+            <motion.div
               className="flex flex-col items-center gap-5"
               style={{ contain: "layout style paint" }}
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -160,11 +206,13 @@ function Team() {
                   CTO BOUND Protocol
                 </div>
               </div>
-            </div>
+            </motion.div>
             {/* Member 3 */}
-            <div
+            <motion.div
               className="flex flex-col items-center gap-5"
               style={{ contain: "layout style paint" }}
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -204,11 +252,13 @@ function Team() {
                   CEO Avantgarde Asset Management Partner
                 </div>
               </div>
-            </div>
+            </motion.div>
             {/* Member 4 */}
-            <div
+            <motion.div
               className="flex flex-col items-center gap-5"
               style={{ contain: "layout style paint" }}
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-full max-w-[288px] aspect-square relative bg-neutral-200 rounded-[20px] overflow-hidden">
                 <img
@@ -248,11 +298,11 @@ function Team() {
                   COO Avantgarde Asset Management Partner
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

@@ -1,4 +1,6 @@
+import { motion } from "framer-motion";
 import FeaturedMobile from "./featured-mobile";
+import { fadeIn, fadeInUp, getHeaderAnimation, getContentAnimation, staggerContainer, staggerItem } from "../utils/scrollAnimations";
 
 function Featured() {
   return (
@@ -9,8 +11,13 @@ function Featured() {
       </div>
 
       {/* Desktop Version */}
-      <section
+      <motion.section
         className="hidden lg:block w-full bg-[#F7F6FE] py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+        variants={fadeIn}
       >
         {/* Background image */}
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
@@ -43,32 +50,41 @@ function Featured() {
 
         <div className="max-w-[1280px] mx-auto relative z-[2]">
           {/* Header Section */}
-          <div
+          <motion.div
             className="flex flex-col items-center gap-4 mb-12 lg:mb-16"
+            {...getHeaderAnimation()}
           >
-            <h2
+            <motion.h2
               className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
             font-semibold leading-[1.2] text-center
             text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
+              variants={fadeInUp}
             >
               Built to Handle Your Savings With Care
-            </h2>
-            <p
+            </motion.h2>
+            <motion.p
               className="text-base lg:text-lg font-normal leading-6 lg:leading-7 text-center
             text-[#4D4D4D] max-w-[820px]"
+              {...getContentAnimation(0.2)}
             >
               A professional, end-to-end approach built to grow your savings
               smartly and responsibly.
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
 
           {/* Cards Grid - 2x2 */}
-          <div
+          <motion.div
             className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
           >
             {/* Card 1: Where Your Savings Are Invested */}
-            <div
+            <motion.div
               className="lg:col-span-2 bg-white rounded-2xl lg:rounded-3xl shadow-sm border border-[#E5EAF2] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="h-96 p-[2.2rem] bg-white rounded-3xl  inline-flex flex-col justify-start items-center gap-10 overflow-hidden">
                 <div className="self-stretch flex flex-col justify-start items-start gap-7">
@@ -124,11 +140,13 @@ function Featured() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 2: Why You Earn Better Rates with BOUND */}
-            <div
+            <motion.div
               className="lg:col-span-3 bg-white rounded-2xl lg:rounded-3xl  shadow-sm border border-[#E5EAF2]"
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-[733px] h-[400px] p-10 bg-white rounded-3xl  inline-flex flex-col justify-start items-center gap-10 overflow-hidden">
                 <div className="self-stretch flex flex-col justify-start items-start gap-7">
@@ -206,11 +224,13 @@ function Featured() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 3: How Your Savings Are Managed */}
-            <div
+            <motion.div
               className="lg:col-span-2 bg-white rounded-2xl lg:rounded-3xl shadow-sm border border-[#E5EAF2]"
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="h-[25rem] p-10 bg-white rounded-3xl  inline-flex flex-col justify-start items-center gap-10 overflow-hidden">
                 <div className="self-stretch flex flex-col justify-start items-start gap-7">
@@ -1270,11 +1290,13 @@ function Featured() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 4: How Your Funds Are Protected */}
-            <div
+            <motion.div
               className="lg:col-span-3 bg-white rounded-2xl lg:rounded-3xl shadow-sm border border-[#E5EAF2] shadow-[0px_8px_60px_0px_rgba(19,13,80,0.30)] outline outline-2 outline-offset-[-2px] outline-[#130d50]"
+              variants={staggerItem}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-[100%] h-[398px] p-10 bg-gradient-to-b from-white to-[#e0e2ff] rounded-3xl  inline-flex flex-col justify-center items-start gap-5 overflow-hidden">
                 <div className="self-stretch flex flex-col justify-start items-start gap-7">
@@ -1374,10 +1396,10 @@ function Featured() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
     </>
   );
 }

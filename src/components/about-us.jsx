@@ -1,6 +1,16 @@
+import { motion } from "framer-motion";
+import { fadeIn, slideInLeft, slideInRight, getHeaderAnimation, getContentAnimation, getImageAnimation } from "../utils/scrollAnimations";
+
 function AboutUs() {
   return (
-    <section className="w-full bg-white py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden">
+    <motion.section 
+      className="w-full bg-white py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      variants={fadeIn}
+    >
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
         {/* Mobile Background Image */}
@@ -30,60 +40,85 @@ function AboutUs() {
       <div className="max-w-[1280px] mx-auto relative z-[2]">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 xl:gap-28">
           {/* Image Section - Top on mobile, left on desktop */}
-          <div className="w-full lg:w-96 flex-shrink-0 order-1 lg:order-1">
+          <motion.div 
+            className="w-full lg:w-96 flex-shrink-0 order-1 lg:order-1"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            variants={slideInLeft}
+          >
             <div className="relative w-full max-w-[384px] mx-auto lg:mx-0">
-              <div className="w-full">
+              <motion.div 
+                className="w-full"
+                {...getImageAnimation()}
+              >
                 <img
                   className="w-full h-full object-cover"
                   src="/about-Image.png"
                   alt="About BOUND Protocol"
                   loading="lazy"
                 />
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Content Section - Below image on mobile, right on desktop */}
-          <div className="w-full lg:w-auto lg:flex-1 max-w-[628px] order-2 lg:order-2">
+          <motion.div 
+            className="w-full lg:w-auto lg:flex-1 max-w-[628px] order-2 lg:order-2"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            variants={slideInRight}
+          >
             <div className="flex flex-col gap-6 lg:gap-9 text-left">
               {/* Heading */}
-              <h2
+              <motion.h2
                 className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
                 font-semibold leading-[1.2] lg:leading-[1.2]
                 text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
+                {...getHeaderAnimation()}
               >
                 We make investing
                 <br />
                 simple
-              </h2>
+              </motion.h2>
 
               {/* Description */}
-              <p
+              <motion.p
                 className="text-base lg:text-base font-normal leading-[1.6] lg:leading-6
                 text-[#4D4D4D] max-w-full lg:max-w-[593px]"
+                {...getContentAnimation(0.2)}
               >
                 Everything we do is built around simplicity. We designed a
                 savings app that simplifies investing and meets real needs.
                 Behind that simplicity is a responsible approach to growing your
                 savings passively, handled by experienced professionals.
-              </p>
+              </motion.p>
 
               {/* CTA Button */}
-              <div className="flex justify-start mt-2 w-full lg:w-auto">
-                <button
+              <motion.div 
+                className="flex justify-start mt-2 w-full lg:w-auto"
+                {...getContentAnimation(0.3)}
+              >
+                <motion.button
                   className="btn-base bg-[#6D5EED] text-white 
                   px-6 py-3.5 lg:px-7 lg:py-4
                   text-base font-bold rounded-xl
                   w-full lg:w-auto"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ duration: 0.2 }}
                 >
                   Start Earning
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

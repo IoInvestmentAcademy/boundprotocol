@@ -1,3 +1,6 @@
+import { motion } from "framer-motion";
+import { fadeIn, fadeInUp, slideInLeft, slideInRight, getHeaderAnimation, getContentAnimation, getImageAnimation, staggerContainer, staggerItem } from "../utils/scrollAnimations";
+
 function Comparison() {
   const challenges = [
     {
@@ -42,45 +45,71 @@ function Comparison() {
   ];
 
   return (
-    <section className="w-full bg-white py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20">
+    <motion.section 
+      className="w-full bg-white py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      variants={fadeIn}
+    >
       <div className="max-w-[1280px] mx-auto">
         {/* Header Section */}
-        <div className="flex flex-col items-center gap-5 mb-12 lg:mb-14">
-          <h2
+        <motion.div 
+          className="flex flex-col items-center gap-5 mb-12 lg:mb-14"
+          {...getHeaderAnimation()}
+        >
+          <motion.h2
             className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
             font-semibold leading-[1.2] text-center
             text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
           >
             Earn Better Rates with On-Chain Returns
-          </h2>
-          <p
+          </motion.h2>
+          <motion.p
             className="text-base font-normal leading-6 text-center
             text-[#4D4D4D] max-w-[794px]"
+            {...getContentAnimation(0.2)}
           >
             There's a smarter way to grow your savings. On-chain financial
             markets unlocks access to higher rates than traditional savings
             products.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Comparison Section */}
         <div className="relative w-full min-h-[660px] lg:min-h-[660px] flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-0">
           {/* Left Side - Challenges - Third on mobile, first on desktop */}
-          <div className="w-full lg:w-auto lg:flex-1 flex flex-col items-start lg:items-end gap-6 lg:gap-8 pl-0 lg:pr-8 order-3 lg:order-1">
-            <h3
+          <motion.div 
+            className="w-full lg:w-auto lg:flex-1 flex flex-col items-start lg:items-end gap-6 lg:gap-8 pl-0 lg:pr-8 order-3 lg:order-1"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            variants={slideInLeft}
+          >
+            <motion.h3
               className="text-[28px] sm:text-[32px] lg:text-[36px] font-semibold leading-[1.25] 
               text-left lg:text-right text-[#1a1a1a] mb-4 lg:mb-0"
+              {...getHeaderAnimation()}
             >
               The challenge of
               <br />
               on-chain access
-            </h3>
+            </motion.h3>
 
-            <div className="flex flex-col gap-6 lg:gap-8 w-full lg:w-auto max-w-[320px]">
+            <motion.div 
+              className="flex flex-col gap-6 lg:gap-8 w-full lg:w-auto max-w-[320px]"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {challenges.map((item, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="flex items-start gap-5 justify-start lg:justify-end"
+                  variants={staggerItem}
                 >
                   <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center order-1 lg:order-2">
                     <img
@@ -99,13 +128,16 @@ function Comparison() {
                       {item.description}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Center Image - First on mobile, center on desktop */}
-          <div className="w-full lg:w-auto flex-shrink-0 order-1 lg:order-2 mb-8 lg:mb-0">
+          <motion.div 
+            className="w-full lg:w-auto flex-shrink-0 order-1 lg:order-2 mb-8 lg:mb-0"
+            {...getImageAnimation()}
+          >
             <div className="w-full max-w-[400px] lg:max-w-[626px] mx-auto">
               <img
                 src="/comparision-image.png"
@@ -114,24 +146,39 @@ function Comparison() {
                 loading="lazy"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Side - Solutions - Second on mobile, right on desktop */}
-          <div className="w-full lg:w-auto lg:flex-1 flex flex-col items-start lg:items-start gap-6 lg:gap-8 pl-0 lg:pl-8 order-2 lg:order-3">
-            <h3
+          <motion.div 
+            className="w-full lg:w-auto lg:flex-1 flex flex-col items-start lg:items-start gap-6 lg:gap-8 pl-0 lg:pl-8 order-2 lg:order-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            variants={slideInRight}
+          >
+            <motion.h3
               className="text-[28px] sm:text-[32px] lg:text-[36px] font-semibold leading-[1.25] 
               text-left text-[#1a1a1a] mb-4 lg:mb-0"
+              {...getHeaderAnimation()}
             >
               Simple access to
               <br />
               on-chain returns
-            </h3>
+            </motion.h3>
 
-            <div className="flex flex-col gap-6 lg:gap-8 w-full lg:w-auto max-w-[320px]">
+            <motion.div 
+              className="flex flex-col gap-6 lg:gap-8 w-full lg:w-auto max-w-[320px]"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {solutions.map((item, index) => (
-                <div
+                <motion.div
                   key={index}
                   className="flex items-start gap-5 justify-start"
+                  variants={staggerItem}
                 >
                   <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
                     <img
@@ -150,13 +197,13 @@ function Comparison() {
                       {item.description}
                     </p>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
