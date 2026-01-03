@@ -46,17 +46,17 @@ function NewsLetter() {
         className="w-[100%] flex flex-col lg:inline-flex lg:flex-row justify-between items-center lg:items-center gap-8 lg:gap-0"
         variants={staggerContainer}
       >
-        <motion.div 
+        <motion.div
           className="w-full lg:w-[480px] flex flex-col justify-start items-start gap-3"
           variants={staggerItem}
         >
-          <motion.div 
+          <motion.div
             className="self-stretch justify-start text-white text-2xl sm:text-3xl lg:text-4xl font-semibold font-['Hanken_Grotesk'] leading-tight lg:leading-[52px]"
             {...getHeaderAnimation()}
           >
             Stay Ahead in the Investment Game
           </motion.div>
-          <motion.div 
+          <motion.div
             className="self-stretch justify-start text-stone-300 text-base sm:text-lg lg:text-xl font-medium font-['Hanken_Grotesk'] leading-6 lg:leading-8"
             {...getContentAnimation(0.2)}
           >
@@ -64,7 +64,7 @@ function NewsLetter() {
             opportunities in decentralized finance.
           </motion.div>
         </motion.div>
-        <motion.div 
+        <motion.div
           className="w-full lg:w-auto flex flex-col justify-center items-start gap-6"
           variants={staggerItem}
         >
@@ -222,13 +222,13 @@ function NewsLetter() {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        <motion.div 
+        <motion.div
           className="justify-start text-stone-300 text-sm sm:text-base font-medium font-['Hanken_Grotesk'] text-center lg:text-left"
           variants={staggerItem}
         >
           © 2026 BOUND Protocol. All Rights Reserved.
         </motion.div>
-        <motion.div 
+        <motion.div
           className="flex flex-col sm:flex-row justify-center lg:justify-start items-center sm:items-start gap-4 sm:gap-6 lg:gap-10"
           variants={staggerItem}
         >

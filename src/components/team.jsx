@@ -1,4 +1,7 @@
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 import {
   fadeIn,
   fadeInUp,
@@ -10,9 +13,34 @@ import {
 } from "../utils/scrollAnimations";
 
 function Team() {
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const videoRef = useRef(null);
+
+  // Handle video playback when modal opens/closes
+  useEffect(() => {
+    if (isVideoModalOpen && videoRef.current) {
+      videoRef.current.play().catch((error) => {
+        console.error("Error playing video:", error);
+      });
+    } else if (!isVideoModalOpen && videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  }, [isVideoModalOpen]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+    };
+  }, []);
+
   return (
     <motion.section
-      className="w-full py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#F7F6FE]"
+      className="w-full py-12 lg:py-20 xl:py-24 px-5 lg:px-10 xl:px-20 relative overflow-hidden bg-[#FFFFFF33]"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
@@ -58,26 +86,30 @@ function Team() {
             achieve their financial goals.
           </motion.p>
         </motion.div>
-        {/* Team Image Section */}
+        {/* Team Video Section */}
         <motion.div
           className="w-full mb-12 lg:mb-16 flex justify-center"
           {...getImageAnimation()}
         >
-          <div className="w-full max-w-[1136px] h-auto lg:h-[700px] relative">
+          <div className="w-full max-w-[1136px] h-auto lg:h-[550px] relative">
             <div
-              className="w-full h-[400px] lg:h-[650px] relative bg-neutral-200 rounded-[20px] overflow-hidden"
+              className="w-full h-[400px] lg:h-[500px] relative bg-neutral-200 rounded-[20px] overflow-hidden group"
               style={{ contain: "layout style paint" }}
             >
-              <img
+              <video
                 className="w-full h-full object-cover"
-                src="/team-video-image.png"
-                alt="Team presentation"
-                loading="lazy"
-                decoding="async"
+                src="/weteam.mp4"
+                poster="/team-video-image.png"
+                muted
+                loop
+                playsInline
+                preload="metadata"
                 style={{ willChange: "auto", backfaceVisibility: "hidden" }}
               />
-              <div
-                className="w-24 h-24 lg:w-32 lg:h-32 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute bg-white/40 rounded-full border-4 border-zinc-500 cursor-pointer"
+              <button
+                onClick={() => setIsVideoModalOpen(true)}
+                className="w-24 h-24 lg:w-32 lg:h-32 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 absolute bg-white/40 rounded-full border-4 border-zinc-500 cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-white/60 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white/50 focus:ring-offset-2"
+                aria-label="Play team video"
                 style={{
                   willChange: "auto",
                   backfaceVisibility: "hidden",
@@ -87,15 +119,88 @@ function Team() {
               >
                 <img
                   src="/play-video.svg"
-                  alt="Play icon"
+                  alt=""
+                  className="w-12 h-12 lg:w-16 lg:h-16"
                   loading="lazy"
                   decoding="async"
                   style={{ willChange: "auto" }}
+                  aria-hidden="true"
                 />
-              </div>
+              </button>
             </div>
           </div>
         </motion.div>
+
+        {/* Video Modal */}
+        <Transition appear show={isVideoModalOpen} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-50"
+            onClose={() => setIsVideoModalOpen(false)}
+          >
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-black bg-opacity-75" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 overflow-y-auto">
+              <div className="flex min-h-full items-center justify-center p-4">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 scale-95"
+                  enterTo="opacity-100 scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 scale-100"
+                  leaveTo="opacity-0 scale-95"
+                >
+                  <Dialog.Panel className="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-black shadow-xl transition-all">
+                    <div className="relative w-full aspect-video">
+                      <button
+                        onClick={() => setIsVideoModalOpen(false)}
+                        className="absolute top-4 right-4 z-10 text-white hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-white rounded-full p-2 transition-colors"
+                        aria-label="Close video"
+                      >
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                      <video
+                        ref={videoRef}
+                        className="w-full h-full object-contain"
+                        src="/weteam.mp4"
+                        controls
+                        autoPlay
+                        playsInline
+                        style={{ willChange: "auto" }}
+                      >
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </Dialog>
+        </Transition>
 
         {/* Executive Members Section */}
         <motion.div

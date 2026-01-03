@@ -42,7 +42,7 @@ function Partners() {
   ];
 
   return (
-    <motion.section 
+    <motion.section
       className="w-full bg-white py-10 lg:py-12 px-8 lg:px-10 xl:px-16 overflow-hidden"
       initial="hidden"
       whileInView="visible"
@@ -52,7 +52,7 @@ function Partners() {
     >
       <div className=" mx-auto">
         {/* Header */}
-        <motion.div 
+        <motion.div
           className="flex flex-col items-center gap-4 mb-8 lg:mb-10"
           {...getHeaderAnimation()}
         >
@@ -101,8 +101,8 @@ function Partners() {
                     src={logo.src}
                     alt={logo.alt}
                     className="object-contain"
-                    style={{
-                      height: "48px",
+                    style={{ 
+                      height: "48px", 
                       width: "auto",
                       maxWidth: "none",
                       display: "block",
@@ -146,8 +146,8 @@ function Partners() {
                     src={logo.src}
                     alt={logo.alt}
                     className="object-contain"
-                    style={{
-                      height: "48px",
+                    style={{ 
+                      height: "48px", 
                       width: "auto",
                       maxWidth: "none",
                       display: "block",

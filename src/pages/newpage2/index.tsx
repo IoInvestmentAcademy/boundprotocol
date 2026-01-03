@@ -320,7 +320,7 @@ function App() {
       </div>
       {/* About Us Section */}
       <div id="mission">
-        <AboutUs /> 
+        <AboutUs />
       </div>
 
       {/* Comparison Section */}

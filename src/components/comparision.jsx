@@ -59,14 +59,14 @@ function Comparison() {
           className="flex flex-col items-center gap-5 mb-12 lg:mb-14"
           {...getHeaderAnimation()}
         >
-          <motion.h2
+          <motion.h2 
             className="text-[32px] sm:text-[40px] md:text-[48px] lg:text-[48px] xl:text-[57px]
             font-semibold leading-[1.2] text-center
             text-[#1a1a1a] tracking-[-0.5px] lg:tracking-[-1px]"
           >
             Earn Better Rates with On-Chain Returns
           </motion.h2>
-          <motion.p
+          <motion.p 
             className="text-base font-normal leading-6 text-center
             text-[#4D4D4D] max-w-[794px]"
             {...getContentAnimation(0.2)}
@@ -88,7 +88,7 @@ function Comparison() {
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
             variants={slideInLeft}
           >
-            <motion.h3
+            <motion.h3 
               className="text-[28px] sm:text-[32px] lg:text-[36px] font-semibold leading-[1.25] 
               text-left lg:text-right text-[#1a1a1a] mb-4 lg:mb-0"
               {...getHeaderAnimation()}
@@ -97,7 +97,7 @@ function Comparison() {
               <br />
               on-chain access
             </motion.h3>
-
+            
             <motion.div 
               className="flex flex-col gap-6 lg:gap-8 w-full lg:w-auto max-w-[320px]"
               variants={staggerContainer}
@@ -106,15 +106,15 @@ function Comparison() {
               viewport={{ once: true, margin: "-100px" }}
             >
               {challenges.map((item, index) => (
-                <motion.div
-                  key={index}
+                <motion.div 
+                  key={index} 
                   className="flex items-start gap-5 justify-start lg:justify-end"
                   variants={staggerItem}
                 >
                   <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center order-1 lg:order-2">
-                    <img
-                      src="/close-circle-fill.svg"
-                      alt=""
+                    <img 
+                      src="/close-circle-fill.svg" 
+                      alt="" 
                       className="w-10 h-10"
                       aria-hidden="true"
                       loading="lazy"
@@ -139,9 +139,9 @@ function Comparison() {
             {...getImageAnimation()}
           >
             <div className="w-full max-w-[400px] lg:max-w-[626px] mx-auto">
-              <img
-                src="/comparision-image.png"
-                alt="Comparison"
+              <img 
+                src="/comparision-image.png" 
+                alt="Comparison" 
                 className="w-full h-auto object-contain"
                 loading="lazy"
               />
@@ -157,7 +157,7 @@ function Comparison() {
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
             variants={slideInRight}
           >
-            <motion.h3
+            <motion.h3 
               className="text-[28px] sm:text-[32px] lg:text-[36px] font-semibold leading-[1.25] 
               text-left text-[#1a1a1a] mb-4 lg:mb-0"
               {...getHeaderAnimation()}
@@ -166,7 +166,7 @@ function Comparison() {
               <br />
               on-chain returns
             </motion.h3>
-
+            
             <motion.div 
               className="flex flex-col gap-6 lg:gap-8 w-full lg:w-auto max-w-[320px]"
               variants={staggerContainer}
@@ -175,15 +175,15 @@ function Comparison() {
               viewport={{ once: true, margin: "-100px" }}
             >
               {solutions.map((item, index) => (
-                <motion.div
-                  key={index}
+                <motion.div 
+                  key={index} 
                   className="flex items-start gap-5 justify-start"
                   variants={staggerItem}
                 >
                   <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
-                    <img
-                      src="/checkbox-circle-fill.svg"
-                      alt=""
+                    <img 
+                      src="/checkbox-circle-fill.svg" 
+                      alt="" 
                       className="w-10 h-10"
                       aria-hidden="true"
                       loading="lazy"
