@@ -5,7 +5,6 @@ function Partners() {
   // Top row logos - duplicate for seamless loop
   const topRowLogos = [
     { name: "Aave", src: "/partners/Aave.svg", alt: "Aave" },
-    { name: "Sumsub", src: "/partners/Sumsub.svg", alt: "Sumsub" },
     { name: "Uniswap", src: "/partners/Uniswap.svg", alt: "UNISWAP" },
     { name: "Microsoft", src: "/partners/Microsoft.svg", alt: "Microsoft" },
     { name: "Avantgarde", src: "/partners/Avantgarde.svg", alt: "AVANTGARDE" },
@@ -24,21 +23,35 @@ function Partners() {
   ];
 
   const mobileRowLogos = [
-    { name: "Aave", src: "/partners/Aave.svg", alt: "Aave" },
     { name: "Yard Hub", src: "/partners/yard hub.svg", alt: "ya" },
     { name: "Microsoft", src: "/partners/Microsoft.svg", alt: "Microsoft" },
+    { name: "Sumsub", src: "/partners/Sumsub.svg", alt: "Sumsub" },
+    { name: "Aave", src: "/partners/Aave.svg", alt: "Aave" },
     { name: "Sumsub", src: "/partners/Sumsub.svg", alt: "Sumsub" },
     { name: "Avantgarde", src: "/partners/Avantgarde.svg", alt: "AVANTGARDE" },
     { name: "Uniswap", src: "/partners/Uniswap.svg", alt: "UNISWAP" },
   ];
 
   // Duplicate arrays multiple times for seamless infinite scroll
-  // Using 3 copies ensures seamless looping - when one set scrolls out, the next identical set continues
-  const topRowDuplicated = [...topRowLogos, ...topRowLogos, ...topRowLogos];
+  // Using 4 copies ensures seamless looping - when one set scrolls out, the next identical set continues
+  // The animation moves exactly 25% (1/4) so it loops perfectly
+  const topRowDuplicated = [
+    ...topRowLogos,
+    ...topRowLogos,
+    ...topRowLogos,
+    ...topRowLogos,
+  ];
   const bottomRowDuplicated = [
     ...bottomRowLogos,
     ...bottomRowLogos,
     ...bottomRowLogos,
+    ...bottomRowLogos,
+  ];
+  const mobileRowDuplicated = [
+    ...mobileRowLogos,
+    ...mobileRowLogos,
+    ...mobileRowLogos,
+    ...mobileRowLogos,
   ];
 
   return (
@@ -100,9 +113,8 @@ function Partners() {
                   <img
                     src={logo.src}
                     alt={logo.alt}
-                    className="object-contain"
-                    style={{ 
-                      height: "48px", 
+                    className="object-contain h-[20.539px] lg:h-[48px]"
+                    style={{
                       width: "auto",
                       maxWidth: "none",
                       display: "block",
@@ -145,9 +157,8 @@ function Partners() {
                   <img
                     src={logo.src}
                     alt={logo.alt}
-                    className="object-contain"
-                    style={{ 
-                      height: "48px", 
+                    className="object-contain h-[20.539px] lg:h-[48px]"
+                    style={{
                       width: "auto",
                       maxWidth: "none",
                       display: "block",
@@ -172,7 +183,7 @@ function Partners() {
           <div className="block lg:hidden">
             <div className="overflow-hidden relative w-full">
               <div className="flex items-center gap-8 lg:gap-12 xl:gap-16 animate-scroll-left">
-                {mobileRowLogos.map((logo, index) => (
+                {mobileRowDuplicated.map((logo, index) => (
                   <div
                     key={`top-${logo.name}-${index}`}
                     className="flex items-center justify-center flex-shrink-0 opacity-60 px-2"
@@ -191,9 +202,8 @@ function Partners() {
                     <img
                       src={logo.src}
                       alt={logo.alt}
-                      className="object-contain"
+                      className="object-contain h-[20.539px]"
                       style={{
-                        height: "48px",
                         width: "auto",
                         maxWidth: "none",
                         display: "block",

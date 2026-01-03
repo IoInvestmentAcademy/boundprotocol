@@ -129,18 +129,19 @@ section:has([data-svg-wrapper]) {
 }
 
 /* Seamless infinite scroll animations */
+/* Using 4 copies - animation moves exactly 25% (1/4) for seamless loop */
 @keyframes scroll-left {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-33.333%);
+    transform: translateX(-25%);
   }
 }
 
 @keyframes scroll-right {
   from {
-    transform: translateX(-33.333%);
+    transform: translateX(-25%);
   }
   to {
     transform: translateX(0);
@@ -148,21 +149,23 @@ section:has([data-svg-wrapper]) {
 }
 
 .animate-scroll-left {
-  animation: scroll-left 25s linear infinite;
+  animation: scroll-left 30s linear infinite;
   width: max-content;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+  will-change: transform;
 }
 
 .animate-scroll-right {
-  animation: scroll-right 30s linear infinite;
+  animation: scroll-right 35s linear infinite;
   width: max-content;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+  will-change: transform;
 }
 
 /* Mobile optimizations */
