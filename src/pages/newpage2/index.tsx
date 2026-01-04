@@ -11,6 +11,71 @@ import Partners from "@/components/partners";
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("Home");
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Track scroll position for navbar effect (desktop only)
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Track active section based on scroll position
+  useEffect(() => {
+    const sectionIds = [
+      "home",
+      "mission",
+      "features",
+      "how-it-works",
+      "leadership",
+      "contact-us",
+    ];
+    const sectionToLink: { [key: string]: string } = {
+      home: "Home",
+      mission: "Mission",
+      features: "Features",
+      "how-it-works": "How It Works",
+      leadership: "Leadership",
+      "contact-us": "Contact Us",
+    };
+
+    const observerOptions = {
+      root: null,
+      rootMargin: "-20% 0px -60% 0px", // Trigger when section is in the upper-middle of viewport
+      threshold: 0,
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          const linkName = sectionToLink[sectionId];
+          if (linkName) {
+            setActiveLink(linkName);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
+
+    // Observe all sections
+    sectionIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const navLinks = [
     "Home",
@@ -78,10 +143,17 @@ function App() {
   return (
     <div>
       <div className="max-w-[1440px] mx-auto relative min-h-screen">
-        {/* Header / Navigation */}
-        <header className="w-full px-4 py-3 sm:px-5 sm:py-4 lg:px-10 lg:py-5 xl:px-20 xl:py-5 flex justify-between items-center relative z-[1000] bg-white">
-          {/* Logo */}
-          <div className="flex flex-col items-center">
+        {/* Header / Navigation - Static on mobile, Fixed on desktop */}
+        <header className="w-full px-4 py-3 sm:px-5 sm:py-4 lg:px-10 lg:py-5 xl:px-20 xl:py-5 flex justify-between items-center z-[1000] bg-white lg:bg-transparent lg:fixed lg:top-0 lg:left-0 lg:right-0 lg:max-w-[1440px] lg:mx-auto">
+          {/* Logo - Fades out on desktop when scrolling */}
+          <div
+            className={`flex flex-col items-center transition-opacity duration-300
+              ${
+                isScrolled
+                  ? "lg:opacity-0 lg:pointer-events-none"
+                  : "lg:opacity-100"
+              }`}
+          >
             <img
               src="/boundprotocollogo.png"
               alt="BOUND PROTOCOL"
@@ -115,8 +187,23 @@ function App() {
             />
           </button>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex lg:items-center lg:gap-7">
+          {/* Desktop Nav Links - Glass effect on scroll */}
+          <nav
+            className={`hidden lg:flex lg:items-center lg:gap-7 transition-all duration-500 ease-out
+              ${isScrolled ? "px-8 py-3.5 rounded-full" : ""}`}
+            style={
+              isScrolled
+                ? {
+                    background: "rgba(255, 255, 255, 0.15)",
+                    backdropFilter: "blur(20px)",
+                    WebkitBackdropFilter: "blur(20px)",
+                    boxShadow:
+                      "0 8px 32px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.3)",
+                    border: "1px solid rgba(255, 255, 255, 0.25)",
+                  }
+                : {}
+            }
+          >
             {navLinks.map((link) => (
               <a
                 key={link}
@@ -131,6 +218,9 @@ function App() {
             ))}
           </nav>
         </header>
+
+        {/* Spacer for fixed header on desktop */}
+        <div className="hidden lg:block lg:h-[85px]" />
 
         {/* Mobile Menu Overlay */}
         <div

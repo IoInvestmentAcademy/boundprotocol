@@ -63,86 +63,69 @@ function FeaturedMobile() {
                   designed to deliver consistent, stable returns.
                 </div>
               </div>
-              <div className="self-stretch flex-1 relative">
-                <div className="w-36 h-28 px-5 py-4 left-[171px] top-[-1px] absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
-                {/* <div className="w-36 h-28 left-[171px] top-[-1px] absolute bg-zinc-300 rounded-[19px]" /> */}
-                <div className="w-9 h-9 left-[216px] top-[65px] absolute bg-indigo-100 rounded-full border-2 border-stone-300" />
-                <img
-                  className="w-9 h-9 left-[216.62px] top-[65px] absolute"
-                  src="/sUSDS_Coin1.svg"
-                  loading="lazy"
-                />
-                <img
-                  className="w-9 h-9 left-[240.80px] top-[65px] absolute"
-                  src="/ondo.svg"
-                  loading="lazy"
-                />
-                <div className="w-28 h-28 left-[186.34px] top-[36.36px] absolute rounded-full border-[3px] border-indigo-100" />
-                <div className="left-[200px] top-[6px] absolute text-center justify-start text-black text-xs font-medium font-['Hanken_Grotesk'] leading-7">
-                  Real World Assets
-                </div>
-                <div className="w-36 h-28 px-5 py-4 left-0 top-[-1px] absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
-                {/* <div className="w-36 h-28 left-0 top-[-1px] absolute bg-zinc-300 rounded-[19px]" /> */}
-                <img
-                  className="w-9 h-9 left-[33px] top-[65.83px] absolute"
-                  src="/sUSDS_Coin.svg"
-                  loading="lazy"
-                />
-                <img
-                  className="w-9 h-9 left-[56.76px] top-[65.83px] absolute"
-                  src="/aUSDC.svg"
-                  loading="lazy"
-                />
-                <img
-                  className="w-9 h-9 left-[80.52px] top-[65.83px] absolute"
-                  src="usdcsign.svg"
-                  loading="lazy"
-                />
-                <div className="w-28 h-28 left-[15.34px] top-[36.36px] absolute rounded-full border-[3px] border-indigo-100" />
-                <div className="left-[10px] top-[6px] absolute text-center justify-start text-black text-xs font-medium font-['Hanken_Grotesk'] leading-7">
-                  Yield Bearing Stablecoins
+              {/* Two cards container - centered with transform scale for all screens */}
+              <div className="self-stretch flex-1 flex items-center justify-center">
+                <div
+                  className="flex gap-6"
+                  style={{
+                    transform: "scale(0.9)",
+                    transformOrigin: "center center",
+                  }}
+                >
+                  {/* Left Card: Yield Bearing Stablecoins */}
+                  <div className="w-[144px] h-[112px] bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.5px] border-violet-800 flex flex-col items-center pt-2 relative">
+                    <div className="text-center text-black text-xs font-medium font-['Hanken_Grotesk'] leading-5">
+                      Yield Bearing Stablecoins
+                    </div>
+                    {/* Circle border */}
+                    <div className="w-[90px] h-[90px] absolute bottom-[-20px] left-1/2 -translate-x-1/2 rounded-full border-[3px] border-indigo-100" />
+                    {/* Coin icons */}
+                    <div className="flex items-center justify-center mt-4 gap-[-8px] relative z-10">
+                      <img
+                        className="w-9 h-9"
+                        src="/sUSDS_Coin.svg"
+                        loading="lazy"
+                        alt=""
+                      />
+                      <img
+                        className="w-9 h-9 -ml-2"
+                        src="/aUSDC.svg"
+                        loading="lazy"
+                        alt=""
+                      />
+                      <img
+                        className="w-9 h-9 -ml-2"
+                        src="usdcsign.svg"
+                        loading="lazy"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                  {/* Right Card: Real World Assets */}
+                  <div className="w-[144px] h-[112px] bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.5px] border-violet-800 flex flex-col items-center pt-2 relative">
+                    <div className="text-center text-black text-xs font-medium font-['Hanken_Grotesk'] leading-5">
+                      Real World Assets
+                    </div>
+                    {/* Circle border */}
+                    <div className="w-[90px] h-[90px] absolute bottom-[-20px] left-1/2 -translate-x-1/2 rounded-full border-[3px] border-indigo-100" />
+                    {/* Coin icons */}
+                    <div className="flex items-center justify-center mt-4 gap-[-8px] relative z-10">
+                      <img
+                        className="w-9 h-9"
+                        src="/sUSDS_Coin1.svg"
+                        loading="lazy"
+                        alt=""
+                      />
+                      <img
+                        className="w-9 h-9 -ml-2"
+                        src="/ondo.svg"
+                        loading="lazy"
+                        alt=""
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              {/* <div className="self-stretch flex-1 relative">
-                <div className="w-20 h-40 px-5 py-4 left-0 top-0 absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
-                <div className="w-20 h-40 left-0 top-0 absolute rounded-[19px]" />
-                <img
-                  className="w-8 h-8 left-[47px] top-[95px] absolute"
-                  src="/sUSDS_Coin.svg"
-                  loading="lazy"
-                />
-                <img
-                  className="w-12 h-12 left-[80px] top-[95px] absolute"
-                  src="/aUSDC.svg"
-                  loading="lazy"
-                />
-                <img
-                  className="w-12 h-12 left-[113px] top-[95px] absolute"
-                  src="usdcsign.svg"
-                  loading="lazy"
-                />
-                <div className="w-40 h-40 left-[25px] top-[51px] absolute rounded-full border-[3px] border-indigo-100" />
-                <div className="left-[15px] top-[16px] absolute text-center justify-start text-black text-base font-medium font-['Hanken_Grotesk'] leading-7">
-                  Yield Bearing Stablecoins
-                </div>
-                <div className="w-52 h-40 px-5 py-4 left-[225px] top-0 absolute bg-gradient-to-b from-white to-indigo-100 rounded-[19px] border-[1.50px] border-violet-800" />
-                <div className="w-52 h-40 left-[225px] top-0 absolute rounded-[19px]" />
-                <div className="w-12 h-12 left-[288px] top-[94px] absolute bg-indigo-100 rounded-full border-2 border-stone-300" />
-                <img
-                  className="w-12 h-12 left-[288px] top-[94px] absolute"
-                  src="/sUSDS_Coin1.svg"
-                  loading="lazy"
-                />
-                <img
-                  className="w-12 h-12 left-[321px] top-[94px] absolute"
-                  src="/ondo.svg"
-                  loading="lazy"
-                />
-                <div className="w-40 h-40 left-[250px] top-[51px] absolute rounded-full border-[3px] border-indigo-100" />
-                <div className="left-[266px] top-[16px] absolute text-center justify-start text-black text-base font-medium font-['Hanken_Grotesk'] leading-7">
-                  Real World Assets
-                </div>
-              </div> */}
             </div>
           </div>
 
@@ -158,63 +141,70 @@ function FeaturedMobile() {
                   strategies managed by institutional asset managers.
                 </div>
               </div>
-              <div className="w-80 h-32 left-[16px] top-[107px] absolute">
-                <div className="w-56 h-12 px-2.5 py-2 left-[100.47px] top-[-8px] absolute bg-white rounded-lg outline outline-[0.59px] outline-offset-[-0.59px] outline-indigo-950 inline-flex justify-between items-center">
-                  <div className="flex justify-start items-center gap-2.5">
-                    <div className="inline-flex flex-col justify-center items-start">
-                      <div className="justify-start text-zinc-800 text-[10px] font-normal font-['Hanken_Grotesk'] leading-4">
-                        Lending activities
+              <div className="relative w-full flex-1 flex items-center justify-center">
+                {/* Card container - uses transform scale to fit any screen */}
+                <div
+                  className="relative w-[320px] h-[140px]"
+                  style={{
+                    transform: "scale(0.85)",
+                    transformOrigin: "center center",
+                  }}
+                >
+                  {/* Card 1: Lending activities - Top right */}
+                  <div className="w-[224px] h-[48px] px-3 py-2 absolute right-0 top-0 bg-white rounded-lg outline outline-[0.59px] outline-offset-[-0.59px] outline-indigo-950 flex justify-between items-center z-10">
+                    <div className="text-zinc-800 text-[11px] font-normal font-['Hanken_Grotesk'] leading-4 whitespace-nowrap">
+                      Lending activities
+                    </div>
+                    <img
+                      className="w-14 h-7 flex-shrink-0"
+                      src="/rate1.svg"
+                      alt=""
+                    />
+                    <div className="flex flex-col items-end">
+                      <div className="text-zinc-800 text-[11px] font-normal font-['Hanken_Grotesk'] leading-4 whitespace-nowrap">
+                        $513,676.76
+                      </div>
+                      <div className="text-neutral-400 text-[9px] font-normal font-['Hanken_Grotesk'] leading-3">
+                        +8.18%
                       </div>
                     </div>
                   </div>
-                  <img className="w-14 h-7" src="/rate1.svg" alt="" />
-
-                  <div className="inline-flex flex-col justify-center items-end">
-                    <div className="w-14 text-right justify-start text-zinc-800 text-[10px] font-normal font-['Hanken_Grotesk'] leading-4">
-                      $513,676.76{" "}
+                  {/* Card 2: Liquidity provision - Middle left */}
+                  <div className="w-[256px] h-[56px] px-3 py-2.5 absolute left-0 top-[32px] bg-white rounded-xl outline outline-[0.59px] outline-offset-[-0.59px] outline-indigo-950 flex justify-between items-center z-20">
+                    <div className="text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4 whitespace-nowrap">
+                      Liquidity provision
                     </div>
-                    <div className="justify-start text-neutral-400 text-[8.82px] font-normal font-['Hanken_Grotesk'] leading-3">
-                      +8.18%
-                    </div>
-                  </div>
-                </div>
-                <div className="w-64 h-14 px-3 py-2.5 left-0 top-[26.46px] absolute bg-white rounded-xl outline outline-[0.59px] outline-offset-[-0.59px] outline-indigo-950 inline-flex justify-between items-center">
-                  <div className="flex justify-start items-center gap-3">
-                    <div className="inline-flex flex-col justify-center items-start">
-                      <div className="justify-start text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
-                        Liquidity provision
+                    <img
+                      className="w-14 h-7 flex-shrink-0"
+                      src="/rate2.svg"
+                      alt=""
+                    />
+                    <div className="flex flex-col items-end">
+                      <div className="text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4 whitespace-nowrap">
+                        $280,561.24
+                      </div>
+                      <div className="text-neutral-400 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
+                        4.65%
                       </div>
                     </div>
                   </div>
-                  <img className="w-14 h-7" src="/rate2.svg" alt="" />
-
-                  <div className="inline-flex flex-col justify-center items-end">
-                    <div className="w-16 text-right justify-start text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
-                      $280,561.24{" "}
+                  {/* Card 3: Arbitrage - Bottom center */}
+                  <div className="w-[256px] h-[56px] px-3 py-2.5 absolute left-[32px] top-[72px] bg-white rounded-xl shadow-[-8px_-5px_14px_0px_rgba(19,13,80,0.15)] outline outline-[0.59px] outline-offset-[-0.59px] outline-indigo-950 flex justify-between items-center z-30">
+                    <div className="text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4 whitespace-nowrap">
+                      Arbitrage
                     </div>
-                    <div className="justify-start text-neutral-400 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
-                      4.65%
-                    </div>
-                  </div>
-                </div>
-                <div className="w-64 h-14 px-3 py-2.5 left-[31.72px] top-[61.75px] absolute bg-white rounded-xl shadow-[-8.46851921081543px_-5.645679473876953px_14.114198684692383px_0px_rgba(19,13,80,0.15)] outline outline-[0.59px] outline-offset-[-0.59px] outline-indigo-950 inline-flex justify-between items-center">
-                  <div className="flex justify-start items-center gap-3">
-                    <div className="inline-flex flex-col justify-center items-start">
-                      <div className="justify-start text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
-                        {" "}
-                        Arbitrage
+                    <img
+                      className="w-14 h-7 flex-shrink-0"
+                      src="/rate3.svg"
+                      alt=""
+                    />
+                    <div className="flex flex-col items-end">
+                      <div className="text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4 whitespace-nowrap">
+                        $429,850.15
                       </div>
-                    </div>
-                  </div>
-                  <img className="w-14 h-7" src="/rate3.svg" alt="" />
-                  {/* <div className="w-14 h-7 bg-gradient-to-b from-violet-600/20 to-violet-600/0" />
-                  <div className="w-14 h-6 rounded-[0.71px] outline outline-[1.41px] outline-offset-[-0.71px] outline-indigo-950" /> */}
-                  <div className="inline-flex flex-col justify-center items-end">
-                    <div className="justify-start text-zinc-800 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
-                      $429,850.15{" "}
-                    </div>
-                    <div className="justify-start text-neutral-400 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
-                      +6.43%
+                      <div className="text-neutral-400 text-xs font-normal font-['Hanken_Grotesk'] leading-4">
+                        +6.43%
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -235,75 +225,77 @@ function FeaturedMobile() {
                   keep the portfolio aligned with best-in-class results.
                 </div>
               </div>
-              <div className="w-80 h-52 left-[16px] top-[117px] absolute bg-white rounded-2xl shadow-[0px_-2.8533332347869873px_14.266666412353516px_0px_rgba(19,13,80,0.15)] outline outline-[0.71px] outline-offset-[-0.71px] outline-indigo-950 overflow-hidden">
-                <div className="w-96 h-0 left-[-73px] top-[32px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
-                <div className="w-96 h-0 left-[-73px] top-[69px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
-                <div className="w-96 h-0 left-[-73px] top-[107px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
-                <div className="w-96 h-0 left-[-73px] top-[144px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
-                <div className="w-96 h-0 left-[-73px] top-[182px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
-                <div className="w-0 h-8 left-[315px] top-[42px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-3.5 left-[315px] top-[51px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-10 left-[302px] top-[47px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-6 left-[302px] top-[57px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-9 left-[289px] top-[39px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-5 left-[289px] top-[48px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[276px] top-[25px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-7 left-[276px] top-[33px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-8 left-[263px] top-[45px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-4 left-[263px] top-[53px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-8 left-[251px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-3 left-[251px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-9 left-[238px] top-[50px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-3 left-[238px] top-[61px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-10 left-[225px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-6 left-[225px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-7 left-[212px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-3 left-[212px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-8 left-[199px] top-[55px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-2 left-[199px] top-[65px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-14 left-[186px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-10 left-[186px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[173px] top-[76px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-6 left-[173px] top-[86px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-12 left-[160px] top-[78px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-8 left-[160px] top-[87px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-10 left-[147px] top-[108px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-6 left-[147px] top-[115px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-11 left-[135px] top-[67px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-7 left-[135px] top-[77px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[122px] top-[70px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-4 left-[122px] top-[88px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-11 left-[109px] top-[88px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-4 left-[109px] top-[107px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[96px] top-[99px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-3 left-[96px] top-[122px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-11 left-[83px] top-[92px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-3.5 left-[83px] top-[113px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[70px] top-[88px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-5 left-[70px] top-[104px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-11 left-[57px] top-[99px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-7 left-[57px] top-[106px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[44px] top-[80px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-7 left-[44px] top-[91px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-11 left-[31px] top-[61px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-7 left-[31px] top-[72px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[19px] top-[69px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-7 left-[19px] top-[77px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-11 left-[6px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-2 left-[6px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[-7px] top-[49px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-3 left-[-7px] top-[60px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-14 left-[-20px] top-[71px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-9 left-[-20px] top-[77px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-0 h-11 left-[-33px] top-[102px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
-                <div className="w-0 h-5 left-[-33px] top-[90px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
-                <div className="w-0 h-11 left-[-46px] top-[99px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
-                <div className="w-0 h-7 left-[-46px] top-[107px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
-                <div className="w-10 h-9 left-[12px] top-[11px] absolute opacity-10 bg-indigo-950 rounded-lg" />
-                <img
-                  className="w-8 h-8 left-[15.04px] top-[12.52px] absolute"
-                  src="/new-file.svg"
-                />
+              <div className="relative w-[80%] h-full flex items-center justify-center">
+                <div className="w-[100%] h-52 absolute left-1/2 top-[98px] -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-[0px_-2.8533332347869873px_14.266666412353516px_0px_rgba(19,13,80,0.15)] outline outline-[0.71px] outline-offset-[-0.71px] outline-indigo-950 overflow-hidden">
+                  <div className="w-96 h-0 left-[-73px] top-[32px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
+                  <div className="w-96 h-0 left-[-73px] top-[69px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
+                  <div className="w-96 h-0 left-[-73px] top-[107px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
+                  <div className="w-96 h-0 left-[-73px] top-[144px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
+                  <div className="w-96 h-0 left-[-73px] top-[182px] absolute outline outline-[0.24px] outline-offset-[-0.12px] outline-indigo-100" />
+                  <div className="w-0 h-8 left-[315px] top-[42px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-3.5 left-[315px] top-[51px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-10 left-[302px] top-[47px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-6 left-[302px] top-[57px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-9 left-[289px] top-[39px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-5 left-[289px] top-[48px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[276px] top-[25px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-7 left-[276px] top-[33px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-8 left-[263px] top-[45px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-4 left-[263px] top-[53px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-8 left-[251px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-3 left-[251px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-9 left-[238px] top-[50px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-3 left-[238px] top-[61px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-10 left-[225px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-6 left-[225px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-7 left-[212px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-3 left-[212px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-8 left-[199px] top-[55px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-2 left-[199px] top-[65px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-14 left-[186px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-10 left-[186px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[173px] top-[76px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-6 left-[173px] top-[86px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-12 left-[160px] top-[78px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-8 left-[160px] top-[87px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-10 left-[147px] top-[108px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-6 left-[147px] top-[115px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-11 left-[135px] top-[67px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-7 left-[135px] top-[77px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[122px] top-[70px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-4 left-[122px] top-[88px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-11 left-[109px] top-[88px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-4 left-[109px] top-[107px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[96px] top-[99px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-3 left-[96px] top-[122px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-11 left-[83px] top-[92px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-3.5 left-[83px] top-[113px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[70px] top-[88px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-5 left-[70px] top-[104px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-11 left-[57px] top-[99px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-7 left-[57px] top-[106px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[44px] top-[80px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-7 left-[44px] top-[91px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-11 left-[31px] top-[61px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-7 left-[31px] top-[72px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[19px] top-[69px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-7 left-[19px] top-[77px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-11 left-[6px] top-[59px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-2 left-[6px] top-[70px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[-7px] top-[49px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-3 left-[-7px] top-[60px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-14 left-[-20px] top-[71px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-9 left-[-20px] top-[77px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-0 h-11 left-[-33px] top-[102px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-950" />
+                  <div className="w-0 h-5 left-[-33px] top-[90px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-950" />
+                  <div className="w-0 h-11 left-[-46px] top-[99px] absolute outline outline-[0.62px] outline-offset-[-0.31px] outline-indigo-300" />
+                  <div className="w-0 h-7 left-[-46px] top-[107px] absolute outline outline-[4.96px] outline-offset-[-2.48px] outline-indigo-300" />
+                  <div className="w-10 h-9 left-[12px] top-[11px] absolute opacity-10 bg-indigo-950 rounded-lg" />
+                  <img
+                    className="w-8 h-8 left-[15.04px] top-[12.52px] absolute"
+                    src="/new-file.svg"
+                  />
+                </div>
               </div>
             </div>
           </div>
