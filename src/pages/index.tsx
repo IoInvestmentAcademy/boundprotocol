@@ -386,16 +386,22 @@ function App() {
 
             {/* Buttons */}
             <div className="flex flex-row gap-3 lg:gap-4 justify-center lg:justify-start w-full max-w-[400px] mx-auto lg:mx-0 lg:max-w-none">
-              <button
-                className="btn-base bg-[#6D5EED] text-white 
+              <a
+              href="https://app.boundprotocol.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-base bg-[#6D5EED] text-white 
               flex-1 lg:flex-none lg:w-auto
               px-6 py-4 lg:px-7 lg:py-4
               text-base rounded-lg"
               >
                 Start Earning
-              </button>
+              </a>
               {/* add border */}
-              <button
+              <a
+                href="https://whitepaper.boundprotocol.com/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-base bg-transparent text-[#4D4D4D] border-0 lg:border lg:border-[#E5EAF2] lg:bg-white
               flex-1 lg:flex-none lg:w-auto
               px-6 py-3 lg:px-7 lg:py-4
@@ -404,7 +410,7 @@ function App() {
                 style={{ border: "1px solid #E5EAF2" }}
               >
                 Docs
-              </button>
+              </a>
             </div>
           </div>
         </main>
