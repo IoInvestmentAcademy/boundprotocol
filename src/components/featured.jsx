@@ -20,7 +20,7 @@ function Featured() {
         variants={fadeIn}
       >
         {/* Background image */}
-        <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
+        {/* <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
           <img
             src="/feature-background.svg"
             alt=""
@@ -28,9 +28,9 @@ function Featured() {
             aria-hidden="true"
             loading="lazy"
           />
-        </div>
+        </div> */}
         {/* Background wavy pattern */}
-        <div className="absolute inset-0 w-full h-full z-[1] pointer-events-none opacity-30">
+        {/* <div className="absolute inset-0 w-full h-full z-[1] pointer-events-none opacity-30">
           <svg
             className="w-full h-full"
             viewBox="0 0 1440 800"
@@ -46,7 +46,7 @@ function Featured() {
               opacity="0.5"
             />
           </svg>
-        </div>
+        </div> */}
 
         <div className="max-w-[1280px] mx-auto relative z-[2]">
           {/* Header Section */}

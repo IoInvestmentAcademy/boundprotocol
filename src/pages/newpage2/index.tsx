@@ -385,10 +385,10 @@ function App() {
             </div>
 
             {/* Buttons */}
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-center lg:justify-start w-full max-w-[400px] mx-auto lg:mx-0 lg:max-w-none">
+            <div className="flex flex-row gap-3 lg:gap-4 justify-center lg:justify-start w-full max-w-[400px] mx-auto lg:mx-0 lg:max-w-none">
               <button
                 className="btn-base bg-[#6D5EED] text-white 
-              w-full lg:w-auto
+              flex-1 lg:flex-none lg:w-auto
               px-6 py-4 lg:px-7 lg:py-4
               text-base rounded-lg"
               >
@@ -397,7 +397,7 @@ function App() {
               {/* add border */}
               <button
                 className="btn-base bg-transparent text-[#4D4D4D] border-0 lg:border lg:border-[#E5EAF2] lg:bg-white
-              w-full lg:w-auto
+              flex-1 lg:flex-none lg:w-auto
               px-6 py-3 lg:px-7 lg:py-4
               text-base font-medium
               hover:text-[#6D5EED] lg:hover:text-[#738095]"

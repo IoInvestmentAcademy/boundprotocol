@@ -12,17 +12,17 @@ function AboutUs() {
       variants={fadeIn}
     >
       {/* Background Image */}
-      <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
+      {/* <div className="absolute inset-0 w-full h-full z-0 pointer-events-none"> */}
         {/* Mobile Background Image */}
-        <img
+        {/* <img
           src="/background-about-mobile.svg"
           alt=""
           className="block lg:hidden w-full h-full object-cover object-center opacity-100"
           aria-hidden="true"
           loading="lazy"
-        />
+        /> */}
         {/* Desktop Background Image */}
-        <img
+        {/* <img
           src="/background-about.svg"
           alt=""
           className="hidden lg:block w-full h-full object-cover object-center opacity-100"
@@ -34,8 +34,8 @@ function AboutUs() {
             bottom: "-313px",
           }}
           loading="lazy"
-        />
-      </div>
+        /> */}
+      {/* </div> */}
 
       <div className="max-w-[1280px] mx-auto relative z-[2]">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 xl:gap-28">
