@@ -78,7 +78,7 @@ function FeaturedMobile() {
                       Yield Bearing Stablecoins
                     </div>
                     {/* Circle border */}
-                    <div className="w-[90px] h-[90px] absolute bottom-[-20px] left-1/2 -translate-x-1/2 rounded-full border-[3px] border-indigo-100" />
+                    <div style={{ display: "none" }} className="w-[90px] h-[90px] absolute bottom-[-20px] left-1/2 -translate-x-1/2 rounded-full border-[3px] border-indigo-100" />
                     {/* Coin icons */}
                     <div className="flex items-center justify-center mt-4 gap-[-8px] relative z-10">
                       <img
@@ -107,11 +107,11 @@ function FeaturedMobile() {
                       Real World Assets
                     </div>
                     {/* Circle border */}
-                    <div className="w-[90px] h-[90px] absolute bottom-[-20px] left-1/2 -translate-x-1/2 rounded-full border-[3px] border-indigo-100" />
+                    <div style={{ display: "none" }} className="w-[90px] h-[90px] absolute bottom-[-20px] left-1/2 -translate-x-1/2 rounded-full border-[3px] border-indigo-100" />
                     {/* Coin icons */}
                     <div className="flex items-center justify-center mt-4 gap-[-8px] relative z-10">
                       <img
-                        className="w-9 h-9"
+                        className="w-10 h-10 border-2 rounded-full"
                         src="/sUSDS_Coin1.svg"
                         loading="lazy"
                         alt=""

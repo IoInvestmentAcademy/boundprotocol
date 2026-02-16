@@ -326,7 +326,7 @@ function App() {
             >
               Grow Your Savings 
               <br className="hidden lg:block" />
-              <span className="lg:block">with Better Rates</span>
+              <span className="lg:block"> with Better Rates</span>
             </h1>
             <p
               className="text-[15px] sm:text-base md:text-lg lg:text-xl font-normal leading-[1.6] 
