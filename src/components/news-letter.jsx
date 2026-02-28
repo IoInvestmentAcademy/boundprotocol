@@ -169,12 +169,7 @@ function NewsLetter() {
                 <div className="justify-start text-white text-sm sm:text-base font-medium font-['Hanken_Grotesk']">
                   contact@boundprotocol.com
                 </div>
-                <div className="justify-start text-white text-sm sm:text-base font-medium font-['Hanken_Grotesk']">
-                  (123) 456-7890
-                </div>
-                <div className="self-stretch justify-start text-white text-sm sm:text-base font-medium font-['Hanken_Grotesk']">
-                  1234 Investment Lane, Blockchain City, Future State 56789
-                </div>
+               
               </div>
             </div>
           </div>
