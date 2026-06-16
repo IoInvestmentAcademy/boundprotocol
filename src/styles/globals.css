@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap");
-
 @layer base {
   * {
     margin: 0;
@@ -13,111 +11,113 @@
 
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
   }
 
   body {
-    font-family: "Hanken Grotesk", sans-serif;
-    background: white;
     min-height: 100vh;
     overflow-x: hidden;
   }
 }
 
-@layer components {
-  .btn-base {
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    font-family: "Hanken Grotesk", sans-serif;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+@layer utilities {
+  .font-primary {
+    font-family: ui-sans-serif, system-ui, sans-serif;
   }
 }
 
-/* Desktop button hover effects */
-@media (min-width: 768px) {
-  .btn-base:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* Word animation */
+@keyframes word-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Mobile button adjustments */
-@media (max-width: 767px) {
-  .btn-base {
-    border-radius: 10px;
-  }
-
-  .btn-base:active {
-    transform: scale(0.98);
-  }
+.word {
+  opacity: 0;
+  display: inline-block;
+  margin-right: 0.25em;
 }
 
-/* Small mobile adjustments */
-@media (max-width: 480px) {
-  header {
-    padding: 12px 20px !important;
+/* Click ripple */
+@keyframes pulse-glow {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+    box-shadow: 0 0 0 0 rgba(200, 180, 160, 0.4);
   }
-
-  header img {
-    height: 36px !important;
-  }
-
-  main {
-    padding: 24px 20px !important;
+  100% {
+    transform: translate(-50%, -50%) scale(60);
+    opacity: 0;
+    box-shadow: 0 0 0 40px rgba(200, 180, 160, 0);
   }
 }
 
-.styles_descriptionValue__3_YU3 {
-  position: relative;
-  background-image: linear-gradient(90deg, #1a88f8, #9896ff);
-  background-image: linear-gradient(
-    90deg,
-    color(display-p3 0.1 0.53 0.97),
-    color(display-p3 0.6 0.59 1)
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  letter-spacing: -2.01%;
+/* SVG grid lines */
+.grid-line {
+  stroke: rgba(185, 212, 196, 0.15);
+  stroke-width: 0.5;
+  opacity: 0;
+  animation: word-appear 1.5s ease-out forwards;
 }
 
-/* Performance optimizations for framer-motion */
-[data-framer-component],
-[data-framer-name] {
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  contain: layout style paint;
+/* SVG detail dots */
+.detail-dot {
+  fill: rgba(185, 212, 196, 0.35);
+  opacity: 0;
+  animation: word-appear 0.8s ease-out forwards;
 }
 
-/* Optimize motion components */
-[data-framer-component] * {
-  will-change: auto;
+/* Corner bracket elements */
+.corner-element {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+  animation: word-appear 0.8s ease-out forwards;
 }
 
-/* Optimize sections with animations */
-section[class*="motion"] {
-  contain: layout style paint;
+/* Floating ambient dots */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 0.6;
+  }
 }
 
-/* Optimize Banner component with many SVGs */
-section:has([data-svg-wrapper]) {
-  contain: layout style paint;
-  transform: translateZ(0);
-  will-change: auto;
+.floating-element {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(185, 212, 196, 0.35);
+  animation: float 4s ease-in-out infinite;
+  animation-play-state: paused;
 }
 
-/* Optimize SVG containers */
-[data-svg-wrapper] {
-  contain: layout style paint;
-  transform: translateZ(0);
+/* LIVE badge pulse dot */
+@keyframes bnd-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.78); }
 }
 
-/* Reduce motion for users who prefer it */
+.bnd-pulse-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2E9D67;
+  animation: bnd-pulse 2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -126,88 +126,4 @@ section:has([data-svg-wrapper]) {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* Seamless infinite scroll animations */
-/* Using 4 copies - animation moves exactly 25% (1/4) for seamless loop */
-@keyframes scroll-left {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-25%);
-  }
-}
-
-@keyframes scroll-right {
-  from {
-    transform: translateX(-25%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-.animate-scroll-left {
-  animation: scroll-left 30s linear infinite;
-  width: max-content;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
-}
-
-.animate-scroll-right {
-  animation: scroll-right 35s linear infinite;
-  width: max-content;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .animate-scroll-left,
-  .animate-scroll-right {
-    animation-play-state: running;
-    will-change: transform;
-  }
-
-  .animate-scroll-left {
-    animation-duration: 20s;
-  }
-
-  .animate-scroll-right {
-    animation-duration: 25s;
-  }
-}
-
-/* Team section performance optimizations */
-section:has([id="leadership"]) {
-  contain: layout style paint;
-  transform: translateZ(0);
-  will-change: auto;
-}
-
-/* Optimize team member images */
-section:has([id="leadership"]) img {
-  will-change: auto;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-}
-
-/* Optimize aspect-square containers */
-section:has([id="leadership"]) [class*="aspect-square"] {
-  contain: layout style paint;
-  will-change: auto;
-}
-
-/* Prevent layout shifts during fast scrolling */
-section:has([id="leadership"]) [class*="relative"] {
-  contain: layout style paint;
 }

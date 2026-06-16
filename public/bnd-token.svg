@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Dark green background -->
+  <circle cx="50" cy="50" r="50" fill="#3A5440"/>
+  <!-- Inner white ring -->
+  <circle cx="50" cy="50" r="43" fill="none" stroke="white" stroke-width="2.8"/>
+  <!-- Infinity symbol (lemniscate) as thick stroke -->
+  <path d="M50,50 C61,33 82,33 82,50 C82,67 61,67 50,50 C39,33 18,33 18,50 C18,67 39,67 50,50"
+        fill="none" stroke="white" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

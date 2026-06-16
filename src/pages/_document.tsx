@@ -4,18 +4,18 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <title>BOUND - The DeFi Yield Stablecoin</title>
+        <title>BOUND — Instant Liquidity for Real-World Assets</title>
         {/* Primary Meta Tags */}
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#141710" />
         <meta
           name="description"
-          content="Diversified exposure to professional yield strategies across blue-chip protocols"
+          content="Turn locked RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
         />
         <meta
           name="keywords"
-          content="BOUND, DeFi, yield farming, stablecoin, cryptocurrency, blockchain, automated returns, yield strategies"
+          content="BOUND, BLD, RWA, real-world assets, instant liquidity, DeFi, tokenized assets, instant exit"
         />
         <meta name="author" content="BOUND" />
         <link rel="icon" type="image/png" href="/favicon.png"></link>
@@ -25,11 +25,11 @@ export default function Document() {
         <meta property="og:url" content="https://boundprotocol.com" />
         <meta
           property="og:title"
-          content="BOUND - Decentralized Stablecoin Protocol"
+          content="BOUND — Instant Liquidity for Real-World Assets"
         />
         <meta
           property="og:description"
-          content="Diversified exposure to professional yield strategies across blue-chip protocols"
+          content="Turn locked RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
         />
         <meta property="og:image" content="https://boundprotocol.com/BND.png" />
 
@@ -38,11 +38,11 @@ export default function Document() {
         <meta property="twitter:url" content="https://boundprotocol.com" />
         <meta
           property="twitter:title"
-          content="BOUND - Decentralized Stablecoin Protocol"
+          content="BOUND — Instant Liquidity for Real-World Assets"
         />
         <meta
           property="twitter:description"
-          content="Diversified exposure to professional yield strategies across blue-chip protocols"
+          content="Turn locked RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
         />
         <meta
           property="twitter:image"
