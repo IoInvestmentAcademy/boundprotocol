@@ -11,7 +11,7 @@ export default function Document() {
         <meta name="theme-color" content="#141710" />
         <meta
           name="description"
-          content="Turn locked RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
+          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
         />
         <meta
           name="keywords"
@@ -29,7 +29,7 @@ export default function Document() {
         />
         <meta
           property="og:description"
-          content="Turn locked RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
+          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
         />
         <meta property="og:image" content="https://boundprotocol.com/BND.png" />
 
@@ -42,7 +42,7 @@ export default function Document() {
         />
         <meta
           property="twitter:description"
-          content="Turn locked RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
+          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
         />
         <meta
           property="twitter:image"
