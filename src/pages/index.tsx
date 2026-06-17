@@ -157,7 +157,7 @@ export default function Home() {
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-extralight leading-tight tracking-tight" style={{ color: colors[50] }}>
               <div className="mb-4 md:mb-6">
                 <span className="word" data-delay="1600">Turn</span>{" "}
-                <span className="word" data-delay="1750">locked</span>{" "}
+                <span className="word" data-delay="1750">illiquid</span>{" "}
                 <span className="word" data-delay="1900">RWAs</span>{" "}
                 <span className="word" data-delay="2050">into</span>{" "}
                 <span className="word" data-delay="2200">instant</span>{" "}
@@ -204,10 +204,10 @@ export default function Home() {
                         <span style={{ fontSize: 10, color: colors[400], fontWeight: 500 }}>bTBILL</span>
                       </span>
                       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginLeft: 2 }}><path d="M4 6.5L8 10l4-3.5" stroke={colors[300]} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                      {/* Locked text on its own full-width row */}
+                      {/* Illiquid text on its own full-width row */}
                       <span style={{ flex: "1 0 100%", display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: colors[300], paddingLeft: 55, marginTop: -6 }}>
                         <svg width="10" height="10" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}><circle cx="8" cy="8" r="6.2" stroke={colors[300]} strokeWidth="1.3" /><path d="M8 4.6V8l2.2 1.4" stroke={colors[300]} strokeWidth="1.3" strokeLinecap="round" /></svg>
-                        Locked · redeems in 67 days
+                        Illiquid · redeems in 67 days
                       </span>
                     </div>
                     {/* Multi-RWA pill */}
@@ -260,7 +260,7 @@ export default function Home() {
                 {/* Footer */}
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid rgba(185,212,196,0.08)`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", fontSize: 11, color: colors[300] }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                    Redeem locked RWA positions instantly with BLD.
+                    Redeem illiquid RWA positions instantly with BLD.
                   </span>
 
                   {/* BLD/USDC chip */}
