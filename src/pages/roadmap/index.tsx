@@ -207,6 +207,9 @@ const LAYERS = {
 const LAYER_KEYS = Object.keys(LAYERS) as (keyof typeof LAYERS)[];
 type PhaseId = keyof typeof LAYERS.smartContract.phases;
 
+const ROADMAP_DOCX_PATH = "/BOUND_Protocol_Technical_Roadmap.docx";
+const ROADMAP_DOCX_FILENAME = "BOUND_Protocol_Technical_Roadmap.docx";
+
 export default function Roadmap() {
   const [activePhase, setActivePhase] = useState<PhaseId>("phase1");
   const [activeLayer, setActiveLayer] = useState<keyof typeof LAYERS | null>(null);
@@ -256,7 +259,35 @@ export default function Roadmap() {
             4 Layers · 3 Phases · 18–25 Weeks to Mainnet
           </div>
         </div>
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "12px" }}>
+          <a
+            href={ROADMAP_DOCX_PATH}
+            download={ROADMAP_DOCX_FILENAME}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              border: "1px solid rgba(124,58,237,0.45)",
+              background: "rgba(124,58,237,0.14)",
+              color: "#E8E4FF",
+              fontSize: "12px",
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+              textDecoration: "none",
+              cursor: "pointer",
+              transition: "all 0.15s",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 2v8M8 10l3-3M8 10L5 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M3 12h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+            Download Roadmap (.docx)
+          </a>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end" }}>
           {LAYER_KEYS.map(k => (
             <button
               key={k}
@@ -277,6 +308,7 @@ export default function Roadmap() {
               {LAYERS[k].icon} {LAYERS[k].label}
             </button>
           ))}
+          </div>
         </div>
       </div>
 
