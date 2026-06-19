@@ -1,4 +1,5 @@
 import { useState } from "react";
+import styles from "@/styles/milestone-roadmap.module.css";
 
 type PhaseId = 1 | 2 | 3;
 
@@ -428,10 +429,11 @@ function DevelopmentBudgetCard({
   onToggle: () => void;
 }) {
   return (
-    <div style={{ margin: "24px 40px 0" }}>
+    <div className={styles.section} style={{ margin: "24px 40px 0" }}>
       <div
         role="button"
         tabIndex={0}
+        className={styles.budgetInner}
         onClick={onToggle}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -495,7 +497,7 @@ function DevelopmentBudgetCard({
               {DEVELOPMENT_BUDGET.summary}
             </p>
           </div>
-          <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <div className={styles.budgetMeta} style={{ textAlign: "right", flexShrink: 0 }}>
             <div
               style={{
                 fontSize: "11px",
@@ -507,6 +509,7 @@ function DevelopmentBudgetCard({
               {expanded ? "Collapse breakdown" : "View breakdown"}
             </div>
             <div
+              className={styles.budgetMetaStats}
               style={{
                 display: "flex",
                 gap: "16px",
@@ -592,6 +595,7 @@ function DevelopmentBudgetCard({
                 return (
                   <div
                     key={line.category}
+                    className={styles.tableRow}
                     style={{
                       display: "grid",
                       gridTemplateColumns: "minmax(140px, 1fr) 100px 1fr",
@@ -623,7 +627,7 @@ function DevelopmentBudgetCard({
                         {line.milestones}
                       </div>
                     </div>
-                    <div style={{ textAlign: "right" }}>
+                    <div className={styles.tableAmount} style={{ textAlign: "right" }}>
                       <div
                         style={{
                           fontSize: "14px",
@@ -657,6 +661,7 @@ function DevelopmentBudgetCard({
                 );
               })}
               <div
+                className={`${styles.tableRow} ${styles.tableTotal}`}
                 style={{
                   display: "grid",
                   gridTemplateColumns: "minmax(140px, 1fr) 100px 1fr",
@@ -671,6 +676,7 @@ function DevelopmentBudgetCard({
                   Total development
                 </div>
                 <div
+                  className={styles.tableAmount}
                   style={{
                     fontSize: "15px",
                     fontWeight: 700,
@@ -714,6 +720,7 @@ function DevelopmentBudgetCard({
               {DEVELOPMENT_BUDGET.workforce.map((w, i) => (
                 <div
                   key={w.role}
+                  className={styles.tableRow}
                   style={{
                     display: "grid",
                     gridTemplateColumns: "minmax(160px, 1fr) 140px 90px",
@@ -741,6 +748,7 @@ function DevelopmentBudgetCard({
                     {w.duration}
                   </div>
                   <div
+                    className={styles.tableAmount}
                     style={{
                       fontSize: "13px",
                       fontWeight: 600,
@@ -754,6 +762,7 @@ function DevelopmentBudgetCard({
                 </div>
               ))}
               <div
+                className={`${styles.tableRow} ${styles.tableTotal}`}
                 style={{
                   display: "grid",
                   gridTemplateColumns: "minmax(160px, 1fr) 140px 90px",
@@ -769,6 +778,7 @@ function DevelopmentBudgetCard({
                 </div>
                 <div />
                 <div
+                  className={styles.tableAmount}
                   style={{
                     fontSize: "14px",
                     fontWeight: 700,
@@ -913,6 +923,7 @@ export default function MilestoneRoadmap() {
     >
       {/* Header */}
       <div
+        className={styles.header}
         style={{
           padding: "40px 40px 28px",
           borderBottom: "1px solid var(--color-border-tertiary, rgba(0,0,0,0.08))",
@@ -931,6 +942,7 @@ export default function MilestoneRoadmap() {
           BOUND Protocol · Milestone Roadmap
         </div>
         <div
+          className={styles.headerRow}
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -964,6 +976,7 @@ export default function MilestoneRoadmap() {
             </p>
           </div>
           <div
+            className={styles.headerActions}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -974,6 +987,7 @@ export default function MilestoneRoadmap() {
             <a
               href={MILESTONE_DOCX_PATH}
               download={MILESTONE_DOCX_FILENAME}
+              className={styles.downloadBtn}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -1009,7 +1023,7 @@ export default function MilestoneRoadmap() {
               </svg>
               Download Milestone Roadmap (.docx)
             </a>
-            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: "flex-end" }}>
+            <div className={styles.phaseFilters} style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: "flex-end" }}>
             {[
               { id: 0, label: "All phases" },
               ...PHASES.map((p) => ({ id: p.id, label: p.title })),
@@ -1052,6 +1066,7 @@ export default function MilestoneRoadmap() {
 
       {/* Existing APSS context */}
       <div
+        className={`${styles.section} ${styles.apss}`}
         style={{
           margin: "24px 40px 0",
           padding: "20px 24px",
@@ -1135,6 +1150,7 @@ export default function MilestoneRoadmap() {
       {/* Phase banners */}
       {filterPhase === 0 && (
         <div
+          className={styles.phaseBanners}
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
@@ -1179,8 +1195,9 @@ export default function MilestoneRoadmap() {
 
       {/* Timeline */}
       <div style={{ margin: "28px 0 0" }}>
-        <div style={{ padding: "0 40px 40px", overflowY: "auto" }}>
+        <div className={styles.timelineInner} style={{ padding: "0 40px 40px", overflowY: "auto" }}>
           <div
+            className={styles.timelineHeaders}
             style={{
               display: "grid",
               gridTemplateColumns: "88px 1fr",
@@ -1216,6 +1233,7 @@ export default function MilestoneRoadmap() {
 
           <div style={{ position: "relative" }}>
             <div
+              className={styles.timelineLine}
               style={{
                 position: "absolute",
                 left: "127px",
@@ -1234,6 +1252,7 @@ export default function MilestoneRoadmap() {
               return (
                 <div
                   key={m.id}
+                  className={styles.timelineItem}
                   style={{
                     display: "grid",
                     gridTemplateColumns: "88px 1fr",
@@ -1243,6 +1262,7 @@ export default function MilestoneRoadmap() {
                   }}
                 >
                   <div
+                    className={styles.timelineWeek}
                     style={{
                       paddingTop: "16px",
                       paddingRight: "14px",
@@ -1274,6 +1294,7 @@ export default function MilestoneRoadmap() {
 
                   <div style={{ display: "flex", alignItems: "flex-start" }}>
                     <div
+                      className={styles.timelineDotCol}
                       style={{
                         position: "relative",
                         flexShrink: 0,
@@ -1302,6 +1323,7 @@ export default function MilestoneRoadmap() {
                     <div
                       role="button"
                       tabIndex={0}
+                      className={styles.timelineCard}
                       onClick={() => setActive(isActive ? null : m.id)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
@@ -1324,6 +1346,7 @@ export default function MilestoneRoadmap() {
                       }}
                     >
                       <div
+                        className={styles.timelineCardHeader}
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
@@ -1365,6 +1388,7 @@ export default function MilestoneRoadmap() {
                           </span>
                         </div>
                         <span
+                          className={styles.timelineCardToggle}
                           style={{
                             fontSize: "11px",
                             fontWeight: 500,
@@ -1484,6 +1508,7 @@ export default function MilestoneRoadmap() {
 
       {/* Summary stats */}
       <div
+        className={styles.summary}
         style={{
           margin: "0 40px 48px",
           padding: "22px 28px",

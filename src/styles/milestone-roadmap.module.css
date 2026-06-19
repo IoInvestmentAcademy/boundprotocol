@@ -1,0 +1,139 @@
+/* Mobile-only overrides — desktop layout unchanged (min-width: 768px) */
+
+@media (max-width: 767px) {
+  .header {
+    padding: 24px 16px 20px !important;
+  }
+
+  .headerRow {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 16px !important;
+  }
+
+  .headerActions {
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+
+  .downloadBtn {
+    justify-content: center !important;
+    width: 100% !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+
+  .phaseFilters {
+    justify-content: flex-start !important;
+  }
+
+  .section {
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+
+  .apss {
+    padding: 16px !important;
+  }
+
+  .budgetInner {
+    padding: 16px !important;
+  }
+
+  .budgetMeta {
+    text-align: left !important;
+    width: 100% !important;
+  }
+
+  .budgetMetaStats {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .phaseBanners {
+    grid-template-columns: 1fr !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+  }
+
+  .phaseBanners > div {
+    padding: 14px 16px !important;
+  }
+
+  .timelineInner {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-bottom: 32px !important;
+  }
+
+  .timelineHeaders {
+    display: none !important;
+  }
+
+  .timelineLine {
+    left: 62px !important;
+  }
+
+  .timelineItem {
+    grid-template-columns: 48px 1fr !important;
+    margin-bottom: 10px !important;
+  }
+
+  .timelineWeek {
+    padding-top: 14px !important;
+    padding-right: 8px !important;
+  }
+
+  .timelineDotCol {
+    width: 28px !important;
+    padding-top: 16px !important;
+  }
+
+  .timelineCard {
+    padding: 12px 14px !important;
+  }
+
+  .timelineCardHeader {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .timelineCardToggle {
+    padding-top: 0 !important;
+  }
+
+  .tableRow {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    padding: 12px 14px !important;
+  }
+
+  .tableRow .tableAmount {
+    text-align: left !important;
+  }
+
+  .tableTotal {
+    grid-template-columns: 1fr auto !important;
+  }
+
+  .tableTotal > div:nth-child(2) {
+    display: none !important;
+  }
+
+  .summary {
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+    margin-bottom: 32px !important;
+    padding: 18px 16px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 399px) {
+  .summary {
+    grid-template-columns: 1fr !important;
+  }
+}
