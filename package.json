@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3000",
+    "start": "next start -p 3012",
     "lint": "next lint",
     "heroku-postbuild": "npm run build",
     "generate-favicon": "node scripts/generate-favicon.js"
