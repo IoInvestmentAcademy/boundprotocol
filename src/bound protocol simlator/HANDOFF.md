@@ -1,6 +1,29 @@
 # BOUND Protocol Simulator v7 — Handoff
 
-**Last synced:** 2026-07-09 (Documentation `src/BoundLegend.jsx` rewritten v3.0 → **v4.0** to match the v8 engine — corrected BCI price formula, removed the monthly-threshold and float-phase mechanisms, ILB/AYL/EYL → 4-tier waterfall + LCR, Bound Core two-tier model, 0.89% conversion fee, Default/Custom scenarios, glossary overhauled). **All 10 sections audited + docs synced** — awaiting owner sign-off on 3–10.
+**Last synced:** 2026-07-10 — **Participant Economics tab deep audit (Addendum 4) — DEEP-AUDIT SERIES COMPLETE: all four Simulation Results tabs now have dedicated identity probes** (`audit-overview/bcisc/pr-er/participant-economics`). E1–E9 all pass (real `computeLpOutcome` vs second implementation, linearity, netApy↑-with-hold guard, net<gross). One transparency fix: cards' fine print now explains the conversion-fee leg is net of the BND-paid share (paid in BND tokens, never deducted from the deposit). Earlier same day: **Protocol Reserve Revenue + Emergency Reserve tab deep audit** (Addendum 3): all numbers verified to SOURCE level via new permanent probe `scripts/audit-pr-er-identities.mjs` (P1–P16 — incl. exact ER roll-forward/target/top-up re-derivation, per-market integration/maintenance/trade/haircut from served volumes × live rates, and full fee chains from sliders). One fix: the PR chart tooltip summed to gross but showed only the net total — now shows Gross → − ER top-up → Net so it visibly adds up. Earlier same day: **BCI SC Revenue tab deep audit** (see `AUDIT_SECTIONS_7-10_RESULTS_PAGE.md` Addendum 2): all numbers verified correct via new permanent probe `scripts/audit-bcisc-identities.mjs` (B1–B10, incl. cross-checks against the LP fee-table exports); three copy fixes — Pool+APSS cards on BOTH revenue tabs now say "ALL pool volume (retail + RWA)" (was "retail flow", understating the base), Mint/Redemption rate now follows the `mintRedeemFee` slider (was hardcoded 0.3%), chart headline "M12 total"→"M12 · monthly revenue". Also same day: **Protocol Reserve Revenue tab restructured (owner request)** to mirror BCI SC Revenue: the single Monthly Breakdown table split into a $ table (7 sources + Total) + a new **% Composition** table (mirrors BCI SC's, last row = cumulative PR balance). The "Gross / − ER top-up" rows that used to sit inline in the $ table moved into a brand-new **Emergency Reserve** section (own reference card explaining seed/funding/target/waterfall + own Performance table: balance, the two funding credits, target, and coverage %). Two new memos (`prMonthlyCompositionData`, `erPerformanceTableData`); pure UI reorg, no engine values touched, full battery re-confirmed green.
+
+**Earlier the same day — DEFAULT PRESET RECALIBRATED (owner-directed):** see table below. Also: Year 4/5 pool-growth sliders removed (unreachable dead controls — 36-month engine can't reach poolYearIdx 3/4, P10 pitfall); all 10 RWA markets' Integration Fee default $150K→$50K; Overview tab table section renamed "Private Liquidity Providers"→"Liquidity Providers"; Liquidity Layer KPI subtitle dropped its "blended yield" clause.
+
+| Field | Was | Now |
+|---|---|---|
+| `lpGrowth` (Private monthly growth) | $500K | **$800K** |
+| `poolInitialVolume` | $200K | **$50K** |
+| `poolStart` | Month 4 | **Month 6** |
+| `poolGrowthY1/Y2/Y3` | 7/3/3% | **20/15/12%** |
+| `privateBCIConversion` | 98% | **92%** |
+| `retailBCIConversion` | 98% | **80%** |
+| `convFeeRwaUSD` | 0.89% | **0.88%** |
+| `integFee` (all 10 markets) | $150K | **$50K** |
+| `layerMinBuffer` (USDC floor) | 5% | **10%** |
+| `morphoMinReserve` | 20% | **22%** |
+| `aaveYield` | 3.5% | **2.2%** |
+| `morphoYield` | 4.5% | **5.3%** |
+| `enhancedYield` | 7.5% | **6.2%** |
+| `bcUsdcCoverage` (Bound Core) | 100% | **24%** — activates the USDC Yield Position / float yield stream, previously always $0 |
+
+Measured impact (live default preset): M12 annG 8.4%→**12.9%**, M12 Bound Core USDC $0→**$243.4K** (now non-zero). Full battery re-run and green after the recalibration.
+
+**Earlier the same day — ECONOMICS CHANGE (owner-directed):** private mint, private redeem (incl. same-class pre-pool RWA redemption fee), RWA trade fee, and RWA haircut splits all flipped **20/80 → 80% BCI SC / 20% Protocol Reserve**. Engine + per-market table + all UI cards/hints + docs + verification scripts (C6, hand-verify) updated together; maintenance/pool/yield splits unchanged. Measured impact (3-market benchmark): M12 annG 8.47%→**13.64%**, M36 9.46%→**14.52%**, PR cumulative M36 $4.21M→**$2.16M**. App default M12 headline now 13.4%. Docs conversion-fee wording also reverted to 0.88% per owner (note: default preset slider remains 0.89%). Earlier same day: Overview-tab deep audit, owner-requested — every identity behind the BCI Annualized Growth headline independently re-derived across 36 months × 2 configs via new permanent probe `scripts/audit-overview-identities.mjs` (T1–T8, all pass); one label defect fixed ("this month" shown on yearly sums in the All view); dead memo fields from the same-day table restructure removed; see `AUDIT_SECTIONS_7-10_RESULTS_PAGE.md` Addendum). **All 10 sections audited + docs synced (BoundLegend v4.0)** — awaiting owner sign-off on 3–10.
 
 Financial simulation UI for BOUND Protocol: BCI index price, LP flows, RWA markets, fee revenue, and Protocol Reserve.
 
@@ -53,6 +76,10 @@ old bundles — always confirm the URL bar shows **5239**.
 | `node scripts/verify-invariants.mjs` | **Primary harness** — **30 invariant families**, 36 months, exits non-zero on failure |
 | `node scripts/hand-verify-m12.mjs` | Independent M12 re-derivation — **32/32 values**, diffed against engine |
 | `node scripts/audit-conservation.mjs` | Ledger tie-out (1-market + 3-market configs) |
+| `node scripts/audit-overview-identities.mjs` | Overview-tab display identities T1–T8 (SC/NAV roll-forwards, price×supply=backing, annG, annual-summary aggregation) — 36 months × 2 configs |
+| `node scripts/audit-bcisc-identities.mjs` | BCI SC Revenue tab identities B1–B10 (7-stream sum, cross-export re-derivations, post-flip splits, composition=100%, per-market maint, conv/entry vs LP fee-table exports) — 36 months × 2 configs |
+| `node scripts/audit-pr-er-identities.mjs` | PR Revenue + Emergency Reserve identities P1–P16 incl. SOURCE level (gross/net/ER identity, prCum & ER exact roll-forwards, target/top-up formulas, per-market integ/maint/trade/haircut from served volumes × live rates, fee chains from sliders) — 36 months × 2 configs |
+| `node scripts/audit-participant-economics.mjs` | Participant Economics identities E1–E9 (real `computeLpOutcome` vs second implementation, fee legs, Net-APY formula, amount-linearity, netApy↑ with hold, net<gross, RWA-holder averages) |
 | `node scripts/diagnose-10-markets.mjs` | 10-market default pipeline stress-check |
 | `node scripts/quantify-reorder-impact.mjs` | Isolates §3 Addendum 1 STEP 0 reorder before/after (§3 doc) |
 | `node scripts/compare-scenarios.mjs` | Legacy CLI (predates Default-only preset model) |

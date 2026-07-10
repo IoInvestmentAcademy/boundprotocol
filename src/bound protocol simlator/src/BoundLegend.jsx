@@ -361,7 +361,7 @@ export default function BoundLegend({ onClose }) {
           ]},
           { token:"BND", sub:"BOUND Governance Token", points:[
             "Governance token: holders vote on fee structures, ER policy, market approvals.",
-            "When used to pay conversion fees: ~50% discount (0.44% instead of 0.89%).",
+            "When used to pay conversion fees: ~50% discount (0.44% instead of 0.88%).",
             "BND tokens used for fee payment are 100% burned — ZERO credit flows to BCI SC.",
             "BND burning creates deflationary pressure benefiting BND holders independently.",
             "Protocol Reserve executes periodic BND buybacks from the market.",
@@ -388,8 +388,8 @@ export default function BoundLegend({ onClose }) {
 
         {[
           { title:"LP User Flow", flows:[
-            ["Private LP","LP provides USDC → pays 0.3% mint fee → receives rwaUSD → converts to BCI (0.89% or 0.44% BND; default 98% of the deposit converts) → holds BCI through a 6-month capital lock → BCI collateral performance accrues → after the lock, exits monthly at the configured outflow rate (conversion fee + 0.3% redeem fee on the way out)."],
-            ["Retail LP","LP buys rwaUSD on pool (0.3% pool fee + slippage) → converts to BCI (0.89%/0.44%; default 98%) → holds BCI → converts back and sells on pool. No lock, no minimum."],
+            ["Private LP","LP provides USDC → pays 0.3% mint fee → receives rwaUSD → converts to BCI (0.88% or 0.44% BND; default 98% of the deposit converts) → holds BCI through a 6-month capital lock → BCI collateral performance accrues → after the lock, exits monthly at the configured outflow rate (conversion fee + 0.3% redeem fee on the way out)."],
+            ["Retail LP","LP buys rwaUSD on pool (0.3% pool fee + slippage) → converts to BCI (0.88%/0.44%; default 98%) → holds BCI → converts back and sells on pool. No lock, no minimum."],
             ["LP redemption priority","BCI redemptions are SENIOR: LP exits are served first each month from the Layer's USDC buffer plus cash returning from the RWA issuer pipeline — before any new RWA liquidation demand is accepted. RWA service is discretionary; LP exits are an obligation."],
           ]},
           { title:"RWA Holder Flow", flows:[
@@ -428,7 +428,7 @@ export default function BoundLegend({ onClose }) {
           what="Protocol revenue from peg stabilization. Not a fee charged to users."
           how="Buy-side: APSS mints rwaUSD at elevated price, captures spread. Sell-side: APSS buys at discount, burns, captures. Executes atomically in the same block. User only pays pool fee + slippage."
           dist="80% BCI SC · 20% Protocol Reserve" />
-        <FeeCard n="03" title="rwaUSD Conversion Fee (full)" rate="0.89% per conversion" trigger="rwaUSD to BCI"
+        <FeeCard n="03" title="rwaUSD Conversion Fee (full)" rate="0.88% per conversion" trigger="rwaUSD to BCI"
           what="Fee charged when any user converts between rwaUSD and BCI in either direction (entry and exit, private and retail)."
           how="The conversion fee is deducted from the rwaUSD amount. That rwaUSD is burned — its supply is reduced. The USDC that was backing that burned rwaUSD in Bound Core is released and credited to the BCI SC as collateral surplus. This is what drives BCI price up. The single biggest BCI SC revenue stream."
           dist="100% BCI SC (USDC from Bound Core backing the burned rwaUSD) · 0% to Protocol Reserve" />
@@ -438,16 +438,16 @@ export default function BoundLegend({ onClose }) {
           dist="0% BCI SC · 0% Protocol Reserve · 100% BND burn" />
         <FeeCard n="05" title="Private Mint / Redeem Fee" rate="0.3% per side" trigger="Private LP entry/exit"
           what="Fee charged when institutional LPs mint or redeem rwaUSD directly, bypassing the pool."
-          how="Service fee for the direct minting path. Charged 0.3% on entry and 0.3% on exit. Goes primarily to Protocol Reserve as a service fee."
-          dist="20% BCI SC · 80% Protocol Reserve" />
+          how="Service fee for the direct minting path. Charged 0.3% on entry and 0.3% on exit. Majority credited to BCI SC, supporting the index."
+          dist="80% BCI SC · 20% Protocol Reserve" />
         <FeeCard n="06" title="RWA Trade Fee" rate="0.3% per direction" trigger="Every RWA transaction"
           what="Fee charged on every RWA transaction routed through BOUND markets."
           how="RWA to rwaUSD: 0.3% on the sell side. rwaUSD to RWA (reverse direction): 0.3% charged independently. Each direction charged separately on the transaction value."
-          dist="20% BCI SC · 80% Protocol Reserve" />
+          dist="80% BCI SC · 20% Protocol Reserve" />
         <FeeCard n="07" title="RWA Haircut Spread" rate="Dynamic (0.5% baseline, per market)" trigger="Every RWA purchase"
           what="Spread between what BOUND pays for an RWA (below NAV) and what it recovers at maturity."
           how="BOUND buys $1M Treasury at 0.5% haircut, pays $995K, recovers $1M at maturity — $5K spread is revenue. Each market has its own haircut, escalated by a gentle 3-step ladder when concentration rises: per-market held inventory is capped at 10% of the Layer and the whole RWA category at 20%; approaching either cap bumps the haircut and trade fee stepwise (no punitive cliff). The minting-side haircut is reduced by a stress-linked discount ladder (applied with a one-month lag)."
-          dist="20% BCI SC · 80% Protocol Reserve" />
+          dist="80% BCI SC · 20% Protocol Reserve" />
         <FeeCard n="08" title="Annual Market Maintenance Fee" rate="$75K/market/year" trigger="Monthly, per active market"
           what="Recurring annual fee per active RWA market."
           how="RWA issuers pay $75,000/year. Covers oracle maintenance, smart contract upkeep, governance support. Collected monthly ($6,250/month/market)."
@@ -472,12 +472,12 @@ export default function BoundLegend({ onClose }) {
               {[
                 ["Pool Trading Fee","0.3% of pool vol","80%","20%","Retail swaps only"],
                 ["APSS Arbitrage","~0.5% of pool vol","80%","20%","Not a user fee — protocol capture"],
-                ["Conversion (rwaUSD full)","0.89%","100%","0%","USDC backing burned rwaUSD to SC"],
+                ["Conversion (rwaUSD full)","0.88%","100%","0%","USDC backing burned rwaUSD to SC"],
                 ["Conversion (BND discount)","0.44% · BND burned","0%","0%","BND holders only"],
-                ["Private Mint","0.3% on entry","20%","80%","Direct institutional path"],
-                ["Private Redeem","0.3% on exit","20%","80%","Direct institutional path"],
-                ["RWA Trade Fee","0.3%/direction (per market)","20%","80%","Each direction independent"],
-                ["RWA Haircut Spread","Dynamic (0.5% base, per market)","20%","80%","Concentration escalation ladder"],
+                ["Private Mint","0.3% on entry","80%","20%","Direct institutional path"],
+                ["Private Redeem","0.3% on exit","80%","20%","Direct institutional path"],
+                ["RWA Trade Fee","0.3%/direction (per market)","80%","20%","Each direction independent"],
+                ["RWA Haircut Spread","Dynamic (0.5% base, per market)","80%","20%","Concentration escalation ladder"],
                 ["Maintenance Fee","$75K/mkt/yr","20%","80%","Monthly / 12"],
                 ["Integration Fee","$150K/market","0%","100%","One-time, new market"],
                 ["Layer Yield (gross)","Blended Aave/Morpho/Enhanced","80%","10%","10% credited to Emergency Reserve"],
@@ -503,9 +503,9 @@ export default function BoundLegend({ onClose }) {
               {[
                 ["Pool fee + APSS","80%","Every pool swap","Protocol arbitrage surplus to SC"],
                 ["Conversion fee (rwaUSD path)","100%","Every rwaUSD to BCI conversion","USDC from Bound Core backing burned rwaUSD to SC"],
-                ["Private mint/redeem fee","20%","Private LP entry and exit","Partial service fee to SC"],
-                ["RWA trade fee (0.3%/dir.)","20%","Every RWA transaction","SC credited from RWA revenue"],
-                ["RWA haircut spread","20%","On served liquidation/minting volume","Per-market haircut on volume served"],
+                ["Private mint/redeem fee","80%","Private LP entry and exit","Majority of service fee to SC"],
+                ["RWA trade fee (0.3%/dir.)","80%","Every RWA transaction","SC credited from RWA revenue"],
+                ["RWA haircut spread","80%","On served liquidation/minting volume","Per-market haircut on volume served"],
                 ["Market maintenance fee","20%","Monthly per active market","Recurring issuer fee portion to SC"],
                 ["Layer yield","80%","Monthly mark-to-accrual","80% of blended USDC/Morpho/Enhanced yield"],
                 ["Bound Core float yield","80% (flat)","Monthly","Yield on the USDC Yield Position"],
@@ -527,7 +527,7 @@ export default function BoundLegend({ onClose }) {
             <thead><tr><TH>Benefit</TH><TH>Mechanism</TH><TH>Source</TH><TH>Note</TH></tr></thead>
             <tbody>
               {[
-                ["~50% conversion fee discount","Pay 0.44% instead of 0.89%","Direct utility","Must pay in BND tokens"],
+                ["~50% conversion fee discount","Pay 0.44% instead of 0.88%","Direct utility","Must pay in BND tokens"],
                 ["Token supply reduction","BND burned on every discounted conversion","Conversion payments","Each use reduces circulating supply"],
                 ["Periodic BND buyback & burn","PR purchases BND from market, burns","Protocol Reserve income","Regular PR allocation to market buy"],
                 ["RWA minting/redemption backstop","PR covers Layer shortfalls at entry/exit","Protocol Reserve","Pool/APSS stream backstops early-stage"],
@@ -597,7 +597,7 @@ export default function BoundLegend({ onClose }) {
             {["Fee revenues credited to SC without minting new BCI",
               "Layer yield distribution (80% of blended yield)",
               "Bound Core float yield (flat 80%)",
-              "RWA haircut + trade fees (20% share)",
+              "RWA haircut + trade fees (80% share)",
             ].map((t,i) => <div key={i} style={{ fontSize:12.5, color:T.greenInk, marginBottom:5,
               lineHeight:1.55, display:"flex", gap:7 }}>
               <span style={{ color:T.green }}>+</span><span>{t}</span>
@@ -773,9 +773,9 @@ export default function BoundLegend({ onClose }) {
         {/* S10 */}
         <SH id="s10" n="10">User Economics — Who Pays What</SH>
         <ParticipantCard type="Private LP" pays={[
-          "Mint rwaUSD: 0.3% (20% BCI / 80% PR)",
-          "Convert rwaUSD to BCI: 0.89% full or 0.44% with BND",
-          "Exit: 0.89% conversion + 0.3% redeem (20% BCI / 80% PR)",
+          "Mint rwaUSD: 0.3% (80% BCI / 20% PR)",
+          "Convert rwaUSD to BCI: 0.88% full or 0.44% with BND",
+          "Exit: 0.88% conversion + 0.3% redeem (80% BCI / 20% PR)",
           "Commitment: 6-month capital lock, then scheduled monthly exits",
         ]} earns={[
           "BCI collateral performance (simulated ~8-9% annualized at M12, Default preset)",
@@ -785,8 +785,8 @@ export default function BoundLegend({ onClose }) {
         ]} />
         <ParticipantCard type="Retail LP (Pool)" pays={[
           "Buy rwaUSD on pool: 0.3% fee + natural slippage (APSS invisible to user)",
-          "Convert to BCI: 0.89% or 0.44% with BND",
-          "Exit: 0.89% conversion + 0.3% pool + slippage",
+          "Convert to BCI: 0.88% or 0.44% with BND",
+          "Exit: 0.88% conversion + 0.3% pool + slippage",
         ]} earns={[
           "Same BCI collateral performance as private LP",
           "No minimum — accessible to any wallet",
@@ -812,7 +812,7 @@ export default function BoundLegend({ onClose }) {
         <ParticipantCard type="BND Governance Holder" pays={[
           "BND tokens burned when used for conversion fee payment",
         ]} earns={[
-          "~50% conversion fee discount (0.44% vs 0.89%)",
+          "~50% conversion fee discount (0.44% vs 0.88%)",
           "Supply scarcity from continuous burns",
           "Periodic Protocol Reserve buyback & burn",
           "Governance rights: fees, ER policy, market additions",
@@ -855,11 +855,11 @@ export default function BoundLegend({ onClose }) {
         <Sub>4. BCI Revenue Components</Sub>
         <Formula label="Each stream credited to BCI SC (default rates)" lines={[
           "bci_pool    =  Pool_volume  x  0.008  x  0.80        // 0.3% pool + 0.5% APSS",
-          "bci_entry   =  (mint fee + redeem fee + pre-pool RWA redeem fee)  x  0.20",
+          "bci_entry   =  (mint fee + redeem fee + pre-pool RWA redeem fee)  x  0.80",
           "bci_conv    =  all conversion fees, rwaUSD path       // 100% to SC",
-          "               (entry + exit, private + retail, at 0.89% x (1 - BND_usage))",
+          "               (entry + exit, private + retail, at 0.88% x (1 - BND_usage))",
           "bci_maint   =  Σ active markets' maint fee  /  12  x  0.20",
-          "bci_rwa     =  (RWA trade revenue + haircut revenue)  x  0.20",
+          "bci_rwa     =  (RWA trade revenue + haircut revenue)  x  0.80",
           "               // per-market rates on SERVED volume, incl. minting side",
           "bci_morpho  =  Layer_yield_gross  x  0.80",
           "               // Σ (tier balance x tier rate / 12) across USDC/Morpho/Enhanced",
@@ -869,10 +869,10 @@ export default function BoundLegend({ onClose }) {
         <Sub>5. Protocol Reserve Revenue Components</Sub>
         <Formula label="Each stream credited to Protocol Reserve" lines={[
           "pr_pool    =  Pool_volume  x  0.008  x  0.20",
-          "pr_entry   =  (mint + redeem + pre-pool RWA redeem fees)  x  0.80",
+          "pr_entry   =  (mint + redeem + pre-pool RWA redeem fees)  x  0.20",
           "pr_integ   =  Σ integration fees of markets launching this month",
           "pr_maint   =  Σ active markets' maint fee  /  12  x  0.80",
-          "pr_rwa     =  (RWA trade revenue + haircut revenue)  x  0.80",
+          "pr_rwa     =  (RWA trade revenue + haircut revenue)  x  0.20",
           "pr_morpho  =  Layer_yield_gross  x  0.10",
           "pr_float   =  BC_yield_position  x  BC_rate / 12  x  0.20   // flat",
           "",
@@ -883,11 +883,11 @@ export default function BoundLegend({ onClose }) {
 
         <Sub>6. Effective Conversion Rate</Sub>
         <Formula label="BCI SC receives only the rwaUSD-path portion" lines={[
-          "BCI_conv_revenue  =  Conv_volume  x  (1 - BND_usage)  x  0.0089",
+          "BCI_conv_revenue  =  Conv_volume  x  (1 - BND_usage)  x  0.0088",
           "",
           "// BND portion is burned — zero to BCI SC",
           "// Example at 10% BND usage (default):",
-          "  BCI_conv  =  Conv_vol  x  0.90  x  0.0089  ≈  Conv_vol x 0.80%",
+          "  BCI_conv  =  Conv_vol  x  0.90  x  0.0088  ≈  Conv_vol x 0.80%",
         ]} />
 
         <Sub>7. Layer Allocation (4-Tier Waterfall)</Sub>
@@ -961,7 +961,7 @@ export default function BoundLegend({ onClose }) {
           {[
             ["rwaUSD", "BOUND's 100% USDC-backed stablecoin. Backed by Bound Core SC. RWA never backs rwaUSD. Peg defended atomically by APSS on Uniswap v4."],
             ["BCI (Bound Collateralization Index)", "Index token tracking Bound Liquidity Layer collateral performance. Price = (Layer NAV + BCI SC balance) / BCI Supply, in rwaUSD. Never on secondary market. Not a yield product — language is 'index growth' / 'collateral performance.'"],
-            ["BND (BOUND Governance Token)", "Governance token with conversion fee discount utility. ~50% discount when used (0.44% vs 0.89%). 100% burned on use. Zero benefit to BCI SC from BND payments."],
+            ["BND (BOUND Governance Token)", "Governance token with conversion fee discount utility. ~50% discount when used (0.44% vs 0.88%). 100% burned on use. Zero benefit to BCI SC from BND payments."],
             ["APSS (Atomic Peg Stabilization System)", "Core peg defense. Executes corrective trades in same block as every pool trade. Not a user fee — protocol captures arbitrage that would otherwise go to MEV bots."],
             ["BCI SC (BCI Smart Contract)", "Running rwaUSD ledger of accumulated FEE REVENUE only — LP capital lives in the Liquidity Layer, not here. Fee credits grow the SC without minting supply, which is what moves BCI price."],
             ["Bound Core SC", "Holds the USDC backing idle rwaUSD (the non-converting share of LP deposits). Two tiers: raw USDC sized to coverage% × idle rwaUSD (default 100%, 0% yield, instant redemption), plus a USDC Yield Position for any surplus NAV (default 4.5%/yr, flat 80/20 split)."],
@@ -973,7 +973,7 @@ export default function BoundLegend({ onClose }) {
             ["USDC Yield Position", "Bound Core's Tier 2 — USDC NAV above the instant-redemption coverage requirement. Earns the configured rate (default 4.5%/yr), paid out once, flat 80% BCI SC / 20% PR. $0 at the default 100% coverage."],
             ["Emergency Reserve (ER)", "$500K seed, insured. Fed by 10% of gross Layer yield every month plus PR top-ups (capped at 10% of gross monthly PR) toward its target: 10% → 20% of at-risk assets over the 36-month horizon (25% cap beyond)."],
             ["Loss Waterfall", "Order: (1) Emergency Reserve, (2) insurance policy, (3) BCI index reduction. BCI holders are the absolute last resort."],
-            ["Haircut", "Discount at which BOUND buys RWA below NAV. Per-market baseline (0.5% default), escalated by a 3-step ladder as held inventory approaches the 10% per-market / 20% category caps. Minting-side haircut is reduced by a stress-linked discount ladder (one-month lag). Revenue: 20% BCI / 80% PR."],
+            ["Haircut", "Discount at which BOUND buys RWA below NAV. Per-market baseline (0.5% default), escalated by a 3-step ladder as held inventory approaches the 10% per-market / 20% category caps. Minting-side haircut is reduced by a stress-linked discount ladder (one-month lag). Revenue: 80% BCI / 20% PR."],
             ["Collateral Surplus", "Revenue credited to BCI SC. Includes USDC released from Bound Core when rwaUSD is burned (conversion fee), plus fee shares and yield distributions. This drives BCI price."],
             ["Issuer Redemption Pipeline", "Per-market ledger of RWA inventory sent back to its issuer for redemption. Each market's pipeline returns cash at that market's own issuerRedemptionDays (T+30-T+120) — no blended average. Pipeline cash counts as returning liquidity, not held risk."],
             ["T+0", "Instant settlement. Guaranteed for RWA holders. NOT for LP holders — LP redemption tied to RWA issuer period."],
@@ -985,7 +985,7 @@ export default function BoundLegend({ onClose }) {
         <div style={{ padding:"12px 16px", background:T.bgSoft, border:`1px solid ${T.border}`,
           borderRadius:8, fontSize:11.5, color:T.ink3, lineHeight:1.75 }}>
           <strong style={{ color:T.ink, fontSize:12.5 }}>BOUND Protocol Reference Document v4.0</strong><br />
-          Architecture v4, July 2026 — synchronized with simulator v8 after the full 10-section audit. Key changes from v3: BCI price = (Layer NAV + BCI SC) ÷ supply — LP capital and fee revenue in separate ledgers, mint/burn at start-of-month price. Liquidity Layer = 4-tier waterfall (USDC/Morpho/Enhanced/RWA held) with LCR stress modes and a 1.5x RWA acceptance guard — replaces the ILB/AYL/EYL velocity model. BCI redemptions senior to RWA service; per-market issuer pipelines at each market's own T+30-T+120. Bound Core = two-tier coverage model (raw USDC + USDC Yield Position), float yield flat 80/20 — phase schedule removed. Conversion fee 0.89%. Monthly appreciation threshold removed. Concentration: gentle 3-step escalation at 10% per-market / 20% category caps — punitive cliff removed. ER fed by 10% of Layer yield + capped PR top-ups; 36-month horizon throughout. Ten named RWA markets with individual parameters.<br />
+          Architecture v4, July 2026 — synchronized with simulator v8 after the full 10-section audit. Key changes from v3: BCI price = (Layer NAV + BCI SC) ÷ supply — LP capital and fee revenue in separate ledgers, mint/burn at start-of-month price. Liquidity Layer = 4-tier waterfall (USDC/Morpho/Enhanced/RWA held) with LCR stress modes and a 1.5x RWA acceptance guard — replaces the ILB/AYL/EYL velocity model. BCI redemptions senior to RWA service; per-market issuer pipelines at each market's own T+30-T+120. Bound Core = two-tier coverage model (raw USDC + USDC Yield Position), float yield flat 80/20 — phase schedule removed. Conversion fee 0.88%. Private mint/redeem and RWA trade/haircut splits flipped to 80% BCI SC / 20% Protocol Reserve (July 2026). Monthly appreciation threshold removed. Concentration: gentle 3-step escalation at 10% per-market / 20% category caps — punitive cliff removed. ER fed by 10% of Layer yield + capped PR top-ups; 36-month horizon throughout. Ten named RWA markets with individual parameters.<br />
           <span style={{ color:T.red }}>Illustrative only. Not a financial projection or investment advice.</span>
         </div>
       </div>

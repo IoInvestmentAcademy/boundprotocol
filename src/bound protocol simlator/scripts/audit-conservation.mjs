@@ -61,11 +61,11 @@ for (const [label, mks] of [["1 market", [M1]], ["3 markets (default)", [M1, M2,
 
     // C6 — revenue splits complement: every stream's BCI+PR shares reconstruct the gross
     check(close(r.bci_pool / 0.80, r.pr_pool / 0.20), `${tag} C6 pool split not 80/20`);
-    check(close(r.bci_rwa / 0.20, r.pr_rwa / 0.80), `${tag} C6 rwa split not 20/80`);
+    check(close(r.bci_rwa / 0.80, r.pr_rwa / 0.20), `${tag} C6 rwa split not 80/20`);  // flipped 2026-07-10 (owner)
     check(close(r.bci_maint / 0.20, r.pr_maint / 0.80), `${tag} C6 maint split not 20/80`);
     check(close(r.bci_morpho / 0.80, r.pr_morpho / 0.10), `${tag} C6 layer yield split not 80/10`);
     check(close(r.bci_float / 0.80, r.pr_float / 0.20), `${tag} C6 float split not 80/20`);
-    check(close(r.bci_entry / 0.20, r.pr_entry / 0.80), `${tag} C6 entry split not 20/80`);
+    check(close(r.bci_entry / 0.80, r.pr_entry / 0.20), `${tag} C6 entry split not 80/20`);  // flipped 2026-07-10 (owner)
 
     // C7 — RWA fee revenue gross ties to per-market served volumes and rates
     if (r.marketStats) {

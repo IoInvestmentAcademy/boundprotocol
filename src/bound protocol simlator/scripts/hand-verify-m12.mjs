@@ -197,10 +197,10 @@ cmp("layerYieldGross", layerYield, m12.layerYieldGross);
 const poolRate = (p.poolFee + p.apssFee) / 100;
 const bci_pool = pVol * poolRate * 0.80;
 const bci_conv = convFeeEntry + convFeeExit + retConvFeeX + retConvFeeE;
-const bci_entry = (mintFee + redeemFee + 0) * 0.20;       // pool live => no rwaRedeemFee
+const bci_entry = (mintFee + redeemFee + 0) * 0.80;       // pool live => no rwaRedeemFee; 80/20 since 2026-07-10 (owner flip, was 20/80)
 const rwaTrade = (rwaLiq + rwaMint) * tradeFRate;
 cmp("rwaTradeRevenue", rwaTrade, m12.rwaTradeRevenue);
-const bci_rwa = (rwaTrade + haircut) * 0.20;
+const bci_rwa = (rwaTrade + haircut) * 0.80;              // 80/20 since 2026-07-10 (owner flip, was 20/80)
 const bci_maint = MK.maintFee / 12 * 0.20;
 const bci_morpho = layerYield * 0.80;
 const bci_float = bcYieldMo * 0.80;

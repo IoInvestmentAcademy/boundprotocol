@@ -68,14 +68,16 @@ const fSupply = (n) => {
 const PRESETS = {
   default: {
     name: "Default",
-    initPrivateLp:3_200_000, lpGrowth:500_000,
-    poolInitialVolume:200_000, poolStart:4,
-    poolGrowthY1:7, poolGrowthY2:3, poolGrowthY3:3, poolGrowthY4:2, poolGrowthY5:1,
+    // Defaults recalibrated 2026-07-10 (owner-directed) — see HANDOFF changelog
+    // for the full before/after table.
+    initPrivateLp:3_200_000, lpGrowth:800_000,
+    poolInitialVolume:50_000, poolStart:6,
+    poolGrowthY1:20, poolGrowthY2:15, poolGrowthY3:12, poolGrowthY4:8, poolGrowthY5:7,
     bndUsage:10, lpOutflow:2.5, lockPeriod:6,
-    integFee:150_000, maintFee:75_000, morphoRate:4,
-    privateBCIConversion:98, retailBCIConversion:98, retailSellRate:20,
+    integFee:50_000, maintFee:75_000, morphoRate:4,
+    privateBCIConversion:92, retailBCIConversion:80, retailSellRate:20,
     poolFee:0.3, apssFee:0.5,
-    convFeeRwaUSD:0.89, convFeeBND:0.44,
+    convFeeRwaUSD:0.88, convFeeBND:0.44,
     mintRedeemFee:0.3, rwaTradeF:0.3,
     retailOutflowRate:8,
   },
@@ -676,10 +678,10 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
 
     // Mint fee (on full lpIn) + private Redeem fee (rwaUSD after conversion fee)
     // + pre-pool RWA liquidation redemption fee (0.3%). All are redemption/entry-class fees,
-    // split 20% BCI SC / 80% Protocol Reserve (same as the private mint/redeem fee).
+    // split 80% BCI SC / 20% Protocol Reserve (owner-directed flip 2026-07-10; was 20/80).
     const rwaRedeemFee = rwaRedeemVol * mintRdmRate; // 0.3% on pre-pool RWA liquidation volume
-    const bci_entry = (mintFeeRevenue + redeemFeeRevenue + rwaRedeemFee) * 0.20;
-    const pr_entry  = (mintFeeRevenue + redeemFeeRevenue + rwaRedeemFee) * 0.80;
+    const bci_entry = (mintFeeRevenue + redeemFeeRevenue + rwaRedeemFee) * 0.80;
+    const pr_entry  = (mintFeeRevenue + redeemFeeRevenue + rwaRedeemFee) * 0.20;
 
     // Conversion fees -> 100% to BCI SC (private entry + exit, retail entry + exit)
     const bci_conv = convFeeEntry
@@ -695,15 +697,16 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const totalMaintFee = activeMarkets.reduce((s, mk) => s + (mk.maintFee ?? p.maintFee ?? 75_000), 0);
 
     const bci_maint = (totalMaintFee / 12) * 0.20;
-    const bci_rwa   = (rwaTradeRevenue + haircutRevenue) * 0.20;
+    // RWA trade + haircut: 80% BCI SC / 20% PR (owner-directed flip 2026-07-10; was 20/80)
+    const bci_rwa   = (rwaTradeRevenue + haircutRevenue) * 0.80;
     const bci_float = floatToBCI;
     const totalBci  = bci_pool+bci_entry+bci_conv+bci_maint+bci_rwa+bci_morpho+bci_float;
 
     const pr_integ = newM > 0
-      ? activeMarkets.filter(mk => m === mk.launchMonth).reduce((s,mk) => s + (mk.integFee ?? p.integFee ?? 150_000), 0)
+      ? activeMarkets.filter(mk => m === mk.launchMonth).reduce((s,mk) => s + (mk.integFee ?? p.integFee ?? 50_000), 0)
       : 0;
     const pr_maint = (totalMaintFee / 12) * 0.80;
-    const pr_rwa   = (rwaTradeRevenue + haircutRevenue) * 0.80;
+    const pr_rwa   = (rwaTradeRevenue + haircutRevenue) * 0.20;
     const pr_float = floatToPR;
     const totalPrRaw = pr_pool+pr_entry+pr_integ+pr_maint+pr_rwa+pr_morpho+pr_float;
 
@@ -818,14 +821,14 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
       // above blend private+RWA-redemption+retail together for the aggregate revenue
       // totals; these fields expose the PRIVATE-LP-only components for the fee table,
       // computed from the exact same variables — never re-derived independently).
-      privMintBCI:    mintFeeRevenue * 0.20,
-      privMintPR:     mintFeeRevenue * 0.80,
+      privMintBCI:    mintFeeRevenue * 0.80,
+      privMintPR:     mintFeeRevenue * 0.20,
       privConvInBCI:  convFeeEntry,
       privConvInBND:  convAmountEntry * bnd * (p.convFeeBND||0.44) / 100,
       privConvOutBCI: convFeeExit,
       privConvOutBND: lpOut * bnd * (p.convFeeBND||0.44) / 100,
-      privRedeemBCI:  redeemFeeRevenue * 0.20,
-      privRedeemPR:   redeemFeeRevenue * 0.80,
+      privRedeemBCI:  redeemFeeRevenue * 0.80,
+      privRedeemPR:   redeemFeeRevenue * 0.20,
       // Retail fee breakdown - pool fee and APSS split separately
       retBuyPoolFeeBCI:  retailPoolVol * (p.poolFee||0.3)/100 * 0.80,
       retBuyPoolFeePR:   retailPoolVol * (p.poolFee||0.3)/100 * 0.20,
@@ -1031,7 +1034,7 @@ function CapitalCard({ name, blurb, amount, setAmount, years, setYears,
           </div>
         </div>
         <div style={{ fontSize:9, color:T.ink4, lineHeight:1.4 }}>
-          Illustrative only — assumes the BCI index keeps growing at the same pace it reached by month {years*12} ({fp(grossApy)} annualized). Entry and exit fees are the protocol's actual rates for this scenario, charged once each, not annually. Not a guarantee or a forward-looking projection of actual returns.
+          Illustrative only — assumes the BCI index keeps growing at the same pace it reached by month {years*12} ({fp(grossApy)} annualized). Entry and exit fees are the protocol's actual rates for this scenario, charged once each, not annually. The conversion-fee rate shown is net of the BND-paid share — that portion is paid in BND tokens and never deducted from your deposit. Not a guarantee or a forward-looking projection of actual returns.
         </div>
       </div>
     </div>
@@ -1198,7 +1201,7 @@ export default function BoundSimulator({ onOpenDocs }) {
     mintHaircut: 0.3,
     issuerRedemptionDays: 30, // days for issuer to return USDC after BOUND triggers redemption
     rwaTradeF: 0.3,
-    integFee: 150_000,
+    integFee: 50_000,
     maintFee: 75_000,
   };
   // Onboarding pipeline: 10 markets over the 3-year (36-month) projection, launching
@@ -1220,7 +1223,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.3,
       issuerRedemptionDays: 30,
       rwaTradeF: 0.3,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1236,7 +1239,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.5,
       issuerRedemptionDays: 45,
       rwaTradeF: 0.4,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1252,7 +1255,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.25,
       issuerRedemptionDays: 15,
       rwaTradeF: 0.25,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1268,7 +1271,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.6,
       issuerRedemptionDays: 90,
       rwaTradeF: 0.4,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1284,7 +1287,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.5,
       issuerRedemptionDays: 60,
       rwaTradeF: 0.4,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1300,7 +1303,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.3,
       issuerRedemptionDays: 25,
       rwaTradeF: 0.3,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1316,7 +1319,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.25,
       issuerRedemptionDays: 20,
       rwaTradeF: 0.25,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1332,7 +1335,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.4,
       issuerRedemptionDays: 30,
       rwaTradeF: 0.35,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
     {
@@ -1348,7 +1351,7 @@ export default function BoundSimulator({ onOpenDocs }) {
       mintHaircut: 0.3,
       issuerRedemptionDays: 30,
       rwaTradeF: 0.3,
-      integFee: 150_000,
+      integFee: 50_000,
       maintFee: 75_000,
     },
   ]);
@@ -1404,19 +1407,19 @@ export default function BoundSimulator({ onOpenDocs }) {
     //  never read by the engine or rendered by any slider.)
 
     // === LIQUIDITY LAYER v4 =======================================
-    // Structural
-    layerMinBuffer:        5,
+    // Structural — recalibrated 2026-07-10 (owner-directed)
+    layerMinBuffer:        10,
     layerRedemptionDays:   14,
     layerRwaCoverageDays:  14,
     maxRwaPct:             20,
     mkMaxPct:              10,
-    morphoMinReserve:      20,
+    morphoMinReserve:      22,
     enhancedMaxPct:        20,
 
-    // Yield sources (all T+0/T+1)
-    aaveYield:             3.5,
-    morphoYield:           4.5,
-    enhancedYield:         7.5,
+    // Yield sources (all T+0/T+1) — recalibrated 2026-07-10 (owner-directed)
+    aaveYield:             2.2,
+    morphoYield:           5.3,
+    enhancedYield:         6.2,
 
     // LCR thresholds
     lcrHealthy:            1.5,
@@ -1444,7 +1447,9 @@ export default function BoundSimulator({ onOpenDocs }) {
     protocolReservePct:    10,
 
     // -- Bound Core — USDC coverage of idle rwaUSD --------------------
-    bcUsdcCoverage:        100,     // % of idle rwaUSD TVL held as raw USDC for instant redemption
+    // Recalibrated 2026-07-10 (owner-directed): was 100 (yield position always
+    // $0 at that setting); 24% activates the USDC Yield Position / float yield stream.
+    bcUsdcCoverage:        24,      // % of idle rwaUSD TVL held as raw USDC for instant redemption
     bcYieldUsdcRate:       4.5,     // annual yield on USDC Yield Position (instant)
     bcOutflowRate:         2,       // %/month of idle rwaUSD redeemed / converted out of Bound Core
 
@@ -1625,7 +1630,7 @@ export default function BoundSimulator({ onOpenDocs }) {
 
       // Fallback chain matches the engine exactly (mk -> preset -> hardcoded default)
       const maintMonthly = (mk.maintFee ?? p.maintFee ?? 75_000) / 12;
-      const integFee     = mk.integFee ?? p.integFee ?? 150_000;
+      const integFee     = mk.integFee ?? p.integFee ?? 50_000;
 
       const months = Array.from({ length: 36 }, (_, i) => {
         const m = i + 1;
@@ -1641,14 +1646,16 @@ export default function BoundSimulator({ onOpenDocs }) {
         const mintHcut  = (st.mintHcPct  || 0) / 100;
         const integPR   = m === mk.launchMonth ? integFee : 0;
 
-        const liqTradeBCI     = liqVol  * tradeRate * 0.20;
-        const liqTradePR      = liqVol  * tradeRate * 0.80;
-        const liqHaircutBCI   = liqVol  * liqHcut   * 0.20;
-        const liqHaircutPR    = liqVol  * liqHcut   * 0.80;
-        const mintTradeBCI    = mintVol * tradeRate * 0.20;
-        const mintTradePR     = mintVol * tradeRate * 0.80;
-        const mintHaircutBCI  = mintVol * mintHcut  * 0.20;
-        const mintHaircutPR   = mintVol * mintHcut  * 0.80;
+        // RWA trade + haircut flipped to 80% BCI / 20% PR (owner, 2026-07-10);
+        // maintenance unchanged at 20/80.
+        const liqTradeBCI     = liqVol  * tradeRate * 0.80;
+        const liqTradePR      = liqVol  * tradeRate * 0.20;
+        const liqHaircutBCI   = liqVol  * liqHcut   * 0.80;
+        const liqHaircutPR    = liqVol  * liqHcut   * 0.20;
+        const mintTradeBCI    = mintVol * tradeRate * 0.80;
+        const mintTradePR     = mintVol * tradeRate * 0.20;
+        const mintHaircutBCI  = mintVol * mintHcut  * 0.80;
+        const mintHaircutPR   = mintVol * mintHcut  * 0.20;
         const maintBCI        = maintMonthly * 0.20;
         const maintPR         = maintMonthly * 0.80;
 
@@ -1941,9 +1948,10 @@ export default function BoundSimulator({ onOpenDocs }) {
   const [bciPriceView, setBciPriceView] = useState(1);
   const resultsMonth = bciPriceView === 0 ? 36 : bciPriceView * 12;
   const resultsRow   = sim[resultsMonth - 1];
-  // BCI Price & Backing table — its OWN range control, independent of the chart/KPI
-  // range above, so a reader can inspect a different year in the table than the chart.
-  const [bciTableView, setBciTableView] = useState(1);
+  // BCI Price & Backing table — linked to the SAME Range control as the KPI cards
+  // and price chart above it (bciPriceView) — owner reversed an earlier "own
+  // independent selector" request, since the table sits directly under the chart
+  // it describes and having a second control there was one too many controls.
 
   // Simulation Results page — tab layout (owner request 2026-07-09): Overview
   // (KPI cards + price chart + Price & Backing table), BCI SC Revenue, Protocol
@@ -1987,10 +1995,9 @@ export default function BoundSimulator({ onOpenDocs }) {
     return [1, 2, 3].map(y => {
       const months = sim.slice((y - 1) * 12, y * 12);
       const end = months[11];
-      const prev = sim[(y - 1) * 12 - 1];
       return {
-        scStart: prev?.bciSC || 0,
-        privGross: months.reduce((s, r) => s + (r.lpIn || 0), 0),
+        // (scStart/privGross removed 2026-07-10 — their table rows were dropped in
+        //  the Overview restructure; every remaining field is rendered.)
         privLayer: months.reduce((s, r) => s + (r.privateToLayer || 0), 0),
         retailIn: months.reduce((s, r) => s + (r.retailToLayer || 0), 0),
         layerOut: months.reduce((s, r) => s + ((r.privateLayerOut || 0) + (r.retailLayerOut || 0)), 0),
@@ -2043,7 +2050,9 @@ export default function BoundSimulator({ onOpenDocs }) {
       "Integration": +((d.pr_integ  || 0) / 1000).toFixed(1),
       "Layer Yield": +((d.pr_morpho || 0) / 1000).toFixed(1),
       "Float Yield": +((d.pr_float  || 0) / 1000).toFixed(1),
-      total: d.totalPr || 0,
+      gross:   d.totalPrRaw || 0,   // what the stacked bars sum to
+      erTopUp: d.erTopUp    || 0,
+      total:   d.totalPr    || 0,   // net (gross − ER top-up)
     }));
   }, [sim, prRevYear]);
 
@@ -2080,6 +2089,34 @@ export default function BoundSimulator({ onOpenDocs }) {
     }));
   }, [sim]);
 
+  // BCI SC Revenue — % composition (re-added 2026-07-10, owner request): each
+  // stream's share of that month's BCI SC revenue, so a reader can connect the
+  // headline annualized-growth number to what actually drove it (e.g. "12%
+  // annualized this month, 60% of that revenue was conversion fees"). Every
+  // percentage is derived from the same engine exports as the $ table above —
+  // no re-derivation of the totals themselves, just a different unit (rule 8).
+  const bciMonthlyCompositionData = useMemo(() => {
+    return Array.from({ length: 3 }, (_, yi) => ({
+      year: yi + 1,
+      months: Array.from({ length: 12 }, (_, mi) => {
+        const row = sim[yi * 12 + mi];
+        if (!row) return null;
+        const total = row.totalBci || 0;
+        const pct = (v) => total > 0 ? (v || 0) / total * 100 : 0;
+        return {
+          convPct:    pct(row.bci_conv),
+          entryPct:   pct(row.bci_entry),
+          poolPct:    pct(row.bci_pool),
+          rwaPct:     pct(row.bci_rwa),
+          layerPct:   pct(row.bci_morpho),
+          bcYieldPct: pct(row.bci_float),
+          maintPct:   pct(row.bci_maint),
+          annG:       row.annG || 0, // connecting metric — the last row of the table
+        };
+      }),
+    }));
+  }, [sim]);
+
   const prRevenueTableData = useMemo(() => {
     return Array.from({ length: 3 }, (_, yi) => ({
       year: yi + 1,
@@ -2104,16 +2141,83 @@ export default function BoundSimulator({ onOpenDocs }) {
     }));
   }, [sim]);
 
+  // Protocol Reserve Revenue — % composition (2026-07-10, owner request): mirrors
+  // bciMonthlyCompositionData exactly — each of the 7 sources as a share of that
+  // month's GROSS PR revenue (totalPrRaw, i.e. before the Emergency Reserve
+  // top-up is deducted — the same base the 7 rows themselves sum to, so the
+  // composition check row is a genuine 100%, not skewed by the ER deduction).
+  const prMonthlyCompositionData = useMemo(() => {
+    return Array.from({ length: 3 }, (_, yi) => ({
+      year: yi + 1,
+      months: Array.from({ length: 12 }, (_, mi) => {
+        const row = sim[yi * 12 + mi];
+        if (!row) return null;
+        const total = row.totalPrRaw || 0;
+        const pct = (v) => total > 0 ? (v || 0) / total * 100 : 0;
+        return {
+          rwaPct:   pct(row.pr_rwa),
+          entryPct: pct(row.pr_entry),
+          poolPct:  pct(row.pr_pool),
+          maintPct: pct(row.pr_maint),
+          integPct: pct(row.pr_integ),
+          layerPct: pct(row.pr_morpho),
+          floatPct: pct(row.pr_float),
+          prCum:    row.prCum || 0, // connecting metric — the last row of the table
+        };
+      }),
+    }));
+  }, [sim]);
+
+  // Emergency Reserve — performance table (2026-07-10, owner request): its own
+  // section, separate from the PR revenue tables. Every field is a direct engine
+  // export: `er` (running balance), `erTarget` (at-risk assets x year rate),
+  // `er_morpho` (10% of gross Layer yield, credited directly every month), and
+  // `erTopUp` (the same top-up shown/removed from the PR breakdown table above —
+  // capped at 10% of that month's gross PR revenue). Balance roll-forward:
+  // er(t) = er(t-1) + er_morpho(t) + erTopUp(t) — guarded by conservation C5.
+  //
+  // `atRisk` and `targetRatePct` (added 2026-07-10, owner request, to show the
+  // Target formula in full: At-Risk x Rate = Target) are NOT new engine exports —
+  // `atRisk` is the exact sum the engine itself uses (morphoAmt + bcDeployed, both
+  // already direct exports; identical to how bciNav = layerNav + bciSC is treated
+  // as a display identity elsewhere — not a re-derivation of business logic, the
+  // same two numbers the engine already added together for erTarget). `targetRatePct`
+  // reads ER_RATES — the same module-level constant the engine itself indexes one
+  // line above erTarget's own formula — by month, so it can never drift from the
+  // engine's actual rate even if ER_RATES is retuned later.
+  const erPerformanceTableData = useMemo(() => {
+    return Array.from({ length: 3 }, (_, yi) => ({
+      year: yi + 1,
+      months: Array.from({ length: 12 }, (_, mi) => {
+        const row = sim[yi * 12 + mi];
+        if (!row) return null;
+        const balance = row.er || 0;
+        const target  = row.erTarget || 0;
+        const atRisk  = (row.morphoAmt || 0) + (row.bcDeployed || 0);
+        const targetRatePct = ER_RATES[Math.min(Math.ceil(row.m / 12) - 1, 4)] * 100;
+        return {
+          balance,
+          layerCredit: row.er_morpho || 0,
+          topUp:       row.erTopUp || 0,
+          atRisk,
+          targetRatePct,
+          target,
+          coveragePct: target > 0 ? (balance / target) * 100 : 100,
+        };
+      }),
+    }));
+  }, [sim]);
+
   const bciPriceCalcTableData = useMemo(() => {
     return Array.from({ length: 3 }, (_, yi) => ({
       year: yi + 1,
       months: Array.from({ length: 12 }, (_, mi) => {
         const row = sim[yi * 12 + mi];
         if (!row) return null;
-        // BCI SC start = end of previous month
-        const prevRow   = sim[yi * 12 + mi - 1] || null;
-        const scStart   = prevRow ? prevRow.bciSC : 0;
-        const privGross = row.lpIn || 0;
+        // Every field below has a rendered table row (scStart/privGross removed
+        // 2026-07-10 with their rows). All direct engine exports — identities
+        // (scEnd = prev scEnd + revenue; NAV roll-forward; price x supply = backing)
+        // are guarded by conservation C1/C3/C4 + invariant S1.
         const privLayer = row.privateToLayer || 0;
         const retailIn  = row.retailToLayer || 0;
         const layerOut  = (row.privateLayerOut || 0) + (row.retailLayerOut || 0);
@@ -2124,7 +2228,7 @@ export default function BoundSimulator({ onOpenDocs }) {
         const supply    = row.bciSupply || 0;
         const price     = row.bciPrice || 0;
         const annG      = row.annG    || 0;
-        return { scStart, privGross, privLayer, retailIn, layerOut, layerNav, revenue, scEnd, bciNav, supply, price, annG };
+        return { privLayer, retailIn, layerOut, layerNav, revenue, scEnd, bciNav, supply, price, annG };
       }),
     }));
   }, [sim]);
@@ -2279,7 +2383,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                   <div style={{ flex:1 }}>
                     <Slider label="Private Mint / Redeem Fee (%)" value={p.mintRedeemFee||0.3} min={0.05} max={1.0} step={0.05}
                       onChange={v=>up("mintRedeemFee",v)} fmt={v=>`${v}%`}
-                      hint="Charged twice at this same rate: on the full deposit at entry (mint), and on the post-conversion-fee rwaUSD at exit (redeem). Both split 20% BCI SC / 80% Protocol Reserve." />
+                      hint="Charged twice at this same rate: on the full deposit at entry (mint), and on the post-conversion-fee rwaUSD at exit (redeem). Both split 80% BCI SC / 20% Protocol Reserve." />
                   </div>
                   <div style={{ flex:1 }} />
                 </div>
@@ -2385,7 +2489,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                   <div style={{ display:"flex", borderBottom:`1px solid ${T.border}` }}>
                     {[
                       { fee:"Mint Fee", rate:"On full deposit . direct contract",
-                        bci:"20%", pr:"80%",
+                        bci:"80%", pr:"20%",
                         what:"Charged when a private LP deposits USDC directly into the protocol contract (bypassing the pool). Applied to the full deposit amount before any conversion." },
                       { fee:"Conversion Fee - rwaUSD path", rate:"On rwaUSD amount converting to BCI",
                         bci:"100%", pr:"0%",
@@ -2394,7 +2498,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                         bci:"0%", pr:"0%",
                         what:`When the conversion fee is paid using BND governance tokens, ${p.convFeeBND||0.44}% is charged instead of ${p.convFeeRwaUSD||0.88}% (both sliders set independently — not automatically 50%). BND tokens are burned permanently - reducing BND supply, no revenue credited to any pool.` },
                       { fee:"Redeem Fee", rate:"On rwaUSD after conversion fee deducted",
-                        bci:"20%", pr:"80%",
+                        bci:"80%", pr:"20%",
                         what:"Charged when a private LP exits - applied to the rwaUSD amount after the conversion fee has already been deducted. The LP receives USDC net of both the conversion and redeem fees." },
                     ].map(({ fee, rate, bci, pr, what }, i, arr) => (
                       <div key={fee} style={{
@@ -2535,7 +2639,11 @@ export default function BoundSimulator({ onOpenDocs }) {
                   <div style={{ flex:3 }} />
                 </div>
 
-                {/* Row 2 - year-by-year growth rates */}
+                {/* Row 2 - year-by-year growth rates. Year 4/5 sliders removed
+                    2026-07-10 (owner-directed) — the engine horizon is a hard 36
+                    months (3 years), so poolYearIdx (see simulate()) can never
+                    exceed index 2 (Year 3); Year 4/5 rates were unreachable dead
+                    controls (P10 pitfall). */}
                 <div style={{ marginBottom:14 }}>
                   <div style={{ fontSize:10, color:T.ink3, fontWeight:600, textTransform:"uppercase",
                     letterSpacing:"0.08em", marginBottom:10 }}>
@@ -2546,14 +2654,13 @@ export default function BoundSimulator({ onOpenDocs }) {
                       ["Year 1 (%/mo)", "poolGrowthY1", p.poolGrowthY1||20, "Fastest - early stage"],
                       ["Year 2 (%/mo)", "poolGrowthY2", p.poolGrowthY2||10, "Growth begins to slow"],
                       ["Year 3 (%/mo)", "poolGrowthY3", p.poolGrowthY3||6,  "Protocol maturing"],
-                      ["Year 4 (%/mo)", "poolGrowthY4", p.poolGrowthY4||4,  "Stable growth phase"],
-                      ["Year 5 (%/mo)", "poolGrowthY5", p.poolGrowthY5||2,  "Steady-state market"],
                     ].map(([label, key, val, hint]) => (
                       <div key={key} style={{ flex:1 }}>
                         <Slider label={label} value={val} min={1} max={60} step={1}
                           onChange={v=>up(key,v)} fmt={v=>`${v}%`} hint={hint} />
                       </div>
                     ))}
+                    <div style={{ flex:2 }} />
                   </div>
                 </div>
 
@@ -2849,7 +2956,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                               hint="Charged per direction on each RWA transaction through this market. This is the BASELINE only — the same concentration escalation ladder that bumps the liquidation haircut also adds up to +0.15pp here as held RWA rises." />
                           </div>
                           <div style={{ flex:1 }}>
-                            <Slider label="Integration Fee ($)" value={mk.integFee ?? 150_000} min={0} max={500_000} step={25_000}
+                            <Slider label="Integration Fee ($)" value={mk.integFee ?? 50_000} min={0} max={500_000} step={25_000}
                               onChange={v=>upMarket(i,"integFee",v)} fmt={fd}
                               hint="One-time onboarding fee for this market -> 100% Protocol Reserve. Credited on the market launch month." />
                           </div>
@@ -2889,16 +2996,16 @@ export default function BoundSimulator({ onOpenDocs }) {
                 <div style={{ display:"flex", borderBottom:`1px solid ${T.border}` }}>
                   {[
                     { fee:"Liquidation Trade Fee", rate:"Per market . set in market card",
-                      bci:"20%", pr:"80%",
+                      bci:"80%", pr:"20%",
                       what:"Charged on each liquidation routed through BOUND. The RWA holder sells their position to BOUND, receives rwaUSD, and this fee is applied to the volume processed." },
                     { fee:"Liquidation Haircut", rate:"Baseline + escalation if concentrated",
-                      bci:"20%", pr:"80%",
+                      bci:"80%", pr:"20%",
                       what:"BOUND's spread when purchasing an RWA below face value. At 0.5%, BOUND pays $995K for a $1M position and recovers $1M at issuer redemption - the $5K spread is protocol revenue. Rises automatically if this RWA exceeds its Layer concentration limit." },
                     { fee:"Minting Trade Fee", rate:"Per market . set in market card",
-                      bci:"20%", pr:"80%",
+                      bci:"80%", pr:"20%",
                       what:"Charged when a user buys rwaUSD on the pool to mint a new RWA position. BOUND sells RWA from Layer inventory to the buyer and applies this fee to the volume." },
                     { fee:"Minting Haircut", rate:"Baseline − concentration discount",
-                      bci:"20%", pr:"80%",
+                      bci:"80%", pr:"20%",
                       what:"BOUND's spread when selling RWA inventory back to buyers. At 0.3%, a buyer acquiring a $1M position pays $1.003M in rwaUSD - the $3K spread is protocol revenue. Lower than the liquidation haircut because BOUND already holds the asset and has no funding risk. When held RWA concentration is high (or the protocol is in stress), the minting discount reduces this spread to attract buyers and drain inventory - the discounted rate is what the engine actually books." },
                     { fee:"Integration Fee", rate:"Per market . one-time on launch",
                       bci:"0%", pr:"100%",
@@ -4164,7 +4271,7 @@ export default function BoundSimulator({ onOpenDocs }) {
 
                 const privateRows = [
                   { key:"privDeposit",     label:"Private Deposit (seed + monthly growth)", col:T.green, bold:true,  sep:false, bg:T.bgSoft },
-                  { key:"privMintFee",     label:"  Mint Fee (0.3% · 20/80 BCI/PR)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
+                  { key:"privMintFee",     label:"  Mint Fee (0.3% · 80/20 BCI/PR)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
                   { key:"privRwaReceived", label:"  rwaUSD Received (post mint fee)",       col:T.green, bold:false, sep:false, bg:T.bgEl },
                   { key:"privToBci",       label:`  → Converting to BCI (${p.privateBCIConversion||95}%, gross)`, col:T.green, bold:false, sep:false, bg:T.bgEl },
                   { key:"privConvFee",     label:"    Conversion Fee (100% BCI SC)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
@@ -4294,7 +4401,7 @@ export default function BoundSimulator({ onOpenDocs }) {
           <KPI
             label={`Liquidity Layer · M${resultsMonth}`}
             value={fd(resultsRow?.layer)}
-            sub={`Backs all BCI tokens · ${fp(resultsRow?.blendedAnnualYield||0)} blended yield`}
+            sub="Backs all BCI tokens"
           />
           <KPI
             label={`BCI Supply · M${resultsMonth}`}
@@ -4371,26 +4478,29 @@ export default function BoundSimulator({ onOpenDocs }) {
               </LineChart>
             </ResponsiveContainer>
 
-            {/* Linked BCI SC Balance table — own range control, see bciTableView above */}
+            {/* Linked BCI SC Balance table — shares bciPriceView with the chart/KPIs above */}
             {(() => {
-              const isAll = bciTableView === 0;
+              const isAll = bciPriceView === 0;
               const monthCols = isAll
                 ? bciScBalanceYearSummary
-                : (bciPriceCalcTableData[bciTableView - 1]?.months || []);
+                : (bciPriceCalcTableData[bciPriceView - 1]?.months || []);
               const colLabels = isAll
                 ? ["Y1","Y2","Y3"]
-                : Array.from({length:12}, (_, i) => `M${(bciTableView - 1) * 12 + i + 1}`);
+                : Array.from({length:12}, (_, i) => `M${(bciPriceView - 1) * 12 + i + 1}`);
               const rows = [
+                { section: "1 · Liquidity Providers — capital in the Layer" },
                 { key:"layerNav",   label:"Liquidity Layer NAV (end)",            col:T.blue,  bold:true,  sep:false, bg:T.bgEl },
-                { key:"privGross",  label:"  Private USDC deposited",             col:T.ink4,  bold:false, sep:false, bg:T.bgEl },
-                { key:"privLayer",  label:"  → Private net to Layer",             col:T.blue,  bold:false, sep:false, bg:T.bgEl },
-                { key:"retailIn",   label:"  → Retail pool to Layer",             col:T.blue,  bold:false, sep:false, bg:T.bgEl },
-                { key:"layerOut",   label:"  − Layer redemptions",                col:T.red,   bold:false, sep:true,  bg:T.bgEl },
-                { key:"scStart",    label:"BCI SC — revenue (start)",             col:T.ink3,  bold:false, sep:false, bg:T.bgSoft },
-                { key:"revenue",    label:"  + Fee revenue → BCI SC",             col:T.green, bold:false, sep:true,  bg:T.bgSoft },
-                { key:"scEnd",      label:"BCI SC — revenue (end)",               col:T.green, bold:true,  sep:false, bg:T.greenSoft },
-                { key:"bciNav",     label:"Total backing (Layer + BCI SC)",       col:T.ink,   bold:true,  sep:true,  bg:T.bgSoft },
-                { key:"supply",     label:"÷ BCI Supply (tokens)",                col:T.ink3,  bold:false, sep:false, bg:T.bgSoft, isTokens:true },
+                { key:"privLayer",  label:"  → Private net to Layer",             col:T.blue,  bold:false, sep:false, bg:T.bgSoft },
+                { key:"retailIn",   label:"  → Retail pool to Layer",             col:T.blue,  bold:false, sep:false, bg:T.bgSoft },
+                { key:"layerOut",   label:"  − Layer redemptions",                col:T.red,   bold:false, sep:true,  bg:T.bgSoft },
+
+                { section: "2 · BCI Smart Contract — accumulated fee revenue" },
+                { key:"scEnd",      label:"BCI SC Balance (fee revenue, running total)", col:T.green, bold:true,  sep:false, bg:T.greenSoft },
+                { key:"revenue",    label:isAll ? "  + New fee revenue this year" : "  + New fee revenue this month", col:T.green, bold:false, sep:true,  bg:T.bgSoft },
+
+                { section: "3 · BCI Price Calculation" },
+                { key:"bciNav",     label:"Total backing (Layer + BCI SC)",       col:T.ink,   bold:true,  sep:false, bg:T.bgSoft },
+                { key:"supply",     label:"÷ BCI Supply (tokens)",                col:T.ink3,  bold:false, sep:false, bg:T.bgEl, isTokens:true },
                 { key:"price",      label:"= BCI Price (rwaUSD)",                 col:T.green, bold:true,  sep:false, bg:T.greenSoft, isDec:true },
                 { key:"annG",       label:"Annualized Growth",                    col:T.green, bold:false, sep:false, bg:T.bgSoft, isPct:true },
               ];
@@ -4400,23 +4510,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                     flexWrap:"wrap", gap:8, marginBottom:8 }}>
                     <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
                       letterSpacing:"0.08em" }}>
-                      BCI Price & Backing — {isAll ? "Annual Summary" : `Monthly Breakdown · Year ${bciTableView}`}
-                    </span>
-                    <div style={{ display:"flex", gap:3, alignItems:"center" }}>
-                      {[0,1,2,3].map(y=>(
-                        <button key={y} onClick={()=>setBciTableView(y)}
-                          style={{ padding:"2px 8px", borderRadius:4, cursor:"pointer", fontSize:9.5,
-                            fontWeight:bciTableView===y?700:500,
-                            border:`1px solid ${bciTableView===y?T.green:T.border}`,
-                            background:bciTableView===y?T.greenSoft:T.bgEl,
-                            color:bciTableView===y?T.greenInk:T.ink3 }}>
-                          {y===0?"All":`Year ${y}`}
-                        </button>
-                      ))}
-                    </div>
-                    <span style={{ fontSize:9, color:T.ink4, maxWidth:460, textAlign:"right", lineHeight:1.4 }}>
-                      Private seed → Liquidity Layer (collateral). BCI SC = fee revenue only.
-                      Price = (Layer NAV + BCI SC) ÷ supply.
+                      BCI Price & Backing — {isAll ? "Annual Summary" : `Monthly Breakdown · Year ${bciPriceView}`}
                     </span>
                   </div>
                   <div style={{ overflowX:"auto", border:`1px solid ${T.border}`, borderRadius:8 }}>
@@ -4425,7 +4519,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                         <tr style={{ background:T.bgSoft }}>
                           <th style={{ padding:"6px 12px", textAlign:"left", color:T.ink3, fontWeight:600,
                             fontSize:9, textTransform:"uppercase", letterSpacing:"0.06em",
-                            borderBottom:`1px solid ${T.border}`, width:200, whiteSpace:"nowrap" }}>Component</th>
+                            borderBottom:`1px solid ${T.border}`, width:230, whiteSpace:"nowrap" }}>Component</th>
                           {colLabels.map(lbl => (
                             <th key={lbl} style={{ padding:"6px 6px", textAlign:"right", color:T.ink3,
                               fontWeight:600, fontSize:9, borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap",
@@ -4436,7 +4530,15 @@ export default function BoundSimulator({ onOpenDocs }) {
                         </tr>
                       </thead>
                       <tbody>
-                        {rows.map(({ key, label, col, bold, sep, bg, isTokens, isDec, isPct }) => (
+                        {rows.map(({ section, key, label, col, bold, sep, bg, isTokens, isDec, isPct }) => {
+                          if (section) return (
+                            <tr key={section} style={{ background:T.bgInset }}>
+                              <td colSpan={colLabels.length + 1} style={{ padding:"5px 12px", fontSize:9,
+                                fontWeight:700, color:T.ink3, textTransform:"uppercase", letterSpacing:"0.07em",
+                                borderBottom:`1px solid ${T.border}` }}>{section}</td>
+                            </tr>
+                          );
+                          return (
                           <tr key={key} style={{ borderBottom:sep?`2px solid ${T.borderS}`:`1px solid ${T.border}`, background:bg }}>
                             <td style={{ padding:"5px 12px", color:bold?T.ink:col,
                               fontSize:bold?10.5:9.5, fontWeight:bold?700:400, whiteSpace:"nowrap" }}>{label}</td>
@@ -4458,7 +4560,8 @@ export default function BoundSimulator({ onOpenDocs }) {
                               );
                             })}
                           </tr>
-                        ))}
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -4503,7 +4606,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                 </SectionTitle>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
                   <div style={{ fontSize:9.5, color:T.ink3, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:600 }}>
-                    M{bciRevYear * 12} total
+                    M{bciRevYear * 12} · monthly revenue
                   </div>
                   <div style={{ fontSize:22, fontWeight:500, color:T.greenInk, fontFamily:MONO, letterSpacing:"-0.02em" }}>
                     {fd(bciYearEndRow?.totalBci)}
@@ -4571,11 +4674,11 @@ export default function BoundSimulator({ onOpenDocs }) {
                 {[
                   { fee:"Conversion Fees", rate:"On rwaUSD ↔ BCI conversion", bci:"100%", pr:"0%", col:RC.conv,
                     what:"Charged when rwaUSD converts to/from BCI. Credited entirely to BCI SC — the strongest driver of BCI price." },
-                  { fee:"Mint / Redemption", rate:"0.3% · rwaUSD mint & redeem (protocol)", bci:"20%", pr:"80%", col:RC.entry,
+                  { fee:"Mint / Redemption", rate:`${p.mintRedeemFee||0.3}% · rwaUSD mint & redeem (protocol)`, bci:"80%", pr:"20%", col:RC.entry,
                     what:"Smart-contract fee when rwaUSD is minted or redeemed via the protocol — including pre-pool RWA liquidations." },
-                  { fee:"Pool + APSS", rate:"On retail pool buy / exit volume", bci:"80%", pr:"20%", col:RC.pool,
-                    what:"Pool trading fee plus APSS arbitrage on retail flow. Zero before pool launch (month poolStart)." },
-                  { fee:"RWA Fees", rate:"On RWA liquidation + minting volume", bci:"20%", pr:"80%", col:RC.rwa,
+                  { fee:"Pool + APSS", rate:"On ALL pool volume (retail + RWA)", bci:"80%", pr:"20%", col:RC.pool,
+                    what:"Pool trading fee plus APSS arbitrage on every pool swap — retail buys/exits AND RWA liquidation/minting legs routed through the pool. Zero before pool launch (month poolStart)." },
+                  { fee:"RWA Fees", rate:"On RWA liquidation + minting volume", bci:"80%", pr:"20%", col:RC.rwa,
                     what:"Liquidation trade fee and dynamic haircut from RWA markets." },
                   { fee:"Layer Yield", rate:"On Liquidity Layer deployed capital", bci:"80%", pr:"10%", er:"10%", col:RC.morpho,
                     what:"Aave / Morpho / Enhanced yield on the Liquidity Layer. 10% tops up the Emergency Reserve." },
@@ -4667,10 +4770,95 @@ export default function BoundSimulator({ onOpenDocs }) {
               );
             })()}
 
-            {/* (The "% Composition" table that used to sit here was removed 2026-07-09:
-                it re-expressed the Monthly Breakdown above as percentages while the
-                stacked chart already shows composition visually — pure duplication,
-                per the owner's "cut what overcomplicates" directive.) */}
+            {/* BCI SC Revenue — % Composition. Re-added 2026-07-10 (owner request):
+                connects the headline annualized-growth number to what drove it —
+                the LAST row is Annualized Growth for that month, directly below
+                the composition rows, so a reader can read down the column and see
+                "12% annualized, 60% of that revenue was conversion fees." */}
+            {(() => {
+              const { months } = bciMonthlyCompositionData[bciRevYear - 1] || { months:[] };
+              const rows = [
+                { key:"convPct",    label:"Conv. Fees",        col:RC.conv   },
+                { key:"entryPct",   label:"Mint / Redemption", col:RC.entry  },
+                { key:"poolPct",    label:"Pool + APSS",       col:RC.pool   },
+                { key:"rwaPct",     label:"RWA Fees",          col:RC.rwa    },
+                { key:"layerPct",   label:"Layer Yield",       col:RC.morpho },
+                { key:"bcYieldPct", label:"Bound Core Yield",  col:RC.float  },
+                { key:"maintPct",   label:"Maintenance",       col:RC.maint  },
+              ];
+              return (
+                <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
+                  <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
+                    <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
+                      letterSpacing:"0.08em" }}>BCI SC Revenue — % Composition · Year {bciRevYear}</span>
+                    <div style={{ fontSize:9, color:T.ink5, marginTop:2, fontWeight:400 }}>
+                      Each source as a share of that month's fee revenue credited to BCI SC (sums to 100%). Bottom row: that month's annualized index growth.
+                    </div>
+                  </div>
+                  <div style={{ overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:10 }}>
+                      <thead><tr style={{ background:T.bgSoft }}>
+                        <th style={{ padding:"6px 12px", textAlign:"left", color:T.ink3, fontWeight:600,
+                          fontSize:9, textTransform:"uppercase", letterSpacing:"0.06em",
+                          borderBottom:`1px solid ${T.border}`, width:230, whiteSpace:"nowrap" }}>Source</th>
+                        {Array.from({length:12},(_,i)=>(
+                          <th key={i} style={{ padding:"6px 5px", textAlign:"right", color:T.ink3,
+                            fontWeight:600, fontSize:9, borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>
+                            M{(bciRevYear-1)*12+i+1}
+                          </th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {rows.map(({ key, label, col }) => (
+                          <tr key={key} style={{ borderBottom:`1px solid ${T.border}`, background:T.bgEl }}>
+                            <td style={{ padding:"5px 12px", color:col, fontSize:9.5, whiteSpace:"nowrap" }}>{label}</td>
+                            {months.map((c,mi) => {
+                              if (!c) return <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
+                              const val = c[key]||0;
+                              return (
+                                <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                  fontFamily:MONO, fontSize:10, color:val===0?T.ink5:col, fontWeight:500 }}>
+                                  {val===0?"—":`${val.toFixed(1)}%`}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                        <tr style={{ borderTop:`2px solid ${T.borderS}`, borderBottom:`1px solid ${T.border}`, background:T.bgSoft }}>
+                          <td style={{ padding:"5px 12px", color:T.ink, fontSize:9.5, fontWeight:600 }}>Total (composition check)</td>
+                          {months.map((c,mi) => {
+                            if (!c) return <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                              fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
+                            const tot = (c.convPct||0)+(c.entryPct||0)+(c.poolPct||0)+(c.rwaPct||0)
+                              +(c.layerPct||0)+(c.bcYieldPct||0)+(c.maintPct||0);
+                            return (
+                              <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                fontFamily:MONO, fontSize:10, color:tot===0?T.ink5:T.ink3, fontWeight:600 }}>
+                                {tot===0?"—":`${tot.toFixed(1)}%`}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                        <tr style={{ background:T.greenSoft }}>
+                          <td style={{ padding:"6px 12px", color:T.ink, fontSize:10.5, fontWeight:700 }}>Annualized Growth (BCI Index)</td>
+                          {months.map((c,mi) => {
+                            if (!c) return <td key={mi} style={{ padding:"6px 5px", textAlign:"right",
+                              fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
+                            return (
+                              <td key={mi} style={{ padding:"6px 5px", textAlign:"right",
+                                fontFamily:MONO, fontSize:10.5, color:T.greenInk, fontWeight:700 }}>
+                                {c.annG.toFixed(1)}%
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
         )}
@@ -4736,9 +4924,17 @@ export default function BoundSimulator({ onOpenDocs }) {
                               {p.dataKey}: ${p.value}K
                             </div>
                           ))}
-                          <div style={{ fontFamily:MONO, color:T.blue, marginTop:4, fontWeight:700,
+                          <div style={{ fontFamily:MONO, color:T.ink2, marginTop:4,
                             borderTop:`1px solid ${T.border}`, paddingTop:4 }}>
-                            Total (net): {fd(d.total)}
+                            Gross: {fd(d.gross)}
+                          </div>
+                          {d.erTopUp > 0 && (
+                            <div style={{ fontFamily:MONO, color:T.red }}>
+                              − ER top-up: {fd(d.erTopUp)}
+                            </div>
+                          )}
+                          <div style={{ fontFamily:MONO, color:T.blue, fontWeight:700 }}>
+                            Net to PR: {fd(d.total)}
                           </div>
                         </div>
                       );
@@ -4778,14 +4974,14 @@ export default function BoundSimulator({ onOpenDocs }) {
               </div>
               <div style={{ display:"flex", flexWrap:"wrap" }}>
                 {[
-                  { fee:"Mint / Redemption", rate:"0.3% · rwaUSD mint & redeem (protocol)", pr:"80%", bci:"20%", col:RC.entry,
-                    what:"Smart-contract fee on rwaUSD mint and redeem — including pre-pool RWA liquidations. Majority to Protocol Reserve." },
-                  { fee:"RWA Fees", rate:"On RWA liquidation + minting volume", pr:"80%", bci:"20%", col:RC.rwa,
-                    what:"Liquidation trade fee and dynamic haircut from RWA markets. Majority to Protocol Reserve." },
+                  { fee:"Mint / Redemption", rate:`${p.mintRedeemFee||0.3}% · rwaUSD mint & redeem (protocol)`, pr:"20%", bci:"80%", col:RC.entry,
+                    what:"Smart-contract fee on rwaUSD mint and redeem — including pre-pool RWA liquidations. Majority to BCI SC." },
+                  { fee:"RWA Fees", rate:"On RWA liquidation + minting volume", pr:"20%", bci:"80%", col:RC.rwa,
+                    what:"Liquidation trade fee and dynamic haircut from RWA markets. Majority to BCI SC." },
                   { fee:"Maintenance", rate:"Annual · per active market", pr:"80%", bci:"20%", col:RC.maint,
                     what:"Recurring per-market maintenance fee. Majority to Protocol Reserve." },
-                  { fee:"Pool + APSS", rate:"On retail pool buy / exit volume", pr:"20%", bci:"80%", col:RC.pool,
-                    what:"Pool trading fee plus APSS on retail flow. Zero before pool launch (month poolStart)." },
+                  { fee:"Pool + APSS", rate:"On ALL pool volume (retail + RWA)", pr:"20%", bci:"80%", col:RC.pool,
+                    what:"Pool trading fee plus APSS on every pool swap — retail AND RWA legs routed through the pool. Zero before pool launch (month poolStart)." },
                   { fee:"Bound Core Yield", rate:"USDC Yield Position · flat split", pr:"20%", bci:"80%", col:RC.float,
                     what:"Yield on the USDC Yield Position. Flat 20% to Protocol Reserve, 80% to BCI SC." },
                   { fee:"Layer Yield", rate:"On Liquidity Layer deployed capital", pr:"10%", bci:"80%", er:"10%", col:RC.morpho,
@@ -4816,7 +5012,13 @@ export default function BoundSimulator({ onOpenDocs }) {
               </div>
             </div>
 
-            {/* Protocol Reserve — Monthly Breakdown ($) */}
+            {/* Protocol Reserve — Monthly Breakdown ($). Restructured 2026-07-10
+                (owner request) to mirror the BCI SC Revenue tab exactly: 7 source
+                rows + one bold Total. The "Gross (sum of sources)" / "− ER top-up"
+                rows that used to live here (added when the S30 audit found the net
+                total didn't visibly add up to the sources) have moved to their own
+                Emergency Reserve section below, where the full funding picture
+                (balance, target, coverage) lives — not removed, relocated. */}
             {(() => {
               const { months } = prRevenueTableData[prRevYear - 1] || { months:[] };
               const rows = [
@@ -4827,22 +5029,20 @@ export default function BoundSimulator({ onOpenDocs }) {
                 { key:"integ", label:"Integration → Protocol Reserve",       col:RC.integ,  bold:false, sep:false, bg:T.bgEl },
                 { key:"layer", label:"Layer Yield → Protocol Reserve",       col:RC.morpho, bold:false, sep:false, bg:T.bgEl },
                 { key:"float", label:"Float Yield → Protocol Reserve",       col:RC.float,  bold:false, sep:true,  bg:T.bgEl },
-                // These two rows make the column actually ADD UP: the 7 source rows
-                // sum to gross; the ER top-up (up to 10% of gross) is then deducted
-                // before the net credit. Previously the deduction was invisible and
-                // the bold total did not equal the sum of the rows above it.
-                { key:"grossRaw", label:"Gross (sum of sources above)",        col:T.ink,     bold:false, sep:false, bg:T.bgSoft },
-                { key:"erTopUp",  label:"− Emergency Reserve top-up",          col:T.red,     bold:false, sep:true,  bg:T.bgSoft },
                 { key:"gross", label:"Total to Protocol Reserve (net)",      col:T.blue,    bold:true,  sep:false, bg:T.blueSoft },
                 { key:"prCum", label:"Cumulative",                           col:T.ink3,    bold:false, sep:false, bg:T.bgSoft },
               ];
               return (
                 <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
-                  <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}`,
-                    display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                    <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
-                      letterSpacing:"0.08em" }}>Protocol Reserve Revenue — Monthly Breakdown · Year {prRevYear}</span>
-                    <span style={{ fontSize:9, color:T.ink4 }}>Linked to Year {prRevYear} selector above</span>
+                  <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                      <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
+                        letterSpacing:"0.08em" }}>Protocol Reserve Revenue — Monthly Breakdown · Year {prRevYear}</span>
+                      <span style={{ fontSize:9, color:T.ink4 }}>Linked to Year {prRevYear} selector above</span>
+                    </div>
+                    <div style={{ fontSize:9, color:T.ink5, marginTop:2 }}>
+                      "Total (net)" is after the Emergency Reserve top-up — see the Emergency Reserve section below for that deduction in full.
+                    </div>
                   </div>
                   <div style={{ overflowX:"auto" }}>
                     <table style={{ width:"100%", borderCollapse:"collapse", fontSize:10 }}>
@@ -4883,8 +5083,195 @@ export default function BoundSimulator({ onOpenDocs }) {
               );
             })()}
 
-            {/* (The "% Composition" table that used to sit here was removed 2026-07-09 —
-                same duplication rationale as the BCI SC one.) */}
+            {/* Protocol Reserve Revenue — % Composition (re-added 2026-07-10,
+                mirrors the BCI SC Revenue % Composition table). Last row is the
+                cumulative Protocol Reserve balance — the connecting metric, same
+                role annG plays on the BCI SC tab. */}
+            {(() => {
+              const { months } = prMonthlyCompositionData[prRevYear - 1] || { months:[] };
+              const rows = [
+                { key:"rwaPct",   label:"RWA Fees",          col:RC.rwa    },
+                { key:"entryPct", label:"Mint / Redemption", col:RC.entry  },
+                { key:"poolPct",  label:"Pool + APSS",       col:RC.pool   },
+                { key:"maintPct", label:"Maintenance",       col:RC.maint  },
+                { key:"integPct", label:"Integration",       col:RC.integ  },
+                { key:"layerPct", label:"Layer Yield",       col:RC.morpho },
+                { key:"floatPct", label:"Float Yield",       col:RC.float  },
+              ];
+              return (
+                <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
+                  <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
+                    <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
+                      letterSpacing:"0.08em" }}>Protocol Reserve Revenue — % Composition · Year {prRevYear}</span>
+                    <div style={{ fontSize:9, color:T.ink5, marginTop:2, fontWeight:400 }}>
+                      Each source as a share of that month's GROSS fee revenue routed to Protocol Reserve (before the ER top-up; sums to 100%).
+                    </div>
+                  </div>
+                  <div style={{ overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:10 }}>
+                      <thead><tr style={{ background:T.bgSoft }}>
+                        <th style={{ padding:"6px 12px", textAlign:"left", color:T.ink3, fontWeight:600,
+                          fontSize:9, textTransform:"uppercase", letterSpacing:"0.06em",
+                          borderBottom:`1px solid ${T.border}`, width:230, whiteSpace:"nowrap" }}>Source</th>
+                        {Array.from({length:12},(_,i)=>(
+                          <th key={i} style={{ padding:"6px 5px", textAlign:"right", color:T.ink3,
+                            fontWeight:600, fontSize:9, borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>
+                            M{(prRevYear-1)*12+i+1}
+                          </th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {rows.map(({ key, label, col }) => (
+                          <tr key={key} style={{ borderBottom:`1px solid ${T.border}`, background:T.bgEl }}>
+                            <td style={{ padding:"5px 12px", color:col, fontSize:9.5, whiteSpace:"nowrap" }}>{label}</td>
+                            {months.map((c,mi) => {
+                              if (!c) return <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
+                              const val = c[key]||0;
+                              return (
+                                <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                  fontFamily:MONO, fontSize:10, color:val===0?T.ink5:col, fontWeight:500 }}>
+                                  {val===0?"—":`${val.toFixed(1)}%`}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                        <tr style={{ borderTop:`2px solid ${T.borderS}`, borderBottom:`1px solid ${T.border}`, background:T.bgSoft }}>
+                          <td style={{ padding:"5px 12px", color:T.ink, fontSize:9.5, fontWeight:600 }}>Total (composition check)</td>
+                          {months.map((c,mi) => {
+                            if (!c) return <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                              fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
+                            const tot = (c.rwaPct||0)+(c.entryPct||0)+(c.poolPct||0)+(c.maintPct||0)
+                              +(c.integPct||0)+(c.layerPct||0)+(c.floatPct||0);
+                            return (
+                              <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                fontFamily:MONO, fontSize:10, color:tot===0?T.ink5:T.ink3, fontWeight:600 }}>
+                                {tot===0?"—":`${tot.toFixed(1)}%`}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                        <tr style={{ background:T.blueSoft }}>
+                          <td style={{ padding:"6px 12px", color:T.ink, fontSize:10.5, fontWeight:700 }}>Cumulative Protocol Reserve</td>
+                          {months.map((c,mi) => {
+                            if (!c) return <td key={mi} style={{ padding:"6px 5px", textAlign:"right",
+                              fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
+                            return (
+                              <td key={mi} style={{ padding:"6px 5px", textAlign:"right",
+                                fontFamily:MONO, fontSize:10.5, color:T.blue, fontWeight:700 }}>
+                                {fd(c.prCum)}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* ── EMERGENCY RESERVE — separate section (owner request 2026-07-10) ── */}
+          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:8 }}>
+              <span style={{ fontSize:12, fontWeight:700, color:T.ink, letterSpacing:"-0.01em" }}>
+                Emergency Reserve
+              </span>
+              <span style={{ fontSize:9, color:T.ink4 }}>Linked to Year {prRevYear} selector above</span>
+            </div>
+
+            {/* Emergency Reserve — reference card (same pattern as the Fee Sources
+                & Allocation cards above): explains the logic, not just the numbers. */}
+            <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
+              <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
+                <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
+                  letterSpacing:"0.08em" }}>Emergency Reserve — How It's Funded & Sized</span>
+              </div>
+              <div style={{ display:"flex", flexWrap:"wrap" }}>
+                {[
+                  { fee:"Seed", rate:"$500,000 at launch", col:T.amber,
+                    what:"One-time protocol treasury seed at Month 1, insured. Starting balance for the loss-absorption reserve." },
+                  { fee:"Layer Yield Credit", rate:"10% of gross Layer yield, every month", col:RC.morpho,
+                    what:"A direct, automatic credit — separate from Protocol Reserve revenue. Grows the ER continuously as the Liquidity Layer earns yield, regardless of PR's own performance." },
+                  { fee:"Protocol Reserve Top-Up", rate:"Only when ER balance < target; capped at 10% of gross PR revenue that month", col:T.blue,
+                    what:"Fires only when the reserve has fallen behind its target. Since it's capped at 10% of PR revenue, a big shortfall closes gradually, never all at once." },
+                  { fee:"Target Size", rate:"At-risk assets × year rate", col:T.ink,
+                    what:"At-risk assets = Morpho deployment + Bound Core's USDC Yield Position. Rate rises each year: 10% (Year 1) → 15% (Year 2) → 20% (Year 3) → 25% cap beyond the simulator's 36-month horizon." },
+                  { fee:"Loss Waterfall", rate:"3 layers, in order", col:T.red,
+                    what:"(1) Emergency Reserve absorbs first. (2) Insurance policy covers losses beyond the ER's balance. (3) BCI index reduction — debiting the BCI SC directly — is the last resort, reached only if both prior layers are exhausted." },
+                ].map(({ fee, rate, what, col }, i, arr) => (
+                  <div key={fee} style={{ flex:"1 1 220px", minWidth:0, padding:"12px 14px",
+                    borderRight: i < arr.length-1 ? `1px solid ${T.border}` : "none" }}>
+                    <div style={{ fontSize:11.5, fontWeight:600, color:T.ink, marginBottom:5, paddingBottom:5,
+                      borderBottom:`2px solid ${col}` }}>{fee}</div>
+                    <div style={{ fontSize:10.5, color:T.ink3, marginBottom:8 }}>{rate}</div>
+                    <div style={{ fontSize:10.5, color:T.ink4, lineHeight:1.5 }}>{what}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Emergency Reserve — Performance table */}
+            {(() => {
+              const { months } = erPerformanceTableData[prRevYear - 1] || { months:[] };
+              const rows = [
+                { key:"balance",       label:"ER Balance (end of month)",              col:T.amber, bold:true,  sep:false, bg:T.amberSoft },
+                { key:"layerCredit",   label:"  → From Layer yield (10% credit)",      col:RC.morpho, bold:false, sep:false, bg:T.bgEl },
+                { key:"topUp",         label:"  → Top-up from Protocol Reserve",       col:T.blue,  bold:false, sep:true,  bg:T.bgEl },
+                { key:"atRisk",        label:"Total Value at Risk (Morpho + BC Yield Position)", col:T.ink3, bold:false, sep:false, bg:T.bgSoft },
+                { key:"targetRatePct", label:"  × Target Rate (this year)",            col:T.ink3,  bold:false, sep:false, bg:T.bgSoft, isPct:true },
+                { key:"target",        label:"= ER Target",                           col:T.ink,   bold:true,  sep:true,  bg:T.bgSoft },
+                { key:"coveragePct",   label:"Coverage (Balance ÷ Target)",            col:T.green, bold:true,  sep:false, bg:T.greenSoft, isPct:true },
+              ];
+              return (
+                <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
+                  <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
+                    <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
+                      letterSpacing:"0.08em" }}>Emergency Reserve — Performance · Year {prRevYear}</span>
+                    <div style={{ fontSize:9, color:T.ink5, marginTop:2, fontWeight:400 }}>
+                      Balance rolls forward from the two credits above it. Target = Total Value at Risk × this year's Target Rate. Coverage below 100% means the reserve is still catching up to its target — not a shortfall against any current obligation.
+                    </div>
+                  </div>
+                  <div style={{ overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:10 }}>
+                      <thead><tr style={{ background:T.bgSoft }}>
+                        <th style={{ padding:"6px 12px", textAlign:"left", color:T.ink3, fontWeight:600,
+                          fontSize:9, textTransform:"uppercase", letterSpacing:"0.06em",
+                          borderBottom:`1px solid ${T.border}`, width:260, whiteSpace:"nowrap" }}>Component</th>
+                        {Array.from({length:12},(_,i)=>(
+                          <th key={i} style={{ padding:"6px 5px", textAlign:"right", color:T.ink3,
+                            fontWeight:600, fontSize:9, borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>
+                            M{(prRevYear-1)*12+i+1}
+                          </th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {rows.map(({ key, label, col, bold, sep, bg, isPct }) => (
+                          <tr key={key} style={{ borderBottom:sep?`2px solid ${T.borderS}`:`1px solid ${T.border}`, background:bg }}>
+                            <td style={{ padding:"5px 12px", color:bold?T.ink:col,
+                              fontSize:bold?10.5:9.5, fontWeight:bold?700:400, whiteSpace:"nowrap" }}>{label}</td>
+                            {months.map((d,mi) => {
+                              if (!d) return <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
+                              const val = d[key]||0;
+                              return (
+                                <td key={mi} style={{ padding:"5px 5px", textAlign:"right",
+                                  fontFamily:MONO, fontSize:10, color:val===0?T.ink5:col,
+                                  fontWeight:bold?700:500 }}>
+                                  {isPct ? `${val.toFixed(0)}%` : (val===0?"—":fd(val))}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
         )}
