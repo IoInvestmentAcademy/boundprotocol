@@ -246,7 +246,7 @@ export default function Home() {
                     <div style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "16px 16px 14px", background: "rgba(27,74,56,0.35)", border: `1px solid rgba(60,100,70,0.2)`, borderRadius: 12 }}>
                       <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
                         <span style={{ fontFamily: "monospace", fontSize: 26, fontWeight: 500, color: colors[50], letterSpacing: "-0.02em", lineHeight: 1 }}>49,812.50</span>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: colors[200] }}>BLD</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: colors[200] }}>rwaUSD</span>
                       </div>
                       <div style={{ marginTop: 5, fontSize: 11.5, color: colors[300] }}>≈ $49,812.50 · settles in seconds</div>
                       <button style={{ marginTop: 12, width: "100%", border: "none", cursor: "pointer", background: colors[100], color: colors[900], fontFamily: "inherit", fontSize: 13.5, fontWeight: 600, padding: "11px", borderRadius: 10, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
@@ -260,22 +260,22 @@ export default function Home() {
                 {/* Footer */}
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid rgba(185,212,196,0.08)`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", fontSize: 11, color: colors[300] }}>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-                    Redeem illiquid RWA positions instantly with BLD.
+                    Redeem illiquid RWA positions instantly with rwaUSD.
                   </span>
 
-                  {/* BLD/USDC chip */}
+                  {/* rwaUSD/USDC chip */}
                   <div style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,0.04)", border: `1px solid rgba(185,212,196,0.1)`, padding: "7px 7px 7px 13px", borderRadius: 12 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <span style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: `1.5px solid rgba(20,23,16,0.8)`, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff" }}>
-                          <img src="/bnd-token.svg" alt="BLD" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src="/bnd-token.svg" alt="rwaUSD" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </span>
                         <span style={{ width: 22, height: 22, marginLeft: -7, borderRadius: "50%", overflow: "hidden", border: `1.5px solid rgba(20,23,16,0.8)`, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff" }}>
                           <img src="/usdc_logo.png" alt="USDC" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </span>
                       </div>
                       <div>
-                        <div style={{ fontSize: 9, letterSpacing: "0.08em", color: colors[400], fontWeight: 600 }}>BLD / USDC</div>
+                        <div style={{ fontSize: 9, letterSpacing: "0.08em", color: colors[400], fontWeight: 600 }}>rwaUSD / USDC</div>
                         <div style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 500, color: colors[50] }}>$1.00</div>
                       </div>
                     </div>
@@ -298,7 +298,7 @@ export default function Home() {
             <span className="word" data-delay="4520">instant</span>{" "}
             <span className="word" data-delay="4640">liquidity</span>{" "}
             <span className="word" data-delay="4760">in</span>{" "}
-            <span className="word" data-delay="4880">BLD</span>{" "}
+            <span className="word" data-delay="4880">rwaUSD</span>{" "}
             <span className="word" data-delay="5000">while</span>{" "}
             <span className="word" data-delay="5120">the</span>{" "}
             <span className="word" data-delay="5240">underlying</span>{" "}

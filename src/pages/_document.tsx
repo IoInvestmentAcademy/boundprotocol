@@ -11,11 +11,11 @@ export default function Document() {
         <meta name="theme-color" content="#141710" />
         <meta
           name="description"
-          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
+          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in rwaUSD while the underlying redemption settles in the background."
         />
         <meta
           name="keywords"
-          content="BOUND, BLD, RWA, real-world assets, instant liquidity, DeFi, tokenized assets, instant exit"
+          content="BOUND, rwaUSD, RWA, real-world assets, instant liquidity, DeFi, tokenized assets, instant exit"
         />
         <meta name="author" content="BOUND" />
         <link rel="icon" type="image/png" href="/favicon.png"></link>
@@ -29,7 +29,7 @@ export default function Document() {
         />
         <meta
           property="og:description"
-          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
+          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in rwaUSD while the underlying redemption settles in the background."
         />
         <meta property="og:image" content="https://boundprotocol.com/BND.png" />
 
@@ -42,7 +42,7 @@ export default function Document() {
         />
         <meta
           property="twitter:description"
-          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in BLD while the underlying redemption settles in the background."
+          content="Turn illiquid RWAs into instant liquidity with Bound Liquid Dollar. Get instant liquidity in rwaUSD while the underlying redemption settles in the background."
         />
         <meta
           property="twitter:image"
