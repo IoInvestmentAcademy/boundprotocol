@@ -10,6 +10,20 @@ const nextConfig = {
   async rewrites() {
     return [];
   },
+  async redirects() {
+    return [
+      {
+        source: "/simulator",
+        destination: "/dataroom",
+        permanent: true,
+      },
+      {
+        source: "/simulator/:path*",
+        destination: "/dataroom/:path*",
+        permanent: true,
+      },
+    ];
+  },
   // Serve the whitepaper PDF inline in the browser (not as a forced download)
   async headers() {
     return [

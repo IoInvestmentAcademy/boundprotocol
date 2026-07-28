@@ -160,7 +160,7 @@ export default function Home() {
           Whitepaper
         </a>
         <a
-          href="/simulator"
+          href="/dataroom"
           className="inline-flex items-center justify-center rounded-lg border px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-semibold tracking-[0.06em] no-underline transition-colors duration-200"
           style={{
             color: colors[900],
@@ -174,7 +174,7 @@ export default function Home() {
             e.currentTarget.style.background = colors[50];
           }}
         >
-          Docs
+          Data Room
         </a>
       </nav>
 

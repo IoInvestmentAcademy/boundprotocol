@@ -43,8 +43,9 @@ for (const file of htmlFiles) {
     continue;
   }
   let html = readFileSync(from, "utf8");
-  // Standalone Vite hub is /#docs; Next.js hub is /simulator#docs
-  html = html.replaceAll("location.assign('/#docs')", "location.assign('/simulator#docs')");
+  // Standalone Vite hub is /#docs; Next.js hub is /dataroom#docs
+  html = html.replaceAll("location.assign('/#docs')", "location.assign('/dataroom#docs')");
+  html = html.replaceAll("location.assign('/simulator#docs')", "location.assign('/dataroom#docs')");
   writeFileSync(to, html, "utf8");
   console.log("synced", file);
 }

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
+import DataRoomGate from "@/components/dataroom/DataRoomGate";
 
 const SimulatorApp = dynamic(() => import("@/components/simulator/SimulatorRoot"), {
   ssr: false,
@@ -21,18 +22,21 @@ const SimulatorApp = dynamic(() => import("@/components/simulator/SimulatorRoot"
   ),
 });
 
-export default function SimulatorPage() {
+export default function DataroomPage() {
   return (
     <>
       <Head>
-        <title>BOUND Protocol — Documentation Library</title>
+        <title>BOUND Protocol — Data Room</title>
         <meta
           name="description"
-          content="BOUND Protocol documentation library — whitepaper, tokenomics audit, market analysis, simulators, legal, and investor materials."
+          content="Restricted BOUND Protocol data room — whitepaper, tokenomics, market analysis, simulators, legal, and investor materials."
         />
+        <meta name="robots" content="noindex, nofollow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-      <SimulatorApp />
+      <DataRoomGate>
+        <SimulatorApp />
+      </DataRoomGate>
     </>
   );
 }
