@@ -10,10 +10,31 @@ const nextConfig = {
   async rewrites() {
     return [];
   },
+  // Serve the whitepaper PDF inline in the browser (not as a forced download)
+  async headers() {
+    return [
+      {
+        source: "/bound-whitepaper-2026.pdf",
+        headers: [
+          { key: "Content-Type", value: "application/pdf" },
+          { key: "Content-Disposition", value: 'inline; filename="Bound Whitepaper 2026.pdf"' },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+        ],
+      },
+      {
+        source: "/Bound%20Whitepaper%202026.pdf",
+        headers: [
+          { key: "Content-Type", value: "application/pdf" },
+          { key: "Content-Disposition", value: 'inline; filename="Bound Whitepaper 2026.pdf"' },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+        ],
+      },
+    ];
+  },
   // Enable static optimization where possible
   experimental: {
     optimizeFonts: true,
   },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig

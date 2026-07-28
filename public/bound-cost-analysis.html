@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operating Cost Analysis — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+/* Ambient abstract-green background — identical recipe to the whitepaper and audit */
+body{
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);
+}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+/* Financial tables carry more columns than the prose documents — tighten them. */
+table{font-size:13px}
+th,td{padding:8px 10px}
+td:not(:first-child){font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+/* The benchmark table's last two columns are prose, not figures. */
+#validation td:nth-child(n+3){font-family:var(--sans);white-space:normal}
+#cogs td:last-child,#opex td:last-child{font-family:var(--sans);white-space:normal}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Operating Cost &amp; Company Analysis</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="abstract" href="#abstract"><span class="snav-num">§</span>Abstract</a><a data-id="scope" href="#scope"><span class="snav-num">1</span>Scope and Method</a><a data-id="rebasing" href="#rebasing"><span class="snav-num">2</span>Rebasing</a><a data-id="shape" href="#shape"><span class="snav-num">3</span>Cost Base</a><a data-id="cogs" href="#cogs"><span class="snav-num">4</span>Cost of Goods Sold</a><a data-id="personnel" href="#personnel"><span class="snav-num">5</span>Personnel</a><a data-id="opex" href="#opex"><span class="snav-num">6</span>Operating Expenses</a><a data-id="entities" href="#entities"><span class="snav-num">7</span>Entity Attribution</a><a data-id="opco" href="#opco"><span class="snav-num">8</span>Operating Company</a><a data-id="marketing" href="#marketing"><span class="snav-num">9</span>Marketing Budget</a><a data-id="coverage" href="#coverage"><span class="snav-num">10</span>Cost Coverage</a><a data-id="validation" href="#validation"><span class="snav-num">11</span>External Validation</a><a data-id="limits" href="#limits"><span class="snav-num">12</span>Limits</a><a data-id="disclaimer" href="#disclaimer"><span class="snav-num">§</span>Legal Disclaimer</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Operating Cost &amp; Company Analysis</div><h1>Cost Base, Entity Attribution and the Operating Company</h1>
+<p class="lede">BOUND Protocol — cost base rebased onto the simulation engine's default case.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Operating Cost &amp; Company Analysis</div></div>
+<div><div class="k">Period</div><div class="v">FY2026–FY2028 — July 2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+<div><div class="k">Origin</div><div class="v">Bucharest, Romania</div></div>
+</div></div></div>
+<div class="wrap">
+<section id="abstract"><div class="sec-head"><div class="sec-num">§</div><h2>Abstract</h2></div>
+<p>A cost model is only as good as the revenue series it is indexed to. The financial model behind this document scaled its largest cost line against an investment balance that the protocol does not operate — a portfolio fee series unrelated to the liquidity engine the simulator actually models. This document rebases every revenue-scaling cost onto the simulator’s default case and reports what the cost base looks like once that correction is made.</p>
+<p>Over the thirty-six months the simulator covers, the rebased operating cost base totals $9,407,335, against protocol revenue of $6,828,594. Personnel accounts for $2,938,869 of that at full employer cost, spread across nine roles that reach their steady-state headcount within the first five months and do not grow thereafter. The cost-to-revenue ratio falls from 2.63× in the first year to 0.97× in the third. It does not reach parity inside the horizon; the cumulative position at month thirty-six is −$2,578,741.</p>
+<p>This document specifies the scope of the analysis, the rebasing that was performed and why, the composition of the cost base, the personnel plan at gross-to-net detail under Romanian payroll law, and the external benchmarks each material line was tested against. Where the model is understated, that is stated. Where an assumption carries no supporting plan, that is stated too. The figures are model outputs on the assumptions recorded here — not forecasts, and not a budget that has been committed.</p>
+</section>
+<section id="scope"><div class="sec-head"><div class="sec-num">1</div><h2>Scope and Method</h2></div>
+<h4 class="sub">1.1 Sources</h4><p>Two sheets of the financial model are in scope: <b>Costs</b>, which holds the cost forecast and its assumptions, and <b>Personnel costs</b>, which holds the roster, the hiring flags and the salary escalation. No other sheet is quoted, including where the cost sheets reference one. The third source is the simulator itself: the default preset against the default OUSG market, dumped to a fixed series so that every rebased figure in this document can be re-derived rather than trusted.</p>
+<p>The financial model runs sixty months. The simulator runs thirty-six. This document is bounded by the shorter of the two — FY2026 through FY2028 — because a cost line rebased onto a series that does not exist is an extrapolation, not a measurement. Years four and five of the financial model are outside this analysis.</p>
+<h4 class="sub">1.2 Reconciliation performed</h4><p>Two structural traps in the workbook were identified and corrected before any figure was taken. The <b>Costs</b> sheet begins its monthly series at column I; <b>Personnel costs</b> begins at column H. Reading both from the same column drops December from every year. And personnel must be read from the summary block, which applies the hiring flags, rather than the gross block, which prices all twelve defined roles whether or not they are hired — the difference over five years is $721,268.</p>
+<p>With both corrected, the personnel line inside the cost forecast ties to the personnel sheet in all sixty months, and the category totals tie to the model’s own total-expenses row in every year. Every figure below descends from those two reconciled series.</p>
+</section>
+<section id="rebasing"><div class="sec-head"><div class="sec-num">2</div><h2>Rebasing the Model onto Protocol Results</h2></div>
+<h4 class="sub">2.1 What the model was indexed to</h4><p>The financial model computes its largest cost line — payment fees — as one tenth of one percent of a series labelled <i>TVL for portfolios</i>. That series is an investment closing balance carried on a different sheet; it is a custody and portfolio-management fee base, and it moves independently of RWA liquidations, minting, conversions and pool trading. The protocol’s cost of processing flow was therefore indexed to a balance the protocol does not charge against.</p>
+<p>The consequence is not a small calibration error. Measured against the simulator’s default case, the balance the model assumes exceeds protocol value under custody by 2.3× in the first year, 3.8× in the second and 5.0× in the third — a gap that widens rather than closes.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Year</th><th>Model implied balance</th><th>Simulator TVL</th><th>Ratio</th></tr></thead><tbody><tr><td>FY2026</td><td>$18,281,483</td><td>$8,057,981</td><td>2.3×</td></tr><tr><td>FY2027</td><td>$62,926,034</td><td>$16,677,245</td><td>3.8×</td></tr><tr><td>FY2028</td><td>$164,928,739</td><td>$32,747,212</td><td>5.0×</td></tr></tbody></table></div><div class="cap">Model implied balance is back-solved from the payment-fee line at its own 0.1% rate. Simulator TVL is the monthly average of Liquidity Layer plus Bound Core balance, default preset. Source: Costs rows 16 and 50; scripts/sim-default.json.</div>
+<h4 class="sub">2.2 What was replaced</h4><p>Three lines are driven by the model’s own revenue series and are rebased here. Payment fees are recomputed at the same one-tenth-of-one-percent rate against protocol transaction volume — the flow the protocol actually processes. Cloud infrastructure and infrastructure maintenance retain the model’s recipe, seeding at one twelfth of their annual assumption and compounding monthly, but compound against the simulator’s volume growth rather than the model’s.</p>
+<p>Everything else is carried unchanged. Personnel, software licences, general and administrative expenses, legal, sales and marketing, and development are not indexed to revenue anywhere in the model, and rebasing them would invent a relationship the source does not contain.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Line</th><th>Original basis</th><th>Rebased basis</th><th>Original 3-yr</th><th>Rebased 3-yr</th></tr></thead><tbody><tr><td>Payment fees</td><td>0.1% × investment balance</td><td>0.1% × transaction volume</td><td>$2,953,635</td><td>$723,687</td></tr><tr><td>Cloud infrastructure</td><td>compounds on model revenue growth</td><td>compounds on simulator volume growth</td><td>$987,356</td><td>$1,183,307</td></tr><tr><td>Maintenance infrastructure</td><td>compounds on model revenue growth</td><td>compounds on simulator volume growth</td><td>$1,175,424</td><td>$1,408,699</td></tr></tbody></table></div><div class="cap">Source: Costs rows 46, 47 and 50, against scripts/sim-default.json. Rates and seeding recipes are unchanged; only the driver series differs.</div>
+<p>The net effect on the three-year cost base is a reduction of $3,976,052, from $13,383,387 as modelled to $9,407,335 as rebased. Almost all of that reduction is the payment-fee line alone.</p>
+<h4 class="sub">2.3 Limits of the rebasing</h4><p>The rebasing inherits every assumption of the simulator’s default preset, including its single OUSG market, its growth path and its fee schedule. A different preset produces a different cost base, and the sensitivity is roughly linear in volume for payment fees and compounding for the two infrastructure lines. The rebasing also cannot repair a cost line the model never contained: it corrects what is indexed to the wrong series, not what is absent, and the absences are set out in Chapter 9.</p>
+</section>
+<section id="shape"><div class="sec-head"><div class="sec-num">3</div><h2>The Shape of the Cost Base</h2></div>
+<div class="kpis"><div class="kpi"><div class="kn">$9,407,335</div><div class="kl">Rebased 3-year cost base</div></div><div class="kpi"><div class="kn">$2,938,869</div><div class="kl">Personnel at employer cost</div></div><div class="kpi"><div class="kn">31.2%</div><div class="kl">Personnel share of base</div></div><div class="kpi"><div class="kn">9</div><div class="kl">Steady-state headcount</div></div><div class="kpi"><div class="kn">0.97×</div><div class="kl">Cost-to-revenue, FY2028</div></div></div>
+<h4 class="sub">3.1 Composition</h4><p>The cost base is dominated by cost of goods sold, which carries personnel, the two infrastructure lines, software licences and payment fees. Sales and marketing is the largest single discretionary commitment; legal is concentrated almost entirely in the launch year.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Category</th><th>FY2026</th><th>FY2027</th><th>FY2028</th><th>3-year total</th><th>Share</th></tr></thead><tbody><tr><td>Cost of goods sold</td><td>$1,396,303</td><td>$2,075,182</td><td>$2,815,786</td><td>$6,287,271</td><td>66.8%</td></tr><tr><td>Sales and marketing</td><td>$711,429</td><td>$394,286</td><td>$394,286</td><td>$1,500,000</td><td>15.9%</td></tr><tr><td>Legal</td><td>$872,000</td><td>$72,000</td><td>$72,000</td><td>$1,016,000</td><td>10.8%</td></tr><tr><td>General and administrative</td><td>$137,551</td><td>$58,256</td><td>$58,256</td><td>$254,064</td><td>2.7%</td></tr><tr><td>Development</td><td>$250,000</td><td>$50,000</td><td>$50,000</td><td>$350,000</td><td>3.7%</td></tr><tr class="tot"><td>Total</td><td>$3,367,283</td><td>$2,649,724</td><td>$3,390,328</td><td>$9,407,335</td><td>100.0%</td></tr></tbody></table></div><div class="cap">Rebased. Source: Costs rows 51, 59, 66, 71, 76 and 78, with revenue-scaling lines replaced per Chapter 2.</div>
+<div class="chart"><div class="ct">Cost composition — three-year total</div><div class="barrow"><div class="lab">Cost of goods sold</div><div class="track"><div class="fill" style="width:66.8%"></div></div><div class="val">$6,287,271</div></div><div class="barrow"><div class="lab">Sales and marketing</div><div class="track"><div class="fill" style="width:15.9%"></div></div><div class="val">$1,500,000</div></div><div class="barrow"><div class="lab">Legal</div><div class="track"><div class="fill" style="width:10.8%"></div></div><div class="val">$1,016,000</div></div><div class="barrow"><div class="lab">General and administrative</div><div class="track"><div class="fill" style="width:2.7%"></div></div><div class="val">$254,064</div></div><div class="barrow"><div class="lab">Development</div><div class="track"><div class="fill" style="width:3.7%"></div></div><div class="val">$350,000</div></div></div>
+<h4 class="sub">3.2 The second-year decline</h4><p>Costs fall in the second year. This is structural rather than an efficiency: the launch year carries regulatory licensing, the smart-contract audit, the bug-bounty allocation, equipment and application development, and those obligations do not recur on the model’s schedule. The base then resumes growing in the third year as the volume-linked lines compound.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Year</th><th>Total cost</th><th>Change</th><th>Protocol revenue</th><th>Cost-to-revenue</th></tr></thead><tbody><tr><td>FY2026</td><td>$3,367,283</td><td>—</td><td>$1,279,599</td><td>2.63×</td></tr><tr><td>FY2027</td><td>$2,649,724</td><td>−$717,559</td><td>$2,043,708</td><td>1.30×</td></tr><tr><td>FY2028</td><td>$3,390,328</td><td>$740,604</td><td>$3,505,287</td><td>0.97×</td></tr></tbody></table></div><div class="cap">Rebased costs against simulator default-case protocol revenue (BCI surplus capital plus Protocol Reserve).</div>
+</section>
+<section id="cogs"><div class="sec-head"><div class="sec-num">4</div><h2>Cost of Goods Sold</h2></div>
+<p>Cost of goods sold carries five lines. Two are fixed against headcount, two compound with protocol volume, and one is a direct function of it. Each is stated below with the driver that produces it.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Line</th><th>FY2026</th><th>FY2027</th><th>FY2028</th><th>3-year total</th><th>Driver</th></tr></thead><tbody><tr><td>Personnel (employer cost)</td><td>$894,391</td><td>$993,135</td><td>$1,051,343</td><td>$2,938,869</td><td>Roster, flags and salary escalation</td></tr><tr><td>Payment fees</td><td>$107,320</td><td>$233,713</td><td>$382,654</td><td>$723,687</td><td>0.1% of protocol transaction volume</td></tr><tr><td>Maintenance infrastructure</td><td>$208,904</td><td>$454,936</td><td>$744,858</td><td>$1,408,699</td><td>Seeded at $50,000/yr, compounds on volume growth</td></tr><tr><td>Cloud infrastructure</td><td>$175,480</td><td>$382,147</td><td>$625,681</td><td>$1,183,307</td><td>Seeded at $42,000/yr, compounds on volume growth</td></tr><tr><td>Software licences</td><td>$10,208</td><td>$11,250</td><td>$11,250</td><td>$32,708</td><td>Headcount-driven, $15,000/yr at full roster</td></tr><tr class="tot"><td>Total</td><td>$1,396,303</td><td>$2,075,182</td><td>$2,815,786</td><td>$6,287,271</td><td>—</td></tr></tbody></table></div><div class="cap">Rebased. Source: Costs rows 45–51; Personnel costs row 85 plus employer contribution.</div>
+<p>The composition changes materially across the horizon. Personnel is 64.1% of cost of goods sold in the first year and 37.3% in the third, not because the team shrinks but because the volume-linked lines compound around it. That is operating leverage, and it is the single most important structural property of this cost base.</p>
+</section>
+<section id="personnel"><div class="sec-head"><div class="sec-num">5</div><h2>Personnel and Compensation</h2></div>
+<h4 class="sub">5.1 The roster</h4><p>The model defines twelve roles and hires nine. Headcount reaches five in the first month, nine by the fifth, and does not change again for the remainder of the horizon. Salary is the only escalator: gross pay is indexed at 5.5% in 2026, 6.0% in 2027 and 5.7% thereafter, following the Romanian national forecast, and every role except the founder carries a 10% bonus.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Role</th><th>Allocation</th><th>Gross start salary</th><th>Bonus</th><th>Hire</th><th>3-year gross</th></tr></thead><tbody><tr><td>Founder / CEO</td><td>G&amp;A</td><td>$162,000</td><td>0%</td><td>2026-01</td><td>$527,455</td></tr><tr><td>CMO</td><td>S&amp;M</td><td>$97,200</td><td>10%</td><td>2026-01</td><td>$348,120</td></tr><tr><td>CTO / Co-founder</td><td>R&amp;D</td><td>$129,600</td><td>10%</td><td>2026-01</td><td>$464,160</td></tr><tr><td>Content &amp; Education Lead</td><td>S&amp;M</td><td>$42,728</td><td>10%</td><td>2026-05</td><td>$137,230</td></tr><tr><td>Head of BD (Business Development)</td><td>S&amp;M</td><td>$94,500</td><td>10%</td><td>2026-02</td><td>$329,768</td></tr><tr><td>Community Manager</td><td>S&amp;M</td><td>$30,780</td><td>10%</td><td>2026-05</td><td>$98,857</td></tr><tr><td>Institutional Relations Manager</td><td>S&amp;M</td><td>$87,750</td><td>10%</td><td>2026-02</td><td>$306,213</td></tr><tr><td>Product Designer (UX/UI)</td><td>R&amp;D</td><td>$56,700</td><td>10%</td><td>2026-01</td><td>$203,070</td></tr><tr><td>Smart Contract Engineer</td><td>R&amp;D</td><td>$128,250</td><td>10%</td><td>2026-01</td><td>$459,325</td></tr></tbody></table></div><div class="cap">Source: Personnel costs rows 9–20 (roster and flags) and rows 73–84 (summary). Gross is salary plus bonus, before employer contributions.</div>
+<p>Three defined roles are never hired: Co-founder, DeFi Strategist, Marketing Lead. They carry salary assumptions in the model and contribute nothing to its cost. They are disclosed here rather than dropped, because a roster that prices twelve roles and staffs nine is a hiring decision that has already been taken.</p>
+<h4 class="sub">5.2 Gross-to-net under Romanian payroll law</h4><p>The model records gross pay. Gross pay is not what the protocol spends, and it is not what anyone receives. Under Romanian law an employee contributes 25% of gross to the pension fund and 10% to health insurance, both uncapped; income tax of 10% is then charged on what remains, which is 6.5% of gross. The employer adds a work-insurance contribution of 2.25% on top of gross and owes no pension contribution under normal working conditions.</p>
+<p>The arithmetic that follows is therefore fixed: an employee receives 58.5% of gross, the State Budget receives 41.5% of gross from within it, and the employer pays 102.25% of gross in total.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Role</th><th>Gross</th><th>Pension 25%</th><th>Health 10%</th><th>Income tax</th><th>Net received</th><th>Employer 2.25%</th><th>Total employer cost</th></tr></thead><tbody><tr><td>Founder / CEO</td><td>$527,455</td><td>$131,864</td><td>$52,746</td><td>$34,285</td><td>$308,561</td><td>$11,868</td><td>$539,323</td></tr><tr><td>CMO</td><td>$348,120</td><td>$87,030</td><td>$34,812</td><td>$22,628</td><td>$203,650</td><td>$7,833</td><td>$355,953</td></tr><tr><td>CTO / Co-founder</td><td>$464,160</td><td>$116,040</td><td>$46,416</td><td>$30,170</td><td>$271,534</td><td>$10,444</td><td>$474,604</td></tr><tr><td>Content &amp; Education Lead</td><td>$137,230</td><td>$34,307</td><td>$13,723</td><td>$8,920</td><td>$80,279</td><td>$3,088</td><td>$140,317</td></tr><tr><td>Head of BD (Business Development)</td><td>$329,768</td><td>$82,442</td><td>$32,977</td><td>$21,435</td><td>$192,914</td><td>$7,420</td><td>$337,188</td></tr><tr><td>Community Manager</td><td>$98,857</td><td>$24,714</td><td>$9,886</td><td>$6,426</td><td>$57,832</td><td>$2,224</td><td>$101,082</td></tr><tr><td>Institutional Relations Manager</td><td>$306,213</td><td>$76,553</td><td>$30,621</td><td>$19,904</td><td>$179,135</td><td>$6,890</td><td>$313,103</td></tr><tr><td>Product Designer (UX/UI)</td><td>$203,070</td><td>$50,768</td><td>$20,307</td><td>$13,200</td><td>$118,796</td><td>$4,569</td><td>$207,639</td></tr><tr><td>Smart Contract Engineer</td><td>$459,325</td><td>$114,831</td><td>$45,933</td><td>$29,856</td><td>$268,705</td><td>$10,335</td><td>$469,660</td></tr><tr class="tot"><td>Total</td><td>$2,874,200</td><td>$718,550</td><td>$287,420</td><td>$186,823</td><td>$1,681,407</td><td>$64,669</td><td>$2,938,869</td></tr></tbody></table></div><div class="cap">Thirty-six months, FY2026–FY2028, USD. Rates verified against PwC Worldwide Tax Summaries (Romania, 2026): employee CAS 25% and CASS 10%, both uncapped; income tax 10% flat on the post-contribution base; employer CAM 2.25%.</div>
+<div class="kpis"><div class="kpi"><div class="kn">$2,938,869</div><div class="kl">Total employer cost</div></div><div class="kpi"><div class="kn g">$1,681,407</div><div class="kl">Net reaching employees</div></div><div class="kpi"><div class="kn w">$1,257,462</div><div class="kl">Total to State Budget</div></div><div class="kpi"><div class="kn">42.8%</div><div class="kl">Effective tax wedge</div></div></div>
+<div class="chart"><div class="ct">Where each dollar of employer cost goes</div><div class="barrow"><div class="lab">Net to employees</div><div class="track"><div class="fill" style="width:57.2%"></div></div><div class="val">$1,681,407</div></div><div class="barrow"><div class="lab">Pension (CAS)</div><div class="track"><div class="fill" style="width:24.4%"></div></div><div class="val">$718,550</div></div><div class="barrow"><div class="lab">Health (CASS)</div><div class="track"><div class="fill" style="width:9.8%"></div></div><div class="val">$287,420</div></div><div class="barrow"><div class="lab">Income tax</div><div class="track"><div class="fill" style="width:6.4%"></div></div><div class="val">$186,823</div></div><div class="barrow"><div class="lab">Work insurance</div><div class="track"><div class="fill" style="width:2.2%"></div></div><div class="val">$64,669</div></div></div>
+<h4 class="sub">5.3 What the model omits</h4><p>The model carries a 35% payroll-tax assumption that no formula references. That figure is the employee contribution — pension and health combined — and it is deducted from gross rather than added to it, so its absence from the formulas is correct and the personnel line is not understated by 35%. What the model does omit is the employer’s own contribution: 2.25% of gross, or $64,669 across the horizon. That amount is added to every personnel figure in this document and is the only adjustment made to the model’s personnel series.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Year</th><th>Model gross</th><th>Employer contribution</th><th>True employer cost</th><th>Net to staff</th></tr></thead><tbody><tr><td>FY2026</td><td>$874,710</td><td>$19,681</td><td>$894,391</td><td>$511,705</td></tr><tr><td>FY2027</td><td>$971,282</td><td>$21,854</td><td>$993,135</td><td>$568,200</td></tr><tr><td>FY2028</td><td>$1,028,208</td><td>$23,135</td><td>$1,051,343</td><td>$601,502</td></tr><tr class="tot"><td>Total</td><td>$2,874,200</td><td>$64,669</td><td>$2,938,869</td><td>$1,681,407</td></tr></tbody></table></div><div class="cap">Source: Personnel costs row 85, with employer CAM applied.</div>
+</section>
+<section id="opex"><div class="sec-head"><div class="sec-num">6</div><h2>Operating Expenses</h2></div>
+<p>Outside cost of goods sold the base carries four categories, none of which is indexed to protocol activity. Their shape is dominated by what happens once at launch and what recurs thereafter.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Category</th><th>FY2026</th><th>FY2027</th><th>FY2028</th><th>3-year total</th><th>Character</th></tr></thead><tbody><tr><td>Sales and marketing</td><td>$711,429</td><td>$394,286</td><td>$394,286</td><td>$1,500,000</td><td>$1.5M launch year, $1.0M recurring</td></tr><tr><td>Legal</td><td>$872,000</td><td>$72,000</td><td>$72,000</td><td>$1,016,000</td><td>Licensing, audit and bounty at launch; advisory recurring</td></tr><tr><td>Development</td><td>$250,000</td><td>$50,000</td><td>$50,000</td><td>$350,000</td><td>Application build at launch; integrations recurring</td></tr><tr><td>General and administrative</td><td>$137,551</td><td>$58,256</td><td>$58,256</td><td>$254,064</td><td>Equipment at launch; office, accounting and recruiting recurring</td></tr></tbody></table></div><div class="cap">Source: Costs rows 53–76. Not rebased — none of these lines is revenue-indexed in the model.</div>
+<p>Sales and marketing is 15.9% of the three-year base and the largest discretionary commitment in the model. It is also the reason personnel accounts for a smaller share of this cost base than is typical, a point taken up in Chapter 8.</p>
+</section>
+<section id="entities"><div class="sec-head"><div class="sec-num">7</div><h2>Entity Attribution</h2></div>
+<p>Cost belongs to an entity. So does revenue. Until this chapter existed, this document reported a single cost base and the business plan set protocol revenue against it — money that accrues to index holders, netted against costs borne by a company that has no revenue at all. The two sit in different entities and cannot be combined.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Entity</th><th>Jurisdiction</th><th>Role</th><th>Bears</th></tr></thead><tbody><tr><td>Nexus Technologies Foundation</td><td>Panama</td><td>Owns the protocol and its intellectual property; grants the token delegation</td><td>Capitalised development IP</td></tr><tr><td>BITSWIFT TECHNOLOGIES INC.</td><td>Panama</td><td>Distributes the token; holds raise proceeds; counterparty on the SAFT</td><td>Token legal</td></tr><tr><td>Operating company</td><td>European Union</td><td>Develops the protocol, employs the team, runs go-to-market</td><td>All operating cost</td></tr></tbody></table></div><div class="cap">Entity roles as recorded in the corporate documents and the SAFT.</div>
+<h4 class="sub">7.1 Every cost line, and who bears it</h4><div class="tbl-scroll"><table><thead><tr><th>Line</th><th>FY2026</th><th>FY2027</th><th>FY2028</th><th>36-month total</th><th>Borne by</th></tr></thead><tbody><tr><td>Personnel (employer cost)</td><td>$894,391</td><td>$993,135</td><td>$1,051,343</td><td>$2,938,869</td><td>Operating company</td></tr><tr><td>Sales and marketing</td><td>$711,429</td><td>$394,286</td><td>$394,286</td><td>$1,500,000</td><td>Operating company</td></tr><tr><td>Maintenance infrastructure</td><td>$208,904</td><td>$454,936</td><td>$744,858</td><td>$1,408,699</td><td>Operating company</td></tr><tr><td>Cloud infrastructure</td><td>$175,480</td><td>$382,147</td><td>$625,681</td><td>$1,183,307</td><td>Operating company</td></tr><tr><td>Legal</td><td>$872,000</td><td>$72,000</td><td>$72,000</td><td>$1,016,000</td><td>Split — token legal to Issuer</td></tr><tr><td>Development</td><td>$250,000</td><td>$50,000</td><td>$50,000</td><td>$350,000</td><td>Operating company — billed on, IP to Foundation</td></tr><tr><td>General and administrative</td><td>$137,551</td><td>$58,256</td><td>$58,256</td><td>$254,064</td><td>Operating company</td></tr><tr><td>Software licences</td><td>$10,208</td><td>$11,250</td><td>$11,250</td><td>$32,708</td><td>Operating company</td></tr><tr><td>Payment fees</td><td>$107,320</td><td>$233,713</td><td>$382,654</td><td>$723,687</td><td>Protocol</td></tr><tr class="tot"><td>Total</td><td>$3,367,283</td><td>$2,649,724</td><td>$3,390,328</td><td>$9,407,335</td><td></td></tr></tbody></table></div><div class="cap">Payment fees scale with on-chain volume and are netted against protocol revenue, not carried by the company.</div>
+<div class="tbl-scroll"><table><thead><tr><th>Bearer</th><th>FY2026</th><th>FY2027</th><th>FY2028</th><th>36-month total</th><th>Share</th></tr></thead><tbody><tr><td>Operating company</td><td>$3,259,963</td><td>$2,416,011</td><td>$3,007,674</td><td>$8,683,648</td><td>92.3%</td></tr><tr><td>Protocol</td><td>$107,320</td><td>$233,713</td><td>$382,654</td><td>$723,687</td><td>7.7%</td></tr></tbody></table></div><div class="cap">The operating company bears 92.3% of the base.</div>
+<h4 class="sub">7.2 Development is billed on, not absorbed</h4><p>The Foundation owns the protocol. Development work creates that protocol. So the operating company bills the Foundation for it and the Foundation capitalises the result as intellectual property — $378,000 over the horizon, inclusive of the services margin. Treating it as a bare expense of the operating company would mean one entity paying to build an asset another entity owns, with nothing recorded against it.</p>
+</section>
+<section id="opco"><div class="sec-head"><div class="sec-num">8</div><h2>The Operating Company</h2></div>
+<p>The operating company is paid under a development-and-services agreement with the Foundation and the Issuer, at cost plus 8%. That agreement is what gives it a revenue line. Without one it is a cost centre with no income — commercially wrong, and indefensible on transfer pricing, since an EU company performing real work for a Panama principal at zero margin is the textbook challenge.</p>
+<div class="kpis"><div class="kpi"><div class="kn">$9,378,339</div><div class="kl">Services revenue, 36 months</div></div><div class="kpi"><div class="kn g">$694,692</div><div class="kl">Margin at 8%</div></div><div class="kpi"><div class="kn w">$111,151</div><div class="kl">EU tax at 16%</div></div><div class="kpi"><div class="kn">$260,509</div><div class="kl">Monthly cost</div></div></div>
+<h4 class="sub">8.1 Profit and loss</h4><div class="tbl-scroll"><table><thead><tr><th>USD</th><th>FY2026</th><th>FY2027</th><th>FY2028</th><th>36-month total</th></tr></thead><tbody><tr><td>Services revenue</td><td>$3,520,760</td><td>$2,609,291</td><td>$3,248,288</td><td>$9,378,339</td></tr><tr><td>Operating cost</td><td>−$3,259,963</td><td>−$2,416,011</td><td>−$3,007,674</td><td>−$8,683,648</td></tr><tr><td>Margin</td><td>$260,797</td><td>$193,281</td><td>$240,614</td><td>$694,692</td></tr><tr><td>EU corporate tax</td><td>−$41,728</td><td>−$30,925</td><td>−$38,498</td><td>−$111,151</td></tr><tr><td>Net result</td><td>$219,070</td><td>$162,356</td><td>$202,116</td><td>$583,541</td></tr></tbody></table></div><div class="cap">Cost plus 8%, taxed at the Romanian corporate rate of 16%. The company is deliberately close to break-even: it is a service provider, not a profit centre.</div>
+<h4 class="sub">8.2 How it is funded, and for how long</h4><p>The company runs a <b>24-month funded plan</b>. That horizon is its own — the protocol's 36-month simulation is a different entity on a different clock, and the two are reported separately throughout this document set.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Source</th><th>Amount</th><th>Form</th></tr></thead><tbody><tr><td>Seed raise, directed to operations</td><td>$2,480,000</td><td>Cash at token generation</td></tr><tr><td>Company share of the public raise, 30%</td><td>$2,250,000</td><td>Cash at token generation</td></tr><tr><td>Marketing allocation, 2% of supply</td><td>$1,000,000</td><td>Tokens, liquidated on schedule</td></tr><tr><td>Treasury allocation vested by month 24</td><td>$1,293,750</td><td>Tokens, liquidated on schedule</td></tr><tr><td>Total available</td><td>$7,023,750</td><td></td></tr></tbody></table></div><div class="cap">Token figures are valued at the launch price and vest on the schedules in the tokenomics model.</div>
+<div class="note"><span class="nh">More than one funding route</span>Two of the four sources above are token allocations valued at the launch price. They are shown here because they are already allocated and already vesting, not because the plan requires them to be sold. The operating company also holds an equity route: it can raise against its own equity to cover working capital, and that option substitutes for some or all of the token allocations shown above. The company therefore has more than one path to the same funded position.</div>
+<div class="tbl-scroll"><table><thead><tr><th>24-month position</th><th>Amount</th></tr></thead><tbody><tr><td>Cost to month 24, including margin</td><td>$6,252,226</td></tr><tr><td>Funding available by month 24</td><td>$7,023,750</td></tr><tr><td>Surplus</td><td>$771,524</td></tr></tbody></table></div><div class="cap">Monthly cost $260,509. The plan is funded for its stated horizon.</div>
+</section>
+<section id="marketing"><div class="sec-head"><div class="sec-num">9</div><h2>The Marketing Budget</h2></div>
+<p>Sales and marketing is $1,500,000 over the horizon, rebuilt from published benchmarks rather than carried across from the financial model, which had it at $3,740,000. The first two stages of the go-to-market plan are a direct sales motion — institutional liquidity providers and RWA issuers closed one relationship at a time — and that motion does not consume a mass-market budget.</p>
+<p>At $5,000 to $15,000 per sourced opportunity, the ten to fifteen relationships the first stage needs cost between $75,000 and $225,000 to source. The old budget spent $1,580,000 in the launch year on a motion that cannot absorb it.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Phase</th><th>When</th><th>Line</th><th>Amount</th></tr></thead><tbody><tr><td>Phase 1 — B2B institutional</td><td>Months 1–5</td><td>Brand system and institutional collateral</td><td>$60,000</td></tr><tr><td>Phase 1 — B2B institutional</td><td>Months 1–5</td><td>Category research and thought leadership</td><td>$50,000</td></tr><tr><td>Phase 1 — B2B institutional</td><td>Months 1–5</td><td>Two Tier-2 conferences</td><td>$120,000</td></tr><tr><td>Phase 1 — B2B institutional</td><td>Months 1–5</td><td>Public relations and analyst relations</td><td>$40,000</td></tr><tr><td>Phase 1 — B2B institutional</td><td>Months 1–5</td><td>Issuer business-development materials and data room</td><td>$30,000</td></tr><tr><td>Phase 2 — Pool launch</td><td>Months 6–8</td><td>Launch campaign</td><td>$120,000</td></tr><tr><td>Phase 2 — Pool launch</td><td>Months 6–8</td><td>One Tier-2 conference</td><td>$60,000</td></tr><tr><td>Phase 2 — Pool launch</td><td>Months 6–8</td><td>Public relations and earned media</td><td>$40,000</td></tr><tr><td>Phase 2 — Pool launch</td><td>Months 6–8</td><td>DeFi ecosystem and integrations</td><td>$60,000</td></tr><tr><td>Phase 3 — Open market</td><td>Months 9–36</td><td>Content and search, $12,000 a month</td><td>$336,000</td></tr><tr><td>Phase 3 — Open market</td><td>Months 9–36</td><td>Community and education, $7,000 a month</td><td>$196,000</td></tr><tr><td>Phase 3 — Open market</td><td>Months 9–36</td><td>Conferences, two a year</td><td>$240,000</td></tr><tr><td>Phase 3 — Open market</td><td>Months 9–36</td><td>Performance marketing, retail acquisition</td><td>$148,000</td></tr><tr class="tot"><td>Total</td><td></td><td></td><td>$1,500,000</td></tr></tbody></table></div><div class="cap">Benchmarks, July 2026: Tier-2 conference $50,000–150,000 all-in; events 5–15% of B2B marketing budgets; $5,000–15,000 per sourced opportunity; median B2B sales-led customer acquisition cost $11,400.</div>
+<div class="chart"><div class="ct">Marketing by phase</div><div class="barrow"><div class="lab">B2B institutional</div><div class="track"><div class="fill" style="width:20.0%"></div></div><div class="val">$300,000</div></div><div class="barrow"><div class="lab">Pool launch</div><div class="track"><div class="fill" style="width:18.7%"></div></div><div class="val">$280,000</div></div><div class="barrow"><div class="lab">Open market</div><div class="track"><div class="fill" style="width:61.3%"></div></div><div class="val">$920,000</div></div></div>
+<p>The <b>Marketing token allocation covers $1,000,000</b> of this — 66.7% of the budget. Marketing is funded from that allocation first and from cash second. Spending cash while the allocation intended for exactly this purpose sits idle would be the wrong way round.</p>
+</section>
+<section id="coverage"><div class="sec-head"><div class="sec-num">10</div><h2>Cost Coverage</h2></div>
+<p>Coverage is an entity-level question, and Chapter 7 established that this document set reports two entities on two clocks. Reporting a single blended coverage ratio would repeat exactly the error this document exists to correct: protocol revenue accrues to index holders and to the Protocol Reserve, while the operating cost base is reimbursed under a services agreement. The two are stated separately below and are never netted.</p>
+<h4 class="sub">10.1 The protocol</h4><p>The protocol bears payment processing fees and nothing else. Every other line in Chapter 7 belongs to the operating company. Against that, protocol revenue is the BCI surplus and the Protocol Reserve.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Year</th><th>Protocol revenue</th><th>Protocol-borne cost</th><th>Net</th><th>Coverage</th></tr></thead><tbody><tr><td>FY2026</td><td>$1,279,599</td><td>$107,320</td><td>$1,172,280</td><td>11.92×</td></tr><tr><td>FY2027</td><td>$2,043,708</td><td>$233,713</td><td>$1,809,994</td><td>8.74×</td></tr><tr><td>FY2028</td><td>$3,505,287</td><td>$382,654</td><td>$3,122,633</td><td>9.16×</td></tr><tr class="tot"><td>Cumulative</td><td>$6,828,594</td><td>$723,687</td><td>$6,104,907</td><td>9.44×</td></tr></tbody></table></div><div class="cap">Protocol revenue is BCI surplus capital plus Protocol Reserve, simulator default case. Protocol-borne cost is payment processing fees, per Chapter 7.</div>
+<p>The protocol covers its own costs in every year of the horizon. This is a structural result rather than a favourable one: the protocol is not the entity that employs the team or runs go-to-market, so almost none of the cost base sits here. What this line does establish is that the fee engine is self-sustaining on its own terms, and that protocol revenue is available in full to index holders and the Reserve.</p>
+<h4 class="sub">10.2 The operating company</h4><p>The operating company is reimbursed at cost plus 8% under the development-and-services agreement. Its revenue is that fee, not protocol revenue, which it never receives.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Year</th><th>Services revenue</th><th>Operating cost</th><th>Margin</th><th>Net after EU tax</th></tr></thead><tbody><tr><td>FY2026</td><td>$3,520,760</td><td>−$3,259,963</td><td>$260,797</td><td>$219,070</td></tr><tr><td>FY2027</td><td>$2,609,291</td><td>−$2,416,011</td><td>$193,281</td><td>$162,356</td></tr><tr><td>FY2028</td><td>$3,248,288</td><td>−$3,007,674</td><td>$240,614</td><td>$202,116</td></tr><tr class="tot"><td>Cumulative</td><td>$9,378,339</td><td>−$8,683,648</td><td>$694,692</td><td>$583,541</td></tr></tbody></table></div><div class="cap">Cost plus 8%, taxed at the EU corporate rate of 16%.</div>
+<p>The company returns $583,541 across the horizon. It cannot report a loss on this structure, because its revenue is defined as its cost plus a margin. That is the point of a cost-plus service company and not evidence of commercial strength. The question that matters for the company is funding, not profitability, and it is answered in Chapter 8: the plan is funded to month twenty-four with a surplus.</p>
+<h4 class="sub">10.3 Why these are not combined</h4><p>Setting $6,828,594 of protocol revenue against $9,407,335 of total cost base would produce a deficit of −$2,578,741 and a coverage ratio of 1.38×. That figure is stated here only so that it is not derived independently and misread. It has no economic meaning: it charges money owed to index holders against costs borne by a company those holders do not own, and it counts protocol-borne payment fees on the cost side while counting protocol revenue on the other. Chapter 7 rules the combination out, and this chapter observes that ruling.</p>
+<div class="note warn"><span class="nh">Read these numbers carefully</span>These are model outputs on the default preset, not forecasts and not a funding plan. A different preset, a different market set, or a different marketing commitment moves every figure in this chapter.</div>
+</section>
+<section id="validation"><div class="sec-head"><div class="sec-num">11</div><h2>External Validation</h2></div>
+<p>Every material line was tested against published market ranges for 2026. The results divide cleanly: the security budget is adequate, the regulatory budget is not, and the technical salaries sit below the bands they are competing in.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Line</th><th>Model figure</th><th>Market range</th><th>Assessment</th><th>Source</th></tr></thead><tbody><tr><td>Smart-contract audit</td><td>$200,000, launch year</td><td>$50K–$100K typical DeFi; $60K–$120K realistic pre-launch</td><td>Adequate to conservative</td><td>Sherlock; Zealynx; QuillAudits (2026)</td></tr><tr><td>Bug bounty</td><td>$300,000, launch year only</td><td>$80K–$100K max reward mid-size; $1M+ at scale</td><td>Budget reasonable; recurrence missing</td><td>Immunefi; Sherlock (2026)</td></tr><tr><td>Regulatory licensing</td><td>$300,000, launch year only</td><td>€350K–€900K first year; €150K–€250K annually to hold</td><td>Understated on both counts</td><td>Crassula; Pharos; InnReg (2026)</td></tr><tr><td>Legal advisory</td><td>$72,000 per year</td><td>€80K–€200K for authorisation preparation alone</td><td>Plausible steady state; light at launch</td><td>Crassula; InnReg (2026)</td></tr><tr><td>Smart-contract engineer</td><td>$128,250 base</td><td>$150K–$200K mid-level; $200K–$300K senior, plus tokens</td><td>Below the mid-level floor</td><td>InterviewPal; CryptoRecruit; Metana (2026)</td></tr><tr><td>Chief technology officer</td><td>$129,600 base</td><td>Senior individual contributors alone command $200K–$300K</td><td>Materially below market</td><td>InterviewPal; CryptoRecruit (2026)</td></tr></tbody></table></div><div class="cap">Benchmarks gathered July 2026. Ranges are as published by the cited sources and are indicative, not quotations for this protocol.</div>
+<h4 class="sub">8.1 Regulatory licensing</h4><p>The model books regulatory licensing once, at $300,000, in the launch year and nothing thereafter. Published first-year costs for a MiCA authorisation run from €350,000 to €900,000 all-in, and holding the authorisation costs a further €150,000 to €250,000 every year. The model is therefore light in the year it spends and silent in the four years it must keep spending. This is the largest single omission identified in the cost base.</p>
+<h4 class="sub">8.2 Technical compensation</h4><p>The smart-contract engineer is budgeted at $128,250 and the chief technology officer at $129,600. Published 2026 ranges place mid-level smart-contract engineers at $150,000 to $200,000 and senior engineers who own protocol architecture at $200,000 to $300,000 before token compensation. Lifting both roles to a $200,000 floor adds approximately $142,150 of base salary a year, or roughly $875,000 across five years once bonus and employer contributions are included.</p>
+<p>The consequence is not that the model is wrong — it is that the model prices a team it may not be able to recruit at these levels. That is a hiring risk carried inside a cost assumption, and it belongs in the cost document rather than outside it.</p>
+<h4 class="sub">8.3 Payroll share</h4><p>Payroll typically accounts for 60% to 75% of an early-stage company’s burn. In this model it is 31.2% of the three-year base. The difference is almost entirely the $1.5 million launch marketing commitment and the $1.0 million a year that follows it. Whether that allocation is correct is a strategic question rather than an accounting one; what the comparison establishes is that this cost base is not shaped like a typical early-stage company’s, and the divergence is deliberate and locatable.</p>
+</section>
+<section id="limits"><div class="sec-head"><div class="sec-num">12</div><h2>Model Limits and Open Items</h2></div>
+<p>This chapter names what the cost model does not contain or does not support. It is an engineering disclosure of the model’s boundaries, not a criticism of it.</p>
+<ul class="find"><li><b>Recurring regulatory cost:</b> licensing is booked once at launch. Holding a MiCA authorisation costs €150,000 to €250,000 a year and appears nowhere in the base.</li><li><b>Recurring security cost:</b> the bug bounty is booked once at launch. A bounty programme that closes after year one is not a bounty programme.</li><li><b>Headcount plan:</b> the roster reaches nine in month five and never changes, across a horizon in which value under custody grows from $3.6 million to $46.1 million. No hiring is funded against that growth.</li><li><b>Technical compensation:</b> two of the three engineering-side salaries sit below published market floors, as set out in Chapter 8.</li><li><b>Cost allocation:</b> every role carries a G&amp;A, S&amp;M or R&amp;D tag, but the cost forecast routes all personnel into cost of goods sold. The tags are unused, so no functional cost split is available from this model.</li><li><b>Horizon:</b> the analysis stops at month thirty-six because the simulator does. Years four and five of the financial model are unexamined here.</li><li><b>Scenario dependence:</b> every rebased figure inherits the default preset. No scenario range is presented, and none should be inferred.</li><li><b>Unhired roles:</b> three defined roles carry salary assumptions and no hiring flag. If the plan intends to hire them, the cost base is understated by their fully loaded cost.</li></ul>
+</section>
+<section id="disclaimer"><div class="sec-head"><div class="sec-num">§</div><h2>Legal Disclaimer</h2></div>
+<p>This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. All figures are outputs of a financial model and of the BOUND simulation engine on the assumptions recorded in this document; they are not forecasts, budgets, commitments or guarantees of actual results. Cost figures rebased onto the simulator inherit every assumption of its default preset. Payroll figures apply Romanian statutory rates as published for 2026 and are illustrative of the model’s roster rather than a statement of any individual’s compensation; the applicable jurisdiction, entity of employment and engagement structure are matters of fact not determined by this document. Market benchmarks are drawn from third-party published sources as at July 2026, are indicative rather than quotations, and may change. Forward-looking statements are subject to material uncertainty and change. © 2026 BOUND Protocol.</p>
+</section>
+<footer><div class="disc"><b>Note.</b> Every figure in this document is derived from the financial model's <span class="mono">Costs</span> and <span class="mono">Personnel costs</span> sheets and from the simulation engine's default case. Regenerate via <span class="mono">node scripts/sim-default-dump.mjs</span>, <span class="mono">python3 scripts/gen-costs-content.py</span>, then <span class="mono">node scripts/build-costs.mjs</span>.</div>
+<div>BOUND Protocol · Operating Cost &amp; Company Analysis FY2026–FY2028 — July 2026 · Bucharest, Romania</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>

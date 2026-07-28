@@ -1,0 +1,953 @@
+{
+  "front": {
+    "brand": "BOUND Protocol",
+    "kind": "Go-to-Market Strategy",
+    "tagline": "Sequencing a Two-Sided Liquidity Market",
+    "version": "Months 1–36 — July 2026",
+    "place": "Bucharest, Romania"
+  },
+  "chapters": [
+    {
+      "num": "",
+      "id": "abstract",
+      "title": "Abstract",
+      "nav": "Abstract",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "BOUND is a two-sided market. One side supplies liquidity and receives BLI; the other brings tokenized real-world assets and receives dollars. Neither side is useful without the other, and both cannot be opened at once. This document sets out the order in which they open, what gates each stage, and how the protocol is taken to market on both sides.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "The plan is staged on two independent axes. Liquidity supply opens first to private investors, DAOs and companies, and later to any holder seeking yield. Liquidity demand opens first to institutional RWA holders transacting directly against the smart contract, and later to the open market once the rwaUSD pool is live. RWA market onboarding runs in parallel from the first month and is independent of both.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "Every figure here is drawn from the simulation engine's default case. Over thirty-six months the protocol earns $6,828,594 against a Liquidity Layer that reaches $37,791,553. The marketing allocation of $1,500,000 in the launch year is taken from the operating cost model and allocated in full in Chapter 8.",
+          "boldLabel": false
+        },
+        {
+          "t": "kpis",
+          "items": [
+            {
+              "n": "3",
+              "l": "Stages, two axes"
+            },
+            {
+              "n": "Month 6",
+              "l": "Pool and retail liquidity open"
+            },
+            {
+              "n": "Month 9",
+              "l": "RWA minting opens"
+            },
+            {
+              "n": "$1,500,000",
+              "l": "Launch-year marketing"
+            },
+            {
+              "n": "$37,791,553",
+              "l": "Liquidity Layer, month 36"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "1",
+      "id": "market",
+      "title": "The Market",
+      "nav": "The Market",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "1.1 Supply side — where liquidity comes from",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Public companies, DAOs, fintechs and crypto-native businesses hold more than $35 billion in on-chain stablecoin reserves, and for most treasury teams those balances are idle. Mainstream stablecoin yields run from roughly 4.1% to 11.8%, and the spread across that range reflects real differences in collateral, custody and liquidity risk.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "BOUND's modelled Annualized Index Growth sits at the upper end of that band. More importantly it is earned differently: the return comes from the spread on exits the protocol underwrites, not from lending the capital out. That is a different risk shape, and it is the positioning wedge — not a higher number, a different exposure.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The capital requirement is small against the available pool. The default case needs roughly $6,551,823 of Liquidity Layer by month five, which is about 0.019% of idle on-chain stablecoin reserves. The constraint on this side is access and credibility, not market size.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "1.2 Demand side — where the assets are",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Tokenized real-world assets stand at $22–33 billion on-chain and are growing at roughly 75% a year. The category divides into three unequal parts, and they do not share the same problem.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Category",
+                "On-chain AUM",
+                "Representative issuers",
+                "Exit problem"
+              ],
+              "rows": [
+                [
+                  "Treasuries and money-market funds",
+                  "~$10B",
+                  "BUIDL $2.5B, USYC $3B, USDY $2.1B, BENJI $828M, OUSG $625M",
+                  "Least acute — shortest redemption cycles"
+                ],
+                [
+                  "Private credit",
+                  "~$8B",
+                  "Maple, Centrifuge, Goldfinch, Apollo",
+                  "Most acute — permissioned, eligibility-gated, uneven liquidity"
+                ],
+                [
+                  "Real estate",
+                  "~$2–3B",
+                  "RealT, Lofty, Propy",
+                  "Structurally illiquid, but fragmented and jurisdiction-bound"
+                ]
+              ],
+              "cap": "Market data as at 2026. Sources: Eco; MetaMask; StablecoinInsider."
+            },
+            {
+              "t": "p",
+              "text": "This asymmetry should drive onboarding order, and it cuts against the obvious path. Treasuries are the easiest markets to integrate and the least in need of the product. Private credit is the hardest to integrate and the most underserved. The commercial answer is to lead with treasuries to prove the mechanism, and to prioritise private credit for the markets that follow — where the haircut the protocol can charge is widest because the alternative is waiting ninety days.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "2",
+      "id": "coldstart",
+      "title": "The Cold-Start Problem",
+      "nav": "Cold Start",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "A liquidity venue with no liquidity serves nobody, and liquidity providers do not fund a venue with no flow. Most protocols answer this by renting liquidity — committed facilities, market makers, or partner rails — and rented liquidity has one universal property: it is repriced or withdrawn under stress, which is precisely when exits are demanded.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "BOUND's architecture makes the problem tractable rather than eliminating it. Because the reserve is protocol-owned, the protocol can stand on the other side of every exit from the first month without waiting for a counterparty to appear. The cold-start question therefore reduces to a single one: how much capital is needed before the first exits can be served, and who supplies it.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "The answer is that the first side to open is the one that can be closed by direct sale. Institutional liquidity providers can be approached, diligenced and committed one at a time; retail liquidity cannot. That is why supply opens before demand broadens, and why the first stage is a sales motion rather than a marketing one.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "3",
+      "id": "stages",
+      "title": "The Staged Plan",
+      "nav": "The Staged Plan",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Three stages, two axes. The axes move independently: the gate that opens retail liquidity supply is the same event that opens public demand — the rwaUSD pool going live — but the market set is being widened continuously underneath both.",
+          "boldLabel": false
+        },
+        {
+          "t": "swimlane",
+          "title": "Market opening sequence — supply and demand axes",
+          "stages": [
+            {
+              "name": "Stage 1",
+              "from": 1,
+              "to": 5
+            },
+            {
+              "name": "Stage 2",
+              "from": 6,
+              "to": 8
+            },
+            {
+              "name": "Stage 3",
+              "from": 9,
+              "to": 36
+            }
+          ],
+          "lanes": [
+            {
+              "name": "Liquidity supply",
+              "cells": [
+                "Private investors, DAOs, companies. Six-month lock.",
+                "Opens to any holder. BLI purchasable and secondary-tradeable.",
+                "Open market. Retail reaches parity with private by month 36."
+              ]
+            },
+            {
+              "name": "Liquidity demand",
+              "cells": [
+                "Institutional RWA holders. Direct smart-contract mint and redeem only.",
+                "rwaUSD pool live. APSS active. Public exits available.",
+                "RWA minting opens. Full stream set operating."
+              ]
+            },
+            {
+              "name": "RWA markets",
+              "cells": [
+                "Onboarding from month one — independent of both axes.",
+                "Continues.",
+                "Continues; widening beyond launch partners."
+              ]
+            }
+          ],
+          "cap": "Stage boundaries read from the simulation engine: retail liquidity and pool volume both begin in month 6; RWA minting begins in month 9."
+        },
+        {
+          "t": "table",
+          "head": [
+            "",
+            "Stage 1 — Institutional",
+            "Stage 2 — Pool launch",
+            "Stage 3 — Open market"
+          ],
+          "rows": [
+            [
+              "Months",
+              "1–5",
+              "6–8",
+              "9–36"
+            ],
+            [
+              "Revenue",
+              "$470,859",
+              "$293,641",
+              "$6,064,094"
+            ],
+            [
+              "Average Liquidity Layer",
+              "$5,095,863",
+              "$7,907,099",
+              "$19,676,716"
+            ],
+            [
+              "Annualised take on capital",
+              "22.18%",
+              "14.85%",
+              "13.21%"
+            ],
+            [
+              "Motion",
+              "Direct sales",
+              "Launch campaign",
+              "Performance marketing"
+            ]
+          ],
+          "cap": "Simulator default case. \"Take on capital\" is protocol revenue over average Liquidity Layer, annualised."
+        }
+      ]
+    },
+    {
+      "num": "4",
+      "id": "stage1",
+      "title": "Stage One — Private Liquidity and Institutional Exits",
+      "nav": "Stage One",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "4.1 What is actually being sold",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "It is tempting to describe the pre-pool period as a yield product — capital parked in the Liquidity Layer, earning the underlying deployment yield until the real business starts. The model does not support that description, and the correct one is stronger.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "Deployed-capital yield is 5.9% of Stage 1 revenue. The remaining 94.1% comes from the liquidity business itself: fees on market onboarding, and the spread on exits the protocol underwrites for institutional holders transacting directly against the smart contract. The business is operating from month one. What the pool adds later is reach, not existence.",
+              "boldLabel": false
+            },
+            {
+              "t": "donut",
+              "title": "Stage 1 revenue composition — months 1–5",
+              "slices": [
+                {
+                  "lab": "Integration fees",
+                  "val": "$150,000",
+                  "pct": 31.856697714466925
+                },
+                {
+                  "lab": "RWA trade and haircut",
+                  "val": "$146,155",
+                  "pct": 31.04020324783578
+                },
+                {
+                  "lab": "Mint and redemption fees",
+                  "val": "$63,212",
+                  "pct": 13.424821283096586
+                },
+                {
+                  "lab": "Conversion fees",
+                  "val": "$52,305",
+                  "pct": 11.108365454400568
+                },
+                {
+                  "lab": "Maintenance fees",
+                  "val": "$31,250",
+                  "pct": 6.636812023847276
+                },
+                {
+                  "lab": "Deployed-capital yield",
+                  "val": "$27,937",
+                  "pct": 5.933100276352868
+                }
+              ],
+              "cap": "Simulator default case, $470,859 total."
+            },
+            {
+              "t": "p",
+              "text": "<b>Integration fees are the largest single line.</b> They are charged on onboarding rather than on volume, which makes issuer acquisition the highest-leverage activity of the entire stage — it converts to revenue immediately rather than waiting for flow to build. The marketing allocation in Chapter 8 reflects that.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "4.2 Why direct settlement is a feature",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "While the pool is closed, the only route to mint or redeem rwaUSD is directly through the smart contract. For the audience this stage targets, that is an advantage rather than a limitation: institutional tickets executed through a public pool would suffer material slippage, and direct settlement prices the transaction at protocol terms with no exposure to pool depth.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The message follows from the mechanism. An allocator holding a position they cannot exit for ninety days is not looking for a trading venue; they are looking for a counterparty with a known price. That is exactly what the protocol is in this stage.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "4.3 The liquidity-provider proposition",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Early capital earns the most. Stage 1 returns 22.18% annualised on the capital in the layer, against 13.21% in Stage 3 — not because the business weakens, but because there is less capital competing for the same exit spread. This is a real and defensible reason to commit early, and Chapter 6 sets out why it should not be restated as a forward promise.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Audience",
+                "What they hold",
+                "What BOUND offers",
+                "Primary objection"
+              ],
+              "rows": [
+                [
+                  "DAO treasuries",
+                  "Idle stablecoin reserves",
+                  "Yield from an exit spread, not lending risk",
+                  "Smart-contract risk on a new protocol"
+                ],
+                [
+                  "Crypto-native funds",
+                  "Deployable mandate capital",
+                  "Uncorrelated return with defined mechanics",
+                  "Capacity — is the position large enough to matter"
+                ],
+                [
+                  "Corporate and fintech treasuries",
+                  "Operating stablecoin float",
+                  "Transparent, on-chain, no lock beyond six months",
+                  "Accounting and custody treatment"
+                ],
+                [
+                  "Family offices and private investors",
+                  "Discretionary allocation",
+                  "Early entry at the widest spread",
+                  "Liquidity — no secondary market until Stage 2"
+                ]
+              ],
+              "cap": "Objections are what the Stage 1 sales motion must answer; the proof points are the audit, the APSS mainnet telemetry, and the published cost and business models."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "5",
+      "id": "stage2",
+      "title": "Stage Two — Pool Launch",
+      "nav": "Stage Two",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The rwaUSD pool going live is the single largest structural change in the plan. Three things happen at once, and they serve different audiences.",
+          "boldLabel": false
+        },
+        {
+          "t": "ul",
+          "items": [
+            "Public exits become available: any holder of an integrated RWA can exit through the pool rather than only through direct settlement.",
+            "BLI becomes secondary-tradeable: liquidity providers gain an exit that does not require redeeming against the layer — the answer to the main Stage 1 objection.",
+            "The APSS stream opens: pool trading and peg-correction surplus begin accruing, reaching $124,506 a month by month 36, or 32.2% of monthly revenue."
+          ],
+          "boldLabel": true
+        },
+        {
+          "t": "p",
+          "text": "The commercial consequence is that Stage 2 is the first stage with a launch moment. Stage 1 is a sequence of private closes with no public event; Stage 2 has a date, a deployment, and something demonstrable. The campaign allocation in Chapter 8 is concentrated accordingly.",
+          "boldLabel": false
+        },
+        {
+          "t": "note",
+          "text": "The pool is deployed at mainnet launch, at the close of the delivery programme. Keeping public access closed through Stage 1 is a commercial decision, not a technical constraint — the contracts exist and are audited before the gate opens.",
+          "kind": "",
+          "head": "On sequencing"
+        }
+      ]
+    },
+    {
+      "num": "6",
+      "id": "stage3",
+      "title": "Stage Three — The Open Market",
+      "nav": "Stage Three",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "6.1 What opening retail actually does",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Retail participation scales the business on both axes. Retail liquidity reaches parity with private capital by month 36 — $18,890,656 against $18,900,897 — and retail flow drives the pool stream that becomes 32.2% of monthly revenue.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "It does not raise the return per unit of capital, and the strategy should be built on the truth of that rather than around it. Retail volume genuinely adds revenue; retail capital arrives slightly faster than the revenue it generates. Between the first five months and the final twelve, average monthly revenue grows 3.10× while the average Liquidity Layer grows 5.43×. The second number is the larger, so Annualized Index Growth drifts down from 13.0% to 11.0% across the horizon.",
+              "boldLabel": false
+            },
+            {
+              "t": "line",
+              "title": "Annualized Index Growth against Liquidity Layer growth",
+              "xs": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36
+              ],
+              "series": [
+                {
+                  "name": "Annualized Index Growth (%)",
+                  "vals": [
+                    22.69728942932938,
+                    16.838572223994873,
+                    14.7864092407054,
+                    13.682106108112846,
+                    12.96676764110245,
+                    12.829618710278123,
+                    12.695528630079345,
+                    12.540428702427198,
+                    12.577034494083916,
+                    12.568861306245838,
+                    12.532704139116735,
+                    12.479037774326907,
+                    12.414597179666975,
+                    12.343818455453537,
+                    12.26968027543216,
+                    12.194213823658927,
+                    12.118821607210473,
+                    12.0437385487852,
+                    11.96974696776525,
+                    11.897385705798879,
+                    11.827023009784332,
+                    11.758906645805656,
+                    11.693198753139566,
+                    11.630000296086273,
+                    11.569368314999572,
+                    11.511328123108754,
+                    11.455881912801601,
+                    11.403014786591626,
+                    11.352698930000926,
+                    11.30408635788871,
+                    11.257222854014227,
+                    11.21212938143714,
+                    11.16880787776875,
+                    11.12724560927627,
+                    11.085899678624811,
+                    11.044415579574785
+                  ],
+                  "color": "accent"
+                }
+              ],
+              "ylabel": "AIG %",
+              "cap": "Simulator default case. AIG is a historical measure of an index whose value can also decline."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "6.2 What this means for messaging",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The protocol has committed, in its whitepaper, to describing Annualized Index Growth as a historical metric of an index that can fall. Marketing a yield increase at the moment retail opens would contradict that commitment and would be falsified by the protocol's own published model within a year.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "Retail is therefore positioned on what it genuinely delivers: an entry that requires no private placement, an exit that does not require redemption, and participation in a business whose absolute scale is compounding. The mechanism by which volume supports yield is disclosed in the documentation for anyone who works through it. It is not a headline.",
+              "boldLabel": false
+            },
+            {
+              "t": "note",
+              "text": "Operating rule: no marketing asset states or implies that Annualized Index Growth rises as the protocol scales. The published model shows it declining as capital grows faster than revenue, and every public number must be one the model produces.",
+              "kind": "warn",
+              "head": "Messaging discipline"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "7",
+      "id": "acquisition",
+      "title": "Acquisition Strategy",
+      "nav": "Acquisition",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Five audiences, three of them addressed by sales rather than marketing. The distinction matters for budget: the institutional side is closed one relationship at a time and scales with headcount, while the retail side scales with spend.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Audience",
+            "Stage",
+            "Channel",
+            "Core message",
+            "Proof point"
+          ],
+          "rows": [
+            [
+              "RWA issuers",
+              "1 →",
+              "Direct BD, category research, conference presence",
+              "Instant exit liquidity removes the largest objection allocators raise, at zero capital pre-allocation",
+              "APSS mainnet telemetry; audit report"
+            ],
+            [
+              "Institutional LPs",
+              "1 →",
+              "Direct sales, roadshow, warm introductions",
+              "A return earned from an underwritten exit spread, not from lending risk",
+              "Published cost model, business plan and simulator"
+            ],
+            [
+              "DAO treasuries",
+              "1 →",
+              "Governance forums, treasury working groups, direct",
+              "Idle reserves earning from a transparent, on-chain spread business",
+              "On-chain verifiability of every figure"
+            ],
+            [
+              "RWA holders",
+              "2 →",
+              "Issuer co-marketing, integrations, search",
+              "Exit a ninety-day position in one transaction at a price known in advance",
+              "Live haircut quotes; settlement tracker"
+            ],
+            [
+              "DeFi yield users",
+              "3 →",
+              "Performance marketing, aggregators, community",
+              "Index exposure to RWA liquidity infrastructure, freely entered and exited",
+              "Secondary market depth; published index history"
+            ]
+          ],
+          "cap": "Channels are ordered by the stage at which each audience opens."
+        },
+        {
+          "t": "sub",
+          "title": "7.1 Issuer onboarding is the priority activity",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Integration fees are 31.9% of Stage 1 revenue and are collected on onboarding. Every additional market also widens the exit inventory that makes the protocol useful to holders, and diversifies a revenue base that would otherwise concentrate in a single market. It is the only activity that compounds across both axes at once.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "8",
+      "id": "budget",
+      "title": "Marketing Allocation",
+      "nav": "Marketing Allocation",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The cost model books $1,500,000 of sales and marketing across the horizon, rebuilt from B2B benchmarks rather than carried over from the financial model, which had it at $3,740,000. This chapter allocates it in full. The shape follows the staging: institutional sales support first, a concentrated launch campaign second, performance acquisition last. The Marketing token allocation covers $1,000,000 of it — 66.7% — and is spent before cash.",
+          "boldLabel": false
+        },
+        {
+          "t": "bar",
+          "title": "Marketing allocation by stage",
+          "cats": [
+            "Stage 1 — Institutional",
+            "Stage 2 — Pool launch",
+            "Stage 3 — Open market"
+          ],
+          "vals": [
+            300000,
+            280000,
+            920000
+          ],
+          "labels": [
+            "$300,000",
+            "$280,000",
+            "$920,000"
+          ],
+          "cap": "Total $1,500,000, reconciling to the launch-year sales and marketing line in the Operating Cost Analysis."
+        },
+        {
+          "t": "table",
+          "head": [
+            "Stage",
+            "Activity",
+            "Amount",
+            "Share",
+            "Rationale"
+          ],
+          "rows": [
+            [
+              "Stage 1",
+              "Brand system and institutional collateral",
+              "$60,000",
+              "4.0%",
+              "Data room, issuer materials, institutional-grade presentation"
+            ],
+            [
+              "Stage 1",
+              "Category research and thought leadership",
+              "$50,000",
+              "3.3%",
+              "Authority in the RWA liquidity category before the pool opens"
+            ],
+            [
+              "Stage 1",
+              "Two Tier-2 conferences",
+              "$120,000",
+              "8.0%",
+              "Where institutional LPs and RWA issuers are actually met"
+            ],
+            [
+              "Stage 1",
+              "Public relations and analyst relations",
+              "$40,000",
+              "2.7%",
+              "Coverage that supports a direct sales motion"
+            ],
+            [
+              "Stage 1",
+              "Issuer business-development materials",
+              "$30,000",
+              "2.0%",
+              "Integration fees are the largest Stage 1 revenue line"
+            ],
+            [
+              "Stage 2",
+              "Launch campaign",
+              "$120,000",
+              "8.0%",
+              "rwaUSD pool live; BLI becomes secondary-tradeable"
+            ],
+            [
+              "Stage 2",
+              "One Tier-2 conference",
+              "$60,000",
+              "4.0%",
+              "Launch visibility with the institutional audience"
+            ],
+            [
+              "Stage 2",
+              "Public relations and earned media",
+              "$40,000",
+              "2.7%",
+              "Launch coverage and analyst briefings"
+            ],
+            [
+              "Stage 2",
+              "DeFi ecosystem and integrations",
+              "$60,000",
+              "4.0%",
+              "Aggregators, dashboards, analytics"
+            ],
+            [
+              "Stage 3",
+              "Content and search, $12,000 a month",
+              "$336,000",
+              "22.4%",
+              "Sustaining organic acquisition"
+            ],
+            [
+              "Stage 3",
+              "Community and education, $7,000 a month",
+              "$196,000",
+              "13.1%",
+              "Documentation, support, guides"
+            ],
+            [
+              "Stage 3",
+              "Conferences, two a year",
+              "$240,000",
+              "16.0%",
+              "Continued issuer and LP origination"
+            ],
+            [
+              "Stage 3",
+              "Performance marketing, retail",
+              "$148,000",
+              "9.9%",
+              "The most discretionary line, and the last to spend"
+            ]
+          ],
+          "cap": "Allocation of the launch-year sales and marketing budget. Totals $1,500,000."
+        },
+        {
+          "t": "p",
+          "text": "Two features of this allocation are deliberate. Issuer business development is the single largest Stage 1 line, because integration fees convert to revenue on onboarding rather than on volume. And no allocation is made to token incentives: the protocol's governance token confers governance utility only, and buying liquidity with emissions would contradict the architecture the whitepaper describes.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "9",
+      "id": "targets",
+      "title": "Targets and Gates",
+      "nav": "Targets and Gates",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Each stage opens on a gate rather than on a date. The engineering programme sets the earliest possible date for each; commercial readiness sets the actual one.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Gate",
+            "Depends on",
+            "Commercial criterion"
+          ],
+          "rows": [
+            [
+              "Stage 1 opens",
+              "Mainnet launch (delivery roadmap M12)",
+              "First RWA market onboarded; audit report published"
+            ],
+            [
+              "Stage 2 opens",
+              "rwaUSD pool deployed and audited",
+              "Liquidity Layer deep enough to absorb public exit flow without breaching coverage"
+            ],
+            [
+              "Stage 3 opens",
+              "RWA minting live; secondary market functioning",
+              "Multiple markets onboarded; settlement and support operating at volume"
+            ]
+          ],
+          "cap": "Milestone references are to the Delivery Roadmap."
+        },
+        {
+          "t": "table",
+          "head": [
+            "Measure",
+            "Month 5",
+            "Month 12",
+            "Month 24",
+            "Month 36"
+          ],
+          "rows": [
+            [
+              "Liquidity Layer",
+              "$6,551,823",
+              "$10,785,150",
+              "$19,036,873",
+              "$37,791,553"
+            ],
+            [
+              "— private",
+              "$6,551,823",
+              "$10,357,669",
+              "$15,273,225",
+              "$18,900,897"
+            ],
+            [
+              "— retail",
+              "$0",
+              "$427,481",
+              "$3,763,648",
+              "$18,890,656"
+            ],
+            [
+              "Monthly revenue",
+              "$70,679",
+              "$135,892",
+              "$208,595",
+              "$386,084"
+            ],
+            [
+              "Monthly volume",
+              "$3,510,471",
+              "$15,650,628",
+              "$23,455,307",
+              "$40,965,866"
+            ],
+            [
+              "BLI price",
+              "1.0521",
+              "1.1248",
+              "1.2461",
+              "1.3693"
+            ],
+            [
+              "Annualized Index Growth",
+              "13.0%",
+              "12.5%",
+              "11.6%",
+              "11.0%"
+            ]
+          ],
+          "cap": "Simulator default case. These are model outputs, not commitments."
+        }
+      ]
+    },
+    {
+      "num": "10",
+      "id": "risks",
+      "title": "Risks to the Plan",
+      "nav": "Risks",
+      "blocks": [
+        {
+          "t": "table",
+          "head": [
+            "Risk",
+            "Mechanism",
+            "Mitigation in this plan"
+          ],
+          "rows": [
+            [
+              "Cold start fails on the supply side",
+              "Institutional LPs decline to fund a protocol with no operating history",
+              "APSS is already deployed with mainnet telemetry; audit and published models precede the raise"
+            ],
+            [
+              "Capital outpaces demand",
+              "Layer grows faster than onboarded markets can absorb, diluting return and weakening the next raise",
+              "Issuer onboarding funded as the largest Stage 1 activity; capital raised against a widening market set"
+            ],
+            [
+              "Issuer concentration",
+              "Revenue concentrated in a single market; one issuer withdrawing removes the business",
+              "Continuous onboarding across all three stages; explicitly funded in Stage 3"
+            ],
+            [
+              "Retail access is restricted",
+              "Jurisdictional gating delays or narrows Stage 3",
+              "Stages 1 and 2 are viable without retail; the plan does not depend on it for coverage"
+            ],
+            [
+              "Yield expectation mismatch",
+              "Providers expect rising returns and encounter the modelled decline",
+              "Messaging discipline in Chapter 6; every public number produced by the published model"
+            ],
+            [
+              "Competitor response",
+              "An incumbent bundles instant exit into an existing distribution advantage",
+              "Protocol-owned liquidity and issuer-neutral onboarding are hard to replicate from a single-issuer position"
+            ]
+          ],
+          "cap": "Competitive positioning is assessed in the Competitors Analysis."
+        }
+      ]
+    },
+    {
+      "num": "11",
+      "id": "limits",
+      "title": "Limits and Open Items",
+      "nav": "Limits",
+      "blocks": [
+        {
+          "t": "ul",
+          "items": [
+            "Single scenario: every figure derives from one preset against one RWA market. Stage boundaries would move under a different preset.",
+            "Market concentration: the default case runs one market, so the issuer-concentration risk above is not visible in the figures that accompany it.",
+            "No conversion assumptions: this plan states channels and audiences but does not model acquisition cost, conversion rate or sales-cycle length. Those require pipeline data the protocol does not yet have.",
+            "Budget horizon: the allocation covers the launch year only. Years two and three carry $1,080,000 a year in the cost model, unallocated here.",
+            "Capital pacing: this plan optimises for capital raised rather than for yield defended. That is a deliberate choice — the Liquidity Layer is the protocol's exit capacity, and depth is what makes issuers integrate — but it accepts the dilution set out in Chapter 6.",
+            "Regulatory: retail access is subject to jurisdictional restriction, and the timing of Stage 3 is not wholly within the protocol's control."
+          ],
+          "boldLabel": true
+        }
+      ]
+    },
+    {
+      "num": "",
+      "id": "disclaimer",
+      "title": "Legal Disclaimer",
+      "nav": "Legal Disclaimer",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. All figures are outputs of the BOUND simulation engine on its default preset and of a cost model documented separately; they are model outputs, not forecasts, budgets, commitments or targets, and a different preset produces different figures throughout. rwaUSD makes no return promise of any kind. The Bound Liquidity Index is an index token whose value can rise or fall; Annualized Index Growth is a historical metric, is shown in this document declining as the protocol scales, and implies nothing about future performance. BND confers governance utility only and no claim on protocol revenue. Market data is drawn from third-party published sources as at July 2026 and may change. Statements about market opening sequence and access are subject to regulatory restriction and are not commitments. Forward-looking statements are subject to material uncertainty and change. © 2026 BOUND Protocol.",
+          "boldLabel": false
+        }
+      ]
+    }
+  ]
+}

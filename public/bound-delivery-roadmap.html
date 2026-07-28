@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delivery Roadmap — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+body{background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;background-repeat:no-repeat;}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+table{font-size:13px}th,td{padding:8px 10px}
+#budget td:nth-child(2),#budget td:nth-child(3){font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+/* Categorical chart ramp — base.css ships only greens. */
+:root{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;--c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+@media (prefers-color-scheme:dark){
+  :root{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;--c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}}
+:root[data-theme="light"]{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;--c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+:root[data-theme="dark"]{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;--c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}
+.cv{width:100%;height:auto;display:block;overflow:visible}
+.cv .grid{stroke:var(--line);stroke-width:1}
+.cv .axis{stroke:var(--line2);stroke-width:1.5}
+.cv .stem{stroke:var(--line2);stroke-width:1;stroke-dasharray:2 3}
+.cv .ax{fill:var(--ink3);font-family:var(--mono);font-size:10.5px}
+.cv .ac{text-anchor:middle}.cv .ar{text-anchor:end}
+.cv .vl{fill:var(--ink);font-family:var(--mono);font-size:12px;font-weight:600;text-anchor:middle}
+.cv .lg{fill:var(--ink2);font-family:var(--sans);font-size:12.5px}
+.cv .lg.strong{fill:var(--ink);font-family:var(--mono);font-size:12px;font-weight:600}
+.cv .pb{fill:#fff;font-family:var(--sans);font-size:12.5px;font-weight:600;text-anchor:middle}
+.cv .gid{fill:#fff;font-family:var(--mono);font-size:10.5px;font-weight:700}
+.cv .gidbg{fill:var(--accent2)}
+.cv .gtl{fill:var(--ink);font-family:var(--sans);font-size:12.5px}
+.cv .gwk{fill:var(--ink3);font-family:var(--mono);font-size:10.5px;font-variant-numeric:tabular-nums}
+/* milestone cards */
+.mstones{display:grid;gap:16px;margin:16px 0}
+.ms{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px 16px;box-shadow:var(--shadow)}
+.ms-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ms-id{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;color:#fff;
+  background:var(--accent2);border-radius:5px;padding:3px 8px}
+.ms-wk{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.ms h5{margin:0 0 7px;font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.ms-i{font-size:14px;color:var(--ink2);margin:0 0 10px;line-height:1.55}
+.ms ul{margin:0 0 12px;padding-left:18px}
+.ms li{font-size:13.5px;color:var(--ink2);line-height:1.5;margin:4px 0}
+.ms-o{border-left:3px solid var(--accent2);background:var(--raise);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink2);line-height:1.5}
+.ms-o span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:700;color:var(--ink3);margin-bottom:4px}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Delivery Roadmap</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="abstract" href="#abstract"><span class="snav-num">§</span>Abstract</a><a data-id="brief" href="#brief"><span class="snav-num">1</span>Roadmap in Brief</a><a data-id="starting" href="#starting"><span class="snav-num">2</span>Starting Point</a><a data-id="principles" href="#principles"><span class="snav-num">3</span>Delivery Principles</a><a data-id="phase1" href="#phase1"><span class="snav-num">4</span>Phase 1: Foundation</a><a data-id="phase2" href="#phase2"><span class="snav-num">5</span>Phase 2: Build</a><a data-id="phase3" href="#phase3"><span class="snav-num">6</span>Phase 3: Audit &amp; Launch</a><a data-id="audit" href="#audit"><span class="snav-num">7</span>Audit Strategy</a><a data-id="budget" href="#budget"><span class="snav-num">8</span>Development Budget</a><a data-id="risk" href="#risk"><span class="snav-num">9</span>Schedule Risk</a><a data-id="openitems" href="#openitems"><span class="snav-num">10</span>Boundaries and Notes</a><a data-id="disclaimer" href="#disclaimer"><span class="snav-num">§</span>Legal Disclaimer</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Delivery Roadmap</div><h1>RWA Migration — Engineering Delivery Plan</h1>
+<p class="lede">BOUND Protocol — extending deployed APSS infrastructure to real-world asset liquidity.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Delivery Roadmap</div></div>
+<div><div class="k">Programme</div><div class="v">12 Milestones · 3 Phases · 22–25 Weeks — July 2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+<div><div class="k">Origin</div><div class="v">Bucharest, Romania</div></div>
+</div></div></div>
+<div class="wrap">
+<section id="abstract"><div class="sec-head"><div class="sec-num">§</div><h2>Abstract</h2></div>
+<p>BOUND is not starting from zero. The Atomic Peg Stabilization System — the rwaUSD settlement dollar and its core liquidity pool — is already deployed and operational. This roadmap extends that foundation to support instant liquidity for real-world assets. It is a migration plan, not a rebuild.</p>
+<p>Delivery is structured as twelve milestones across three phases, executed by four engineering layers running in parallel from the first week. Development is budgeted at a fixed $320,000 across twenty-two weeks of engineering execution, against a delivery window of twenty-two to twenty-five weeks to mainnet inclusive of audit remediation and launch. External audit and security-competition fees are budgeted and tracked separately.</p>
+<p>This roadmap presents twelve milestones across three phases, taking BOUND from a locked architecture decision through to live RWA markets on mainnet. Each milestone is written for a non-technical audience: what gets built, what becomes possible as a result, and why it matters strategically.</p>
+<p>Development is budgeted at a fixed $320,000 across 22 weeks of engineering execution, with a realistic delivery window of 22–25 weeks to mainnet inclusive of audit and launch buffer. External audit and security competition fees are budgeted and tracked separately from the development allocation.</p>
+<p>This document defines the complete technical build roadmap for the BOUND Protocol. It covers four parallel engineering layers — Smart Contracts, Backend &amp; Oracle Automation, Frontend, and DevOps &amp; Security — structured across three high-intensity phases targeting mainnet launch in 18 to 25 weeks.</p>
+<p>The roadmap delivers every component required for BOUND to go live: the rwaUSD and liquidity pool contracts, the oracle-driven haircut and settlement engine, the RWA issuer onboarding and management system, the instant exit swap interface, and the data infrastructure serving issuers, asset managers, and external integrators.</p>
+<p>Compression from the original 36-week plan to 18–25 weeks is achieved entirely through parallel execution across all layers — not by reducing scope. Every deliverable is preserved. Achieving 18 weeks requires dedicated, full-time teams across all four layers from day one.</p>
+<p>This document opens with a plain-language roadmap that any reader can follow end to end. The chapters that follow descend into the full engineering specification — every deliverable, every layer, every gate. A reader who needs only the shape of the programme can stop after Chapter 1.</p>
+<div class="kpis"><div class="kpi"><div class="kn">12</div><div class="kl">Milestones</div></div><div class="kpi"><div class="kn">3</div><div class="kl">Phases</div></div><div class="kpi"><div class="kn">22–25</div><div class="kl">Weeks to mainnet</div></div><div class="kpi"><div class="kn">$320,000</div><div class="kl">Development budget</div></div><div class="kpi"><div class="kn">~3.5</div><div class="kl">FTE blended team</div></div></div>
+</section>
+<section id="brief"><div class="sec-head"><div class="sec-num">1</div><h2>The Roadmap in Brief</h2></div>
+<p>This chapter is written for readers without an engineering background. It describes what is being built, in what order, and what becomes possible at each stage. Nothing here requires technical knowledge to follow.</p>
+<div class="chart"><div class="ct">Delivery timeline — 25 weeks, 12 milestones</div><svg viewBox="0 0 880 458" role="img" aria-label="Delivery timeline — 25 weeks, 12 milestones" class="cv"><rect x="348.0" y="58.0" width="123.8" height="366.0" fill="var(--c1)" opacity=".06"/><rect x="348.0" y="30" width="123.8" height="24" rx="5" fill="var(--c1)" opacity=".85"/><text x="409.9" y="46" class="pb">Phase 1 · Foundation</text><text x="409.9" y="22" class="ax ac">Weeks 1–6</text><rect x="471.8" y="58.0" width="206.4" height="366.0" fill="var(--c2)" opacity=".06"/><rect x="471.8" y="30" width="206.4" height="24" rx="5" fill="var(--c2)" opacity=".85"/><text x="575.0" y="46" class="pb">Phase 2 · Build</text><text x="575.0" y="22" class="ax ac">Weeks 7–16</text><rect x="678.2" y="58.0" width="185.8" height="366.0" fill="var(--c3)" opacity=".06"/><rect x="678.2" y="30" width="185.8" height="24" rx="5" fill="var(--c3)" opacity=".85"/><text x="771.1" y="46" class="pb">Phase 3 · Audit &amp; Launch</text><text x="771.1" y="22" class="ax ac">Weeks 17–25</text><line x1="348.0" y1="58.0" x2="348.0" y2="424.0" class="grid"/><text x="348.0" y="441.0" class="ax ac">Week 1</text><line x1="451.2" y1="58.0" x2="451.2" y2="424.0" class="grid"/><text x="451.2" y="441.0" class="ax ac">Week 5</text><line x1="554.4" y1="58.0" x2="554.4" y2="424.0" class="grid"/><text x="554.4" y="441.0" class="ax ac">Week 10</text><line x1="657.6" y1="58.0" x2="657.6" y2="424.0" class="grid"/><text x="657.6" y="441.0" class="ax ac">Week 15</text><line x1="760.8" y1="58.0" x2="760.8" y2="424.0" class="grid"/><text x="760.8" y="441.0" class="ax ac">Week 20</text><line x1="864.0" y1="58.0" x2="864.0" y2="424.0" class="grid"/><text x="864.0" y="441.0" class="ax ac">Week 25</text><line x1="348" y1="424.0" x2="864" y2="424.0" class="axis"/><rect x="0" y="64.0" width="880" height="30" fill="var(--ink)" opacity=".03"/><rect x="2" y="70.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="83.0" class="gid ac">M1</text><text x="42" y="83.0" class="gtl">RWA Architecture Blueprint Locked</text><rect x="348.0" y="71.0" width="41.3" height="16" rx="4" fill="var(--c1)"/><text x="396.3" y="83.0" class="gwk">W1–2</text><rect x="2" y="100.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="113.0" class="gid ac">M2</text><text x="42" y="113.0" class="gtl">Core Contracts Aligned to RWA Architecture</text><rect x="389.3" y="101.0" width="41.3" height="16" rx="4" fill="var(--c1)"/><text x="437.6" y="113.0" class="gwk">W3–4</text><rect x="0" y="124.0" width="880" height="30" fill="var(--ink)" opacity=".03"/><rect x="2" y="130.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="143.0" class="gid ac">M3</text><text x="42" y="143.0" class="gtl">Infrastructure &amp; Platform Readiness</text><rect x="430.6" y="131.0" width="41.3" height="16" rx="4" fill="var(--c1)"/><text x="478.8" y="143.0" class="gwk">W5–6</text><rect x="2" y="160.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="173.0" class="gid ac">M4</text><text x="42" y="173.0" class="gtl">Oracle Engine Operational</text><rect x="471.8" y="161.0" width="61.9" height="16" rx="4" fill="var(--c2)"/><text x="540.8" y="173.0" class="gwk">W7–9</text><rect x="0" y="184.0" width="880" height="30" fill="var(--ink)" opacity=".03"/><rect x="2" y="190.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="203.0" class="gid ac">M5</text><text x="42" y="203.0" class="gtl">Instant Exit Swap Live on Testnet</text><rect x="533.8" y="191.0" width="41.3" height="16" rx="4" fill="var(--c2)"/><text x="582.0" y="203.0" class="gwk">W10–11</text><rect x="2" y="220.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="233.0" class="gid ac">M6</text><text x="42" y="233.0" class="gtl">Issuer Onboarding Platform Complete</text><rect x="575.0" y="221.0" width="41.3" height="16" rx="4" fill="var(--c2)"/><text x="623.3" y="233.0" class="gwk">W12–13</text><rect x="0" y="244.0" width="880" height="30" fill="var(--ink)" opacity=".03"/><rect x="2" y="250.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="263.0" class="gid ac">M7</text><text x="42" y="263.0" class="gtl">Data &amp; Analytics Platform Live</text><rect x="616.3" y="251.0" width="41.3" height="16" rx="4" fill="var(--c2)"/><text x="664.6" y="263.0" class="gwk">W14–15</text><rect x="2" y="280.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="293.0" class="gid ac">M8</text><text x="42" y="293.0" class="gtl">Full Integration &amp; Pre-Audit Hardening</text><rect x="657.6" y="281.0" width="20.6" height="16" rx="4" fill="var(--c2)"/><text x="685.2" y="293.0" class="gwk">W16</text><rect x="0" y="304.0" width="880" height="30" fill="var(--ink)" opacity=".03"/><rect x="2" y="310.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="323.0" class="gid ac">M9</text><text x="42" y="323.0" class="gtl">First-Party Security Audit Complete</text><rect x="678.2" y="311.0" width="82.6" height="16" rx="4" fill="var(--c3)"/><text x="767.8" y="323.0" class="gwk">W17–20</text><rect x="2" y="340.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="353.0" class="gid ac">M10</text><text x="42" y="353.0" class="gtl">Public Security Competition Closed</text><rect x="760.8" y="341.0" width="61.9" height="16" rx="4" fill="var(--c3)"/><text x="753.8" y="353.0" class="gwk ar">W21–23</text><rect x="0" y="364.0" width="880" height="30" fill="var(--ink)" opacity=".03"/><rect x="2" y="370.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="383.0" class="gid ac">M11</text><text x="42" y="383.0" class="gtl">Production Readiness Verified</text><rect x="822.7" y="371.0" width="20.6" height="16" rx="4" fill="var(--c3)"/><text x="815.7" y="383.0" class="gwk ar">W24</text><rect x="2" y="400.0" width="30" height="18" rx="4" class="gidbg"/><text x="17" y="413.0" class="gid ac">M12</text><text x="42" y="413.0" class="gtl">RWA Markets Live on Mainnet</text><rect x="843.4" y="401.0" width="20.6" height="16" rx="4" fill="var(--c3)"/><text x="836.4" y="413.0" class="gwk ar">W25</text></svg></div><div class="cap">Phase boundaries and milestone weeks as specified in the source roadmaps.</div>
+<h4 class="sub">1.1 The three phases</h4><div class="tbl-scroll"><table><thead><tr><th>Phase</th><th>Weeks</th><th>Scope</th></tr></thead><tbody><tr><td>Phase 1: Foundation</td><td>Weeks 1–6</td><td>APSS baseline mapped, RWA architecture locked, core contracts aligned, platform ready</td></tr><tr><td>Phase 2: Build</td><td>Weeks 7–16</td><td>Oracle automation, instant exit UX, issuer platform, APIs, pre-audit hardening</td></tr><tr><td>Phase 3: Audit &amp; Launch</td><td>Weeks 17–25</td><td>External audit, public competition, production readiness, RWA mainnet launch</td></tr></tbody></table></div><div class="cap">Source: RWA Milestone Roadmap, timeline table.</div>
+<p>Each phase closes on a gate that every engineering layer must clear together. A phase is not complete when one layer finishes; it is complete when the gate below is met across all four.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Phase</th><th>Title</th><th>Weeks</th><th>All-Layer Exit Gate</th></tr></thead><tbody><tr><td>Phase 1</td><td>Foundation &amp; Architecture</td><td>1–6</td><td>rwaUSD architecture finalised; all teams unblocked; devnet live</td></tr><tr><td>Phase 2</td><td>Build — Full Parallel Execution</td><td>7–16</td><td>All BOUND systems integrated end-to-end on testnet; pre-audit hardening complete</td></tr><tr><td>Phase 3</td><td>Audit, Hardening &amp; Mainnet Launch</td><td>17–25</td><td>Audit signed off; QA/performance/load targets met; rwaUSD markets live on mainnet</td></tr></tbody></table></div><div class="cap">Source: Protocol Technical Roadmap, timeline table. * 18 weeks is the minimum with fully dedicated teams and a clean single-round audit remediation. 25 weeks is the realistic target accounting for team ramp-up and potential second-round audit findings.</div>
+<p><b>Foundation</b> settles the design so that nothing is redesigned later. <b>Build</b> is where the product is actually written — the pricing engine, the instant-exit interface, the issuer platform and the data layer. <b>Audit and Launch</b> adds no features at all; it is six to nine weeks of proving the system is safe enough to hold institutional capital.</p>
+<h4 class="sub">1.2 The twelve milestones in one line each</h4><div class="tbl-scroll"><table><thead><tr><th>Milestone</th><th>Weeks</th><th>What it delivers</th><th>Why it matters</th></tr></thead><tbody><tr><td>M1</td><td>1–2</td><td>RWA Architecture Blueprint Locked</td><td>Engineering proceeds against a locked target state. The pivot is explicit; rework is minimised.</td></tr><tr><td>M2</td><td>3–4</td><td>Core Contracts Aligned to RWA Architecture</td><td>The deployed APSS foundation is preserved while the full RWA stack is assembled around it.</td></tr><tr><td>M3</td><td>5–6</td><td>Infrastructure &amp; Platform Readiness</td><td>Phase 2 begins with operational infrastructure, not setup. The pivot ships on a proven platform.</td></tr><tr><td>M4</td><td>7–9</td><td>Oracle Engine Operational</td><td>RWA markets price and settle programmatically. The protocol no longer depends on manual operations.</td></tr><tr><td>M5</td><td>10–11</td><td>Instant Exit Swap Live on Testnet</td><td>The core product promise is demonstrable: illiquid RWA holders receive rwaUSD instantly.</td></tr><tr><td>M6</td><td>12–13</td><td>Issuer Onboarding Platform Complete</td><td>Partner onboarding scales without proportional operational headcount.</td></tr><tr><td>M7</td><td>14–15</td><td>Data &amp; Analytics Platform Live</td><td>Institutional stakeholders, issuers, and developers access consistent, auditable protocol data.</td></tr><tr><td>M8</td><td>16</td><td>Full Integration &amp; Pre-Audit Hardening</td><td>The RWA migration enters audit with fewer unknowns, reducing remediation cost and timeline risk.</td></tr><tr><td>M9</td><td>17–20</td><td>First-Party Security Audit Complete</td><td>Institutional partners receive the security assurance required before allocating RWA capital.</td></tr><tr><td>M10</td><td>21–23</td><td>Public Security Competition Closed</td><td>Community-scale review complements the firm audit. Confidence is earned, not asserted.</td></tr><tr><td>M11</td><td>24</td><td>Production Readiness Verified</td><td>Real capital enters a system proven under operational stress, not best-case conditions.</td></tr><tr><td>M12</td><td>25</td><td>RWA Markets Live on Mainnet</td><td>BOUND delivers on its mission: institutional RWA liquidity on-chain, built on a deployed rwaUSD and pool foundation.</td></tr></tbody></table></div><div class="cap">Each milestone is expanded in full, with its deliverables, in Chapters 4 to 6.</div>
+<h4 class="sub">1.3 What it costs</h4><p>Development is fixed at $320,000. That figure covers engineering, infrastructure and launch execution across twenty-two weeks. It does not cover the external security audit, the public security competition, the bug-bounty capital or legal advisory — those are budgeted separately and are set out in Chapter 8.</p>
+<div class="chart"><div class="ct">Development budget by phase</div><svg viewBox="0 0 880 290" role="img" aria-label="Development budget by phase" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">200K</text><line x1="64" y1="80.5" x2="854" y2="80.5" class="grid"/><text x="55" y="84.0" class="ax ar">150K</text><line x1="64" y1="135.0" x2="854" y2="135.0" class="grid"/><text x="55" y="138.5" class="ax ar">100K</text><line x1="64" y1="189.5" x2="854" y2="189.5" class="grid"/><text x="55" y="193.0" class="ax ar">50K</text><line x1="64" y1="244.0" x2="854" y2="244.0" class="grid"/><text x="55" y="247.5" class="ax ar">0</text><rect x="140.7" y="159.0" width="110.0" height="85.0" rx="3" fill="var(--c1)"/><text x="195.7" y="151.0" class="vl">$78,000</text><text x="195.7" y="264.0" class="ax ac">Foundation</text><rect x="404.0" y="76.1" width="110.0" height="167.9" rx="3" fill="var(--c2)"/><text x="459.0" y="68.1" class="vl">$154,000</text><text x="459.0" y="264.0" class="ax ac">Build</text><rect x="667.3" y="148.1" width="110.0" height="95.9" rx="3" fill="var(--c3)"/><text x="722.3" y="140.1" class="vl">$88,000</text><text x="722.3" y="264.0" class="ax ac">Launch</text><line x1="64" y1="244" x2="854" y2="244" class="axis"/></svg></div><div class="cap">Source: RWA Milestone Roadmap, budget by phase.</div>
+<div class="note"><span class="nh">Where the plain-language section ends</span>The rest of this document is the engineering specification. It is written for the delivery team and for technical reviewers, and it assumes familiarity with smart contract development, infrastructure and security practice.</div>
+</section>
+<section id="starting"><div class="sec-head"><div class="sec-num">2</div><h2>Starting Point and Scope</h2></div>
+<h4 class="sub">2.1 What BOUND is</h4><p>BOUND is the institutional liquidity infrastructure layer for Real-World Assets. Tokenization has perfected asset issuance — but secondary liquidity remains a massive barrier. Allocators hesitate to commit capital when faced with 30-to-90-day redemption windows.</p>
+<p>BOUND eliminates that friction by providing a shared, on-chain liquidity layer that gives RWA holders an instant dollar exit via the rwaUSD — while the underlying fund preserves its stable, long-term background settlement timeline. rwaUSD trades at $1.00 on Uniswap and can be swapped for USDC instantly.</p>
+<h4 class="sub">2.2 What is already deployed</h4><p>The APSS system — the rwaUSD settlement dollar and the core liquidity pool — is deployed and operational. This programme extends it rather than replacing it, which is the single most consequential fact about the schedule and the budget: the foundation does not have to be rebuilt, and live markets must not be disrupted while it is extended.</p>
+<p>BOUND is not starting from zero. The APSS system — rwaUSD and core liquidity pool — is already deployed and operational. This roadmap extends that foundation to support Real-World Asset instant liquidity, rather than building a new protocol from scratch.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Asset</th><th>Status</th></tr></thead><tbody><tr><td>APSS System</td><td>rwaUSD and liquidity pool — deployed and operational</td></tr><tr><td>rwaUSD Token</td><td>Existing stablecoin infrastructure retained as settlement asset</td></tr><tr><td>Liquidity Pool</td><td>Core pool deployed; requires RWA instant-exit extensions</td></tr></tbody></table></div><div class="cap">Source: RWA Milestone Roadmap, starting-point table.</div>
+<h4 class="sub">2.3 What this programme does not cover</h4><p>The engineering scope is the settlement dollar, the liquidity pool, the RWA registry, the oracle and settlement layer, the issuer platform and the data layer. The Bound Liquidity Index structure is already formed and is not a build item here, and the BND governance token is outside this programme except for the governance plumbing listed in Milestone M2. A reader should not infer full protocol coverage from this document.</p>
+<h4 class="sub">2.4 What issuers gain</h4><div class="tbl-scroll"><table><thead><tr><th>Strategic Benefit</th><th>What It Means for Issuers</th></tr></thead><tbody><tr><td>Accelerate Inflows &amp; Sales</td><td>Instant exit liquidity removes the single biggest objection allocators raise</td></tr><tr><td>Eliminate Balance Sheet Run Risk</td><td>BOUND's reserves absorb investor exit pressure; fund operational assets remain insulated</td></tr><tr><td>Zero Operational Disruption</td><td>Issuer redemption calendar, NAV process, and settlement timeline remain unchanged</td></tr><tr><td>No Middleman Dependency</td><td>Liquidity is generated programmatically — no reliance on external market makers</td></tr><tr><td>MiCA-Compliant Architecture</td><td>Built around a MiCA Title II utility-type classification from day one</td></tr></tbody></table></div><div class="cap">Source: Protocol Technical Roadmap, strategic benefits table.</div>
+</section>
+<section id="principles"><div class="sec-head"><div class="sec-num">3</div><h2>Delivery Principles</h2></div>
+<p>Six principles govern how the programme is executed. They are constraints on the delivery team, not aspirations.</p>
+<h4 class="sub">3.1 Decentralisation by Default</h4><p>All normal BOUND operations are permissionless. Admin keys are multi-sig gated and scope-limited to emergency market suspension and haircut parameter bounds only. Emergency controls must self-expire or require community ratification via timelock. Issuers, asset managers, and rwaUSD holders can operate without any reliance on BOUND team keys.</p>
+<h4 class="sub">3.2 Parallelism is the Compression Strategy</h4><p>The timeline shortens entirely through parallel execution. Smart contract development, backend, frontend, and DevOps all run at full capacity simultaneously from Week 1. Any sequential dependency is a schedule risk to be raised at the weekly cross-team sync immediately.</p>
+<h4 class="sub">3.3 Audit Gate is Non-Negotiable</h4><p>No mainnet deployment until Phase 3 audit sign-off. Any contract modification from competition findings triggers a targeted re-audit of the affected modules. The audit window cannot be compressed below 6 weeks without dropping the public competition round, which is not recommended for a protocol handling institutional capital.</p>
+<h4 class="sub">3.4 MiCA Compliance from Architecture</h4><p>The BOUND smart contract and backend architecture is designed around MiCA Title II utility-type classification from day one — not retrofitted. Compliance reporting pipelines, data retention, and issuer obligation tracking are first-class engineering concerns.</p>
+<h4 class="sub">3.5 SEO from Day One</h4><p>Frontend SEO is an engineering deliverable from Phase 1. The target is for BOUND to rank as the primary result for 'RWA instant liquidity', 'instant RWA exit', and 'rwaUSD' before mainnet launch.</p>
+<h4 class="sub">3.6 Security at Every Layer</h4><p>Security is not siloed to smart contracts. DevOps, backend, and frontend each carry their own security obligations — WAF, SAST/DAST, oracle node hardening, HSM-backed hot wallet signing, input validation — throughout all phases.</p>
+</section>
+<section id="phase1"><div class="sec-head"><div class="sec-num">4</div><h2>Phase 1: Foundation &amp; Architecture   Weeks 1–6</h2></div>
+<p>All four layers mobilise simultaneously. The goal is to exit Phase 1 with every team unblocked: BOUND core contracts designed and core logic written, infra reproducible, app scaffold live, oracle scaffolded. Architecture decisions — upgrade pattern, storage layout, rwaUSD mechanics — must be finalised by end of Week 2.</p>
+<h4 class="sub">4.1 Milestones</h4>
+<div class="mstones">
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M1</span><span class="ms-wk">Wks 1–2</span></div>
+    <h5>RWA Architecture Blueprint Locked</h5>
+    <p class="ms-i">The RWA migration specification is finalised. Existing APSS contracts are mapped against target architecture; net-new modules are fully specified with no open design decisions.</p>
+    <ul><li>APSS baseline documented — current rwaUSD and liquidity pool behaviour catalogued and mapped</li><li>RWA eligibility framework defined — qualifying asset classes, onboarding criteria, and collateral rules</li><li>Haircut model specified — instant-exit pricing logic, parameter bounds, and oracle dependencies</li><li>Migration path agreed — upgrade strategy for APSS contracts without disrupting live rwaUSD markets</li><li>Governance and delivery cadence live — decision log, weekly syncs, escalation path</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>Engineering proceeds against a locked target state. The pivot is explicit; rework is minimised.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M2</span><span class="ms-wk">Wks 3–4</span></div>
+    <h5>Core Contracts Aligned to RWA Architecture</h5>
+    <p class="ms-i">APSS contracts are extended and new RWA modules are implemented. rwaUSD and the liquidity pool are refactored for RWA instant exits; registry and governance modules are built and unit-tested.</p>
+    <ul><li>rwaUSD aligned — stablecoin accounting extended for RWA collateral and settlement flows</li><li>Liquidity pool extended — instant-exit swap path, reserve tracking, background settlement queue</li><li>RWA registry contract built — onboarding, eligibility enforcement, haircut assignment on-chain</li><li>Governance module extended — proposals, timelock, emergency pause integrated with RWA permissions</li><li>Admin controls scoped — multi-sig emergency levers only; routine operations permissionless</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>The deployed APSS foundation is preserved while the full RWA stack is assembled around it.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M3</span><span class="ms-wk">Wks 5–6</span></div>
+    <h5>Infrastructure &amp; Platform Readiness</h5>
+    <p class="ms-i">Cloud infrastructure, CI/CD, and application platform are extended for RWA workloads. Teams ship against the new architecture without provisioning debt.</p>
+    <ul><li>Environment parity — dev, staging, and testnet reproducible; APSS and RWA stacks deployable on demand</li><li>CI/CD pipeline extended — contract migration tests, integration gates, and safe deployment automation</li><li>Design system and app shell updated — RWA flows, issuer surfaces, and protocol branding consistent</li><li>Observability baseline — logging, metrics, and alerting wired for rwaUSD reserve and pool health</li><li>SEO and metadata foundations — search and social previews reflect RWA positioning</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>Phase 2 begins with operational infrastructure, not setup. The pivot ships on a proven platform.</div>
+  </div></div>
+<h4 class="sub">4.2 Deliverables by engineering layer</h4>
+<h4 class="sub">Smart Contract Development — BOUND Protocol Core &amp; rwaUSD Token Architecture</h4><ul class="find"><li>Architecture decisions finalised: upgrade pattern (proxy/diamond), storage layout, rwaUSD mechanics, haircut model</li><li>rwaUSD contract: mint/burn gated to liquidity pool, peg mechanics, USDC collateral accounting</li><li>RWA registry: asset onboarding primitives, eligibility enforcement, haircut assignment storage</li><li>Liquidity pool core: instant exit swap logic, reserve tracking, background settlement queue</li><li>Governance module: on-chain proposals, quorum, timelock, emergency pause — decentralised by default</li><li>Admin role matrix: multi-sig gated emergency levers only (market suspension, haircut override); all normal ops permissionless</li><li>Security primitives: access control library, reentrancy guards, overflow checks, rate-limit patterns</li><li>Unit test scaffold: 100% branch coverage target established; fuzz test harness set up (echidna/foundry)</li></ul>
+<h4 class="sub">Backend &amp; Oracle Automation — Mono-repo Scaffold &amp; Dev Environment</h4><ul class="find"><li>Backend mono-repo: service boundaries, shared TypeScript types, CI skeleton</li><li>Database schema: RWA registry mirror, rwaUSD market state, NAV history, settlement queue, issuer obligation tracker</li><li>Oracle service scaffold: NAV/price event listener, block-confirmation queue, retry and backoff logic</li><li>Local devnet with mock BOUND contracts wired to backend for end-to-end integration testing from day one</li></ul>
+<h4 class="sub">Frontend — Design System &amp; App Scaffold</h4><ul class="find"><li>Design system: BOUND brand tokens (colour, type, spacing), component library, accessibility baseline (WCAG AA)</li><li>App scaffold: Next.js + TypeScript, wallet adapters (wagmi/viem), route architecture</li><li>SEO foundation: metadata schema, Open Graph, structured data targeting 'RWA liquidity', 'instant RWA exit', 'rwaUSD'</li><li>Content strategy: keyword map positioning BOUND as the primary RWA instant liquidity protocol</li></ul>
+<h4 class="sub">DevOps &amp; Security — Infrastructure as Code &amp; CI/CD</h4><ul class="find"><li>IaC: Terraform for all cloud resources (AWS/GCP); fully reproducible environment definitions</li><li>Container orchestration: Kubernetes or ECS; service mesh for internal inter-service communication</li><li>CI/CD pipeline: GitHub Actions — lint, test, build, deploy gates enforced on every PR</li><li>Secrets management: HashiCorp Vault or AWS Secrets Manager; zero plaintext secrets in any repo</li></ul>
+</section>
+<section id="phase2"><div class="sec-head"><div class="sec-num">5</div><h2>Phase 2: Build — Full Parallel Execution   Weeks 7–16</h2></div>
+<p>The longest and most intensive phase. All four teams execute at full capacity simultaneously. The oracle automation layer connects to BOUND's RWA pricing and haircut assignment logic. The frontend wires up wallet flows, rwaUSD swap UX, and the issuer onboarding wizard. DevOps hardens the security baseline. Weekly cross-team syncs keep integration points aligned.</p>
+<h4 class="sub">5.1 Milestones</h4>
+<div class="mstones">
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M4</span><span class="ms-wk">Wks 7–9</span></div>
+    <h5>Oracle Engine Operational</h5>
+    <p class="ms-i">The automated pricing and settlement layer is live. BOUND receives real-time RWA valuations and executes haircut and settlement logic without manual intervention.</p>
+    <ul><li>Real-time NAV feeds connected — live pricing for all listed RWAs with freshness guards</li><li>Haircut engine automated — discount rates update from oracle data without manual intervention</li><li>Background settlement processor running — queued redemptions execute autonomously</li><li>Failover and redundancy validated — oracle continuity through RPC outages and stale feeds</li><li>Issuer obligation tracker active — missed reporting deadlines flagged and suspension workflows triggered</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>RWA markets price and settle programmatically. The protocol no longer depends on manual operations.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M5</span><span class="ms-wk">Wks 10–11</span></div>
+    <h5>Instant Exit Swap Live on Testnet</h5>
+    <p class="ms-i">End-to-end RWA-to-rwaUSD instant exit is demonstrable on testnet. Existing rwaUSD liquidity supports the new swap path.</p>
+    <ul><li>Instant exit interface complete — asset selection, haircut preview, and execution against extended pool</li><li>Wallet connectivity verified — MetaMask, WalletConnect, and hardware wallet flows production-ready</li><li>Settlement status tracking live — holders follow background redemption progress in real time</li><li>Error handling standardised — failure modes surface clear, actionable messages</li><li>Integration tests passing — APSS pool extensions and RWA registry interact correctly under load</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>The core product promise is demonstrable: illiquid RWA holders receive rwaUSD instantly.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M6</span><span class="ms-wk">Wks 12–13</span></div>
+    <h5>Issuer Onboarding Platform Complete</h5>
+    <p class="ms-i">RWA issuers apply, are vetted, pay fees, and launch markets through a self-serve platform integrated with on-chain registry logic.</p>
+    <ul><li>Issuer application workflow — guided entity and asset documentation with eligibility pre-checks</li><li>On-chain fee collection — vetting and market-enabling fees without manual invoicing</li><li>Issuer dashboard live — NAV submission, obligation calendar, market status, and compliance tracking</li><li>Eligibility engine — real-time feedback on asset qualification against protocol rules</li><li>Audit obligation tracker — quarterly reporting requirements visible and enforceable</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>Partner onboarding scales without proportional operational headcount.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M7</span><span class="ms-wk">Wks 14–15</span></div>
+    <h5>Data &amp; Analytics Platform Live</h5>
+    <p class="ms-i">Protocol data — markets, rwaUSD reserves, settlements, governance — is exposed via APIs and operational dashboards.</p>
+    <ul><li>GraphQL API live — unified query surface for markets, registry, and settlement state</li><li>REST API complete — issuer and asset-manager operations fully covered</li><li>Protocol analytics dashboard — rwaUSD reserve health, swap volume, active markets, settlement queue depth</li><li>Public transparency endpoint — on-chain and indexed data for holders and researchers</li><li>Partner documentation published — OpenAPI and GraphQL Playground for integrators</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>Institutional stakeholders, issuers, and developers access consistent, auditable protocol data.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M8</span><span class="ms-wk">Wk 16</span></div>
+    <h5>Full Integration &amp; Pre-Audit Hardening</h5>
+    <p class="ms-i">All layers — extended APSS contracts, RWA modules, backend, and frontend — are integrated, security-tested, and ready for external audit.</p>
+    <ul><li>End-to-end testnet validation — issuer onboarding through holder exit and settlement completion</li><li>Penetration test completed — external red team on all public surfaces</li><li>Static analysis clean — zero high or critical findings across smart contract scope</li><li>Attack scenario suite complete — flash-loan, governance, and oracle manipulation vectors tested</li><li>Infrastructure security baseline verified — WAF, DDoS protection, network segmentation</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>The RWA migration enters audit with fewer unknowns, reducing remediation cost and timeline risk.</div>
+  </div></div>
+<h4 class="sub">5.2 Deliverables by engineering layer</h4>
+<h4 class="sub">Smart Contract Development — Oracle Integration, Issuer Flows &amp; Full Test Coverage</h4><ul class="find"><li>Oracle interface contracts: NAV/price feed hooks per RWA, data-freshness guards, stale-price circuit breakers</li><li>Haircut assignment contract: dynamic haircut computation from oracle data, issuer-specific risk parameters</li><li>Automation trigger interfaces: Chainlink Automation / custom keeper ABI for background settlement processing</li><li>Issuer onboarding contracts: eligibility checks, vetting-fee collection, market-enabling fee logic</li><li>Ongoing obligations enforcement: reporting deadline tracking, suspension trigger on missed obligations</li><li>Strategy execution: asset manager callable vaults, rebalance logic, yield routing to reserves</li><li>Integration tests: oracle manipulation, keeper failure modes, flash-loan vectors, gas profiling</li><li>Full scenario test suite: bank-run simulation, haircut drift, governance attacks, MiCA compliance edge cases</li><li>Static analysis: Slither, Aderyn, Mythril passes — all high/critical findings resolved</li><li>NatSpec documentation complete; architecture diagrams and threat model drafted</li></ul>
+<h4 class="sub">Backend &amp; Oracle Automation — Oracle Automation Engine &amp; BOUND Data API</h4><ul class="find"><li>Keeper/Oracle service: monitors RWA NAV feeds, triggers haircut recalculation and settlement autonomously</li><li>Background settlement processor: queues and executes underlying RWA redemptions as they clear</li><li>Issuer obligation tracker: monitors reporting deadlines, flags missed obligations, triggers suspension workflow</li><li>Asset manager automation: scheduled rebalances, reserve threshold alerts, auto-compound routines</li><li>Redundancy &amp; failover: multi-RPC failover, dead-letter queues, PagerDuty/OpsGenie alerting</li><li>Signed transaction pipeline: HSM or KMS-backed hot wallet, nonce manager, gas oracle</li><li>REST API: authenticated endpoints for issuer ops, market CRUD, NAV submission, health checks</li><li>GraphQL API: rwaUSD market depth, RWA registry listings, historical yields, governance data, issuer status</li><li>Subgraph (The Graph): all BOUND protocol events indexed for on-chain transparency</li><li>Rate limiting, API key management, CORS policy, OpenAPI + GraphQL Playground docs</li><li>Caching layer: Redis for hot rwaUSD price/market paths; CDN for static analytics snapshots</li></ul>
+<h4 class="sub">Frontend — rwaUSD Swap UX, Issuer Onboarding &amp; Full Data Layer</h4><ul class="find"><li>Wallet connect flows: multi-chain support, session management, transaction UX</li><li>rwaUSD instant exit swap interface: RWA selection, haircut preview, swap confirmation, settlement status tracker</li><li>rwaUSD/USDC swap integration: Uniswap deep-link and on-protocol swap routing</li><li>Issuer onboarding wizard: eligibility self-check, entity/asset documentation upload, fee payment flow</li><li>Issuer dashboard: NAV submission portal, obligation calendar, market status, quarterly audit tracker</li><li>Asset manager portfolio view: positions, live rwaUSD market depth, background settlement queue status</li><li>REST API integration: issuer management and market ops</li><li>GraphQL integration: live rwaUSD market data, RWA registry, governance proposals</li><li>SEO execution: SSR for all key pages, XML sitemap, Core Web Vitals target &gt;= 90</li><li>Responsive design: mobile-first, progressive enhancement across all breakpoints</li></ul>
+<h4 class="sub">DevOps &amp; Security — Security Baseline, Observability &amp; Protocol Hardening</h4><ul class="find"><li>Network segmentation: private VPC, WAF rules, DDoS protection (Cloudflare or AWS Shield Advanced)</li><li>SAST/DAST: automated scans on every build pipeline run; Snyk dependency vulnerability scanning</li><li>Oracle/keeper node hardening: host-based IDS, anomaly alerting, automatic isolation on breach detection</li><li>Hot wallet security: HSM-backed signing, spend limits, multi-party approval for large transactions</li><li>Backup policy: encrypted daily snapshots, cross-region replication, monthly restore tests</li><li>Centralised logging: ELK stack or Datadog; structured logs from all services</li><li>Distributed tracing: OpenTelemetry across backend, oracle, and keeper services</li><li>Incident response playbook: severity tiers, escalation paths, rwaUSD depeg runbook, post-mortem template</li><li>Penetration test: external red-team engagement on all public-facing BOUND surfaces</li></ul>
+</section>
+<section id="phase3"><div class="sec-head"><div class="sec-num">6</div><h2>Phase 3: Audit, Hardening &amp; Mainnet Launch   Weeks 17–25</h2></div>
+<p>No new features. This phase is entirely about correctness, security, and production readiness. BOUND's core contracts go through external audit and public competition. Backend and DevOps reach SLA targets. Frontend passes full QA and accessibility. Mainnet deployment occurs only after audit sign-off — issuers can go live on rwaUSD markets from that point.</p>
+<h4 class="sub">6.1 Milestones</h4>
+<div class="mstones">
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M9</span><span class="ms-wk">Wks 17–20</span></div>
+    <h5>First-Party Security Audit Complete</h5>
+    <p class="ms-i">A tier-one firm audits the full RWA scope — APSS extensions and net-new modules. All material findings are resolved.</p>
+    <ul><li>Full-scope audit by Trail of Bits, Certora, or OpenZeppelin — migration path and new contracts in scope</li><li>Critical and high findings remediated and re-verified</li><li>Audit report published — transparent disclosure for issuers, investors, and partners</li><li>Re-test sign-off obtained from auditing firm</li><li>Protocol listed in recognised security registries where applicable</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>Institutional partners receive the security assurance required before allocating RWA capital.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M10</span><span class="ms-wk">Wks 21–23</span></div>
+    <h5>Public Security Competition Closed</h5>
+    <p class="ms-i">Independent researchers stress-test the RWA migration under competitive review. Valid findings are remediated before launch.</p>
+    <ul><li>Code4rena or Sherlock competition completed — broad coverage of rwaUSD mechanics and RWA registry</li><li>Competition findings triaged and remediated</li><li>Targeted re-audit of modified modules completed</li><li>Results published publicly</li><li>Immunefi bug bounty configured for mainnet launch</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>Community-scale review complements the firm audit. Confidence is earned, not asserted.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M11</span><span class="ms-wk">Wk 24</span></div>
+    <h5>Production Readiness Verified</h5>
+    <p class="ms-i">Load, disaster recovery, and operational runbooks are validated. The RWA system meets launch-grade reliability targets.</p>
+    <ul><li>Load test passed — 10x projected peak swap volume without degradation</li><li>Disaster recovery drill completed — oracle failure, database outage, and RPC loss recovered cleanly</li><li>rwaUSD peg monitoring and alerting live — anomalies surfaced within seconds</li><li>On-call runbooks tested — incident response executable by any qualified engineer</li><li>Zero-downtime upgrade pipeline validated — contract migrations deploy safely</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>Real capital enters a system proven under operational stress, not best-case conditions.</div>
+  </div>
+  <div class="ms">
+    <div class="ms-h"><span class="ms-id">M12</span><span class="ms-wk">Wk 25</span></div>
+    <h5>RWA Markets Live on Mainnet</h5>
+    <p class="ms-i">The RWA architecture goes live. Existing rwaUSD and extended liquidity pool support instant exits for listed RWAs.</p>
+    <ul><li>RWA contract upgrades deployed from audited commit hash — APSS baseline preserved where unchanged</li><li>Multi-sig ownership confirmed — no single key controls protocol functions</li><li>First RWA markets enabled — issuer partners live at launch</li><li>rwaUSD liquidity maintained — stablecoin and pool extensions operational for instant exits</li><li>Immunefi bug bounty live — continuous post-launch security coverage</li><li>Launch communications distributed — partners, community, and public announcement</li></ul>
+    <div class="ms-o"><span>Strategic outcome</span>BOUND delivers on its mission: institutional RWA liquidity on-chain, built on a deployed rwaUSD and pool foundation.</div>
+  </div></div>
+<h4 class="sub">6.2 Deliverables by engineering layer</h4>
+<h4 class="sub">Smart Contract Development — Formal Verification, External Audit &amp; Mainnet Deploy</h4><ul class="find"><li>Formal invariant checks on rwaUSD peg accounting and reserve solvency logic (Certora Prover or Halmos)</li><li>First-party audit: top-tier firm (Trail of Bits / Certora / OpenZeppelin) — full scope across all BOUND contracts</li><li>Remediation sprint: all findings triaged, fixed, and re-tested before competition round</li><li>Public competition: Code4rena or Sherlock — broad researcher coverage on rwaUSD mechanics and RWA registry</li><li>Second remediation: competition findings fixed; targeted re-audit of affected modules completed</li><li>Final audit sign-off obtained; mainnet deployed from audited commit hash</li><li>Post-launch: Immunefi bug bounty live; any contract-modifying finding triggers immediate re-audit</li></ul>
+<h4 class="sub">Backend &amp; Oracle Automation — Load Testing, SLA Hardening &amp; DR Drills</h4><ul class="find"><li>Load tests: 10x projected peak swap volume; all bottlenecks identified and resolved</li><li>Disaster recovery drill: RPC outage, DB failover, oracle downtime — all BOUND-critical recovery paths validated</li><li>Monitoring dashboards live: Grafana + Prometheus for rwaUSD reserve health, swap latency, keeper uptime</li><li>On-call runbooks for oracle failure, rwaUSD depeg alert, issuer suspension workflow</li><li>API documentation published: Swagger UI and GraphQL Playground accessible to RWA issuer partners</li></ul>
+<h4 class="sub">Frontend — QA, Accessibility Audit &amp; Launch</h4><ul class="find"><li>End-to-end tests: Playwright suite covering rwaUSD swap, issuer onboarding, governance, and dashboard flows</li><li>Accessibility audit: screen reader testing, keyboard navigation, colour contrast validation</li><li>Performance audit: Lighthouse &gt;= 90 across all core metrics on all key pages</li><li>Analytics integration: on-chain swap events + off-chain funnel tracking (issuer conversion, swap volume)</li><li>Final UAT with issuer and asset manager personas; all blocking issues resolved before launch</li></ul>
+<h4 class="sub">DevOps &amp; Security — Production Readiness &amp; Mainnet Infrastructure</h4><ul class="find"><li>Blue-green deployment pipeline: zero-downtime contract upgrades and backend releases validated</li><li>SOC 2 readiness review: access controls, audit logging, and change management controls assessed</li><li>Mainnet deployment checklist: key rotation, multi-sig ownership transfer, all monitoring and alerts live</li><li>MiCA Title II compliance infrastructure: reporting pipelines and data retention policies active</li><li>Ongoing post-launch: monthly dependency updates, quarterly pen tests, live Immunefi bug bounty</li></ul>
+</section>
+<section id="audit"><div class="sec-head"><div class="sec-num">7</div><h2>Audit and Security Strategy</h2></div>
+<p>BOUND's contracts handle institutional capital with a programmatic peg mechanism. The audit strategy is non-negotiable and structured in two rounds. Any shortcut here increases existential protocol risk.</p>
+<h4 class="sub">7.1 Round 1: First-Party Audit — Weeks 17–20</h4><p>Engage a top-tier firm (Trail of Bits, Certora, or OpenZeppelin) for full-scope review of rwaUSD, liquidity pool, RWA registry, oracle interfaces, and governance contracts. Remediation sprint runs concurrent with Week 20 — all findings triaged, fixed, and re-tested.</p>
+<h4 class="sub">7.2 Round 2: Public Competition — Weeks 21–23</h4><p>Code4rena or Sherlock competition. Broad researcher coverage on rwaUSD peg mechanics, haircut logic, and oracle manipulation vectors. All valid findings trigger a targeted re-audit of affected modules before mainnet deployment.</p>
+<h4 class="sub">7.3 Ongoing: Immunefi Bug Bounty — Post-Launch</h4><p>Live bug bounty with tiered payouts scaled to finding severity. Any post-launch finding that requires a contract modification triggers an immediate re-audit of the affected module before the fix goes to mainnet. No exceptions.</p>
+<div class="note warn"><span class="nh">Audit booking is a Phase 1 action</span>Top-tier firms — the ones this plan names — quote booking queues of roughly four to twelve weeks from first enquiry to kickoff, and elite-only engagements can run to several months. The audit slot must therefore be secured during Phase 1, not at the end of Phase 2 as the schedule-risk table assumes. Booking late is the cheapest way to lose six weeks on this programme. <i>Market conditions as at July 2026.</i></div>
+</section>
+<section id="budget"><div class="sec-head"><div class="sec-num">8</div><h2>Development Budget</h2></div>
+<p>Fixed $320,000 development allocation through Milestone 12 (RWA markets live on mainnet), built on deployed APSS infrastructure. Covers engineering, infrastructure, and launch execution — audit and competition fees excluded.</p>
+<p>The allocation is presented three ways — by workstream, by role and by phase. Each cut totals $320,000; they are three views of one budget, not three budgets.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Total budget</th><th>Timeline</th><th>Team size</th></tr></thead><tbody><tr><td>$320,000</td><td>22 weeks</td><td>~3.5 FTE blended team</td></tr></tbody></table></div><div class="cap">Source: RWA Milestone Roadmap, budget headline.</div>
+<h4 class="sub">8.1 By workstream</h4><div class="tbl-scroll"><table><thead><tr><th>Workstream</th><th>Amount</th><th>Milestones</th><th>Scope</th></tr></thead><tbody><tr><td>Smart contracts</td><td>$90,000</td><td>M1–M2, M8</td><td>APSS contract extensions, RWA registry, liquidity pool upgrade path, governance alignment, migration scripts, unit and integration tests</td></tr><tr><td>Backend &amp; oracle automation</td><td>$62,000</td><td>M4, M7</td><td>NAV feed integration, haircut engine, background settlement processor, issuer obligation tracker, core REST endpoints</td></tr><tr><td>Frontend &amp; product UI</td><td>$52,000</td><td>M3, M5, M6</td><td>Instant exit swap interface, wallet flows, settlement tracker, issuer onboarding surfaces, protocol analytics views</td></tr><tr><td>DevOps &amp; infrastructure</td><td>$28,000</td><td>M3, M11</td><td>Cloud environments, CI/CD, RPC and indexing, observability, staging and production pipelines, deployment automation</td></tr><tr><td>Architecture &amp; program management</td><td>$32,000</td><td>M1–M12</td><td>APSS migration specification, technical leadership, sprint coordination, delivery governance across all phases</td></tr><tr><td>QA &amp; integration testing</td><td>$18,000</td><td>M5, M8, M11</td><td>End-to-end testnet validation, regression suite, pre-mainnet integration checks, launch readiness verification</td></tr><tr><td>Mainnet launch engineering</td><td>$26,000</td><td>M11–M12</td><td>Contract upgrade deployment, multi-sig handover support, first-market enablement, launch runbooks and cutover execution</td></tr><tr><td>Contingency reserve</td><td>$12,000</td><td>All phases</td><td>Buffer for APSS migration surprises, oracle integration rework, and scope adjustments within the fixed budget</td></tr></tbody></table></div><div class="cap">Source: RWA Milestone Roadmap. Total $320,000.</div>
+<div class="chart"><div class="ct">Development budget by workstream</div><svg viewBox="0 0 880 360" role="img" aria-label="Development budget by workstream" class="cv"><path d="M195.0 68.0 A112 112 0 0 1 304.8 201.9 L257.8 192.5 A64 64 0 0 0 195.0 116.0 Z" fill="var(--c1)" stroke="var(--surface)" stroke-width="1.5"/><path d="M304.8 201.9 A112 112 0 0 1 212.5 290.6 L205.0 243.2 A64 64 0 0 0 257.8 192.5 Z" fill="var(--c2)" stroke="var(--surface)" stroke-width="1.5"/><path d="M212.5 290.6 A112 112 0 0 1 109.8 252.7 L146.3 221.6 A64 64 0 0 0 205.0 243.2 Z" fill="var(--c3)" stroke="var(--surface)" stroke-width="1.5"/><path d="M109.8 252.7 A112 112 0 0 1 83.3 188.8 L131.2 185.0 A64 64 0 0 0 146.3 221.6 Z" fill="var(--c4)" stroke="var(--surface)" stroke-width="1.5"/><path d="M83.3 188.8 A112 112 0 0 1 95.2 129.2 L138.0 150.9 A64 64 0 0 0 131.2 185.0 Z" fill="var(--c5)" stroke="var(--surface)" stroke-width="1.5"/><path d="M95.2 129.2 A112 112 0 0 1 132.8 86.9 L159.4 126.8 A64 64 0 0 0 138.0 150.9 Z" fill="var(--c6)" stroke="var(--surface)" stroke-width="1.5"/><path d="M132.8 86.9 A112 112 0 0 1 168.9 71.1 L180.1 117.8 A64 64 0 0 0 159.4 126.8 Z" fill="var(--c7)" stroke="var(--surface)" stroke-width="1.5"/><path d="M168.9 71.1 A112 112 0 0 1 195.0 68.0 L195.0 116.0 A64 64 0 0 0 180.1 117.8 Z" fill="var(--c8)" stroke="var(--surface)" stroke-width="1.5"/><rect x="368" y="31" width="11" height="11" rx="2.5" fill="var(--c1)"/><text x="388" y="40" class="lg">Smart contracts</text><text x="854" y="40" class="lg ar strong">$90,000 · 28.1%</text><rect x="368" y="64" width="11" height="11" rx="2.5" fill="var(--c2)"/><text x="388" y="73" class="lg">Backend &amp; oracle automation</text><text x="854" y="73" class="lg ar strong">$62,000 · 19.4%</text><rect x="368" y="97" width="11" height="11" rx="2.5" fill="var(--c3)"/><text x="388" y="106" class="lg">Frontend &amp; product UI</text><text x="854" y="106" class="lg ar strong">$52,000 · 16.3%</text><rect x="368" y="130" width="11" height="11" rx="2.5" fill="var(--c4)"/><text x="388" y="139" class="lg">Architecture &amp; program management</text><text x="854" y="139" class="lg ar strong">$32,000 · 10.0%</text><rect x="368" y="163" width="11" height="11" rx="2.5" fill="var(--c5)"/><text x="388" y="172" class="lg">DevOps &amp; infrastructure</text><text x="854" y="172" class="lg ar strong">$28,000 · 8.8%</text><rect x="368" y="196" width="11" height="11" rx="2.5" fill="var(--c6)"/><text x="388" y="205" class="lg">Mainnet launch engineering</text><text x="854" y="205" class="lg ar strong">$26,000 · 8.1%</text><rect x="368" y="229" width="11" height="11" rx="2.5" fill="var(--c7)"/><text x="388" y="238" class="lg">QA &amp; integration testing</text><text x="854" y="238" class="lg ar strong">$18,000 · 5.6%</text><rect x="368" y="262" width="11" height="11" rx="2.5" fill="var(--c8)"/><text x="388" y="271" class="lg">Contingency reserve</text><text x="854" y="271" class="lg ar strong">$12,000 · 3.8%</text></svg></div>
+<h4 class="sub">8.2 By role</h4><div class="tbl-scroll"><table><thead><tr><th>Role</th><th>Duration</th><th>Amount</th></tr></thead><tbody><tr><td>Senior smart contract engineer</td><td>18 weeks · full-time</td><td>$81,000</td></tr><tr><td>Backend / oracle engineer</td><td>16 weeks · full-time</td><td>$56,000</td></tr><tr><td>Frontend engineer</td><td>14 weeks · full-time</td><td>$45,500</td></tr><tr><td>DevOps engineer</td><td>8 weeks · fractional</td><td>$24,000</td></tr><tr><td>Protocol architect / PM</td><td>12 weeks · fractional</td><td>$36,000</td></tr><tr><td>QA engineer</td><td>8 weeks · fractional</td><td>$16,000</td></tr><tr><td>Infrastructure &amp; tooling</td><td>22 weeks · ongoing</td><td>$28,000</td></tr><tr><td>Integration &amp; launch overhead</td><td>Weeks 17–22</td><td>$21,500</td></tr><tr><td>Contingency reserve</td><td>All phases</td><td>$12,000</td></tr></tbody></table></div><div class="cap">Source: RWA Milestone Roadmap. Total $320,000.</div>
+<h4 class="sub">8.3 By phase</h4><div class="tbl-scroll"><table><thead><tr><th>Phase</th><th>Weeks</th><th>Amount</th><th>Share</th></tr></thead><tbody><tr><td>Phase 1 — Foundation</td><td>Weeks 1–6</td><td>$78,000</td><td>24%</td></tr><tr><td>Phase 2 — Build</td><td>Weeks 7–16</td><td>$154,000</td><td>48%</td></tr><tr><td>Phase 3 — Launch</td><td>Weeks 17–22</td><td>$88,000</td><td>28%</td></tr></tbody></table></div><div class="cap">Source: RWA Milestone Roadmap. Total $320,000. Stated shares are rounded from 24.4%, 48.1% and 27.5%.</div>
+<p>The budget spans weeks one to twenty-two of engineering execution. The delivery window extends to week twenty-five because it absorbs audit remediation and launch, during which engineering spend is minimal and is carried by the contingency reserve. The two figures measure different things and are not in conflict.</p>
+<h4 class="sub">8.4 Excluded from the development budget</h4><p>The following are tracked and budgeted separately from the $320,000 development allocation:</p>
+<ul class="find"><li>External smart contract audit (Trail of Bits, Certora, OpenZeppelin, etc.)</li><li>Public security competition (Code4rena, Sherlock)</li><li>Targeted re-audit fees after competition findings</li><li>Immunefi bug bounty capital and escrow</li><li>Legal and securities compliance advisory</li></ul>
+<p>The external audit and the bug-bounty allocation appear in the protocol's Operating Cost Analysis under legal expenses, at $200,000 and $300,000 respectively in the launch year. The public security competition and its targeted re-audit carry no line in that model — a gap that document already records.</p>
+<h4 class="sub">8.5 Relationship to the operating cost model</h4><p>This $320,000 engineering programme is not the same figure as the $250,000 Development line in the Operating Cost Analysis, and the two should not be compared directly. That line covers application development and protocol integrations only; the engineering effort described here spans smart contracts, backend, frontend, infrastructure, architecture and quality assurance, most of which sits inside the cost model's personnel line rather than its development line. Neither figure is revised by this document.</p>
+<h4 class="sub">8.6 Which entity bears it, and where the IP vests</h4><p>The programme is executed and paid for by the operating company, incorporated in the European Union, which employs the engineering team and bears all operating cost. It is not borne by the token issuer. The operating company works under a development-and-services agreement with Nexus Technologies Foundation and BITSWIFT TECHNOLOGIES INC., and is reimbursed at cost plus a margin.</p>
+<p>The intellectual property this programme creates &amp;mdash; the contracts, the infrastructure and the protocol design &amp;mdash; vests in Nexus Technologies Foundation, which owns the protocol and grants the token delegation. The operating company is a service provider, not the owner of what it builds. Entity roles and the full attribution of every cost line are set out in the Operating Cost &amp;amp; Company Analysis.</p>
+</section>
+<section id="risk"><div class="sec-head"><div class="sec-num">9</div><h2>Schedule Risk</h2></div>
+<p>The following conditions must hold to achieve 18 weeks. If any are not met, add the indicated buffer to the overall timeline.</p>
+<p>The delivery window is twenty-two to twenty-five weeks. An eighteen-week floor is achievable, but only if every condition below holds simultaneously — fully dedicated teams from week one, an audit slot already secured, and a clean single-round audit remediation. This plan treats twenty-two to twenty-five weeks as the commitment and eighteen as the compressed case, because the conditions are demanding and their failure modes are additive.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Condition</th><th>If Not Met</th></tr></thead><tbody><tr><td>Full dedicated teams from Week 1</td><td>Ramp-up delays add 2–4 weeks to Phase 1</td></tr><tr><td>Audit firm booked before Phase 2 ends</td><td>Firm availability alone can add 2–6 weeks of idle time</td></tr><tr><td>rwaUSD architecture finalised by Week 2</td><td>A late architecture change resets Phase 2 scope for all layers</td></tr><tr><td>Oracle/contract integration aligned by Week 8</td><td>Misalignment between backend and contracts is the most common slip point</td></tr><tr><td>Single audit remediation round sufficient</td><td>A severe finding requiring re-architecture adds 3–6 weeks</td></tr><tr><td>No material MiCA compliance pivot</td><td>Regulatory reclassification mid-build would require contract and backend rework</td></tr></tbody></table></div><div class="cap">Source: Protocol Technical Roadmap, schedule risk table.</div>
+<p>Two of these conditions deserve particular weight. A late architecture change resets Phase 2 scope for all four layers simultaneously, which is why the design is locked at week two. And misalignment between the oracle layer and the contracts is named in the source as the most common slip point in programmes of this shape — it is the reason the weekly cross-team sync exists.</p>
+</section>
+<section id="openitems"><div class="sec-head"><div class="sec-num">10</div><h2>Scope Boundaries and Editorial Notes</h2></div>
+<p>This document merges two source roadmaps written for different audiences. Where they differed, the divergence is recorded here rather than silently resolved.</p>
+<ul class="find"><li><b>Terminology:</b> both sources call the settlement dollar BLD, the Bound Liquid Dollar. It is rendered here as rwaUSD, matching the whitepaper, the simulator and every other platform document. The instrument is unchanged; only the name is current.</li><li><b>Timeline:</b> the technical roadmap states 18–25 weeks and the milestone roadmap 22–25. This document leads with 22–25 as the delivery commitment and presents 18 as the compressed floor, with the conditions it requires set out in Chapter 9.</li><li><b>Budget horizon:</b> the budget covers 22 weeks of engineering execution while delivery runs to week 25. The gap is audit remediation and launch, carried by contingency. Both sources are correct; the relationship was simply unstated.</li><li><b>Regulation:</b> "MICA" in the sources is rendered MiCA throughout, matching Regulation (EU) 2023/1114 as cited in the whitepaper.</li><li><b>Scope:</b> neither source covers the Bound Liquidity Index structure, which is already formed, nor the BND governance token beyond the governance plumbing in M2.</li><li><b>Cost model:</b> the $320,000 engineering programme does not revise the Operating Cost Analysis or the Business Plan, both of which retain their published figures.</li></ul>
+</section>
+<section id="disclaimer"><div class="sec-head"><div class="sec-num">§</div><h2>Legal Disclaimer</h2></div>
+<p>This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. It describes an engineering plan: timelines, budgets, milestones and deliverables are forward-looking statements subject to material uncertainty and change, and are not commitments or guarantees of delivery. Audit and security-competition outcomes cannot be known in advance, and no assurance is given that any audit will be completed within the window described or that any finding will be remediable within it. Vendor and firm names are indicative of the standard sought and do not represent engagements that have been secured. Market conditions cited for audit booking reflect published third-party sources as at July 2026. © 2026 BOUND Protocol.</p>
+</section>
+<footer><div class="disc"><b>Note.</b> This document merges the RWA Milestone Roadmap and the Protocol Technical Roadmap. Content is parsed directly from both sources; terminology is rendered in current platform naming, as recorded in Chapter 10. Regenerate via <span class="mono">python3 scripts/gen-roadmap-content.py</span>, then <span class="mono">node scripts/build-roadmap.mjs</span>.</div>
+<div>BOUND Protocol · Delivery Roadmap · 12 Milestones · 3 Phases · 22–25 Weeks — July 2026 · Bucharest, Romania</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>

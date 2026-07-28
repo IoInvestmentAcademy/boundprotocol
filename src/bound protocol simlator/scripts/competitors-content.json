@@ -1,0 +1,389 @@
+{
+ "front": {
+  "brand": "BOUND Protocol",
+  "kind": "Competitors Analysis",
+  "tagline": "The Competitive Landscape for RWA Liquidity Infrastructure",
+  "date": "2026",
+  "confidential": "Confidential — Prepared for investor and partner distribution"
+ },
+ "chapters": [
+  {
+   "num": "1",
+   "id": "framing",
+   "title": "Competitive Framing",
+   "nav": "Competitive Framing",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "BOUND competes in a single, precisely defined category: on-chain liquidity infrastructure for tokenized real-world assets. Its competitors are every architecture that offers an RWA holder a way to convert a locked, issuer-redeemable position into usable dollars — and every design that could plausibly become the settlement standard of the RWA sector. It competes for exit flow, issuer integrations, and the sector's settlement standard.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "The competitive universe divides into two tiers. Direct competitors solve, or claim to solve, the same problem — instant liquidity for tokenized assets. As of mid-2026 there are four live architectures: pre-allocated liquidity facilities (Midas MSL), market-maker RFQ networks (Symbiotic Liquid Lane), shared redemption rails for Treasuries (Ondo Nexus), and borrow-against-collateral markets (Aave Horizon). Indirect competitors reduce the need for a liquidity layer without providing one: issuer-native instant-redemption facilities, secondary trading venues, discounted-claim designs, and RWA-native platform ecosystems. Each is assessed below on the same four questions: what it does, where it is strong, where it is structurally limited, and how BOUND is positioned against it.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "One development frames the entire analysis. Between March and June 2026, the two most credible direct competitors merged their efforts: Midas raised a $50 million Series A explicitly to solve instant redemption, and Symbiotic launched Liquid Lane with Midas as its first integrated issuer. The market has consolidated around a single competing thesis — rented liquidity, supplied by committed third-party capital and market makers, attached issuer-by-issuer. BOUND's thesis is the opposite: owned liquidity, supplied by a protocol-native reserve, delivered through a common settlement dollar for the whole sector. The remainder of this document tests those two theses architecture by architecture.",
+     "boldLabel": false
+    }
+   ]
+  },
+  {
+   "num": "2",
+   "id": "direct",
+   "title": "Direct Competitors",
+   "nav": "Direct Competitors",
+   "blocks": [
+    {
+     "t": "sub",
+     "title": "2.1 Midas — Open Liquidity Architecture & MSL (Primary Competitor)",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Midas is a Berlin-based platform that tokenizes institutional investment strategies into regulatory-compliant mTokens (mTBILL, mBASIS, mHYPER, and Liquid Yield Tokens curated by managers including RE7 and MEV Capital). Since 2024 it has issued more than $1.7 billion in tokenized assets to 20,000+ holders, with TVL above $500 million, and holds EU regulatory approval to distribute to retail investors without minimum thresholds — one of very few RWA platforms with that permission. In March 2026 it closed a $50 million Series A led by RRE Ventures and Creandum, with Franklin Templeton, Coinbase Ventures, Framework Ventures, GSR, and Anchorage Digital participating, bringing total funding to $58.75 million. The round's stated purpose: launch Midas Staked Liquidity (MSL), a dedicated redemption facility with up to $40 million initial capacity that lets mToken holders exit instantly, and build it out into an “Open Liquidity Architecture.”",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "Strengths: The best-funded dedicated attempt at the RWA liquidity problem; genuine issuance traction and a live product suite; EU retail distribution approval; blue-chip cap table including a top-tier TradFi asset manager; deep DeFi composability (Morpho, Pendle, Curve); and a public narrative — “liquidity, not issuance, is the bottleneck” — that educates the market on exactly the problem BOUND solves.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Weaknesses: MSL is pre-allocated capital: liquidity must be committed and reserved against redemptions, in a sector where liquidity is the scarcest resource. Initial capacity of $40 million stands against $1.7 billion of issued assets — roughly 2% coverage. The facility serves Midas's own mTokens, making it a platform feature rather than sector infrastructure. Its stress behavior is untested: committed providers face their strongest incentive to withdraw exactly when redemption demand spikes. And Midas monetizes as an issuer (fees on the underlying strategies), meaning liquidity is a cost center it must subsidize, not a business line.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Comparison to BOUND: Midas validates BOUND's problem statement with $50 million of institutional conviction — and then solves it for one platform, with rented capital. BOUND inverts every structural choice: liquidity is supplied by a protocol-owned reserve that earns a conservative base return when idle rather than by pre-allocated third-party commitments; acquired RWA inventory is recycled through BOUND's own markets rather than parked; coverage is governed by Basel-style liquidity-coverage discipline rather than a fixed facility size; and the delivery vehicle is rwaUSD — a settlement dollar any issuer, institution, or retail user can hold — rather than a redemption feature inside one issuer's product. Where Midas asks issuers and LPs to fund liquidity, BOUND's issuer proposition requires zero pre-allocation. Midas is simultaneously BOUND's clearest competitor and its most valuable market evidence: its issuance data calibrates what a single well-run RWA platform generates in flow — the volume a shared liquidity layer addresses across many such platforms.",
+       "boldLabel": true
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "2.2 Symbiotic Liquid Lane — the Market-Maker RFQ Network",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Launched 2 June 2026 on Symbiotic Core V2, Liquid Lane is an RFQ-based settlement network for tokenized assets. An RWA holder requests an exit; KYC-verified market makers and curators bid on-chain; the winning bid settles atomically, delivering USDC to the redeemer while the market maker takes the tokenized position and processes native redemption in the background on the issuer's timeline. Capital sits in curator-managed vaults — initial curators include Fasanara Capital, Avantgarde Finance, Barter, and KPK — and remains deployed in lending protocols (Aave, Morpho) between redemption events, recalled automatically when requests trigger. Midas is the first integrated issuer, with Fasanara's mGLOBAL the first live asset.",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "Strengths: More capital-efficient than a pre-funded facility — committed collateral stays productive between redemptions; shared vaults can serve multiple issuers, giving it genuine infrastructure ambitions rather than single-platform scope; atomic T+0 settlement; and immediate credibility through the Midas integration and named institutional curators.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Weaknesses: The model rents liquidity from market makers, and inherits every known failure mode of quote-driven liquidity: quotes widen or vanish under stress, when exits are demanded most; the redeemer pays a competitive but uncontrolled spread that prices duration and panic; and vault capital deployed in lending markets is exposed to utilization spikes — Symbiotic's own documentation flags that lending-market utilization can affect liquidity available for redemptions, and that vault withdrawal delays shorter than the underlying asset's redemption window can leave liquidity unavailable. Access is a professional workflow for qualified market makers and asset managers, not a retail-usable standard. And the network produces no settlement asset: it moves USDC, adding no sector-native unit of account.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Comparison to BOUND: Liquid Lane is the most sophisticated version of the market-maker model — and the clearest architectural foil for BOUND. Both promise T+0 exits with background issuer redemption; the difference is who stands behind the promise. In Liquid Lane, exit certainty depends on third-party market makers choosing to bid, on spreads they set, with capital they can redirect. In BOUND, exit capacity is protocol-owned, priced by transparent risk-tiered haircuts set in advance, and governed by liquidity-coverage rules that cap RWA intake before capacity is ever threatened — the protocol cannot be outbid or abandoned by its own liquidity. BOUND's stabilization operations also become more active under stress rather than retreating from it. Finally, Liquid Lane distributes USDC; BOUND distributes rwaUSD, building the sector's settlement standard with every exit it serves.",
+       "boldLabel": true
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "2.3 Ondo Nexus — Shared Redemption Rails for Tokenized Treasuries",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Announced February 2025, Ondo Nexus extends the instant mint/redeem infrastructure of Ondo's OUSG to third-party tokenized Treasuries, diversifying OUSG's backing across Franklin Templeton, WisdomTree, Wellington, and Fundbridge products and leveraging redemption relationships with BlackRock, Circle, and PayPal (including a PYUSD facility of up to 25 million per day). It is the most mature liquidity offering in the Treasuries category, and Ondo demonstrated near-real-time cross-border redemption with J.P. Morgan's Kinexys, Mastercard, and Ripple in May 2026.",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "Strengths: Genuinely live 24/7/365 redemption for the largest RWA category; first-tier institutional partnerships; multi-venue liquidity redundancy; and the strongest brand in tokenized Treasuries.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Weaknesses: Scope is the defining constraint: Nexus works because short-dated Treasuries are themselves nearly liquid — it does not, and structurally cannot, address private credit or other genuinely illiquid RWAs, which is where the liquidity gap is deepest. Access is gated (OUSG is a qualified-purchaser product; instant transactions carry minimums; USDY redeems T+1 with a $100,000 floor). And the rails depend on external facilities that have already faltered — Circle's instant BUIDL redemption facility experienced a 23-hour period of limited availability in March 2025.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Comparison to BOUND: Nexus and BOUND are largely non-overlapping in the near term and potentially complementary: Nexus deepens exit liquidity inside the Treasuries category, while BOUND's economics are strongest precisely where Nexus cannot go — the T+45 to T+90+ private credit and fund segment. Ondo's success is best read as proof that liquidity infrastructure creates category leadership: OUSG's instant redemption is a primary reason for its dominance. BOUND generalizes that lesson across all issuer-redeemable RWA classes, for all participant types, through one settlement asset. Ondo products are also candidate markets for BOUND onboarding rather than pure adversaries.",
+       "boldLabel": true
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "2.4 Aave Horizon — Borrowing Against RWAs (the Leverage Alternative)",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Launched August 2025, Horizon is Aave's permissioned lending instance where qualified institutions post tokenized RWAs (Superstate, VanEck, Ripple, Centrifuge/Janus Henderson, Circle yield fund, and others) as collateral and borrow USDC, RLUSD, or GHO against them, while anyone may supply stablecoins to the pool. By mid-2026 the market approached ~$540 million in net deposits with outstanding RWA-collateralized borrows exceeding $200 million — the strongest evidence yet that institutions will pay for liquidity against RWA positions rather than sell them.",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "Strengths: Built on the largest lending protocol in DeFi; institutional-grade issuer network with issuer-level compliance embedded in collateral tokens; permissionless stablecoin supply side; and a real, growing book.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Weaknesses: Borrowing is not an exit: the holder retains full asset exposure, pays interest, and takes on liquidation risk against collateral whose on-chain pricing updates on delayed NAV schedules — a documented weakness of leveraged RWA positions. Loan-to-value caps limit accessible liquidity to a fraction of position size. Access is restricted to qualified institutional investors allowlisted by each issuer; there is no retail path and no settlement asset. April 2026's broader Aave stress event ($123 million in bad debt from an exploit, subsequently backstopped) illustrates the systemic-risk surface of pooled lending infrastructure.",
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "Comparison to BOUND: Horizon competes for a slice of BOUND's demand — holders who need temporary dollars — but serves a different job: financing, not exit. A fund that wants leverage on its Treasury book uses Horizon; a fund that wants out of a credit position at a known price today uses BOUND. The two are also compatible: rwaUSD-liquid markets improve the collateral quality story of every RWA, and BOUND's Liquidity Layer deploys idle capital into exactly this class of blue-chip lending venue. Horizon's growth is therefore market validation of paid-for RWA liquidity demand more than a substitutional threat.",
+       "boldLabel": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "3",
+   "id": "indirect",
+   "title": "Indirect Competitors and Structural Alternatives",
+   "nav": "Indirect Competitors",
+   "blocks": [
+    {
+     "t": "sub",
+     "title": "3.1 Issuer-Native Instant Redemption (BUIDL–Circle, OUSG rails)",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "The most credible long-term threat is issuers solving liquidity themselves: BlackRock's BUIDL maintains a Circle-operated instant USDC redemption facility, and every major issuer is under pressure to offer something similar. The limitation is structural — each facility is single-product, capped (the BUIDL facility was provisioned up to 20 million USDC and still suffered a 23-hour disruption), funded by capital that must sit ready, and rebuilt from scratch per issuer. Issuer-by-issuer facilities recreate the fragmentation problem at the liquidity layer. BOUND's counter-position is the shared-infrastructure argument: one integration gives an issuer instant-exit capability, a dedicated rwaUSD market, and membership in a sector-wide standard — at zero pre-allocation, versus building and funding a proprietary facility.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "3.2 Secondary Venues and Per-Asset Pools (UniswapX BUIDL, DEX pairs)",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "BUIDL's February 2026 availability on UniswapX marked the arrival of permissioned RWAs on public secondary venues, and per-asset DEX pools remain the default liquidity answer for smaller issuers. The evidence base (Sections 2–3 of the accompanying Market Analysis) shows why this does not close the gap: 56% of large positions show zero weekly activity, identical assets price 1–3% apart across chains, and pool depth for whitelisted-investor assets is structurally thin because the eligible trading base is small. Venues distribute assets; they do not manufacture the dollar-side depth exits require. BOUND treats secondary venues as complementary distribution, with the protocol's own reserve providing the guaranteed bid that venues cannot.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "3.3 Discounted-Claim and RWA-Backed Dollar Designs (Usual USD0++/USD0)",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Designs that embed RWA exposure inside a dollar-denominated instrument — or offer exit through a discounted claim — remain live in the market and remain BOUND's clearest negative benchmark. The January 2025 USD0++ event (an unannounced $0.87 redemption floor; depeg to ~$0.89–0.935; a 92% Curve pool imbalance; more than $200 million of affected Morpho borrows) demonstrated what happens when an illiquid claim trades as money. Under MiCA, RWA-in-the-backing designs additionally drift toward asset-referenced-token treatment. BOUND's architecture is the structural refutation: rwaUSD is never backed by RWA and never floored below par; all RWA exposure lives in the BLI, an index token that is explicitly not money and whose value can rise or fall. Every stress event in this category strengthens BOUND's separation narrative.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "3.4 RWA-Native Platforms and Chains (Plume, Securitize ecosystem)",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "RWAfi platforms — Plume's Nest vaults distributing Securitize-issued institutional products (Apollo, Hamilton Lane, VanEck, BlackRock), with its own pUSD stablecoin — compete for the same issuer relationships and could evolve toward liquidity provision. Today they are distribution and composability layers: they extend where tokenized assets can travel, not how holders exit them at par on demand. They are better read as future integration surface for rwaUSD markets than as head-to-head liquidity competitors, but their issuer relationships make them the most likely origin of a future competing standard and warrant monitoring.",
+       "boldLabel": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "4",
+   "id": "matrix",
+   "title": "Competitive Matrix",
+   "nav": "Competitive Matrix",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "The matrix compares the five live architectures on the dimensions that decide the category.",
+     "boldLabel": false
+    },
+    {
+     "t": "table",
+     "head": [
+      "Dimension",
+      "BOUND Protocol",
+      "Midas MSL",
+      "Symbiotic Liquid Lane",
+      "Ondo Nexus",
+      "Aave Horizon"
+     ],
+     "rows": [
+      [
+       "What the holder gets",
+       "Instant exit to rwaUSD at transparent risk-tiered haircut",
+       "Instant exit from Midas mTokens",
+       "USDC at winning market-maker bid",
+       "Instant Treasury redemption to stablecoins",
+       "Stablecoin loan against RWA (no exit)"
+      ],
+      [
+       "Liquidity source",
+       "Protocol-owned Bound Liquidity Layer + APSS",
+       "Pre-allocated staked facility (up to $40M initial)",
+       "Curator vaults + KYC'd market-maker bids",
+       "OUSG rails + partner facilities (Circle, PayPal)",
+       "Permissionless stablecoin suppliers"
+      ],
+      [
+       "Asset scope",
+       "Any integrated RWA market, incl. illiquid credit",
+       "Midas mTokens only",
+       "Integrated issuers (Midas first)",
+       "Tokenized Treasuries only",
+       "Approved RWA collateral list"
+      ],
+      [
+       "Issuer burden",
+       "Zero pre-allocation; integration + maintenance fee",
+       "Facility capital must be committed",
+       "Market-maker/curator network required",
+       "Backing diversification into OUSG",
+       "Issuer allowlisting + compliance"
+      ],
+      [
+       "Stress behavior",
+       "Coverage-governed; stabilization more active under stress",
+       "Finite facility; provider commitment untested",
+       "Quotes widen/withdraw; vault liquidity tied to lending utilization",
+       "Partner facility outage precedent (Mar 2025)",
+       "Liquidation risk on delayed NAV oracles"
+      ],
+      [
+       "Exit price certainty",
+       "Haircut schedule known in advance",
+       "Facility terms (while capacity lasts)",
+       "Uncontrolled competitive spread",
+       "Par, within facility limits",
+       "N/A — debt position, interest accrues"
+      ],
+      [
+       "Retail accessibility",
+       "rwaUSD usable as a standard stablecoin",
+       "EU retail for mTokens; MSL protocol-level",
+       "Qualified market makers / managers",
+       "Qualified purchasers; $ minimums",
+       "Qualified institutions only"
+      ],
+      [
+       "Settlement asset created",
+       "rwaUSD — native RWA-sector dollar",
+       "None (USDC out)",
+       "None (USDC out)",
+       "None (USDC/PYUSD out)",
+       "None (borrowed stables)"
+      ],
+      [
+       "Scale / traction (mid-2026)",
+       "Pre-launch; APSS live on mainnet (2,000+ tx)",
+       "$1.7B issued; $40M facility; $58.75M raised",
+       "Launched Jun 2026; first assets live",
+       "Category leader in Treasuries",
+       "~$540M market; $200M+ borrows"
+      ]
+     ],
+     "cap": "Sources: company disclosures and product documentation cited in Works Cited. BOUND row reflects protocol design and mainnet APSS telemetry; BOUND is pre-launch and figures for competitors are as publicly reported."
+    }
+   ]
+  },
+  {
+   "num": "5",
+   "id": "synthesis",
+   "title": "Strategic Synthesis",
+   "nav": "Strategic Synthesis",
+   "blocks": [
+    {
+     "t": "ul",
+     "items": [
+      "The category's shared flaw: Every funded competitor rents its liquidity — from committed LPs (MSL), market makers (Liquid Lane), partner facilities (Nexus), or pool suppliers (Horizon). Rented liquidity is withdrawn, repriced, or capped precisely under stress; the March 2025 BUIDL facility outage and Symbiotic's own documented utilization caveats are the existing proof points. BOUND is the only architecture in the set where the liquidity is protocol-owned and its deployment is governed by hard coverage rules.",
+      "Consolidation, and the gap it leaves: Midas + Symbiotic joining forces (April–June 2026) concentrates the rented-liquidity thesis into one stack and confirms the problem's value — while leaving the sector-standard position empty: their stack serves integrated issuers' redemptions in USDC; it does not create a common settlement asset, a retail-usable standard, or dedicated per-asset markets. No competitor is building toward “the native stablecoin of the RWA sector.”",
+      "The uncontested segment: The deepest liquidity need — private credit and fund structures at T+45 to T+90+ — is served by no live architecture: Nexus cannot reach it, Horizon only leverages it, and MSL/Liquid Lane touch it only for their integrated issuers at market-maker spreads. This is where BOUND's recycling model (acquire, hold within coverage caps, resell through protocol markets, redeem residual through issuer pipelines) has no functional equivalent.",
+      "Regulatory asymmetry: Regulation compounds BOUND's position: interest-prohibition rules (GENIUS, MiCA) pressure yield-embedded dollar designs, and asset-referenced-token treatment penalizes RWA-in-the-backing structures — the two architectures adjacent to BOUND's territory — while a 100% USDC-backed settlement dollar with quarantined risk sits on the compliant side of both regimes.",
+      "Monitoring agenda: Watch items: (i) MSL capacity growth and any opening of Midas's Open Liquidity Architecture to third-party issuers; (ii) Liquid Lane's curator/market-maker roster and behavior in its first stress episode; (iii) issuer-native facilities from BlackRock/Securitize scale-ups; (iv) any move by Ondo, Plume, or a stablecoin major toward an RWA-sector settlement asset — the only development that would contest BOUND's category directly."
+     ],
+     "boldLabel": true
+    },
+    {
+     "t": "p",
+     "text": "Net assessment: the 2026 competitive field validates BOUND's problem at institutional scale, crowds into a structurally weaker solution class, and leaves both the illiquid-credit segment and the sector-settlement-standard position open. BOUND's window is defined less by the absence of competitors than by the architecture they have all chosen not to build.",
+     "boldLabel": true
+    }
+   ]
+  },
+  {
+   "num": "",
+   "id": "sources",
+   "title": "Works Cited",
+   "nav": "Works Cited",
+   "blocks": [
+    {
+     "t": "cite",
+     "text": "1. CoinDesk, “Midas raises $50 million to tackle pain point for tokenized asset investors,” 30 March 2026."
+    },
+    {
+     "t": "cite",
+     "text": "2. Midas / Cathay Capital / TechFundingNews Series A materials, March 2026 ($58.75M total funding; MSL up to $40M initial capacity; $1.7B issuance; 20,000+ holders; TVL >$500M; EU retail approval)."
+    },
+    {
+     "t": "cite",
+     "text": "3. Symbiotic, “Liquid Lane — Instant Liquidity for Tokenized Assets,” product documentation and launch release, 2 June 2026 (RFQ mechanics; curator vaults; Midas as first integrated issuer; Fasanara, Avantgarde Finance, Barter, and KPK as initial vault curators)."
+    },
+    {
+     "t": "cite",
+     "text": "4. American Banker / Brave New Coin, “Symbiotic and Midas Build Instant Liquidity for Tokenized Assets,” 28–29 April 2026 (60–180+ day redemption framing; Symbiotic Core V2; mGLOBAL first live asset)."
+    },
+    {
+     "t": "cite",
+     "text": "5. Ondo Finance, “Introducing Ondo Nexus,” February 2025; “The Liquidity Advantage,” April 2025 (24/7 OUSG rails; PYUSD facility up to 25M/day; Circle BUIDL instant-redemption facility 23-hour disruption, 27 March 2025); OUSG/USDY product documentation, 2026."
+    },
+    {
+     "t": "cite",
+     "text": "6. Aave Labs, “Aave Horizon Launches,” August 2025; Coin Metrics State of the Network #365, May 2026; Cryptonomist, January 2026; CryptoDaily, July 2026 (institutional/qualified access; ~$200M+ outstanding RWA-collateralized borrows; ~$540M market size; collateral from Superstate, VanEck, Ripple, Centrifuge, Circle)."
+    },
+    {
+     "t": "cite",
+     "text": "7. Gate Research / Coin360 / CryptoCadet coverage of the Usual USD0++ redemption-floor event, 9–15 January 2025 ($0.87 floor; depeg to ~$0.89–0.935; 92% Curve pool imbalance; >$200M Morpho borrows affected)."
+    },
+    {
+     "t": "cite",
+     "text": "8. RWA.xyz distributed-value and holder data, July 2026 (~$33.5B; ~960,000 holders; 167 platforms)."
+    },
+    {
+     "t": "cite",
+     "text": "9. Blockchainreporter / RWA.xyz-derived sector reporting, July 2026 (56% of positions >$100K with zero weekly activity; ~10% of RWA value in DeFi)."
+    },
+    {
+     "t": "cite",
+     "text": "10. Canton, “State of RWA Tokenization 2026” (1–3% cross-chain pricing gaps; 2–5% cross-chain friction), cited via Consensys."
+    },
+    {
+     "t": "cite",
+     "text": "11. Uniswap Labs / Securitize, BUIDL availability on UniswapX, February 2026 (secondary-venue access for permissioned Treasuries)."
+    },
+    {
+     "t": "cite",
+     "text": "12. Plume Network / Securitize partnership materials, November 2025 (RWAfi chain distribution and Nest vaults) — adjacent-platform context."
+    },
+    {
+     "t": "cite",
+     "text": "13. Regulation (EU) 2023/1114 (MiCA), EMT/ART provisions; US Public Law 119-27 (GENIUS Act) — regulatory treatment of yield-bearing and asset-referenced designs."
+    },
+    {
+     "t": "cite",
+     "text": "14. BOUND Protocol internal materials: protocol architecture (rwaUSD, BLI, Bound Liquidity Layer, APSS), 36-month financial model (v8), and APSS mainnet telemetry — proprietary."
+    },
+    {
+     "t": "note",
+     "text": "This document is provided for informational purposes only and does not constitute an offer to sell or a solicitation of an offer to buy any asset, nor investment, legal, or tax advice. Competitor information reflects public disclosures as of July 2026 and may change. Regulatory positioning is subject to ongoing legal review. © 2026 BOUND Protocol / IO Investment."
+    }
+   ]
+  }
+ ]
+}

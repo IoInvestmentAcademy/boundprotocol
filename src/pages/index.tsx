@@ -130,6 +130,54 @@ export default function Home() {
         </span>
       </div>
 
+      {/* Top-right nav — Whitepaper + Docs */}
+      <nav
+        aria-label="Site"
+        className="absolute top-5 right-5 sm:top-6 sm:right-6 md:top-8 md:right-8 z-20 flex items-center gap-1.5 sm:gap-2.5 opacity-0"
+        style={{ animation: "word-appear 1s ease-out forwards", animationDelay: "0.35s" }}
+      >
+        <a
+          href="/bound-whitepaper-2026.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center rounded-lg border px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-semibold tracking-[0.06em] no-underline transition-colors duration-200"
+          style={{
+            color: colors[100],
+            borderColor: "rgba(185,212,196,0.14)",
+            background: "rgba(255,255,255,0.03)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "rgba(185,212,196,0.32)";
+            e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+            e.currentTarget.style.color = colors[50];
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(185,212,196,0.14)";
+            e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+            e.currentTarget.style.color = colors[100];
+          }}
+        >
+          Whitepaper
+        </a>
+        <a
+          href="/simulator"
+          className="inline-flex items-center justify-center rounded-lg border px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-[11px] sm:text-xs font-semibold tracking-[0.06em] no-underline transition-colors duration-200"
+          style={{
+            color: colors[900],
+            borderColor: "rgba(185,212,196,0.28)",
+            background: colors[50],
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = colors[100];
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = colors[50];
+          }}
+        >
+          Docs
+        </a>
+      </nav>
+
       <div className="floating-element" style={{ pointerEvents: "none", top: "25%", left: "15%", animationDelay: "5s" }}></div>
       <div className="floating-element" style={{ pointerEvents: "none", top: "60%", left: "85%", animationDelay: "5.5s" }}></div>
       <div className="floating-element" style={{ pointerEvents: "none", top: "40%", left: "10%", animationDelay: "6s" }}></div>

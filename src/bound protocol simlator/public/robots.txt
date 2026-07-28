@@ -1,0 +1,19 @@
+# The whitepaper is the only public artefact. Everything else sits behind a
+# Cloudflare Access policy and must not be crawled or indexed.
+#
+# This file is a request, not a control. The gate is the Access policy — see
+# DEPLOYMENT.md. A crawler that ignores robots.txt still cannot read a gated path.
+
+User-agent: *
+Allow: /$
+Allow: /bound-whitepaper.html
+Disallow: /legal/
+Disallow: /bound-cost-analysis.html
+Disallow: /bound-business-plan.html
+Disallow: /bound-gtm-strategy.html
+Disallow: /bound-delivery-roadmap.html
+Disallow: /bound-market-analysis.html
+Disallow: /bound-competitors-analysis.html
+Disallow: /bound-architecture.html
+Disallow: /bound-tokenomics-audit.html
+Disallow: /tokenomics.html

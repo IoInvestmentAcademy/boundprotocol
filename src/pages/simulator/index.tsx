@@ -10,13 +10,13 @@ const SimulatorApp = dynamic(() => import("@/components/simulator/SimulatorRoot"
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#F6F4EE",
-        color: "#6B6A62",
+        background: "#0E130F",
+        color: "#889086",
         fontFamily: "'Geist','Inter',-apple-system,'Segoe UI',sans-serif",
         fontSize: 14,
       }}
     >
-      Loading simulator…
+      Loading documentation library…
     </div>
   ),
 });
@@ -25,10 +25,10 @@ export default function SimulatorPage() {
   return (
     <>
       <Head>
-        <title>Bound Simulator v8</title>
+        <title>BOUND Protocol — Documentation Library</title>
         <meta
           name="description"
-          content="BOUND Protocol financial model — Architecture v4, 10 revenue streams, dynamic liquidity waterfall. Explore capital flows, revenue projections, and stress scenarios."
+          content="BOUND Protocol documentation library — whitepaper, tokenomics audit, market analysis, simulators, legal, and investor materials."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>

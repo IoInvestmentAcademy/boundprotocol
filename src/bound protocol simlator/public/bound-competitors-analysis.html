@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Competitors Analysis — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+/* Ambient abstract-green background — identical recipe to the audit page */
+body{
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);
+}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+/* Confidentiality marker in the masthead */
+.confidential{display:inline-block;margin-top:14px;padding:5px 11px;border-radius:999px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+  color:var(--warn);background:var(--warnSoft);border:1px solid color-mix(in srgb,var(--warn) 34%,transparent)}
+/* Works Cited entries */
+.cite{font-size:12.5px;line-height:1.6;color:var(--ink2);margin:0 0 9px;padding-left:2px}
+.cite a{color:var(--accent2);text-decoration:none;word-break:break-word}
+.cite a:hover{text-decoration:underline}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Competitors Analysis</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="framing" href="#framing"><span class="snav-num">1</span>Competitive Framing</a><a data-id="direct" href="#direct"><span class="snav-num">2</span>Direct Competitors</a><a data-id="indirect" href="#indirect"><span class="snav-num">3</span>Indirect Competitors</a><a data-id="matrix" href="#matrix"><span class="snav-num">4</span>Competitive Matrix</a><a data-id="synthesis" href="#synthesis"><span class="snav-num">5</span>Strategic Synthesis</a><a data-id="sources" href="#sources"><span class="snav-num">§</span>Works Cited</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Competitors Analysis</div><h1>The Competitive Landscape for RWA Liquidity Infrastructure</h1>
+<p class="lede">BOUND Protocol — every live architecture competing to turn locked RWA positions into usable dollars, assessed side by side.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Competitors Analysis</div></div>
+<div><div class="k">Date</div><div class="v">2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+</div>
+<div class="confidential">Confidential — Prepared for investor and partner distribution</div>
+</div></div>
+<div class="wrap">
+<section id="framing"><div class="sec-head"><div class="sec-num">1</div><h2>Competitive Framing</h2></div>
+<p>BOUND competes in a single, precisely defined category: on-chain liquidity infrastructure for tokenized real-world assets. Its competitors are every architecture that offers an RWA holder a way to convert a locked, issuer-redeemable position into usable dollars — and every design that could plausibly become the settlement standard of the RWA sector. It competes for exit flow, issuer integrations, and the sector's settlement standard.</p>
+<p>The competitive universe divides into two tiers. Direct competitors solve, or claim to solve, the same problem — instant liquidity for tokenized assets. As of mid-2026 there are four live architectures: pre-allocated liquidity facilities (Midas MSL), market-maker RFQ networks (Symbiotic Liquid Lane), shared redemption rails for Treasuries (Ondo Nexus), and borrow-against-collateral markets (Aave Horizon). Indirect competitors reduce the need for a liquidity layer without providing one: issuer-native instant-redemption facilities, secondary trading venues, discounted-claim designs, and RWA-native platform ecosystems. Each is assessed below on the same four questions: what it does, where it is strong, where it is structurally limited, and how BOUND is positioned against it.</p>
+<p>One development frames the entire analysis. Between March and June 2026, the two most credible direct competitors merged their efforts: Midas raised a $50 million Series A explicitly to solve instant redemption, and Symbiotic launched Liquid Lane with Midas as its first integrated issuer. The market has consolidated around a single competing thesis — rented liquidity, supplied by committed third-party capital and market makers, attached issuer-by-issuer. BOUND's thesis is the opposite: owned liquidity, supplied by a protocol-native reserve, delivered through a common settlement dollar for the whole sector. The remainder of this document tests those two theses architecture by architecture.</p>
+</section>
+<section id="direct"><div class="sec-head"><div class="sec-num">2</div><h2>Direct Competitors</h2></div>
+<h4 class="sub">2.1 Midas — Open Liquidity Architecture &amp; MSL (Primary Competitor)</h4><p>Midas is a Berlin-based platform that tokenizes institutional investment strategies into regulatory-compliant mTokens (mTBILL, mBASIS, mHYPER, and Liquid Yield Tokens curated by managers including RE7 and MEV Capital). Since 2024 it has issued more than $1.7 billion in tokenized assets to 20,000+ holders, with TVL above $500 million, and holds EU regulatory approval to distribute to retail investors without minimum thresholds — one of very few RWA platforms with that permission. In March 2026 it closed a $50 million Series A led by RRE Ventures and Creandum, with Franklin Templeton, Coinbase Ventures, Framework Ventures, GSR, and Anchorage Digital participating, bringing total funding to $58.75 million. The round's stated purpose: launch Midas Staked Liquidity (MSL), a dedicated redemption facility with up to $40 million initial capacity that lets mToken holders exit instantly, and build it out into an “Open Liquidity Architecture.”</p>
+<p><b>Strengths:</b> The best-funded dedicated attempt at the RWA liquidity problem; genuine issuance traction and a live product suite; EU retail distribution approval; blue-chip cap table including a top-tier TradFi asset manager; deep DeFi composability (Morpho, Pendle, Curve); and a public narrative — “liquidity, not issuance, is the bottleneck” — that educates the market on exactly the problem BOUND solves.</p>
+<p><b>Weaknesses:</b> MSL is pre-allocated capital: liquidity must be committed and reserved against redemptions, in a sector where liquidity is the scarcest resource. Initial capacity of $40 million stands against $1.7 billion of issued assets — roughly 2% coverage. The facility serves Midas's own mTokens, making it a platform feature rather than sector infrastructure. Its stress behavior is untested: committed providers face their strongest incentive to withdraw exactly when redemption demand spikes. And Midas monetizes as an issuer (fees on the underlying strategies), meaning liquidity is a cost center it must subsidize, not a business line.</p>
+<p><b>Comparison to BOUND:</b> Midas validates BOUND's problem statement with $50 million of institutional conviction — and then solves it for one platform, with rented capital. BOUND inverts every structural choice: liquidity is supplied by a protocol-owned reserve that earns a conservative base return when idle rather than by pre-allocated third-party commitments; acquired RWA inventory is recycled through BOUND's own markets rather than parked; coverage is governed by Basel-style liquidity-coverage discipline rather than a fixed facility size; and the delivery vehicle is rwaUSD — a settlement dollar any issuer, institution, or retail user can hold — rather than a redemption feature inside one issuer's product. Where Midas asks issuers and LPs to fund liquidity, BOUND's issuer proposition requires zero pre-allocation. Midas is simultaneously BOUND's clearest competitor and its most valuable market evidence: its issuance data calibrates what a single well-run RWA platform generates in flow — the volume a shared liquidity layer addresses across many such platforms.</p>
+<h4 class="sub">2.2 Symbiotic Liquid Lane — the Market-Maker RFQ Network</h4><p>Launched 2 June 2026 on Symbiotic Core V2, Liquid Lane is an RFQ-based settlement network for tokenized assets. An RWA holder requests an exit; KYC-verified market makers and curators bid on-chain; the winning bid settles atomically, delivering USDC to the redeemer while the market maker takes the tokenized position and processes native redemption in the background on the issuer's timeline. Capital sits in curator-managed vaults — initial curators include Fasanara Capital, Avantgarde Finance, Barter, and KPK — and remains deployed in lending protocols (Aave, Morpho) between redemption events, recalled automatically when requests trigger. Midas is the first integrated issuer, with Fasanara's mGLOBAL the first live asset.</p>
+<p><b>Strengths:</b> More capital-efficient than a pre-funded facility — committed collateral stays productive between redemptions; shared vaults can serve multiple issuers, giving it genuine infrastructure ambitions rather than single-platform scope; atomic T+0 settlement; and immediate credibility through the Midas integration and named institutional curators.</p>
+<p><b>Weaknesses:</b> The model rents liquidity from market makers, and inherits every known failure mode of quote-driven liquidity: quotes widen or vanish under stress, when exits are demanded most; the redeemer pays a competitive but uncontrolled spread that prices duration and panic; and vault capital deployed in lending markets is exposed to utilization spikes — Symbiotic's own documentation flags that lending-market utilization can affect liquidity available for redemptions, and that vault withdrawal delays shorter than the underlying asset's redemption window can leave liquidity unavailable. Access is a professional workflow for qualified market makers and asset managers, not a retail-usable standard. And the network produces no settlement asset: it moves USDC, adding no sector-native unit of account.</p>
+<p><b>Comparison to BOUND:</b> Liquid Lane is the most sophisticated version of the market-maker model — and the clearest architectural foil for BOUND. Both promise T+0 exits with background issuer redemption; the difference is who stands behind the promise. In Liquid Lane, exit certainty depends on third-party market makers choosing to bid, on spreads they set, with capital they can redirect. In BOUND, exit capacity is protocol-owned, priced by transparent risk-tiered haircuts set in advance, and governed by liquidity-coverage rules that cap RWA intake before capacity is ever threatened — the protocol cannot be outbid or abandoned by its own liquidity. BOUND's stabilization operations also become more active under stress rather than retreating from it. Finally, Liquid Lane distributes USDC; BOUND distributes rwaUSD, building the sector's settlement standard with every exit it serves.</p>
+<h4 class="sub">2.3 Ondo Nexus — Shared Redemption Rails for Tokenized Treasuries</h4><p>Announced February 2025, Ondo Nexus extends the instant mint/redeem infrastructure of Ondo's OUSG to third-party tokenized Treasuries, diversifying OUSG's backing across Franklin Templeton, WisdomTree, Wellington, and Fundbridge products and leveraging redemption relationships with BlackRock, Circle, and PayPal (including a PYUSD facility of up to 25 million per day). It is the most mature liquidity offering in the Treasuries category, and Ondo demonstrated near-real-time cross-border redemption with J.P. Morgan's Kinexys, Mastercard, and Ripple in May 2026.</p>
+<p><b>Strengths:</b> Genuinely live 24/7/365 redemption for the largest RWA category; first-tier institutional partnerships; multi-venue liquidity redundancy; and the strongest brand in tokenized Treasuries.</p>
+<p><b>Weaknesses:</b> Scope is the defining constraint: Nexus works because short-dated Treasuries are themselves nearly liquid — it does not, and structurally cannot, address private credit or other genuinely illiquid RWAs, which is where the liquidity gap is deepest. Access is gated (OUSG is a qualified-purchaser product; instant transactions carry minimums; USDY redeems T+1 with a $100,000 floor). And the rails depend on external facilities that have already faltered — Circle's instant BUIDL redemption facility experienced a 23-hour period of limited availability in March 2025.</p>
+<p><b>Comparison to BOUND:</b> Nexus and BOUND are largely non-overlapping in the near term and potentially complementary: Nexus deepens exit liquidity inside the Treasuries category, while BOUND's economics are strongest precisely where Nexus cannot go — the T+45 to T+90+ private credit and fund segment. Ondo's success is best read as proof that liquidity infrastructure creates category leadership: OUSG's instant redemption is a primary reason for its dominance. BOUND generalizes that lesson across all issuer-redeemable RWA classes, for all participant types, through one settlement asset. Ondo products are also candidate markets for BOUND onboarding rather than pure adversaries.</p>
+<h4 class="sub">2.4 Aave Horizon — Borrowing Against RWAs (the Leverage Alternative)</h4><p>Launched August 2025, Horizon is Aave's permissioned lending instance where qualified institutions post tokenized RWAs (Superstate, VanEck, Ripple, Centrifuge/Janus Henderson, Circle yield fund, and others) as collateral and borrow USDC, RLUSD, or GHO against them, while anyone may supply stablecoins to the pool. By mid-2026 the market approached ~$540 million in net deposits with outstanding RWA-collateralized borrows exceeding $200 million — the strongest evidence yet that institutions will pay for liquidity against RWA positions rather than sell them.</p>
+<p><b>Strengths:</b> Built on the largest lending protocol in DeFi; institutional-grade issuer network with issuer-level compliance embedded in collateral tokens; permissionless stablecoin supply side; and a real, growing book.</p>
+<p><b>Weaknesses:</b> Borrowing is not an exit: the holder retains full asset exposure, pays interest, and takes on liquidation risk against collateral whose on-chain pricing updates on delayed NAV schedules — a documented weakness of leveraged RWA positions. Loan-to-value caps limit accessible liquidity to a fraction of position size. Access is restricted to qualified institutional investors allowlisted by each issuer; there is no retail path and no settlement asset. April 2026's broader Aave stress event ($123 million in bad debt from an exploit, subsequently backstopped) illustrates the systemic-risk surface of pooled lending infrastructure.</p>
+<p><b>Comparison to BOUND:</b> Horizon competes for a slice of BOUND's demand — holders who need temporary dollars — but serves a different job: financing, not exit. A fund that wants leverage on its Treasury book uses Horizon; a fund that wants out of a credit position at a known price today uses BOUND. The two are also compatible: rwaUSD-liquid markets improve the collateral quality story of every RWA, and BOUND's Liquidity Layer deploys idle capital into exactly this class of blue-chip lending venue. Horizon's growth is therefore market validation of paid-for RWA liquidity demand more than a substitutional threat.</p>
+</section>
+<section id="indirect"><div class="sec-head"><div class="sec-num">3</div><h2>Indirect Competitors and Structural Alternatives</h2></div>
+<h4 class="sub">3.1 Issuer-Native Instant Redemption (BUIDL–Circle, OUSG rails)</h4><p>The most credible long-term threat is issuers solving liquidity themselves: BlackRock's BUIDL maintains a Circle-operated instant USDC redemption facility, and every major issuer is under pressure to offer something similar. The limitation is structural — each facility is single-product, capped (the BUIDL facility was provisioned up to 20 million USDC and still suffered a 23-hour disruption), funded by capital that must sit ready, and rebuilt from scratch per issuer. Issuer-by-issuer facilities recreate the fragmentation problem at the liquidity layer. BOUND's counter-position is the shared-infrastructure argument: one integration gives an issuer instant-exit capability, a dedicated rwaUSD market, and membership in a sector-wide standard — at zero pre-allocation, versus building and funding a proprietary facility.</p>
+<h4 class="sub">3.2 Secondary Venues and Per-Asset Pools (UniswapX BUIDL, DEX pairs)</h4><p>BUIDL's February 2026 availability on UniswapX marked the arrival of permissioned RWAs on public secondary venues, and per-asset DEX pools remain the default liquidity answer for smaller issuers. The evidence base (Sections 2–3 of the accompanying Market Analysis) shows why this does not close the gap: 56% of large positions show zero weekly activity, identical assets price 1–3% apart across chains, and pool depth for whitelisted-investor assets is structurally thin because the eligible trading base is small. Venues distribute assets; they do not manufacture the dollar-side depth exits require. BOUND treats secondary venues as complementary distribution, with the protocol's own reserve providing the guaranteed bid that venues cannot.</p>
+<h4 class="sub">3.3 Discounted-Claim and RWA-Backed Dollar Designs (Usual USD0++/USD0)</h4><p>Designs that embed RWA exposure inside a dollar-denominated instrument — or offer exit through a discounted claim — remain live in the market and remain BOUND's clearest negative benchmark. The January 2025 USD0++ event (an unannounced $0.87 redemption floor; depeg to ~$0.89–0.935; a 92% Curve pool imbalance; more than $200 million of affected Morpho borrows) demonstrated what happens when an illiquid claim trades as money. Under MiCA, RWA-in-the-backing designs additionally drift toward asset-referenced-token treatment. BOUND's architecture is the structural refutation: rwaUSD is never backed by RWA and never floored below par; all RWA exposure lives in the BLI, an index token that is explicitly not money and whose value can rise or fall. Every stress event in this category strengthens BOUND's separation narrative.</p>
+<h4 class="sub">3.4 RWA-Native Platforms and Chains (Plume, Securitize ecosystem)</h4><p>RWAfi platforms — Plume's Nest vaults distributing Securitize-issued institutional products (Apollo, Hamilton Lane, VanEck, BlackRock), with its own pUSD stablecoin — compete for the same issuer relationships and could evolve toward liquidity provision. Today they are distribution and composability layers: they extend where tokenized assets can travel, not how holders exit them at par on demand. They are better read as future integration surface for rwaUSD markets than as head-to-head liquidity competitors, but their issuer relationships make them the most likely origin of a future competing standard and warrant monitoring.</p>
+</section>
+<section id="matrix"><div class="sec-head"><div class="sec-num">4</div><h2>Competitive Matrix</h2></div>
+<p>The matrix compares the five live architectures on the dimensions that decide the category.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Dimension</th><th>BOUND Protocol</th><th>Midas MSL</th><th>Symbiotic Liquid Lane</th><th>Ondo Nexus</th><th>Aave Horizon</th></tr></thead><tbody><tr><td>What the holder gets</td><td>Instant exit to rwaUSD at transparent risk-tiered haircut</td><td>Instant exit from Midas mTokens</td><td>USDC at winning market-maker bid</td><td>Instant Treasury redemption to stablecoins</td><td>Stablecoin loan against RWA (no exit)</td></tr><tr><td>Liquidity source</td><td>Protocol-owned Bound Liquidity Layer + APSS</td><td>Pre-allocated staked facility (up to $40M initial)</td><td>Curator vaults + KYC'd market-maker bids</td><td>OUSG rails + partner facilities (Circle, PayPal)</td><td>Permissionless stablecoin suppliers</td></tr><tr><td>Asset scope</td><td>Any integrated RWA market, incl. illiquid credit</td><td>Midas mTokens only</td><td>Integrated issuers (Midas first)</td><td>Tokenized Treasuries only</td><td>Approved RWA collateral list</td></tr><tr><td>Issuer burden</td><td>Zero pre-allocation; integration + maintenance fee</td><td>Facility capital must be committed</td><td>Market-maker/curator network required</td><td>Backing diversification into OUSG</td><td>Issuer allowlisting + compliance</td></tr><tr><td>Stress behavior</td><td>Coverage-governed; stabilization more active under stress</td><td>Finite facility; provider commitment untested</td><td>Quotes widen/withdraw; vault liquidity tied to lending utilization</td><td>Partner facility outage precedent (Mar 2025)</td><td>Liquidation risk on delayed NAV oracles</td></tr><tr><td>Exit price certainty</td><td>Haircut schedule known in advance</td><td>Facility terms (while capacity lasts)</td><td>Uncontrolled competitive spread</td><td>Par, within facility limits</td><td>N/A — debt position, interest accrues</td></tr><tr><td>Retail accessibility</td><td>rwaUSD usable as a standard stablecoin</td><td>EU retail for mTokens; MSL protocol-level</td><td>Qualified market makers / managers</td><td>Qualified purchasers; $ minimums</td><td>Qualified institutions only</td></tr><tr><td>Settlement asset created</td><td>rwaUSD — native RWA-sector dollar</td><td>None (USDC out)</td><td>None (USDC out)</td><td>None (USDC/PYUSD out)</td><td>None (borrowed stables)</td></tr><tr><td>Scale / traction (mid-2026)</td><td>Pre-launch; APSS live on mainnet (2,000+ tx)</td><td>$1.7B issued; $40M facility; $58.75M raised</td><td>Launched Jun 2026; first assets live</td><td>Category leader in Treasuries</td><td>~$540M market; $200M+ borrows</td></tr></tbody></table></div><div class="cap">Sources: company disclosures and product documentation cited in Works Cited. BOUND row reflects protocol design and mainnet APSS telemetry; BOUND is pre-launch and figures for competitors are as publicly reported.</div>
+</section>
+<section id="synthesis"><div class="sec-head"><div class="sec-num">5</div><h2>Strategic Synthesis</h2></div>
+<ul class="find"><li><b>The category's shared flaw:</b> Every funded competitor rents its liquidity — from committed LPs (MSL), market makers (Liquid Lane), partner facilities (Nexus), or pool suppliers (Horizon). Rented liquidity is withdrawn, repriced, or capped precisely under stress; the March 2025 BUIDL facility outage and Symbiotic's own documented utilization caveats are the existing proof points. BOUND is the only architecture in the set where the liquidity is protocol-owned and its deployment is governed by hard coverage rules.</li><li><b>Consolidation, and the gap it leaves:</b> Midas + Symbiotic joining forces (April–June 2026) concentrates the rented-liquidity thesis into one stack and confirms the problem's value — while leaving the sector-standard position empty: their stack serves integrated issuers' redemptions in USDC; it does not create a common settlement asset, a retail-usable standard, or dedicated per-asset markets. No competitor is building toward “the native stablecoin of the RWA sector.”</li><li><b>The uncontested segment:</b> The deepest liquidity need — private credit and fund structures at T+45 to T+90+ — is served by no live architecture: Nexus cannot reach it, Horizon only leverages it, and MSL/Liquid Lane touch it only for their integrated issuers at market-maker spreads. This is where BOUND's recycling model (acquire, hold within coverage caps, resell through protocol markets, redeem residual through issuer pipelines) has no functional equivalent.</li><li><b>Regulatory asymmetry:</b> Regulation compounds BOUND's position: interest-prohibition rules (GENIUS, MiCA) pressure yield-embedded dollar designs, and asset-referenced-token treatment penalizes RWA-in-the-backing structures — the two architectures adjacent to BOUND's territory — while a 100% USDC-backed settlement dollar with quarantined risk sits on the compliant side of both regimes.</li><li><b>Monitoring agenda:</b> Watch items: (i) MSL capacity growth and any opening of Midas's Open Liquidity Architecture to third-party issuers; (ii) Liquid Lane's curator/market-maker roster and behavior in its first stress episode; (iii) issuer-native facilities from BlackRock/Securitize scale-ups; (iv) any move by Ondo, Plume, or a stablecoin major toward an RWA-sector settlement asset — the only development that would contest BOUND's category directly.</li></ul>
+<p><b>Net assessment:</b> the 2026 competitive field validates BOUND's problem at institutional scale, crowds into a structurally weaker solution class, and leaves both the illiquid-credit segment and the sector-settlement-standard position open. BOUND's window is defined less by the absence of competitors than by the architecture they have all chosen not to build.</p>
+</section>
+<section id="sources"><div class="sec-head"><div class="sec-num">§</div><h2>Works Cited</h2></div>
+<p class="cite">1. CoinDesk, “Midas raises $50 million to tackle pain point for tokenized asset investors,” 30 March 2026.</p>
+<p class="cite">2. Midas / Cathay Capital / TechFundingNews Series A materials, March 2026 ($58.75M total funding; MSL up to $40M initial capacity; $1.7B issuance; 20,000+ holders; TVL &gt;$500M; EU retail approval).</p>
+<p class="cite">3. Symbiotic, “Liquid Lane — Instant Liquidity for Tokenized Assets,” product documentation and launch release, 2 June 2026 (RFQ mechanics; curator vaults; Midas as first integrated issuer; Fasanara, Avantgarde Finance, Barter, and KPK as initial vault curators).</p>
+<p class="cite">4. American Banker / Brave New Coin, “Symbiotic and Midas Build Instant Liquidity for Tokenized Assets,” 28–29 April 2026 (60–180+ day redemption framing; Symbiotic Core V2; mGLOBAL first live asset).</p>
+<p class="cite">5. Ondo Finance, “Introducing Ondo Nexus,” February 2025; “The Liquidity Advantage,” April 2025 (24/7 OUSG rails; PYUSD facility up to 25M/day; Circle BUIDL instant-redemption facility 23-hour disruption, 27 March 2025); OUSG/USDY product documentation, 2026.</p>
+<p class="cite">6. Aave Labs, “Aave Horizon Launches,” August 2025; Coin Metrics State of the Network #365, May 2026; Cryptonomist, January 2026; CryptoDaily, July 2026 (institutional/qualified access; ~$200M+ outstanding RWA-collateralized borrows; ~$540M market size; collateral from Superstate, VanEck, Ripple, Centrifuge, Circle).</p>
+<p class="cite">7. Gate Research / Coin360 / CryptoCadet coverage of the Usual USD0++ redemption-floor event, 9–15 January 2025 ($0.87 floor; depeg to ~$0.89–0.935; 92% Curve pool imbalance; &gt;$200M Morpho borrows affected).</p>
+<p class="cite">8. RWA.xyz distributed-value and holder data, July 2026 (~$33.5B; ~960,000 holders; 167 platforms).</p>
+<p class="cite">9. Blockchainreporter / RWA.xyz-derived sector reporting, July 2026 (56% of positions &gt;$100K with zero weekly activity; ~10% of RWA value in DeFi).</p>
+<p class="cite">10. Canton, “State of RWA Tokenization 2026” (1–3% cross-chain pricing gaps; 2–5% cross-chain friction), cited via Consensys.</p>
+<p class="cite">11. Uniswap Labs / Securitize, BUIDL availability on UniswapX, February 2026 (secondary-venue access for permissioned Treasuries).</p>
+<p class="cite">12. Plume Network / Securitize partnership materials, November 2025 (RWAfi chain distribution and Nest vaults) — adjacent-platform context.</p>
+<p class="cite">13. Regulation (EU) 2023/1114 (MiCA), EMT/ART provisions; US Public Law 119-27 (GENIUS Act) — regulatory treatment of yield-bearing and asset-referenced designs.</p>
+<p class="cite">14. BOUND Protocol internal materials: protocol architecture (rwaUSD, BLI, Bound Liquidity Layer, APSS), 36-month financial model (v8), and APSS mainnet telemetry — proprietary.</p>
+<div class="note">This document is provided for informational purposes only and does not constitute an offer to sell or a solicitation of an offer to buy any asset, nor investment, legal, or tax advice. Competitor information reflects public disclosures as of July 2026 and may change. Regulatory positioning is subject to ongoing legal review. © 2026 BOUND Protocol / IO Investment.</div>
+</section>
+<footer><div class="disc"><b>Note.</b> This page is a faithful transcription of BOUND Protocol Competitors Analysis, 2026. Regenerate via <span class="mono">node scripts/build-competitors.mjs</span> after any change to the source document.</div>
+<div>BOUND Protocol · Competitors Analysis · 2026</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>

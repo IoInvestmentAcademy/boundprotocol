@@ -1,0 +1,1521 @@
+{
+  "front": {
+    "brand": "BOUND Protocol",
+    "kind": "Delivery Roadmap",
+    "tagline": "RWA Migration — Engineering Delivery Plan",
+    "version": "12 Milestones · 3 Phases · 22–25 Weeks — July 2026",
+    "place": "Bucharest, Romania"
+  },
+  "chapters": [
+    {
+      "num": "",
+      "id": "abstract",
+      "title": "Abstract",
+      "nav": "Abstract",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "BOUND is not starting from zero. The Atomic Peg Stabilization System — the rwaUSD settlement dollar and its core liquidity pool — is already deployed and operational. This roadmap extends that foundation to support instant liquidity for real-world assets. It is a migration plan, not a rebuild.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "Delivery is structured as twelve milestones across three phases, executed by four engineering layers running in parallel from the first week. Development is budgeted at a fixed $320,000 across twenty-two weeks of engineering execution, against a delivery window of twenty-two to twenty-five weeks to mainnet inclusive of audit remediation and launch. External audit and security-competition fees are budgeted and tracked separately.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "This roadmap presents twelve milestones across three phases, taking BOUND from a locked architecture decision through to live RWA markets on mainnet. Each milestone is written for a non-technical audience: what gets built, what becomes possible as a result, and why it matters strategically.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "Development is budgeted at a fixed $320,000 across 22 weeks of engineering execution, with a realistic delivery window of 22–25 weeks to mainnet inclusive of audit and launch buffer. External audit and security competition fees are budgeted and tracked separately from the development allocation.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "This document defines the complete technical build roadmap for the BOUND Protocol. It covers four parallel engineering layers — Smart Contracts, Backend & Oracle Automation, Frontend, and DevOps & Security — structured across three high-intensity phases targeting mainnet launch in 18 to 25 weeks.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "The roadmap delivers every component required for BOUND to go live: the rwaUSD and liquidity pool contracts, the oracle-driven haircut and settlement engine, the RWA issuer onboarding and management system, the instant exit swap interface, and the data infrastructure serving issuers, asset managers, and external integrators.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "Compression from the original 36-week plan to 18–25 weeks is achieved entirely through parallel execution across all layers — not by reducing scope. Every deliverable is preserved. Achieving 18 weeks requires dedicated, full-time teams across all four layers from day one.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "This document opens with a plain-language roadmap that any reader can follow end to end. The chapters that follow descend into the full engineering specification — every deliverable, every layer, every gate. A reader who needs only the shape of the programme can stop after Chapter 1.",
+          "boldLabel": false
+        },
+        {
+          "t": "kpis",
+          "items": [
+            {
+              "n": "12",
+              "l": "Milestones"
+            },
+            {
+              "n": "3",
+              "l": "Phases"
+            },
+            {
+              "n": "22–25",
+              "l": "Weeks to mainnet"
+            },
+            {
+              "n": "$320,000",
+              "l": "Development budget"
+            },
+            {
+              "n": "~3.5",
+              "l": "FTE blended team"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "1",
+      "id": "brief",
+      "title": "The Roadmap in Brief",
+      "nav": "Roadmap in Brief",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This chapter is written for readers without an engineering background. It describes what is being built, in what order, and what becomes possible at each stage. Nothing here requires technical knowledge to follow.",
+          "boldLabel": false
+        },
+        {
+          "t": "timeline",
+          "title": "Delivery timeline — 25 weeks, 12 milestones",
+          "phases": [
+            {
+              "name": "Phase 1 · Foundation",
+              "from": 1,
+              "to": 6
+            },
+            {
+              "name": "Phase 2 · Build",
+              "from": 7,
+              "to": 16
+            },
+            {
+              "name": "Phase 3 · Audit & Launch",
+              "from": 17,
+              "to": 25
+            }
+          ],
+          "marks": [
+            {
+              "id": "M1",
+              "from": 1,
+              "to": 2,
+              "label": "RWA Architecture Blueprint Locked",
+              "outcome": "Engineering proceeds against a locked target state. The pivot is explicit; rework is minimised."
+            },
+            {
+              "id": "M2",
+              "from": 3,
+              "to": 4,
+              "label": "Core Contracts Aligned to RWA Architecture",
+              "outcome": "The deployed APSS foundation is preserved while the full RWA stack is assembled around it."
+            },
+            {
+              "id": "M3",
+              "from": 5,
+              "to": 6,
+              "label": "Infrastructure & Platform Readiness",
+              "outcome": "Phase 2 begins with operational infrastructure, not setup. The pivot ships on a proven platform."
+            },
+            {
+              "id": "M4",
+              "from": 7,
+              "to": 9,
+              "label": "Oracle Engine Operational",
+              "outcome": "RWA markets price and settle programmatically. The protocol no longer depends on manual operations."
+            },
+            {
+              "id": "M5",
+              "from": 10,
+              "to": 11,
+              "label": "Instant Exit Swap Live on Testnet",
+              "outcome": "The core product promise is demonstrable: illiquid RWA holders receive rwaUSD instantly."
+            },
+            {
+              "id": "M6",
+              "from": 12,
+              "to": 13,
+              "label": "Issuer Onboarding Platform Complete",
+              "outcome": "Partner onboarding scales without proportional operational headcount."
+            },
+            {
+              "id": "M7",
+              "from": 14,
+              "to": 15,
+              "label": "Data & Analytics Platform Live",
+              "outcome": "Institutional stakeholders, issuers, and developers access consistent, auditable protocol data."
+            },
+            {
+              "id": "M8",
+              "from": 16,
+              "to": 16,
+              "label": "Full Integration & Pre-Audit Hardening",
+              "outcome": "The RWA migration enters audit with fewer unknowns, reducing remediation cost and timeline risk."
+            },
+            {
+              "id": "M9",
+              "from": 17,
+              "to": 20,
+              "label": "First-Party Security Audit Complete",
+              "outcome": "Institutional partners receive the security assurance required before allocating RWA capital."
+            },
+            {
+              "id": "M10",
+              "from": 21,
+              "to": 23,
+              "label": "Public Security Competition Closed",
+              "outcome": "Community-scale review complements the firm audit. Confidence is earned, not asserted."
+            },
+            {
+              "id": "M11",
+              "from": 24,
+              "to": 24,
+              "label": "Production Readiness Verified",
+              "outcome": "Real capital enters a system proven under operational stress, not best-case conditions."
+            },
+            {
+              "id": "M12",
+              "from": 25,
+              "to": 25,
+              "label": "RWA Markets Live on Mainnet",
+              "outcome": "BOUND delivers on its mission: institutional RWA liquidity on-chain, built on a deployed rwaUSD and pool foundation."
+            }
+          ],
+          "cap": "Phase boundaries and milestone weeks as specified in the source roadmaps."
+        },
+        {
+          "t": "sub",
+          "title": "1.1 The three phases",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Phase",
+                "Weeks",
+                "Scope"
+              ],
+              "rows": [
+                [
+                  "Phase 1: Foundation",
+                  "Weeks 1–6",
+                  "APSS baseline mapped, RWA architecture locked, core contracts aligned, platform ready"
+                ],
+                [
+                  "Phase 2: Build",
+                  "Weeks 7–16",
+                  "Oracle automation, instant exit UX, issuer platform, APIs, pre-audit hardening"
+                ],
+                [
+                  "Phase 3: Audit & Launch",
+                  "Weeks 17–25",
+                  "External audit, public competition, production readiness, RWA mainnet launch"
+                ]
+              ],
+              "cap": "Source: RWA Milestone Roadmap, timeline table."
+            },
+            {
+              "t": "p",
+              "text": "Each phase closes on a gate that every engineering layer must clear together. A phase is not complete when one layer finishes; it is complete when the gate below is met across all four.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Phase",
+                "Title",
+                "Weeks",
+                "All-Layer Exit Gate"
+              ],
+              "rows": [
+                [
+                  "Phase 1",
+                  "Foundation & Architecture",
+                  "1–6",
+                  "rwaUSD architecture finalised; all teams unblocked; devnet live"
+                ],
+                [
+                  "Phase 2",
+                  "Build — Full Parallel Execution",
+                  "7–16",
+                  "All BOUND systems integrated end-to-end on testnet; pre-audit hardening complete"
+                ],
+                [
+                  "Phase 3",
+                  "Audit, Hardening & Mainnet Launch",
+                  "17–25",
+                  "Audit signed off; QA/performance/load targets met; rwaUSD markets live on mainnet"
+                ]
+              ],
+              "cap": "Source: Protocol Technical Roadmap, timeline table. * 18 weeks is the minimum with fully dedicated teams and a clean single-round audit remediation. 25 weeks is the realistic target accounting for team ramp-up and potential second-round audit findings."
+            },
+            {
+              "t": "p",
+              "text": "<b>Foundation</b> settles the design so that nothing is redesigned later. <b>Build</b> is where the product is actually written — the pricing engine, the instant-exit interface, the issuer platform and the data layer. <b>Audit and Launch</b> adds no features at all; it is six to nine weeks of proving the system is safe enough to hold institutional capital.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "1.2 The twelve milestones in one line each",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Milestone",
+                "Weeks",
+                "What it delivers",
+                "Why it matters"
+              ],
+              "rows": [
+                [
+                  "M1",
+                  "1–2",
+                  "RWA Architecture Blueprint Locked",
+                  "Engineering proceeds against a locked target state. The pivot is explicit; rework is minimised."
+                ],
+                [
+                  "M2",
+                  "3–4",
+                  "Core Contracts Aligned to RWA Architecture",
+                  "The deployed APSS foundation is preserved while the full RWA stack is assembled around it."
+                ],
+                [
+                  "M3",
+                  "5–6",
+                  "Infrastructure & Platform Readiness",
+                  "Phase 2 begins with operational infrastructure, not setup. The pivot ships on a proven platform."
+                ],
+                [
+                  "M4",
+                  "7–9",
+                  "Oracle Engine Operational",
+                  "RWA markets price and settle programmatically. The protocol no longer depends on manual operations."
+                ],
+                [
+                  "M5",
+                  "10–11",
+                  "Instant Exit Swap Live on Testnet",
+                  "The core product promise is demonstrable: illiquid RWA holders receive rwaUSD instantly."
+                ],
+                [
+                  "M6",
+                  "12–13",
+                  "Issuer Onboarding Platform Complete",
+                  "Partner onboarding scales without proportional operational headcount."
+                ],
+                [
+                  "M7",
+                  "14–15",
+                  "Data & Analytics Platform Live",
+                  "Institutional stakeholders, issuers, and developers access consistent, auditable protocol data."
+                ],
+                [
+                  "M8",
+                  "16",
+                  "Full Integration & Pre-Audit Hardening",
+                  "The RWA migration enters audit with fewer unknowns, reducing remediation cost and timeline risk."
+                ],
+                [
+                  "M9",
+                  "17–20",
+                  "First-Party Security Audit Complete",
+                  "Institutional partners receive the security assurance required before allocating RWA capital."
+                ],
+                [
+                  "M10",
+                  "21–23",
+                  "Public Security Competition Closed",
+                  "Community-scale review complements the firm audit. Confidence is earned, not asserted."
+                ],
+                [
+                  "M11",
+                  "24",
+                  "Production Readiness Verified",
+                  "Real capital enters a system proven under operational stress, not best-case conditions."
+                ],
+                [
+                  "M12",
+                  "25",
+                  "RWA Markets Live on Mainnet",
+                  "BOUND delivers on its mission: institutional RWA liquidity on-chain, built on a deployed rwaUSD and pool foundation."
+                ]
+              ],
+              "cap": "Each milestone is expanded in full, with its deliverables, in Chapters 4 to 6."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "1.3 What it costs",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Development is fixed at $320,000. That figure covers engineering, infrastructure and launch execution across twenty-two weeks. It does not cover the external security audit, the public security competition, the bug-bounty capital or legal advisory — those are budgeted separately and are set out in Chapter 8.",
+              "boldLabel": false
+            },
+            {
+              "t": "bar",
+              "title": "Development budget by phase",
+              "cats": [
+                "Foundation",
+                "Build",
+                "Launch"
+              ],
+              "vals": [
+                78000,
+                154000,
+                88000
+              ],
+              "labels": [
+                "$78,000",
+                "$154,000",
+                "$88,000"
+              ],
+              "cap": "Source: RWA Milestone Roadmap, budget by phase."
+            }
+          ]
+        },
+        {
+          "t": "note",
+          "text": "The rest of this document is the engineering specification. It is written for the delivery team and for technical reviewers, and it assumes familiarity with smart contract development, infrastructure and security practice.",
+          "kind": "",
+          "head": "Where the plain-language section ends"
+        }
+      ]
+    },
+    {
+      "num": "2",
+      "id": "starting",
+      "title": "Starting Point and Scope",
+      "nav": "Starting Point",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "2.1 What BOUND is",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "BOUND is the institutional liquidity infrastructure layer for Real-World Assets. Tokenization has perfected asset issuance — but secondary liquidity remains a massive barrier. Allocators hesitate to commit capital when faced with 30-to-90-day redemption windows.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "BOUND eliminates that friction by providing a shared, on-chain liquidity layer that gives RWA holders an instant dollar exit via the rwaUSD — while the underlying fund preserves its stable, long-term background settlement timeline. rwaUSD trades at $1.00 on Uniswap and can be swapped for USDC instantly.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.2 What is already deployed",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The APSS system — the rwaUSD settlement dollar and the core liquidity pool — is deployed and operational. This programme extends it rather than replacing it, which is the single most consequential fact about the schedule and the budget: the foundation does not have to be rebuilt, and live markets must not be disrupted while it is extended.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "BOUND is not starting from zero. The APSS system — rwaUSD and core liquidity pool — is already deployed and operational. This roadmap extends that foundation to support Real-World Asset instant liquidity, rather than building a new protocol from scratch.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Asset",
+                "Status"
+              ],
+              "rows": [
+                [
+                  "APSS System",
+                  "rwaUSD and liquidity pool — deployed and operational"
+                ],
+                [
+                  "rwaUSD Token",
+                  "Existing stablecoin infrastructure retained as settlement asset"
+                ],
+                [
+                  "Liquidity Pool",
+                  "Core pool deployed; requires RWA instant-exit extensions"
+                ]
+              ],
+              "cap": "Source: RWA Milestone Roadmap, starting-point table."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.3 What this programme does not cover",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The engineering scope is the settlement dollar, the liquidity pool, the RWA registry, the oracle and settlement layer, the issuer platform and the data layer. The Bound Liquidity Index structure is already formed and is not a build item here, and the BND governance token is outside this programme except for the governance plumbing listed in Milestone M2. A reader should not infer full protocol coverage from this document.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.4 What issuers gain",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Strategic Benefit",
+                "What It Means for Issuers"
+              ],
+              "rows": [
+                [
+                  "Accelerate Inflows & Sales",
+                  "Instant exit liquidity removes the single biggest objection allocators raise"
+                ],
+                [
+                  "Eliminate Balance Sheet Run Risk",
+                  "BOUND's reserves absorb investor exit pressure; fund operational assets remain insulated"
+                ],
+                [
+                  "Zero Operational Disruption",
+                  "Issuer redemption calendar, NAV process, and settlement timeline remain unchanged"
+                ],
+                [
+                  "No Middleman Dependency",
+                  "Liquidity is generated programmatically — no reliance on external market makers"
+                ],
+                [
+                  "MiCA-Compliant Architecture",
+                  "Built around a MiCA Title II utility-type classification from day one"
+                ]
+              ],
+              "cap": "Source: Protocol Technical Roadmap, strategic benefits table."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "3",
+      "id": "principles",
+      "title": "Delivery Principles",
+      "nav": "Delivery Principles",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Six principles govern how the programme is executed. They are constraints on the delivery team, not aspirations.",
+          "boldLabel": false
+        },
+        {
+          "t": "sub",
+          "title": "3.1 Decentralisation by Default",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "All normal BOUND operations are permissionless. Admin keys are multi-sig gated and scope-limited to emergency market suspension and haircut parameter bounds only. Emergency controls must self-expire or require community ratification via timelock. Issuers, asset managers, and rwaUSD holders can operate without any reliance on BOUND team keys.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "3.2 Parallelism is the Compression Strategy",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The timeline shortens entirely through parallel execution. Smart contract development, backend, frontend, and DevOps all run at full capacity simultaneously from Week 1. Any sequential dependency is a schedule risk to be raised at the weekly cross-team sync immediately.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "3.3 Audit Gate is Non-Negotiable",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "No mainnet deployment until Phase 3 audit sign-off. Any contract modification from competition findings triggers a targeted re-audit of the affected modules. The audit window cannot be compressed below 6 weeks without dropping the public competition round, which is not recommended for a protocol handling institutional capital.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "3.4 MiCA Compliance from Architecture",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The BOUND smart contract and backend architecture is designed around MiCA Title II utility-type classification from day one — not retrofitted. Compliance reporting pipelines, data retention, and issuer obligation tracking are first-class engineering concerns.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "3.5 SEO from Day One",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Frontend SEO is an engineering deliverable from Phase 1. The target is for BOUND to rank as the primary result for 'RWA instant liquidity', 'instant RWA exit', and 'rwaUSD' before mainnet launch.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "3.6 Security at Every Layer",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Security is not siloed to smart contracts. DevOps, backend, and frontend each carry their own security obligations — WAF, SAST/DAST, oracle node hardening, HSM-backed hot wallet signing, input validation — throughout all phases.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "4",
+      "id": "phase1",
+      "title": "Phase 1: Foundation & Architecture   Weeks 1–6",
+      "nav": "Phase 1: Foundation",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "All four layers mobilise simultaneously. The goal is to exit Phase 1 with every team unblocked: BOUND core contracts designed and core logic written, infra reproducible, app scaffold live, oracle scaffolded. Architecture decisions — upgrade pattern, storage layout, rwaUSD mechanics — must be finalised by end of Week 2.",
+          "boldLabel": false
+        },
+        {
+          "t": "sub",
+          "title": "4.1 Milestones",
+          "blocks": []
+        },
+        {
+          "t": "cards",
+          "items": [
+            {
+              "id": "M1",
+              "when": "Wks 1–2",
+              "title": "RWA Architecture Blueprint Locked",
+              "intro": "The RWA migration specification is finalised. Existing APSS contracts are mapped against target architecture; net-new modules are fully specified with no open design decisions.",
+              "bullets": [
+                "APSS baseline documented — current rwaUSD and liquidity pool behaviour catalogued and mapped",
+                "RWA eligibility framework defined — qualifying asset classes, onboarding criteria, and collateral rules",
+                "Haircut model specified — instant-exit pricing logic, parameter bounds, and oracle dependencies",
+                "Migration path agreed — upgrade strategy for APSS contracts without disrupting live rwaUSD markets",
+                "Governance and delivery cadence live — decision log, weekly syncs, escalation path"
+              ],
+              "outcome": "Engineering proceeds against a locked target state. The pivot is explicit; rework is minimised."
+            },
+            {
+              "id": "M2",
+              "when": "Wks 3–4",
+              "title": "Core Contracts Aligned to RWA Architecture",
+              "intro": "APSS contracts are extended and new RWA modules are implemented. rwaUSD and the liquidity pool are refactored for RWA instant exits; registry and governance modules are built and unit-tested.",
+              "bullets": [
+                "rwaUSD aligned — stablecoin accounting extended for RWA collateral and settlement flows",
+                "Liquidity pool extended — instant-exit swap path, reserve tracking, background settlement queue",
+                "RWA registry contract built — onboarding, eligibility enforcement, haircut assignment on-chain",
+                "Governance module extended — proposals, timelock, emergency pause integrated with RWA permissions",
+                "Admin controls scoped — multi-sig emergency levers only; routine operations permissionless"
+              ],
+              "outcome": "The deployed APSS foundation is preserved while the full RWA stack is assembled around it."
+            },
+            {
+              "id": "M3",
+              "when": "Wks 5–6",
+              "title": "Infrastructure & Platform Readiness",
+              "intro": "Cloud infrastructure, CI/CD, and application platform are extended for RWA workloads. Teams ship against the new architecture without provisioning debt.",
+              "bullets": [
+                "Environment parity — dev, staging, and testnet reproducible; APSS and RWA stacks deployable on demand",
+                "CI/CD pipeline extended — contract migration tests, integration gates, and safe deployment automation",
+                "Design system and app shell updated — RWA flows, issuer surfaces, and protocol branding consistent",
+                "Observability baseline — logging, metrics, and alerting wired for rwaUSD reserve and pool health",
+                "SEO and metadata foundations — search and social previews reflect RWA positioning"
+              ],
+              "outcome": "Phase 2 begins with operational infrastructure, not setup. The pivot ships on a proven platform."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "4.2 Deliverables by engineering layer",
+          "blocks": []
+        },
+        {
+          "t": "sub",
+          "title": "Smart Contract Development — BOUND Protocol Core & rwaUSD Token Architecture",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Architecture decisions finalised: upgrade pattern (proxy/diamond), storage layout, rwaUSD mechanics, haircut model",
+                "rwaUSD contract: mint/burn gated to liquidity pool, peg mechanics, USDC collateral accounting",
+                "RWA registry: asset onboarding primitives, eligibility enforcement, haircut assignment storage",
+                "Liquidity pool core: instant exit swap logic, reserve tracking, background settlement queue",
+                "Governance module: on-chain proposals, quorum, timelock, emergency pause — decentralised by default",
+                "Admin role matrix: multi-sig gated emergency levers only (market suspension, haircut override); all normal ops permissionless",
+                "Security primitives: access control library, reentrancy guards, overflow checks, rate-limit patterns",
+                "Unit test scaffold: 100% branch coverage target established; fuzz test harness set up (echidna/foundry)"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "Backend & Oracle Automation — Mono-repo Scaffold & Dev Environment",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Backend mono-repo: service boundaries, shared TypeScript types, CI skeleton",
+                "Database schema: RWA registry mirror, rwaUSD market state, NAV history, settlement queue, issuer obligation tracker",
+                "Oracle service scaffold: NAV/price event listener, block-confirmation queue, retry and backoff logic",
+                "Local devnet with mock BOUND contracts wired to backend for end-to-end integration testing from day one"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "Frontend — Design System & App Scaffold",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Design system: BOUND brand tokens (colour, type, spacing), component library, accessibility baseline (WCAG AA)",
+                "App scaffold: Next.js + TypeScript, wallet adapters (wagmi/viem), route architecture",
+                "SEO foundation: metadata schema, Open Graph, structured data targeting 'RWA liquidity', 'instant RWA exit', 'rwaUSD'",
+                "Content strategy: keyword map positioning BOUND as the primary RWA instant liquidity protocol"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "DevOps & Security — Infrastructure as Code & CI/CD",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "IaC: Terraform for all cloud resources (AWS/GCP); fully reproducible environment definitions",
+                "Container orchestration: Kubernetes or ECS; service mesh for internal inter-service communication",
+                "CI/CD pipeline: GitHub Actions — lint, test, build, deploy gates enforced on every PR",
+                "Secrets management: HashiCorp Vault or AWS Secrets Manager; zero plaintext secrets in any repo"
+              ],
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "5",
+      "id": "phase2",
+      "title": "Phase 2: Build — Full Parallel Execution   Weeks 7–16",
+      "nav": "Phase 2: Build",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The longest and most intensive phase. All four teams execute at full capacity simultaneously. The oracle automation layer connects to BOUND's RWA pricing and haircut assignment logic. The frontend wires up wallet flows, rwaUSD swap UX, and the issuer onboarding wizard. DevOps hardens the security baseline. Weekly cross-team syncs keep integration points aligned.",
+          "boldLabel": false
+        },
+        {
+          "t": "sub",
+          "title": "5.1 Milestones",
+          "blocks": []
+        },
+        {
+          "t": "cards",
+          "items": [
+            {
+              "id": "M4",
+              "when": "Wks 7–9",
+              "title": "Oracle Engine Operational",
+              "intro": "The automated pricing and settlement layer is live. BOUND receives real-time RWA valuations and executes haircut and settlement logic without manual intervention.",
+              "bullets": [
+                "Real-time NAV feeds connected — live pricing for all listed RWAs with freshness guards",
+                "Haircut engine automated — discount rates update from oracle data without manual intervention",
+                "Background settlement processor running — queued redemptions execute autonomously",
+                "Failover and redundancy validated — oracle continuity through RPC outages and stale feeds",
+                "Issuer obligation tracker active — missed reporting deadlines flagged and suspension workflows triggered"
+              ],
+              "outcome": "RWA markets price and settle programmatically. The protocol no longer depends on manual operations."
+            },
+            {
+              "id": "M5",
+              "when": "Wks 10–11",
+              "title": "Instant Exit Swap Live on Testnet",
+              "intro": "End-to-end RWA-to-rwaUSD instant exit is demonstrable on testnet. Existing rwaUSD liquidity supports the new swap path.",
+              "bullets": [
+                "Instant exit interface complete — asset selection, haircut preview, and execution against extended pool",
+                "Wallet connectivity verified — MetaMask, WalletConnect, and hardware wallet flows production-ready",
+                "Settlement status tracking live — holders follow background redemption progress in real time",
+                "Error handling standardised — failure modes surface clear, actionable messages",
+                "Integration tests passing — APSS pool extensions and RWA registry interact correctly under load"
+              ],
+              "outcome": "The core product promise is demonstrable: illiquid RWA holders receive rwaUSD instantly."
+            },
+            {
+              "id": "M6",
+              "when": "Wks 12–13",
+              "title": "Issuer Onboarding Platform Complete",
+              "intro": "RWA issuers apply, are vetted, pay fees, and launch markets through a self-serve platform integrated with on-chain registry logic.",
+              "bullets": [
+                "Issuer application workflow — guided entity and asset documentation with eligibility pre-checks",
+                "On-chain fee collection — vetting and market-enabling fees without manual invoicing",
+                "Issuer dashboard live — NAV submission, obligation calendar, market status, and compliance tracking",
+                "Eligibility engine — real-time feedback on asset qualification against protocol rules",
+                "Audit obligation tracker — quarterly reporting requirements visible and enforceable"
+              ],
+              "outcome": "Partner onboarding scales without proportional operational headcount."
+            },
+            {
+              "id": "M7",
+              "when": "Wks 14–15",
+              "title": "Data & Analytics Platform Live",
+              "intro": "Protocol data — markets, rwaUSD reserves, settlements, governance — is exposed via APIs and operational dashboards.",
+              "bullets": [
+                "GraphQL API live — unified query surface for markets, registry, and settlement state",
+                "REST API complete — issuer and asset-manager operations fully covered",
+                "Protocol analytics dashboard — rwaUSD reserve health, swap volume, active markets, settlement queue depth",
+                "Public transparency endpoint — on-chain and indexed data for holders and researchers",
+                "Partner documentation published — OpenAPI and GraphQL Playground for integrators"
+              ],
+              "outcome": "Institutional stakeholders, issuers, and developers access consistent, auditable protocol data."
+            },
+            {
+              "id": "M8",
+              "when": "Wk 16",
+              "title": "Full Integration & Pre-Audit Hardening",
+              "intro": "All layers — extended APSS contracts, RWA modules, backend, and frontend — are integrated, security-tested, and ready for external audit.",
+              "bullets": [
+                "End-to-end testnet validation — issuer onboarding through holder exit and settlement completion",
+                "Penetration test completed — external red team on all public surfaces",
+                "Static analysis clean — zero high or critical findings across smart contract scope",
+                "Attack scenario suite complete — flash-loan, governance, and oracle manipulation vectors tested",
+                "Infrastructure security baseline verified — WAF, DDoS protection, network segmentation"
+              ],
+              "outcome": "The RWA migration enters audit with fewer unknowns, reducing remediation cost and timeline risk."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "5.2 Deliverables by engineering layer",
+          "blocks": []
+        },
+        {
+          "t": "sub",
+          "title": "Smart Contract Development — Oracle Integration, Issuer Flows & Full Test Coverage",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Oracle interface contracts: NAV/price feed hooks per RWA, data-freshness guards, stale-price circuit breakers",
+                "Haircut assignment contract: dynamic haircut computation from oracle data, issuer-specific risk parameters",
+                "Automation trigger interfaces: Chainlink Automation / custom keeper ABI for background settlement processing",
+                "Issuer onboarding contracts: eligibility checks, vetting-fee collection, market-enabling fee logic",
+                "Ongoing obligations enforcement: reporting deadline tracking, suspension trigger on missed obligations",
+                "Strategy execution: asset manager callable vaults, rebalance logic, yield routing to reserves",
+                "Integration tests: oracle manipulation, keeper failure modes, flash-loan vectors, gas profiling",
+                "Full scenario test suite: bank-run simulation, haircut drift, governance attacks, MiCA compliance edge cases",
+                "Static analysis: Slither, Aderyn, Mythril passes — all high/critical findings resolved",
+                "NatSpec documentation complete; architecture diagrams and threat model drafted"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "Backend & Oracle Automation — Oracle Automation Engine & BOUND Data API",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Keeper/Oracle service: monitors RWA NAV feeds, triggers haircut recalculation and settlement autonomously",
+                "Background settlement processor: queues and executes underlying RWA redemptions as they clear",
+                "Issuer obligation tracker: monitors reporting deadlines, flags missed obligations, triggers suspension workflow",
+                "Asset manager automation: scheduled rebalances, reserve threshold alerts, auto-compound routines",
+                "Redundancy & failover: multi-RPC failover, dead-letter queues, PagerDuty/OpsGenie alerting",
+                "Signed transaction pipeline: HSM or KMS-backed hot wallet, nonce manager, gas oracle",
+                "REST API: authenticated endpoints for issuer ops, market CRUD, NAV submission, health checks",
+                "GraphQL API: rwaUSD market depth, RWA registry listings, historical yields, governance data, issuer status",
+                "Subgraph (The Graph): all BOUND protocol events indexed for on-chain transparency",
+                "Rate limiting, API key management, CORS policy, OpenAPI + GraphQL Playground docs",
+                "Caching layer: Redis for hot rwaUSD price/market paths; CDN for static analytics snapshots"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "Frontend — rwaUSD Swap UX, Issuer Onboarding & Full Data Layer",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Wallet connect flows: multi-chain support, session management, transaction UX",
+                "rwaUSD instant exit swap interface: RWA selection, haircut preview, swap confirmation, settlement status tracker",
+                "rwaUSD/USDC swap integration: Uniswap deep-link and on-protocol swap routing",
+                "Issuer onboarding wizard: eligibility self-check, entity/asset documentation upload, fee payment flow",
+                "Issuer dashboard: NAV submission portal, obligation calendar, market status, quarterly audit tracker",
+                "Asset manager portfolio view: positions, live rwaUSD market depth, background settlement queue status",
+                "REST API integration: issuer management and market ops",
+                "GraphQL integration: live rwaUSD market data, RWA registry, governance proposals",
+                "SEO execution: SSR for all key pages, XML sitemap, Core Web Vitals target >= 90",
+                "Responsive design: mobile-first, progressive enhancement across all breakpoints"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "DevOps & Security — Security Baseline, Observability & Protocol Hardening",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Network segmentation: private VPC, WAF rules, DDoS protection (Cloudflare or AWS Shield Advanced)",
+                "SAST/DAST: automated scans on every build pipeline run; Snyk dependency vulnerability scanning",
+                "Oracle/keeper node hardening: host-based IDS, anomaly alerting, automatic isolation on breach detection",
+                "Hot wallet security: HSM-backed signing, spend limits, multi-party approval for large transactions",
+                "Backup policy: encrypted daily snapshots, cross-region replication, monthly restore tests",
+                "Centralised logging: ELK stack or Datadog; structured logs from all services",
+                "Distributed tracing: OpenTelemetry across backend, oracle, and keeper services",
+                "Incident response playbook: severity tiers, escalation paths, rwaUSD depeg runbook, post-mortem template",
+                "Penetration test: external red-team engagement on all public-facing BOUND surfaces"
+              ],
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "6",
+      "id": "phase3",
+      "title": "Phase 3: Audit, Hardening & Mainnet Launch   Weeks 17–25",
+      "nav": "Phase 3: Audit & Launch",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "No new features. This phase is entirely about correctness, security, and production readiness. BOUND's core contracts go through external audit and public competition. Backend and DevOps reach SLA targets. Frontend passes full QA and accessibility. Mainnet deployment occurs only after audit sign-off — issuers can go live on rwaUSD markets from that point.",
+          "boldLabel": false
+        },
+        {
+          "t": "sub",
+          "title": "6.1 Milestones",
+          "blocks": []
+        },
+        {
+          "t": "cards",
+          "items": [
+            {
+              "id": "M9",
+              "when": "Wks 17–20",
+              "title": "First-Party Security Audit Complete",
+              "intro": "A tier-one firm audits the full RWA scope — APSS extensions and net-new modules. All material findings are resolved.",
+              "bullets": [
+                "Full-scope audit by Trail of Bits, Certora, or OpenZeppelin — migration path and new contracts in scope",
+                "Critical and high findings remediated and re-verified",
+                "Audit report published — transparent disclosure for issuers, investors, and partners",
+                "Re-test sign-off obtained from auditing firm",
+                "Protocol listed in recognised security registries where applicable"
+              ],
+              "outcome": "Institutional partners receive the security assurance required before allocating RWA capital."
+            },
+            {
+              "id": "M10",
+              "when": "Wks 21–23",
+              "title": "Public Security Competition Closed",
+              "intro": "Independent researchers stress-test the RWA migration under competitive review. Valid findings are remediated before launch.",
+              "bullets": [
+                "Code4rena or Sherlock competition completed — broad coverage of rwaUSD mechanics and RWA registry",
+                "Competition findings triaged and remediated",
+                "Targeted re-audit of modified modules completed",
+                "Results published publicly",
+                "Immunefi bug bounty configured for mainnet launch"
+              ],
+              "outcome": "Community-scale review complements the firm audit. Confidence is earned, not asserted."
+            },
+            {
+              "id": "M11",
+              "when": "Wk 24",
+              "title": "Production Readiness Verified",
+              "intro": "Load, disaster recovery, and operational runbooks are validated. The RWA system meets launch-grade reliability targets.",
+              "bullets": [
+                "Load test passed — 10x projected peak swap volume without degradation",
+                "Disaster recovery drill completed — oracle failure, database outage, and RPC loss recovered cleanly",
+                "rwaUSD peg monitoring and alerting live — anomalies surfaced within seconds",
+                "On-call runbooks tested — incident response executable by any qualified engineer",
+                "Zero-downtime upgrade pipeline validated — contract migrations deploy safely"
+              ],
+              "outcome": "Real capital enters a system proven under operational stress, not best-case conditions."
+            },
+            {
+              "id": "M12",
+              "when": "Wk 25",
+              "title": "RWA Markets Live on Mainnet",
+              "intro": "The RWA architecture goes live. Existing rwaUSD and extended liquidity pool support instant exits for listed RWAs.",
+              "bullets": [
+                "RWA contract upgrades deployed from audited commit hash — APSS baseline preserved where unchanged",
+                "Multi-sig ownership confirmed — no single key controls protocol functions",
+                "First RWA markets enabled — issuer partners live at launch",
+                "rwaUSD liquidity maintained — stablecoin and pool extensions operational for instant exits",
+                "Immunefi bug bounty live — continuous post-launch security coverage",
+                "Launch communications distributed — partners, community, and public announcement"
+              ],
+              "outcome": "BOUND delivers on its mission: institutional RWA liquidity on-chain, built on a deployed rwaUSD and pool foundation."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "6.2 Deliverables by engineering layer",
+          "blocks": []
+        },
+        {
+          "t": "sub",
+          "title": "Smart Contract Development — Formal Verification, External Audit & Mainnet Deploy",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Formal invariant checks on rwaUSD peg accounting and reserve solvency logic (Certora Prover or Halmos)",
+                "First-party audit: top-tier firm (Trail of Bits / Certora / OpenZeppelin) — full scope across all BOUND contracts",
+                "Remediation sprint: all findings triaged, fixed, and re-tested before competition round",
+                "Public competition: Code4rena or Sherlock — broad researcher coverage on rwaUSD mechanics and RWA registry",
+                "Second remediation: competition findings fixed; targeted re-audit of affected modules completed",
+                "Final audit sign-off obtained; mainnet deployed from audited commit hash",
+                "Post-launch: Immunefi bug bounty live; any contract-modifying finding triggers immediate re-audit"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "Backend & Oracle Automation — Load Testing, SLA Hardening & DR Drills",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Load tests: 10x projected peak swap volume; all bottlenecks identified and resolved",
+                "Disaster recovery drill: RPC outage, DB failover, oracle downtime — all BOUND-critical recovery paths validated",
+                "Monitoring dashboards live: Grafana + Prometheus for rwaUSD reserve health, swap latency, keeper uptime",
+                "On-call runbooks for oracle failure, rwaUSD depeg alert, issuer suspension workflow",
+                "API documentation published: Swagger UI and GraphQL Playground accessible to RWA issuer partners"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "Frontend — QA, Accessibility Audit & Launch",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "End-to-end tests: Playwright suite covering rwaUSD swap, issuer onboarding, governance, and dashboard flows",
+                "Accessibility audit: screen reader testing, keyboard navigation, colour contrast validation",
+                "Performance audit: Lighthouse >= 90 across all core metrics on all key pages",
+                "Analytics integration: on-chain swap events + off-chain funnel tracking (issuer conversion, swap volume)",
+                "Final UAT with issuer and asset manager personas; all blocking issues resolved before launch"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "DevOps & Security — Production Readiness & Mainnet Infrastructure",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Blue-green deployment pipeline: zero-downtime contract upgrades and backend releases validated",
+                "SOC 2 readiness review: access controls, audit logging, and change management controls assessed",
+                "Mainnet deployment checklist: key rotation, multi-sig ownership transfer, all monitoring and alerts live",
+                "MiCA Title II compliance infrastructure: reporting pipelines and data retention policies active",
+                "Ongoing post-launch: monthly dependency updates, quarterly pen tests, live Immunefi bug bounty"
+              ],
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "7",
+      "id": "audit",
+      "title": "Audit and Security Strategy",
+      "nav": "Audit Strategy",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "BOUND's contracts handle institutional capital with a programmatic peg mechanism. The audit strategy is non-negotiable and structured in two rounds. Any shortcut here increases existential protocol risk.",
+          "boldLabel": false
+        },
+        {
+          "t": "sub",
+          "title": "7.1 Round 1: First-Party Audit — Weeks 17–20",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Engage a top-tier firm (Trail of Bits, Certora, or OpenZeppelin) for full-scope review of rwaUSD, liquidity pool, RWA registry, oracle interfaces, and governance contracts. Remediation sprint runs concurrent with Week 20 — all findings triaged, fixed, and re-tested.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "7.2 Round 2: Public Competition — Weeks 21–23",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Code4rena or Sherlock competition. Broad researcher coverage on rwaUSD peg mechanics, haircut logic, and oracle manipulation vectors. All valid findings trigger a targeted re-audit of affected modules before mainnet deployment.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "7.3 Ongoing: Immunefi Bug Bounty — Post-Launch",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Live bug bounty with tiered payouts scaled to finding severity. Any post-launch finding that requires a contract modification triggers an immediate re-audit of the affected module before the fix goes to mainnet. No exceptions.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "note",
+          "text": "Top-tier firms — the ones this plan names — quote booking queues of roughly four to twelve weeks from first enquiry to kickoff, and elite-only engagements can run to several months. The audit slot must therefore be secured during Phase 1, not at the end of Phase 2 as the schedule-risk table assumes. Booking late is the cheapest way to lose six weeks on this programme. <i>Market conditions as at July 2026.</i>",
+          "kind": "warn",
+          "head": "Audit booking is a Phase 1 action"
+        }
+      ]
+    },
+    {
+      "num": "8",
+      "id": "budget",
+      "title": "Development Budget",
+      "nav": "Development Budget",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Fixed $320,000 development allocation through Milestone 12 (RWA markets live on mainnet), built on deployed APSS infrastructure. Covers engineering, infrastructure, and launch execution — audit and competition fees excluded.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "The allocation is presented three ways — by workstream, by role and by phase. Each cut totals $320,000; they are three views of one budget, not three budgets.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Total budget",
+            "Timeline",
+            "Team size"
+          ],
+          "rows": [
+            [
+              "$320,000",
+              "22 weeks",
+              "~3.5 FTE blended team"
+            ]
+          ],
+          "cap": "Source: RWA Milestone Roadmap, budget headline."
+        },
+        {
+          "t": "sub",
+          "title": "8.1 By workstream",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Workstream",
+                "Amount",
+                "Milestones",
+                "Scope"
+              ],
+              "rows": [
+                [
+                  "Smart contracts",
+                  "$90,000",
+                  "M1–M2, M8",
+                  "APSS contract extensions, RWA registry, liquidity pool upgrade path, governance alignment, migration scripts, unit and integration tests"
+                ],
+                [
+                  "Backend & oracle automation",
+                  "$62,000",
+                  "M4, M7",
+                  "NAV feed integration, haircut engine, background settlement processor, issuer obligation tracker, core REST endpoints"
+                ],
+                [
+                  "Frontend & product UI",
+                  "$52,000",
+                  "M3, M5, M6",
+                  "Instant exit swap interface, wallet flows, settlement tracker, issuer onboarding surfaces, protocol analytics views"
+                ],
+                [
+                  "DevOps & infrastructure",
+                  "$28,000",
+                  "M3, M11",
+                  "Cloud environments, CI/CD, RPC and indexing, observability, staging and production pipelines, deployment automation"
+                ],
+                [
+                  "Architecture & program management",
+                  "$32,000",
+                  "M1–M12",
+                  "APSS migration specification, technical leadership, sprint coordination, delivery governance across all phases"
+                ],
+                [
+                  "QA & integration testing",
+                  "$18,000",
+                  "M5, M8, M11",
+                  "End-to-end testnet validation, regression suite, pre-mainnet integration checks, launch readiness verification"
+                ],
+                [
+                  "Mainnet launch engineering",
+                  "$26,000",
+                  "M11–M12",
+                  "Contract upgrade deployment, multi-sig handover support, first-market enablement, launch runbooks and cutover execution"
+                ],
+                [
+                  "Contingency reserve",
+                  "$12,000",
+                  "All phases",
+                  "Buffer for APSS migration surprises, oracle integration rework, and scope adjustments within the fixed budget"
+                ]
+              ],
+              "cap": "Source: RWA Milestone Roadmap. Total $320,000."
+            },
+            {
+              "t": "donut",
+              "title": "Development budget by workstream",
+              "slices": [
+                {
+                  "lab": "Smart contracts",
+                  "val": "$90,000",
+                  "pct": 28.125
+                },
+                {
+                  "lab": "Backend & oracle automation",
+                  "val": "$62,000",
+                  "pct": 19.375
+                },
+                {
+                  "lab": "Frontend & product UI",
+                  "val": "$52,000",
+                  "pct": 16.25
+                },
+                {
+                  "lab": "Architecture & program management",
+                  "val": "$32,000",
+                  "pct": 10.0
+                },
+                {
+                  "lab": "DevOps & infrastructure",
+                  "val": "$28,000",
+                  "pct": 8.75
+                },
+                {
+                  "lab": "Mainnet launch engineering",
+                  "val": "$26,000",
+                  "pct": 8.125
+                },
+                {
+                  "lab": "QA & integration testing",
+                  "val": "$18,000",
+                  "pct": 5.625
+                },
+                {
+                  "lab": "Contingency reserve",
+                  "val": "$12,000",
+                  "pct": 3.75
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.2 By role",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Role",
+                "Duration",
+                "Amount"
+              ],
+              "rows": [
+                [
+                  "Senior smart contract engineer",
+                  "18 weeks · full-time",
+                  "$81,000"
+                ],
+                [
+                  "Backend / oracle engineer",
+                  "16 weeks · full-time",
+                  "$56,000"
+                ],
+                [
+                  "Frontend engineer",
+                  "14 weeks · full-time",
+                  "$45,500"
+                ],
+                [
+                  "DevOps engineer",
+                  "8 weeks · fractional",
+                  "$24,000"
+                ],
+                [
+                  "Protocol architect / PM",
+                  "12 weeks · fractional",
+                  "$36,000"
+                ],
+                [
+                  "QA engineer",
+                  "8 weeks · fractional",
+                  "$16,000"
+                ],
+                [
+                  "Infrastructure & tooling",
+                  "22 weeks · ongoing",
+                  "$28,000"
+                ],
+                [
+                  "Integration & launch overhead",
+                  "Weeks 17–22",
+                  "$21,500"
+                ],
+                [
+                  "Contingency reserve",
+                  "All phases",
+                  "$12,000"
+                ]
+              ],
+              "cap": "Source: RWA Milestone Roadmap. Total $320,000."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.3 By phase",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Phase",
+                "Weeks",
+                "Amount",
+                "Share"
+              ],
+              "rows": [
+                [
+                  "Phase 1 — Foundation",
+                  "Weeks 1–6",
+                  "$78,000",
+                  "24%"
+                ],
+                [
+                  "Phase 2 — Build",
+                  "Weeks 7–16",
+                  "$154,000",
+                  "48%"
+                ],
+                [
+                  "Phase 3 — Launch",
+                  "Weeks 17–22",
+                  "$88,000",
+                  "28%"
+                ]
+              ],
+              "cap": "Source: RWA Milestone Roadmap. Total $320,000. Stated shares are rounded from 24.4%, 48.1% and 27.5%."
+            },
+            {
+              "t": "p",
+              "text": "The budget spans weeks one to twenty-two of engineering execution. The delivery window extends to week twenty-five because it absorbs audit remediation and launch, during which engineering spend is minimal and is carried by the contingency reserve. The two figures measure different things and are not in conflict.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.4 Excluded from the development budget",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The following are tracked and budgeted separately from the $320,000 development allocation:",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "External smart contract audit (Trail of Bits, Certora, OpenZeppelin, etc.)",
+                "Public security competition (Code4rena, Sherlock)",
+                "Targeted re-audit fees after competition findings",
+                "Immunefi bug bounty capital and escrow",
+                "Legal and securities compliance advisory"
+              ],
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The external audit and the bug-bounty allocation appear in the protocol's Operating Cost Analysis under legal expenses, at $200,000 and $300,000 respectively in the launch year. The public security competition and its targeted re-audit carry no line in that model — a gap that document already records.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.5 Relationship to the operating cost model",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "This $320,000 engineering programme is not the same figure as the $250,000 Development line in the Operating Cost Analysis, and the two should not be compared directly. That line covers application development and protocol integrations only; the engineering effort described here spans smart contracts, backend, frontend, infrastructure, architecture and quality assurance, most of which sits inside the cost model's personnel line rather than its development line. Neither figure is revised by this document.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.6 Which entity bears it, and where the IP vests",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The programme is executed and paid for by the operating company, incorporated in the European Union, which employs the engineering team and bears all operating cost. It is not borne by the token issuer. The operating company works under a development-and-services agreement with Nexus Technologies Foundation and BITSWIFT TECHNOLOGIES INC., and is reimbursed at cost plus a margin.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The intellectual property this programme creates &mdash; the contracts, the infrastructure and the protocol design &mdash; vests in Nexus Technologies Foundation, which owns the protocol and grants the token delegation. The operating company is a service provider, not the owner of what it builds. Entity roles and the full attribution of every cost line are set out in the Operating Cost &amp; Company Analysis.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "9",
+      "id": "risk",
+      "title": "Schedule Risk",
+      "nav": "Schedule Risk",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The following conditions must hold to achieve 18 weeks. If any are not met, add the indicated buffer to the overall timeline.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "The delivery window is twenty-two to twenty-five weeks. An eighteen-week floor is achievable, but only if every condition below holds simultaneously — fully dedicated teams from week one, an audit slot already secured, and a clean single-round audit remediation. This plan treats twenty-two to twenty-five weeks as the commitment and eighteen as the compressed case, because the conditions are demanding and their failure modes are additive.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Condition",
+            "If Not Met"
+          ],
+          "rows": [
+            [
+              "Full dedicated teams from Week 1",
+              "Ramp-up delays add 2–4 weeks to Phase 1"
+            ],
+            [
+              "Audit firm booked before Phase 2 ends",
+              "Firm availability alone can add 2–6 weeks of idle time"
+            ],
+            [
+              "rwaUSD architecture finalised by Week 2",
+              "A late architecture change resets Phase 2 scope for all layers"
+            ],
+            [
+              "Oracle/contract integration aligned by Week 8",
+              "Misalignment between backend and contracts is the most common slip point"
+            ],
+            [
+              "Single audit remediation round sufficient",
+              "A severe finding requiring re-architecture adds 3–6 weeks"
+            ],
+            [
+              "No material MiCA compliance pivot",
+              "Regulatory reclassification mid-build would require contract and backend rework"
+            ]
+          ],
+          "cap": "Source: Protocol Technical Roadmap, schedule risk table."
+        },
+        {
+          "t": "p",
+          "text": "Two of these conditions deserve particular weight. A late architecture change resets Phase 2 scope for all four layers simultaneously, which is why the design is locked at week two. And misalignment between the oracle layer and the contracts is named in the source as the most common slip point in programmes of this shape — it is the reason the weekly cross-team sync exists.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "10",
+      "id": "openitems",
+      "title": "Scope Boundaries and Editorial Notes",
+      "nav": "Boundaries and Notes",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This document merges two source roadmaps written for different audiences. Where they differed, the divergence is recorded here rather than silently resolved.",
+          "boldLabel": false
+        },
+        {
+          "t": "ul",
+          "items": [
+            "Terminology: both sources call the settlement dollar BLD, the Bound Liquid Dollar. It is rendered here as rwaUSD, matching the whitepaper, the simulator and every other platform document. The instrument is unchanged; only the name is current.",
+            "Timeline: the technical roadmap states 18–25 weeks and the milestone roadmap 22–25. This document leads with 22–25 as the delivery commitment and presents 18 as the compressed floor, with the conditions it requires set out in Chapter 9.",
+            "Budget horizon: the budget covers 22 weeks of engineering execution while delivery runs to week 25. The gap is audit remediation and launch, carried by contingency. Both sources are correct; the relationship was simply unstated.",
+            "Regulation: \"MICA\" in the sources is rendered MiCA throughout, matching Regulation (EU) 2023/1114 as cited in the whitepaper.",
+            "Scope: neither source covers the Bound Liquidity Index structure, which is already formed, nor the BND governance token beyond the governance plumbing in M2.",
+            "Cost model: the $320,000 engineering programme does not revise the Operating Cost Analysis or the Business Plan, both of which retain their published figures."
+          ],
+          "boldLabel": true
+        }
+      ]
+    },
+    {
+      "num": "",
+      "id": "disclaimer",
+      "title": "Legal Disclaimer",
+      "nav": "Legal Disclaimer",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. It describes an engineering plan: timelines, budgets, milestones and deliverables are forward-looking statements subject to material uncertainty and change, and are not commitments or guarantees of delivery. Audit and security-competition outcomes cannot be known in advance, and no assurance is given that any audit will be completed within the window described or that any finding will be remediable within it. Vendor and firm names are indicative of the standard sought and do not represent engagements that have been secured. Market conditions cited for audit booking reflect published third-party sources as at July 2026. © 2026 BOUND Protocol.",
+          "boldLabel": false
+        }
+      ]
+    }
+  ]
+}

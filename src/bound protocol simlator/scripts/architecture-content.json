@@ -1,0 +1,690 @@
+{
+  "front": {
+    "brand": "BOUND Protocol",
+    "kind": "Smart Contract Architecture",
+    "tagline": "The Deployed Contract System",
+    "version": "Confidential — July 2026",
+    "place": "Bucharest, Romania"
+  },
+  "chapters": [
+    {
+      "num": "",
+      "id": "abstract",
+      "title": "Abstract",
+      "nav": "Abstract",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "BOUND is a modular contract system built on Uniswap V4. Six contracts divide the work: a settlement dollar, a pool hook that defends its peg, an asset manager that deploys the reserve, a calculator that values every position, a converter between the dollar and the index, and the index token itself. This document specifies what each does and how they depend on one another.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "The system described here is <b>deployed and operating</b>. It is the foundation the RWA migration extends rather than replaces, and Chapter 6 maps each component onto the delivery milestones that touch it. What the system does not yet contain — the RWA registry, the oracle engine, the haircut model — is named there rather than implied.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "Two things follow from the architecture and are worth stating at the outset. Peg defence is a hook rather than a service, so it executes inside the user's own transaction and cannot be outbid or front-run. And conversion between the settlement dollar and the index runs through a contract rather than a market, which is what allows the index price to be an on-chain identity rather than a quote.",
+          "boldLabel": false
+        },
+        {
+          "t": "kpis",
+          "items": [
+            {
+              "n": "6",
+              "l": "Core contracts"
+            },
+            {
+              "n": "4",
+              "l": "Access levels"
+            },
+            {
+              "n": "5",
+              "l": "Protocol integrations"
+            },
+            {
+              "n": "Ethereum",
+              "l": "Deployment network"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "1",
+      "id": "system",
+      "title": "System Architecture",
+      "nav": "System Architecture",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The dependency graph is deliberately shallow. The token, the asset manager and the index never call one another directly; they meet at the calculator, which is the single place where value is computed. That shape keeps the arithmetic auditable in one contract rather than distributed across five.",
+          "boldLabel": false
+        },
+        {
+          "t": "graph",
+          "title": "Core contract architecture",
+          "nodes": [
+            {
+              "id": "token",
+              "label": "rwaUSD Token",
+              "sub": "Settlement dollar",
+              "col": 1,
+              "row": 0
+            },
+            {
+              "id": "hook",
+              "label": "Price Hook",
+              "sub": "Peg monitoring",
+              "col": 2,
+              "row": 0
+            },
+            {
+              "id": "bams",
+              "label": "Asset Manager",
+              "sub": "Reserve deployment",
+              "col": 0,
+              "row": 1
+            },
+            {
+              "id": "calc",
+              "label": "Calculator",
+              "sub": "Valuation and risk",
+              "col": 1,
+              "row": 1
+            },
+            {
+              "id": "exchange",
+              "label": "Converter",
+              "sub": "rwaUSD ↔ BLI",
+              "col": 2,
+              "row": 1
+            },
+            {
+              "id": "bli",
+              "label": "BLI Token",
+              "sub": "Liquidity index",
+              "col": 1,
+              "row": 2
+            }
+          ],
+          "edges": [
+            {
+              "a": "token",
+              "b": "hook",
+              "dir": "both"
+            },
+            {
+              "a": "token",
+              "b": "calc",
+              "dir": "to"
+            },
+            {
+              "a": "bams",
+              "b": "calc",
+              "dir": "both"
+            },
+            {
+              "a": "calc",
+              "b": "bli",
+              "dir": "to"
+            },
+            {
+              "a": "hook",
+              "b": "exchange",
+              "dir": "to"
+            }
+          ],
+          "cap": "Arrows show call direction; double-headed arrows are bidirectional dependencies. Source: BOUND Smart Contract Architecture overview."
+        },
+        {
+          "t": "table",
+          "head": [
+            "Component",
+            "Source artefact",
+            "Responsibility"
+          ],
+          "rows": [
+            [
+              "rwaUSD Token",
+              "BOUND.sol",
+              "Settlement dollar"
+            ],
+            [
+              "Price Monitoring Hook",
+              "BOUNDHook.sol",
+              "Peg surveillance and correction trigger"
+            ],
+            [
+              "Asset Management System",
+              "BAMS.sol",
+              "Reserve deployment"
+            ],
+            [
+              "Conversion Contract",
+              "BOUNDExchange.sol",
+              "rwaUSD ↔ BLI conversion"
+            ],
+            [
+              "Financial Calculator",
+              "BOUNDCalculator.sol",
+              "Valuation and risk arithmetic"
+            ],
+            [
+              "BLI Token",
+              "SBOUNDToken.sol",
+              "Bound Liquidity Index"
+            ]
+          ],
+          "cap": "Contract filenames are retained as deployed. Component names are given in current protocol terminology: the source predates the rename of BOUND to rwaUSD and sBOUND to BLI."
+        }
+      ]
+    },
+    {
+      "num": "2",
+      "id": "components",
+      "title": "Component Reference",
+      "nav": "Component Reference",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Each contract, its responsibility, and what it carries. Filenames are the deployed artefacts; names are current protocol terminology.",
+          "boldLabel": false
+        },
+        {
+          "t": "sub",
+          "title": "2.1 rwaUSD Token — BOUND.sol",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The protocol's ERC20 settlement dollar. It carries the supply accounting the rest of the system settles against, exposes mint and burn to the liquidity pool under access control, and holds the reserve linkage that backs circulating supply.",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "Automatic price stabilization through Uniswap V4 hooks",
+                "Reserve management through the Emergency Reserve mechanism",
+                "Direct minter system for controlled, access-gated exchanges"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.2 Price Monitoring Hook — BOUNDHook.sol",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The Uniswap V4 hook that gives the protocol its atomic peg defence. It observes pool state on every interaction and triggers the correcting operation when a deviation crosses threshold — the mechanism the whitepaper describes as the Atomic Peg Stabilization System.",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "Monitors real-time price deviations",
+                "Triggers synchronization when thresholds are exceeded",
+                "Handles Uniswap fee collection (withdrawFeesNoUnlock)"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.3 Asset Management System — BAMS.sol",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Deploys reserve capital into the yield-bearing tiers of the Liquidity Layer and routes trades across venues. This is the contract that turns idle collateral into the deployed-capital yield recorded in the protocol's economic model.",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "Integrates with Morpho for lending and borrowing positions",
+                "Connects with Enzyme for vault-based fund management",
+                "Universal Router for V2, V3 and V4 swap routing",
+                "Emergency control features for reserve recovery"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.4 Conversion Contract — BOUNDExchange.sol",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The only route between the settlement dollar and the index. Conversion is executed here rather than on a market, which is what allows the index price to be an on-chain identity rather than a quote.",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "Facilitates rwaUSD ↔ BLI conversions",
+                "Fee management on both entry and exit",
+                "Queue-based pending exchange system"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.5 Financial Calculator — BOUNDCalculator.sol",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The arithmetic core. Every figure that determines what a participant receives — index price, collateral surplus, position value across venues — is computed here, which is why it sits between the token, the asset manager and the index.",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "Precise handling of multi-decimal assets",
+                "Collateral surplus and risk calculations",
+                "Morpho and Enzyme balance and profit computation"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.6 BLI Token — SBOUNDToken.sol",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The index token representing a claim on reserve performance. Its value rises and falls with the reserve; it is an index, not a deposit, and the contract carries no redemption guarantee.",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "Represents index positions in the Liquidity Layer",
+                "Issued and retired in tandem with the conversion contract"
+              ],
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "3",
+      "id": "access",
+      "title": "Access Control",
+      "nav": "Access Control",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Four access levels, enforced by four modifiers. The design intent is that normal protocol operation requires no privileged key: administrative control exists for emergency and configuration paths, and everything a participant does routinely sits under the public tier.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Access level",
+            "Modifier",
+            "Scope"
+          ],
+          "rows": [
+            [
+              "Owner only",
+              "onlyOwner",
+              "Administrative and critical operations"
+            ],
+            [
+              "Direct minters",
+              "onlyDirectMinter",
+              "Authorized entities executing direct exchanges"
+            ],
+            [
+              "Controllers",
+              "onlyOwnerOrControllers",
+              "Hook and asset-manager integrations"
+            ],
+            [
+              "Public",
+              "—",
+              "Standard ERC20 interactions"
+            ]
+          ],
+          "cap": "Source: BOUND Smart Contract Architecture overview, section 3."
+        },
+        {
+          "t": "p",
+          "text": "A fourth modifier, <b>nonReentrant</b>, is not an access level but a safety property: it guards state-changing paths against reentrancy. It appears alongside the access modifiers because every externally callable value-moving function carries both.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "4",
+      "id": "fees",
+      "title": "Fee Structure",
+      "nav": "Fee Structure",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Fees are charged at two points: conversion between the settlement dollar and the index, and direct mint or redemption of the settlement dollar. The rates below are those the protocol's economic model and whitepaper specify, and are the authoritative schedule.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Operation",
+            "Rate",
+            "Applies to",
+            "Destination"
+          ],
+          "rows": [
+            [
+              "Conversion — standard",
+              "0.88%",
+              "rwaUSD ↔ BLI, paid in rwaUSD",
+              "Surplus capital; the fee amount is burned"
+            ],
+            [
+              "Conversion — discounted",
+              "0.44%",
+              "rwaUSD ↔ BLI, paid in BND",
+              "Governance token burned; supply reduced"
+            ],
+            [
+              "Direct mint / redemption",
+              "0.30%",
+              "Large direct transactions bypassing the pool",
+              "Split between surplus capital and Protocol Reserve"
+            ]
+          ],
+          "cap": "Source: protocol whitepaper and simulation engine. Conversion fees apply symmetrically on entry and exit."
+        },
+        {
+          "t": "sub",
+          "title": "4.1 Fee handling in the contracts",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Internal fees denominated in the protocol's own tokens are burned, which raises the backing per remaining unit rather than accruing to any party",
+                "External fees are collected into the reserve",
+                "The Emergency Reserve mechanism holds capital held back from deployment, available for stress conditions"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "note",
+          "text": "The source architecture overview records a single exchange fee of 0.30% on conversion. That figure predates the current fee schedule, which prices conversion at 0.88% and 0.44% and reserves 0.30% for direct mint and redemption. The rates above are the authoritative ones; the deployed constant should be confirmed against them before this document is relied on for integration work.",
+          "kind": "warn",
+          "head": "Recorded discrepancy"
+        }
+      ]
+    },
+    {
+      "num": "5",
+      "id": "integrations",
+      "title": "Integrations and Deployment",
+      "nav": "Integrations",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "5.1 Protocol integrations",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Five external integrations. One is the venue the protocol defends; three are the yield-bearing tiers of the Liquidity Layer; one is execution routing.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Protocol",
+                "Function",
+                "Role in the architecture"
+              ],
+              "rows": [
+                [
+                  "Uniswap V4",
+                  "Pool management and the hook that carries peg stabilization",
+                  "The venue the APSS defends"
+                ],
+                [
+                  "Aave",
+                  "Liquid lending yield",
+                  "Liquidity Layer tier — 3.5% assumed"
+                ],
+                [
+                  "Morpho",
+                  "Curated lending and borrowing positions",
+                  "Liquidity Layer tier — 4.5% assumed"
+                ],
+                [
+                  "Enzyme",
+                  "Vault-based fund management",
+                  "Liquidity Layer enhanced tier — 7.5% assumed"
+                ],
+                [
+                  "Universal Router",
+                  "Multi-venue swap routing across V2, V3 and V4",
+                  "Execution"
+                ]
+              ],
+              "cap": "Tier yield assumptions are those configured in the simulation engine. Integration set reconciled to the four-tier Liquidity Layer described in the whitepaper."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "5.2 Deployment",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The protocol deploys on <b>Ethereum</b>. A single-network deployment keeps the peg defence, the reserve and the index price on one state machine, which is the precondition for the atomicity the stabilization system depends on — a correction that spans chains is not a correction that can complete or revert as one operation.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "Earlier architecture drafts described a multi-chain deployment with cross-chain execution routing. That is not the current architecture, and the cross-chain execution dependency it required has been removed from scope.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "6",
+      "id": "migration",
+      "title": "Relationship to the RWA Migration",
+      "nav": "RWA Migration",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This system is the starting point of the delivery programme, not its output. The migration extends the deployed contracts and adds the modules that make real-world assets tradeable; it does not rebuild the peg, the pool or the index.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Component",
+            "Artefact",
+            "Milestones",
+            "What the migration does to it"
+          ],
+          "rows": [
+            [
+              "rwaUSD Token",
+              "BOUND.sol",
+              "M1, M2",
+              "Baseline catalogued, then extended for RWA collateral and settlement flows"
+            ],
+            [
+              "Price Monitoring Hook",
+              "BOUNDHook.sol",
+              "M1",
+              "APSS behaviour documented; unchanged by the migration"
+            ],
+            [
+              "Asset Management System",
+              "BAMS.sol",
+              "M2, M4",
+              "Extended for RWA collateral tiers and oracle-driven settlement"
+            ],
+            [
+              "Conversion Contract",
+              "BOUNDExchange.sol",
+              "M2",
+              "Conversion path retained; fee handling aligned to the current schedule"
+            ],
+            [
+              "Financial Calculator",
+              "BOUNDCalculator.sol",
+              "M2, M4",
+              "Extended with haircut computation from oracle data"
+            ],
+            [
+              "BLI Token",
+              "SBOUNDToken.sol",
+              "M1",
+              "Index structure already formed; not a build item in the migration"
+            ],
+            [
+              "— (net new)",
+              "RWA registry",
+              "M2",
+              "Onboarding, eligibility enforcement and haircut assignment on-chain"
+            ],
+            [
+              "— (net new)",
+              "Oracle engine",
+              "M4",
+              "NAV feeds, haircut automation, background settlement processor"
+            ]
+          ],
+          "cap": "Milestone references are to the Delivery Roadmap."
+        },
+        {
+          "t": "p",
+          "text": "Two entries are net new. The RWA registry carries onboarding, eligibility enforcement and haircut assignment on-chain; the oracle engine carries NAV feeds, automated haircut recalculation and the background settlement processor. Everything else in the table already exists and is extended in place.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "7",
+      "id": "status",
+      "title": "Status and Recent Changes",
+      "nav": "Status",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "7.1 Recent changes",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Direct minter system — access-controlled exchanges",
+                "Exchange fee handling with safe arithmetic throughout",
+                "Emergency Reserve — additional reserve functionality",
+                "Access control strengthened with fine-grained modifiers",
+                "Decimal precision — multi-decimal compatibility corrected"
+              ],
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "7.2 Current status",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Area",
+                "Status"
+              ],
+              "rows": [
+                [
+                  "Core contracts",
+                  "Fully functional"
+                ],
+                [
+                  "Security",
+                  "Reinforced with access controls"
+                ],
+                [
+                  "Integration",
+                  "Operational across the integrated protocols"
+                ],
+                [
+                  "Testing",
+                  "Coverage across modules"
+                ],
+                [
+                  "Deployment",
+                  "Active"
+                ]
+              ],
+              "cap": "As characterised in the source architecture overview. These are the engineering team's own descriptions rather than measured results; see Chapter 8."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "7.3 Who builds and who owns",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The contracts described in this document are built and maintained by the operating company, incorporated in the European Union, which employs the engineering team. The intellectual property vests in Nexus Technologies Foundation, a Panama private-interest foundation that owns the protocol and grants the token delegation. BITSWIFT TECHNOLOGIES INC., also incorporated in Panama, issues and distributes the tokens. Deployment authority and the access-control roles described in Chapter 3 are held by the operating company and are separate from ownership.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "8",
+      "id": "limits",
+      "title": "Limits and Open Items",
+      "nav": "Limits",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "What this document does not establish.",
+          "boldLabel": false
+        },
+        {
+          "t": "ul",
+          "items": [
+            "Fee constant: the deployed conversion fee should be confirmed against the 0.88% and 0.44% schedule recorded in Chapter 4.",
+            "Test coverage: the source characterises coverage as comprehensive but records no figure. No coverage percentage is claimed here.",
+            "Audit status: no external audit of these contracts is recorded in the source. The delivery programme schedules a first-party audit and a public competition before RWA markets go live.",
+            "Contract addresses: no deployed addresses are recorded. Any integration work must take them from the protocol's technical documentation rather than from this overview.",
+            "Function-level detail: this is an architecture overview, not an interface specification. Only the function names the source records appear here.",
+            "Governance token: BND is outside the scope of these contracts and is not described."
+          ],
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "",
+      "id": "disclaimer",
+      "title": "Legal Disclaimer",
+      "nav": "Legal Disclaimer",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. It is an architecture overview and not an interface specification, an audit, or a representation that the described system is free of defects. Statements of status and test coverage are the engineering team's characterisations and have not been independently verified. No external security audit of these contracts is recorded. rwaUSD makes no return promise of any kind; the Bound Liquidity Index is an index whose value can rise or fall. Descriptions of planned extension work are forward-looking and subject to material uncertainty and change. © 2026 BOUND Protocol.",
+          "boldLabel": false
+        }
+      ]
+    }
+  ]
+}

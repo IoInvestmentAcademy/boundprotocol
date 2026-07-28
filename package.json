@@ -11,7 +11,8 @@
     "start": "next start -p 3012",
     "lint": "next lint",
     "heroku-postbuild": "npm run build",
-    "generate-favicon": "node scripts/generate-favicon.js"
+    "generate-favicon": "node scripts/generate-favicon.js",
+    "sync:simulator": "node scripts/sync-simulator-public.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

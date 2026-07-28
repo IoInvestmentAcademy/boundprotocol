@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seed Token Investment Proposal — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+:root{--ink4:#6E756C}
+@media(prefers-color-scheme:dark){:root{--ink4:#AFB8AD}}
+:root[data-theme="dark"]{--ink4:#AFB8AD}
+:root[data-theme="light"]{--ink4:#6E756C}
+:root{--c-a:#2C6A57;--c-b:#3E6DB5;--c-c:#B07A1E}
+@media(prefers-color-scheme:dark){:root{--c-a:#5FAE90;--c-b:#6FA0E0;--c-c:#E2AC48}}
+:root[data-theme="dark"]{--c-a:#5FAE90;--c-b:#6FA0E0;--c-c:#E2AC48}
+:root[data-theme="light"]{--c-a:#2C6A57;--c-b:#3E6DB5;--c-c:#B07A1E}
+.cv{width:100%;height:auto;display:block;overflow:visible}
+.gl{stroke:var(--line2);stroke-width:1}
+.ax{fill:var(--ink2);font-family:var(--mono);font-size:10.5px}
+.val{fill:var(--ink);font-family:var(--mono);font-size:10.5px;font-weight:600}
+.ln{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.ln.a{stroke:var(--c-a)}.ln.b{stroke:var(--c-b)}.ln.c{stroke:var(--c-c)}
+.bar.a{fill:var(--c-a)}.bar.b{fill:var(--c-b)}.bar.c{fill:var(--c-c)}
+.lg.a{color:var(--c-a)}.lg.b{color:var(--c-b)}.lg.c{color:var(--c-c)}
+.clg{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono);font-size:11px;font-weight:600}
+.fig{margin:22px 0 8px}
+.figt{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.desc{font-size:13.5px;color:var(--ink2);margin:2px 0 14px}
+.sub{font-size:15px;font-weight:700;color:var(--ink);margin:26px 0 8px}
+.num{text-align:right;font-family:var(--mono)}
+th.num{text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 6px}
+.chip{display:inline-flex;align-items:center;gap:9px;padding:8px 16px 8px 8px;border-radius:999px;
+  background:var(--raise);border:1px solid var(--line);color:var(--ink);font-size:14px;font-weight:600;
+  transition:border-color .14s, transform .14s}
+.chip:hover{border-color:var(--accent2);transform:translateY(-1px)}
+.chip.live{border-color:color-mix(in srgb,var(--accent2) 55%,transparent);
+  background:color-mix(in srgb,var(--accent) 10%,var(--raise))}
+.vm{width:26px;height:26px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.cn{white-space:nowrap}
+.cb{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  border:1px solid color-mix(in srgb,var(--accent2) 45%,transparent);border-radius:999px;padding:2px 7px;margin-left:2px}
+@media print{.chip{border-color:#bbb}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:16px 0}
+.kpi{padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.kn{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.kn.g{color:var(--accent)}.kn.c{color:var(--c-c)}
+.kl{font-size:11.5px;color:var(--ink3);margin-top:5px;line-height:1.35}
+.note{margin:18px 0;padding:14px 16px;border-radius:11px;background:var(--raise);border:1px solid var(--line)}
+.note.warn{border-color:color-mix(in srgb,var(--c-c) 42%,transparent);background:color-mix(in srgb,var(--c-c) 8%,transparent)}
+.nt{font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:5px}
+.nb{font-size:13px;color:var(--ink2);line-height:1.55}
+.deed{font-size:12.5px;color:var(--ink3);line-height:1.6;padding:14px 16px;border-left:2px solid var(--accent2);background:var(--raise);border-radius:0 10px 10px 0;margin:14px 0 0}
+ul{margin:10px 0 10px 18px;padding:0}li{margin:7px 0;font-size:14px;line-height:1.6;color:var(--ink2)}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;
+  border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;color:var(--ink2);font-size:13px;border:1px solid transparent}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;padding:44px 44px 34px}
+.content .wrap{max-width:940px;padding:0 44px}
+@media(max-width:880px){.layout{flex-direction:column}
+ .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+ .snav{display:flex;flex-wrap:wrap;gap:4px}
+ .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}}
+.tbl-scroll{overflow-x:auto}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Token Investment Proposal</div>
+    <div class="sb-sub">Seed Round · BND</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a href="#terms"><span class="snav-num">1</span><span>Investment Terms</span></a><a href="#vesting"><span class="snav-num">2</span><span>Vesting Schedule</span></a><a href="#launch"><span class="snav-num">3</span><span>Launch</span></a><a href="#venues"><span class="snav-num">4</span><span>Listing Venues</span></a><a href="#projections"><span class="snav-num">5</span><span>Financial Projections</span></a><a href="#performance"><span class="snav-num">6</span><span>Token Performance</span></a><a href="#downside"><span class="snav-num">7</span><span>Downside</span></a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Token Investment Proposal</div><h1>Seed Round — BND</h1>
+<p class="lede">The complete Seed allocation of 100,000,000 BND at $0.0248, with the vesting schedule, listing plan, and the projected performance of the position across 36 months — every figure generated from the protocol's live simulation engine.</p>
+<div class="metarow">
+<div><div class="k">Issuer</div><div class="v">BITSWIFT TECHNOLOGIES INC.</div></div>
+<div><div class="k">Round</div><div class="v">Seed · $2,480,000</div></div>
+<div><div class="k">Allocation</div><div class="v">100,000,000 BND</div></div>
+<div><div class="k">Basis</div><div class="v">Live simulation engine</div></div>
+</div>
+<div class="deed"><b>Note.</b> This proposal is issued by BITSWIFT TECHNOLOGIES INC., a corporation incorporated under the laws of the Republic of Panama (Law 32 of 1927), pursuant to Public Deed No.&nbsp;21,201 executed before the Third Notary Public of the Circuit of Panama on 22 September 2025, and duly registered with the Public Registry Office of Panama, Mercantile Section, Folio No.&nbsp;155773464, on 23 September 2025. The protocol and its intellectual property are owned by Nexus Technologies Foundation, which grants the token delegation to the issuer; the protocol is developed by an operating company incorporated in the European Union.</div>
+</div></div>
+<section id="terms" class="wrap"><h2><span class="sec-num">1</span>Investment Terms</h2>
+<p class="desc">The Seed round in full. Figures are the round total, not a per-investor allocation; a subscription for part of the round scales every line proportionally.</p>
+<div class="kpis"><div class="kpi"><div class="kn ">$2,480,000</div><div class="kl">Investment amount</div></div><div class="kpi"><div class="kn ">$0.0248</div><div class="kl">Token price</div></div><div class="kpi"><div class="kn ">100,000,000</div><div class="kl">Tokens allocated (BND)</div></div><div class="kpi"><div class="kn ">10.00%</div><div class="kl">Of total supply</div></div></div>
+<div class="tbl-scroll"><table><thead><tr><th>Term</th><th class="num">Value</th></tr></thead><tbody><tr><td>Investment amount</td><td class="num">$2,480,000</td></tr><tr><td>Token price</td><td class="num">$0.0248</td></tr><tr><td>Tokens allocated</td><td class="num">100,000,000 BND</td></tr><tr><td>Share of total supply</td><td class="num">10.00%</td></tr><tr><td>Implied round valuation (FDV)</td><td class="num">$24,800,000</td></tr><tr><td>Launch price</td><td class="num">$0.0500</td></tr><tr><td>Discount to launch</td><td class="num">50.4%</td></tr><tr><td>Step-up to launch</td><td class="num">2.02×</td></tr></tbody></table></div><div class="cap">Total supply is fixed at 1,000,000,000 BND and cannot be increased. Source: live tokenomics engine.</div>
+<p>The Seed round prices at $0.0248 against a launch price of $0.0500 — a 2.02× step-up, or a 50.4% discount to the price at which the public enters. That discount is the compensation for a 6-month cliff and for capital committed before the protocol carries revenue.</p></section><section id="vesting" class="wrap"><h2><span class="sec-num">2</span>Vesting Schedule</h2>
+<p class="desc">Allocated BND is released on the schedule below. No tokens unlock at generation.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Stage</th><th class="num">Terms</th></tr></thead><tbody><tr><td>Token Generation Event (TGE)</td><td class="num">0% unlocked</td></tr><tr><td>Cliff period</td><td class="num">6 months</td></tr><tr><td>Linear vesting</td><td class="num">24 months following the cliff</td></tr><tr><td>Full vesting completion</td><td class="num">Month 30 from TGE</td></tr></tbody></table></div>
+<figure class="fig"><figcaption class="figt">Seed allocation released, cumulative</figcaption>
+  <svg class="cv" viewBox="0 0 880 250" role="img" aria-label="Seed allocation released, cumulative"><line class="gl" x1="64" y1="222" x2="862" y2="222"/><text class="ax" x="56" y="225.5" text-anchor="end">0K</text><line class="gl" x1="64" y1="119" x2="862" y2="119"/><text class="ax" x="56" y="122.5" text-anchor="end">56M</text><line class="gl" x1="64" y1="16" x2="862" y2="16"/><text class="ax" x="56" y="19.5" text-anchor="end">112M</text><rect class="bar a" x="130.5" y="176.0" width="133.0" height="46.0"/><text class="ax" x="197.0" y="242" text-anchor="middle">Year 1</text><text class="val" x="197.0" y="169.0" text-anchor="middle">25M</text><rect class="bar a" x="396.5" y="84.1" width="133.0" height="137.9"/><text class="ax" x="463.0" y="242" text-anchor="middle">Year 2</text><text class="val" x="463.0" y="77.1" text-anchor="middle">75M</text><rect class="bar a" x="662.5" y="38.1" width="133.0" height="183.9"/><text class="ax" x="729.0" y="242" text-anchor="middle">Year 3</text><text class="val" x="729.0" y="31.1" text-anchor="middle">100M</text></svg>
+  <div class="clg"><span class="lg a">● Released (BND)</span></div>
+  <div class="cap">Nothing is released before month 7. Full release at month 30.</div></figure>
+<p>Nothing unlocks at generation. The first tokens become available in month 7, after which the balance releases evenly across 24 months, completing at month 30. The structure is deliberate: the round holds no sellable position through the launch window, which is when a discounted private tranche would otherwise transmit the most pressure to the public cohort.</p></section><section id="launch" class="wrap"><h2><span class="sec-num">3</span>Launch</h2>
+<div class="kpis"><div class="kpi"><div class="kn ">$0.0500</div><div class="kl">Launch price</div></div><div class="kpi"><div class="kn ">$50,000,000</div><div class="kl">Launch FDV</div></div><div class="kpi"><div class="kn ">Month 7</div><div class="kl">First Seed unlock</div></div><div class="kpi"><div class="kn ">36 months</div><div class="kl">Modelled horizon</div></div></div>
+<p>BND generates at $0.0500, an FDV of $50,000,000 on the fixed 1,000,000,000 supply. The launch date is set by the delivery programme rather than by this document; the Delivery Roadmap governs it and schedules audit and public security competition before RWA markets go live.</p>
+<div class="note "><div class="nt">Launch date</div><div class="nb">The target date is governed by the Delivery Roadmap and is confirmed separately. This proposal makes no representation as to timing.</div></div></section><section id="venues" class="wrap"><h2><span class="sec-num">4</span>Proposed Platforms for BND Listing</h2>
+<p class="desc">Where BND trades at generation, and the venues targeted thereafter.</p>
+<h4 class="sub">Decentralised exchanges</h4>
+<div class="chips"><span class="chip live"><span class="vm" style="background:#FF007A;color:#fff"><svg viewBox='0 0 24 24' width='15' height='15' fill='currentColor'><path d='M12 2c2.2 1.9 3.1 4 2.6 6.3-.3 1.5-1.3 2.6-2 3.6-.7 1-1.1 2-.6 3.2.4.9 1.3 1.5 2.3 1.5 1.2 0 2.1-.8 2.3-1.9.5 2.4-1.3 5-4 5.6-3 .7-6-1.1-6.7-4-.5-2 .2-3.7 1.2-5.2.9-1.3 2-2.4 2.5-3.9C10.2 5.5 10.5 3.6 12 2z'/></svg></span><span class="cn">Uniswap v4</span><span class="cb">Live at TGE</span></span><span class="chip"><span class="vm" style="background:#D1884F;color:#fff"><svg viewBox='0 0 24 24' width='15' height='15' fill='currentColor'><path d='M8 2c.8 0 1.3.6 1.3 1.4L9 7.4c.9-.2 2-.3 3-.3s2.1.1 3 .3l-.3-4C14.7 2.6 15.2 2 16 2s1.4.6 1.4 1.4l.3 4.6C20 9.2 21.5 11 21.5 13.2v3.3c0 3-4.2 5.5-9.5 5.5s-9.5-2.5-9.5-5.5v-3.3C2.5 11 4 9.2 6.3 8l.3-4.6C6.6 2.6 7.2 2 8 2z'/></svg></span><span class="cn">PancakeSwap</span></span><span class="chip"><span class="vm" style="background:#3B6DE7;color:#fff"><svg viewBox='0 0 24 24' width='15' height='15' fill='none' stroke='currentColor' stroke-width='2.4'><path d='M3 19c0-8 5-14 12-14'/><path d='M3 19h18'/></svg></span><span class="cn">Curve</span></span></div>
+<h4 class="sub">Centralised exchanges — targets</h4>
+<div class="chips"><span class="chip"><span class="vm" style="background:#F0B90B;color:#12161C"><svg viewBox='0 0 24 24' width='15' height='15' fill='currentColor'><path d='M12 2.6 8.9 5.7l3.1 3.1 3.1-3.1zM6.1 8.5 3 11.6l3.1 3.1 3.1-3.1zm11.8 0-3.1 3.1 3.1 3.1L21 11.6zM12 10.7l-3.1 3.1L12 16.9l3.1-3.1zm0 7.6-3.1-3.1L12 21.4l3.1-3.1z'/></svg></span><span class="cn">Binance</span></span><span class="chip"><span class="vm" style="background:#FFFFFF;color:#12161C"><svg viewBox='0 0 24 24' width='15' height='15' fill='currentColor'><path d='M2.5 2.5h6v6h-6zM15.5 2.5h6v6h-6zM9 9h6v6H9zM2.5 15.5h6v6h-6zM15.5 15.5h6v6h-6z'/></svg></span><span class="cn">OKX</span></span><span class="chip"><span class="vm" style="background:#5741D9;color:#fff"><svg viewBox='0 0 24 24' width='15' height='15' fill='currentColor'><path d='M12 2C7.6 2 4 5.6 4 10v11h2.6v-8.4a1.3 1.3 0 1 1 2.6 0V21h2.5v-8.4a1.3 1.3 0 1 1 2.6 0V21h2.6v-8.4a1.3 1.3 0 1 1 2.6 0V21H20V10c0-4.4-3.6-8-8-8z'/></svg></span><span class="cn">Kraken</span></span><span class="chip"><span class="vm" style="background:#0BC18E;color:#fff"><svg viewBox='0 0 24 24' width='15' height='15' fill='currentColor'><path d='M7.6 12 14 18.4l3.3-3.3 2.6 2.6L14 23.6 4.4 14V10L14 .4l5.9 5.9-2.6 2.6L14 5.6z'/></svg></span><span class="cn">KuCoin</span></span><span class="chip"><span class="vm" style="background:#1972F5;color:#fff"><svg viewBox='0 0 24 24' width='15' height='15' fill='currentColor'><path d='M12 3.2 21.5 20H15L12 14.4 9 20H2.5z'/></svg></span><span class="cn">MEXC</span></span></div>
+<div class="note warn"><div class="nt">Final listing venues to be determined and announced separately</div><div class="nb">Only the Uniswap v4 BND/USDC pool is committed: the protocol seeds it directly from the raise and the APSS operates as a v4 hook on it. The centralised venues above are <b>targets under discussion</b>. No centralised listing agreement has been executed, and nothing in this document should be read as one. Listing on any named venue is subject to that venue's own review, fees and timing, none of which is within the issuer's control.</div></div></section><section id="projections" class="wrap"><h2><span class="sec-num">5</span>Financial Projections</h2>
+<p class="desc">Basis of the price path, and the mechanisms that drive it.</p>
+<p>Projections are generated from the BOUND Protocol simulation engine on its default preset — the same engine that produces the Business Plan, the Cost Analysis and the Token Economic Audit. No figure in this document is typed by hand, and nothing assumes a scenario more favourable than that preset.</p>
+<p>Value reaches BND through three rule-bound flows off Protocol Reserve revenue rather than through discretionary treasury action: the <b>Burn Engine</b>, which retires supply permanently; the <b>xBND Revenue Switch</b>, which pays private-round holders a price-independent income leg in rwaUSD; and the <b>Public Staking Pool</b>. Protocol Reserve revenue across the horizon is $3.00M.</p>
+<figure class="fig"><figcaption class="figt">Modelled BND price path — 36 months</figcaption>
+  <svg class="cv" viewBox="0 0 880 250" role="img" aria-label="Modelled BND price path — 36 months"><line class="gl" x1="64" y1="222" x2="862" y2="222"/><text class="ax" x="56" y="225.5" text-anchor="end">$0.000</text><line class="gl" x1="64" y1="170.5" x2="862" y2="170.5"/><text class="ax" x="56" y="174" text-anchor="end">$0.018</text><line class="gl" x1="64" y1="119" x2="862" y2="119"/><text class="ax" x="56" y="122.5" text-anchor="end">$0.035</text><line class="gl" x1="64" y1="67.5" x2="862" y2="67.5"/><text class="ax" x="56" y="71" text-anchor="end">$0.053</text><line class="gl" x1="64" y1="16" x2="862" y2="16"/><text class="ax" x="56" y="19.5" text-anchor="end">$0.070</text><path class="ln a" d="M64.0,116.9L86.8,137.2L109.6,147.9L132.4,153.6L155.2,156.4L178.0,157.4L200.8,158.3L223.6,158.0L246.4,157.8L269.2,156.7L292.0,155.1L314.8,153.2L337.6,148.7L360.4,144.4L383.2,140.2L406.0,136.1L428.8,132.0L451.6,128.1L474.4,124.3L497.2,120.5L520.0,116.8L542.8,113.2L565.6,109.6L588.4,106.0L611.2,99.6L634.0,93.4L656.8,87.5L679.6,81.8L702.4,76.3L725.2,71.1L748.0,64.9L770.8,58.8L793.6,51.8L816.4,44.9L839.2,38.0L862.0,31.3"/><text class="ax" x="64" y="242" text-anchor="middle">M1</text><text class="ax" x="337.6" y="242" text-anchor="middle">M13</text><text class="ax" x="611.2" y="242" text-anchor="middle">M25</text><text class="ax" x="862" y="242" text-anchor="middle">M36</text></svg>
+  <div class="clg"><span class="lg a">● BND price (USD)</span></div>
+  <div class="cap">Launch $0.0500 · month 36 $0.0651 · peak $0.0651 · maximum drawdown −56.5%. Constant-product depth converts a thin launch pool into amplified moves in both directions.</div></figure>
+<div class="note warn"><div class="nt">These are model outputs, not forecasts</div><div class="nb">Forward-looking figures derived from internal assumptions and market modelling. They are not guarantees. Actual results may differ materially through market volatility, regulatory developments, liquidity conditions, or delivery risk.</div></div></section><section id="performance" class="wrap"><h2><span class="sec-num">6</span>Projected Token Performance</h2>
+<p class="desc">The Seed position across the modelled horizon, separated into the three components that make it up: tokens still held, cash realised from sales, and xBND income received in rwaUSD.</p>
+<div class="kpis"><div class="kpi"><div class="kn g">$5,735,342</div><div class="kl">Total value, month 36</div></div><div class="kpi"><div class="kn g">+131%</div><div class="kl">Total return</div></div><div class="kpi"><div class="kn g">+32%</div><div class="kl">Annualised (CAGR)</div></div><div class="kpi"><div class="kn ">2.31×</div><div class="kl">MOIC on $2.48M</div></div></div>
+<div class="tbl-scroll"><table><thead><tr><th>Measure</th><th class="num">Year 1</th><th class="num">Year 2</th><th class="num">Year 3</th><th class="num">Total</th></tr></thead><tbody><tr><td>Token price (USD)</td><td class="num">$0.0235</td><td class="num">$0.0396</td><td class="num">$0.0651</td><td class="num">—</td></tr><tr><td>Tokens released, cumulative (BND)</td><td class="num">25,000,000</td><td class="num">75,000,000</td><td class="num">100,000,000</td><td class="num">100,000,000</td></tr><tr><td>Tokens sold in year (BND)</td><td class="num">5,238,684</td><td class="num">14,977,986</td><td class="num">14,185,328</td><td class="num">34,401,997</td></tr><tr><td>Holdings retained (BND)</td><td class="num">19,761,316</td><td class="num">54,783,331</td><td class="num">65,598,003</td><td class="num">65,598,003</td></tr><tr><td>Value of holdings (USD)</td><td class="num">$464,364</td><td class="num">$2,169,203</td><td class="num">$4,272,210</td><td class="num">$4,272,210</td></tr><tr><td>Sale proceeds in year (USD)</td><td class="num">$100,531</td><td class="num">$422,595</td><td class="num">$623,828</td><td class="num">$1,146,954</td></tr><tr><td>xBND income in year (rwaUSD)</td><td class="num">$51,964</td><td class="num">$109,744</td><td class="num">$154,470</td><td class="num">$316,178</td></tr></tbody></table></div><div class="cap">Year 1 closes at month 12, Year 2 at month 24, Year 3 at month 36. Generated from the live tokenomics engine on the default preset.</div>
+<figure class="fig"><figcaption class="figt">Where the return comes from — cumulative, by year</figcaption>
+  <svg class="cv" viewBox="0 0 880 250" role="img" aria-label="Where the return comes from — cumulative, by year"><line class="gl" x1="64" y1="222" x2="862" y2="222"/><text class="ax" x="56" y="225.5" text-anchor="end">$0</text><line class="gl" x1="64" y1="119" x2="862" y2="119"/><text class="ax" x="56" y="122.5" text-anchor="end">$3.21M</text><line class="gl" x1="64" y1="16" x2="862" y2="16"/><text class="ax" x="56" y="19.5" text-anchor="end">$6.42M</text><rect class="bar a" x="130.5" y="207.1" width="133.0" height="14.9"/><rect class="bar b" x="130.5" y="203.9" width="133.0" height="3.2"/><rect class="bar c" x="130.5" y="202.2" width="133.0" height="1.7"/><text class="ax" x="197.0" y="242" text-anchor="middle">Year 1</text><text class="val" x="197.0" y="195.2" text-anchor="middle">$617K</text><rect class="bar a" x="396.5" y="152.4" width="133.0" height="69.6"/><rect class="bar b" x="396.5" y="135.7" width="133.0" height="16.8"/><rect class="bar c" x="396.5" y="130.5" width="133.0" height="5.2"/><text class="ax" x="463.0" y="242" text-anchor="middle">Year 2</text><text class="val" x="463.0" y="123.5" text-anchor="middle">$2.85M</text><rect class="bar a" x="662.5" y="85.0" width="133.0" height="137.0"/><rect class="bar b" x="662.5" y="48.2" width="133.0" height="36.8"/><rect class="bar c" x="662.5" y="38.1" width="133.0" height="10.1"/><text class="ax" x="729.0" y="242" text-anchor="middle">Year 3</text><text class="val" x="729.0" y="31.1" text-anchor="middle">$5.74M</text></svg>
+  <div class="clg"><span class="lg a">● Holdings retained (BND, at market)</span><span class="lg b">● Sale proceeds realised (USD)</span><span class="lg c">● xBND income (rwaUSD)</span></div>
+  <div class="cap">Total value at month 36 is $5,735,342 against $2,480,000 invested.</div></figure>
+<h4 class="sub">The three revenue components</h4>
+<div class="tbl-scroll"><table><thead><tr><th>Component</th><th class="num">Month 36</th><th class="num">% of capital</th><th class="num">Exposure</th></tr></thead><tbody><tr><td>Holdings retained — BND</td><td class="num">$4,272,210</td><td class="num">172%</td><td class="num">Fully price-exposed — unrealised</td></tr><tr><td>Sale proceeds — USD</td><td class="num">$1,146,954</td><td class="num">46%</td><td class="num">Realised at the price on the day</td></tr><tr><td>xBND income — rwaUSD</td><td class="num">$316,178</td><td class="num">13%</td><td class="num">Price-independent — paid in rwaUSD</td></tr><tr><td><b>Total</b></td><td class="num"><b>$5,735,342</b></td><td class="num"><b>231%</b></td><td class="num"></td></tr></tbody></table></div><div class="cap">xBND is the private-round revenue switch: a share of Protocol Reserve revenue paid in rwaUSD, which does not depend on the BND price.</div>
+<figure class="fig"><figcaption class="figt">xBND income and realised proceeds, cumulative</figcaption>
+  <svg class="cv" viewBox="0 0 880 250" role="img" aria-label="xBND income and realised proceeds, cumulative"><line class="gl" x1="64" y1="222" x2="862" y2="222"/><text class="ax" x="56" y="225.5" text-anchor="end">$0</text><line class="gl" x1="64" y1="170.5" x2="862" y2="170.5"/><text class="ax" x="56" y="174" text-anchor="end">$310K</text><line class="gl" x1="64" y1="119" x2="862" y2="119"/><text class="ax" x="56" y="122.5" text-anchor="end">$619K</text><line class="gl" x1="64" y1="67.5" x2="862" y2="67.5"/><text class="ax" x="56" y="71" text-anchor="end">$929K</text><line class="gl" x1="64" y1="16" x2="862" y2="16"/><text class="ax" x="56" y="19.5" text-anchor="end">$1.24M</text><path class="ln c" d="M64.0,222.0L86.8,222.0L109.6,222.0L132.4,222.0L155.2,222.0L178.0,222.0L200.8,219.2L223.6,218.1L246.4,217.2L269.2,215.2L292.0,214.3L314.8,213.4L337.6,211.3L360.4,210.3L383.2,209.2L406.0,207.1L428.8,205.9L451.6,204.7L474.4,202.7L497.2,201.5L520.0,200.2L542.8,198.0L565.6,196.6L588.4,195.1L611.2,192.7L634.0,191.0L656.8,189.3L679.6,186.6L702.4,184.7L725.2,182.7L748.0,180.7L770.8,178.6L793.6,176.5L816.4,174.2L839.2,171.9L862.0,169.4"/><path class="ln b" d="M64.0,222.0L86.8,222.0L109.6,222.0L132.4,222.0L155.2,222.0L178.0,222.0L200.8,219.6L223.6,217.1L246.4,214.5L269.2,211.6L292.0,208.6L314.8,205.3L337.6,201.7L360.4,197.7L383.2,193.3L406.0,188.5L428.8,183.3L451.6,177.6L474.4,171.6L497.2,165.1L520.0,158.2L542.8,150.9L565.6,143.2L588.4,135.0L611.2,126.3L634.0,116.9L656.8,106.9L679.6,96.2L702.4,84.9L725.2,73.0L748.0,66.2L770.8,59.4L793.6,52.4L816.4,45.4L839.2,38.4L862.0,31.3"/><text class="ax" x="64" y="242" text-anchor="middle">M1</text><text class="ax" x="337.6" y="242" text-anchor="middle">M13</text><text class="ax" x="611.2" y="242" text-anchor="middle">M25</text><text class="ax" x="862" y="242" text-anchor="middle">M36</text></svg>
+  <div class="clg"><span class="lg c">● xBND income (rwaUSD)</span><span class="lg b">● Sale proceeds (USD)</span></div>
+  <div class="cap">The xBND leg accrues from the moment the switch is active and is unaffected by the price path; the sale leg cannot begin before the cliff at month 7.</div></figure>
+<p>Two features of this table are worth stating plainly. First, 13% of the capital is returned through the xBND leg alone — $316,178 in rwaUSD — and that leg does not depend on where BND trades. Second, 74% of the month-36 total is still held rather than realised, so it remains fully exposed to the price path and to the pool depth discussed below.</p></section><section id="downside" class="wrap"><h2><span class="sec-num">7</span>Downside Considerations</h2>
+<p class="desc">What protects this position, what does not, and where the model is weakest.</p>
+<div class="kpis"><div class="kpi"><div class="kn c">−57%</div><div class="kl">Maximum modelled drawdown</div></div><div class="kpi"><div class="kn g">$316,178</div><div class="kl">Price-independent income</div></div><div class="kpi"><div class="kn ">59%</div><div class="kl">Of capital realised by M36</div></div><div class="kpi"><div class="kn c">2.0%</div><div class="kl">Launch liquidity as % of FDV</div></div></div>
+<h4 class="sub">What genuinely mitigates the position</h4>
+<ul>
+<li><b>The xBND income leg.</b> $316,178 accrues in rwaUSD across the horizon — 13% of capital — independent of the BND price. Only the private rounds hold this right.</li>
+<li><b>Entry discount.</b> Seed enters 50.4% below launch, so the position absorbs a 50% fall from launch before reaching cost.</li>
+<li><b>Fixed supply.</b> 1,000,000,000 BND exists at genesis and cannot be increased. Two burn sinks reduce it; 1.63% is retired across the horizon.</li>
+<li><b>Cliff structure.</b> No Seed tokens are sellable through the launch window.</li>
+</ul>
+<h4 class="sub">What does not</h4>
+<ul>
+<li><b>There is no capital protection.</b> No portion of this investment is guaranteed, insured, escrowed or principal-protected. The full amount is at risk.</li>
+<li><b>Launch liquidity is thin.</b> The BND/USDC pool holds $1.00M at generation, about 2.0% of FDV. Constant-product depth converts a large sale into an amplified price move, and this single parameter drives most of the −57% drawdown above.</li>
+<li><b>The model is revenue-dependent.</b> Every buy-side engine traces to Protocol Reserve revenue, which is the junior 20% claim on a fee base that must scale broadly as projected.</li>
+<li><b>Delivery risk.</b> The protocol is mid-programme. Audit and public security competition are scheduled but not complete.</li>
+</ul>
+<div class="note warn"><div class="nt">No capital protection is offered</div><div class="nb">The reference form for this proposal contained a protection mechanism apportioning capital between protected and at-risk. No such mechanism exists in the BOUND structure, and none is represented here. Any protection would have to be documented in the SAFT and is not.</div></div></section>
+<section class="wrap"><h2><span class="sec-num">8</span>Important Notice</h2>
+<p>The financial projections presented above are forward-looking statements based on internal assumptions and market modelling. They do not constitute guarantees of future performance. Actual results may vary materially due to market volatility, regulatory developments, liquidity conditions, delivery risk, or other unforeseen factors.</p>
+<p>This document is a proposal and not an offer, solicitation, or recommendation to buy any instrument. It does not constitute investment, legal, or tax advice. Any subscription is governed exclusively by the executed SAFT and its schedules, which prevail over this document in the event of any inconsistency. Prospective investors should take independent advice.</p>
+<p class="cap">Generated 2026-07-28 from the BOUND Protocol simulation engine, default preset, 36-month horizon. Regenerate with <code>node scripts/build-proposal.mjs</code>.</p>
+</section>
+<footer class="foot"><div class="wrap"><div>Seed Token Investment Proposal · BITSWIFT TECHNOLOGIES INC. · Generated from the live simulation engine · 36-month horizon</div></div></footer>
+</div></div>
+<script>
+(function(){var ls=document.querySelectorAll('.snav a'),ss=document.querySelectorAll('section[id]');
+function u(){var y=window.scrollY+120,c=null;ss.forEach(function(s){if(s.offsetTop<=y)c=s.id;});
+ls.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+c);});}
+window.addEventListener('scroll',u,{passive:true});u();})();
+</script>
+</body></html>

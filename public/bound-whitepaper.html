@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Whitepaper — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+/* Ambient abstract-green background — identical recipe to the audit page */
+body{
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);
+}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+/* The BLI net-asset-value identity, set apart from the prose */
+.formula{font-family:var(--mono);font-size:14px;color:var(--accent);background:var(--accentSoft);
+  border:1px solid color-mix(in srgb,var(--accent2) 26%,transparent);border-radius:10px;
+  padding:16px 18px;margin:18px 0;text-align:center;line-height:1.5;overflow-x:auto}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Whitepaper</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="abstract" href="#abstract"><span class="snav-num">§</span>Abstract</a><a data-id="litepaper" href="#litepaper"><span class="snav-num">1</span>The BOUND Litepaper</a><a data-id="overview" href="#overview"><span class="snav-num">2</span>Protocol Overview</a><a data-id="problem" href="#problem"><span class="snav-num">3</span>The RWA Liquidity Problem</a><a data-id="rwausd" href="#rwausd"><span class="snav-num">4</span>rwaUSD</a><a data-id="bli" href="#bli"><span class="snav-num">5</span>BLI — Bound Liquidity Index</a><a data-id="layer" href="#layer"><span class="snav-num">6</span>The Bound Liquidity Layer</a><a data-id="apss" href="#apss"><span class="snav-num">7</span>APSS</a><a data-id="economics" href="#economics"><span class="snav-num">8</span>Protocol Economics</a><a data-id="bnd" href="#bnd"><span class="snav-num">9</span>BND — The Governance Token</a><a data-id="governance" href="#governance"><span class="snav-num">10</span>Governance</a><a data-id="risk" href="#risk"><span class="snav-num">11</span>Risk Framework</a><a data-id="legal" href="#legal"><span class="snav-num">12</span>Regulatory &amp; Legal Framework</a><a data-id="roadmap" href="#roadmap"><span class="snav-num">13</span>Roadmap</a><a data-id="conclusion" href="#conclusion"><span class="snav-num">14</span>Conclusion</a><a data-id="disclaimer" href="#disclaimer"><span class="snav-num">§</span>Legal Disclaimer</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Whitepaper</div><h1>The Liquidity Layer for Tokenized Real-World Assets</h1>
+<p class="lede">BOUND Protocol — on-chain liquidity infrastructure for tokenized real-world assets.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Whitepaper</div></div>
+<div><div class="k">Version</div><div class="v">Version 2.0 — July 2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+<div><div class="k">Origin</div><div class="v">Bucharest, Romania</div></div>
+</div></div></div>
+<div class="wrap">
+<section id="abstract"><div class="sec-head"><div class="sec-num">§</div><h2>Abstract</h2></div>
+<p>Tokenization has succeeded at putting real-world assets on-chain and failed at making them liquid. As of July 2026, approximately $33.5 billion of tokenized real-world assets (RWAs) circulate on-chain, yet the majority can be exited only through their issuer, on settlement windows of thirty to ninety days or longer. In one July 2026 snapshot, 56% of tokenized positions above $100,000 showed zero weekly on-chain activity. The asset class markets itself as instant and around-the-clock; its exits are neither.</p>
+<p>BOUND Protocol is on-chain liquidity infrastructure for tokenized real-world assets. It allows any holder of an integrated RWA token to exit into dollars instantly, at a transparent, risk-tiered haircut, without waiting on issuer redemption calendars and without depending on external market makers. It does this through a strict separation of functions across three tokens. rwaUSD is a digital dollar minted exclusively against USDC and backed 100% by USDC at all times; tokenized RWA exposure never enters its backing. The Bound Liquidity Index (BLI) is an index token that holds all of the protocol's RWA exposure and reserve performance; its value can rise or fall, and it is explicitly not money. The BND token coordinates governance and captures protocol activity through a burn mechanism. Liquidity is supplied by the Bound Liquidity Layer — a protocol-owned reserve deployed across a four-tier structure and governed by Basel-style liquidity-coverage rules — and peg integrity is enforced by the Atomic Peg Stabilization System (APSS), which detects and corrects price deviations atomically within a single transaction. The APSS is deployed and validated on mainnet, with more than 2,000 stabilization transactions executed at an average gas cost of approximately $0.10 and a measured collateral surplus of approximately 0.8% of stabilization volume.</p>
+<p>The protocol earns revenue predominantly from transaction flow — RWA liquidations and minting, conversions, pool trading, and stabilization operations — rather than from holding assets. This whitepaper specifies the problem, the architecture, the economic design, the governance framework, the risk framework, and the regulatory positioning of the protocol. It makes no promise of returns; where the document describes value accrual to the BLI, it does so mechanistically, and the relevant metric — Annualized Index Growth — describes the historical growth of an index whose value can also decline.</p>
+</section>
+<section id="litepaper"><div class="sec-head"><div class="sec-num">1</div><h2>The BOUND Litepaper</h2></div>
+<p>By Georgian Ionita, Founder of BOUND Protocol. This opening chapter explains the protocol in plain language. Readers who want the technical specification can begin at Chapter 2.</p>
+<h4 class="sub">1.1 Why I Wrote This</h4><p>When I first entered DeFi around 2017, I realized how difficult it was to understand even basic concepts. Most whitepapers were written for technical experts, full of terminology and assumptions that made the ecosystem feel closed and inaccessible. I always believed that every complex idea can be explained in a simple way, and that people deserve tools they can truly understand. This chapter is my attempt to offer the clarity I never had — before the document becomes, necessarily, more technical.</p>
+<h4 class="sub">1.2 What Happened to Tokenization</h4><p>Over the last few years, the biggest names in finance started putting traditional assets on the blockchain: US Treasury funds, private credit, money-market funds. This is called tokenization, and it works. You can hold a token that represents a share of a BlackRock fund, transfer it in seconds, and verify everything on-chain. The market for these tokens roughly tripled in the last year alone.</p>
+<p>But there is a problem nobody solved. The token moves in seconds — the money does not. When you want to exit one of these positions, you usually cannot simply sell it. You send a redemption request to the issuer, and then you wait: thirty days, sixty days, sometimes ninety or more, depending on the asset. Your capital is frozen. The industry built beautiful rails for getting into these assets and almost nothing for getting out of them.</p>
+<p>Tokenization solved issuance. It did not solve liquidity. BOUND exists to solve liquidity.</p>
+<h4 class="sub">1.3 What BOUND Does, In One Paragraph</h4><p>BOUND gives holders of tokenized real-world assets an instant exit. You bring your RWA token to a BOUND market and receive rwaUSD — a digital dollar backed one-to-one by the most popular stablecoin from the space, USDC, at a small, transparent discount that reflects how long that asset normally takes to redeem. No waiting, no negotiating with market makers, no hoping someone is on the other side of the trade. The protocol's own reserve stands on the other side of the trade, every time. The RWA the protocol acquires does not sit idle: BOUND can resell it through its own markets to buyers who want that exposure, or redeem it through the issuer over time. The discount the protocol earned along the way is what powers the whole system.</p>
+<h4 class="sub">1.4 The Three Tokens, Simply</h4><ul class="find"><li><b>rwaUSD:</b> A digital dollar for the RWA economy. Always minted against USDC, always backed 100% by USDC. RWA risk never touches it — this is a hard rule of the protocol, not a preference. You can hold it, trade it, and use it like any stablecoin.</li><li><b>BLI (Bound Liquidity Index):</b> The index token for people who capitalize the system. Liquidity providers fund the reserve that makes instant exits possible; in exchange they hold BLI, whose value reflects the reserve's performance and the fees the protocol earns. BLI can go up and it can go down. It is an index, not a deposit — and we will never call it anything else.</li><li><b>BND:</b> The governance token. BND holders steer the protocol — which RWA markets get onboarded, what the risk parameters are — and the token is burned through protocol activity, permanently reducing its supply as the system is used.</li></ul>
+<h4 class="sub">1.5 Who This Is For</h4><p>For institutions and funds holding tokenized assets, BOUND is the exit that does not exist today. For RWA issuers, BOUND is a liquidity layer they can plug into with zero capital pre-allocation — their clients get instant exits, and the issuer's product becomes more attractive to allocate to. For professional liquidity providers, BLI is transparent exposure to the growth of RWA liquidity infrastructure. And over time, for everyone in the tokenized-asset economy, rwaUSD is intended to become the sector's common settlement dollar — the currency RWA markets quote in, trade in, and settle in.</p>
+<p>The rest of this document is the full specification: how the peg is defended, how the reserve is structured, how the economics work, how governance operates, and what the risks are. It is written to be verified, not believed.</p>
+</section>
+<section id="overview"><div class="sec-head"><div class="sec-num">2</div><h2>Protocol Overview</h2></div>
+<p>BOUND Protocol is the liquidity layer for tokenized real-world assets: on-chain infrastructure that converts locked, issuer-redeemable RWA positions into instant dollar liquidity, and positions rwaUSD as the native settlement asset of the RWA sector. The protocol is built from five components, each specified in its own chapter:</p>
+<ul class="find"><li><b>1 — rwaUSD:</b> A digital dollar minted exclusively against USDC and backed 100% by USDC. rwaUSD is the settlement asset of every BOUND market and the currency in which every exit is paid. Its backing never contains RWA exposure. (Chapter 4)</li><li><b>2 — BLI, the Bound Liquidity Index:</b> An index token representing participation in the protocol's capital base. All RWA exposure, reserve performance, and the protocol's fee surplus are reflected in the BLI. Its price is calculated on-chain as net asset value per token, and it can rise or fall. (Chapter 5)</li><li><b>3 — The Bound Liquidity Layer:</b> The protocol-owned capital structure that funds instant exits. Capital is deployed across a four-tier structure — an immediate USDC buffer, a reserve tier, an enhanced tier, and acquired RWA inventory — governed by Basel-style liquidity-coverage rules that cap RWA intake before exit capacity is ever threatened. (Chapter 6)</li><li><b>4 — RWA Markets:</b> Dedicated rwaUSD trading markets for each integrated RWA token, through which holders exit instantly at risk-tiered haircuts and buyers acquire RWA exposure from protocol inventory. Each market connects to the issuer's native redemption pipeline as the terminal exit. (Chapter 6)</li><li><b>5 — APSS:</b> The Atomic Peg Stabilization System: the mechanism that defends rwaUSD's dollar peg by detecting deviations in the rwaUSD/USDC pool and correcting them through atomic mint-and-sell or buy-and-burn operations inside a single transaction — capturing, for the protocol, the stabilization revenue that other stablecoins concede to external arbitrageurs. Deployed and validated on mainnet. (Chapter 7)</li></ul>
+<h4 class="sub">2.1 How the Pieces Fit</h4><p>The flow of the system can be followed in one loop. Liquidity providers capitalize the Bound Liquidity Layer with USDC and receive BLI. An RWA holder who needs an exit sells the RWA token into its BOUND market and receives rwaUSD instantly, at a haircut calibrated to the asset's risk tier and redemption timeline. The protocol now holds the RWA in inventory: it may resell it through the same market to a willing buyer — recycling capital immediately — or redeem it through the issuer's pipeline on the issuer's timeline. The haircut spread, the market's trading fees, conversion fees, and the APSS's stabilization revenue accumulate to the protocol and are reflected in the BLI, while a defined share funds the Protocol Reserve and an Emergency Reserve. rwaUSD circulates outward as the sector's settlement dollar, connected to the broader stablecoin economy through a maintained rwaUSD/USDC pool that the APSS supervises continuously.</p>
+<p>Two design principles make this loop safe. First, separation: the settlement dollar and the risk capital are different instruments held by different participants, and no failure of the RWA book can propagate into rwaUSD's backing. Second, coverage discipline: the protocol accepts RWA inflow only up to what its liquidity coverage rules demonstrate it can carry, so instant-exit capacity is a constraint enforced by code, not a marketing promise.</p>
+<h4 class="sub">2.2 What Is Live</h4><p>The APSS is deployed on mainnet and has executed more than 2,000 stabilization transactions at an average gas cost of approximately $0.10 per operation, generating a measured collateral surplus of approximately 0.8% of stabilization volume. The protocol's economic design has been validated in a 36-month financial simulation implementing the full architecture described in this document — including the four-tier liquidity structure, liquidity-coverage enforcement, staggered onboarding of ten reference RWA markets, and the complete fee system. Remaining components are in development toward audit and launch; the roadmap in Chapter 12 states the status of each.</p>
+</section>
+<section id="problem"><div class="sec-head"><div class="sec-num">3</div><h2>Introduction: The RWA Liquidity Problem</h2></div>
+<h4 class="sub">3.1 The Market That Grew Without an Exit</h4><p>The tokenized RWA market reached approximately $33.5 billion in distributed on-chain value by July 2026 — roughly triple its level a year earlier — held by close to one million wallets across 167 platforms, with a further ~$389 billion of representative asset value committed to tokenization pipelines. Tokenized US Treasuries alone stand near $15 billion, led by BlackRock's BUIDL; tokenized private credit exceeds $3 billion outstanding. Institutional forecasts for the asset class range from $2 trillion (McKinsey, base case, 2030) to $18.9 trillion (BCG–Ripple, 2033).</p>
+<p>The growth is real. The liquidity is not. Institutional fixed-income RWAs redeem primarily through their issuer: redemption is gated through fund administrators, operates on business-day cycles, requires advance notice for large positions, and for private credit and comparable structures settles in thirty to ninety days or longer. Independent evidence is consistent across every indicator: 56% of tokenized positions above $100,000 show zero weekly on-chain activity; entire asset categories turn over roughly once per year; only about 10% of tokenized RWA value circulates in DeFi; identical assets price 1–3% apart across chains; and securities regulators have documented low secondary liquidity and fragmented trading as structural features of the market. Even the category's most liquid products illustrate the constraint — instant-redemption facilities are capped, gated by six-figure minimums, and have suffered day-long outages precisely when needed.</p>
+<h4 class="sub">3.2 Why Existing Approaches Fail</h4><p>Four architectures currently compete to solve RWA liquidity, and each imposes a structural cost. Per-asset DEX pools fragment liquidity into shallow, isolated pairs whose eligible trading base is legally restricted. Pre-allocated liquidity facilities require capital — the sector's scarcest resource — to sit reserved against redemptions, and cover only a small fraction of issued assets. Market-maker RFQ networks rent liquidity that reprices or withdraws under stress, exactly when exits are demanded most. And designs that place RWA exposure inside a dollar-denominated token import credit risk into the money itself; the January 2025 USD0++ event — an unannounced $0.87 redemption floor, an immediate depeg, and cascading liquidations — demonstrated where that road ends.</p>
+<p>The sector therefore still lacks what its own growth requires: a liquidity layer that is protocol-owned rather than rented, open to any issuer rather than closed to one platform, priced transparently in advance rather than quoted under stress, and delivered through a settlement dollar whose backing is never contaminated by the assets it provides liquidity for. That is the specification BOUND is built to.</p>
+<h4 class="sub">3.3 Design Requirements</h4><ul class="find"><li><b>Instant and deterministic:</b> Exits must settle in the same transaction they are requested in, at a price known in advance.</li><li><b>Clean separation of money and risk:</b> The settlement dollar must be fully backed by USDC at all times; RWA exposure must be structurally quarantined in a separately held, clearly labeled risk instrument.</li><li><b>Owned, coverage-governed liquidity:</b> Liquidity must be supplied by protocol-owned capital under hard coverage rules — never by external market makers whose quotes can vanish, and never by issuer pre-allocation.</li><li><b>Recycling, not queuing:</b> Acquired RWA inventory must be resellable through protocol markets, not only redeemable through issuers, so capital recycles rather than queues.</li><li><b>Regulatory alignment by design:</b> The system must operate within EU (MiCA) and US (GENIUS) regulatory perimeters by construction: no interest paid for holding the dollar, no risk assets in its backing, and risk participation clearly labeled as such.</li></ul>
+</section>
+<section id="rwausd"><div class="sec-head"><div class="sec-num">4</div><h2>rwaUSD — The Liquid Dollar of the RWA Sector</h2></div>
+<h4 class="sub">4.1 Definition and Characteristics</h4><p>rwaUSD is a digital dollar issued by BOUND Protocol. It is minted exclusively against USDC at a 1:1 ratio and is backed 100% by USDC at all times. It carries no return promise of any kind: holding rwaUSD does not entitle the holder to interest, rewards, or appreciation. Its function is settlement — it is the asset in which every BOUND market trades and every instant exit is paid — and its design goal is to be indistinguishable in safety and usability from the regulated stablecoin that backs it, while adding the sector-specific utility that general-purpose stablecoins do not provide.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Property</th><th>Specification</th></tr></thead><tbody><tr><td>Minting</td><td>Exclusively against USDC, 1:1, through the Bound Core smart contract</td></tr><tr><td>Backing</td><td>100% USDC at all times; verifiable on-chain; RWA assets are never part of rwaUSD backing</td></tr><tr><td>Redemption</td><td>1:1 back to USDC through the protocol; par redemption is a design invariant</td></tr><tr><td>Peg defense</td><td>Atomic Peg Stabilization System (APSS) on the rwaUSD/USDC pool (Chapter 7)</td></tr><tr><td>Returns to holders</td><td>None. rwaUSD pays no interest and makes no growth claim</td></tr><tr><td>Regulatory design target</td><td>Utility-token architecture under MiCA, with an ART compliance pathway where applicable; designed for payment-stablecoin alignment under the GENIUS Act.</td></tr></tbody></table></div>
+<h4 class="sub">4.2 Backing Architecture: The Bound Core</h4><p>rwaUSD's backing is managed by the Bound Core smart contract under a two-tier structure. A defined share of the USDC backing idle rwaUSD is held as raw, immediately available USDC to service redemptions on demand; the remainder is held in a conservative USDC position deployed to blue-chip on-chain venues, recallable to service redemption surges. The split between the two tiers is a protocol parameter set to keep immediate redemption capacity comfortably above observed redemption behavior, and is adjustable by governance within hard bounds. Under no parameterization does any asset other than USDC or USDC-denominated positions back rwaUSD. Backing is verifiable on-chain in real time, and the protocol publishes the coverage composition continuously rather than through periodic attestations alone.</p>
+<h4 class="sub">4.3 External Utility</h4><p>rwaUSD is designed to circulate beyond the protocol. It is a standard ERC-20 asset usable in any wallet, exchange, or DeFi integration that supports stablecoins. Its intended role is the common settlement unit of the RWA economy: the currency in which RWA markets are quoted, in which issuers denominate distributions, and in which participants hold transactional balances between positions. A protocol-maintained rwaUSD/USDC pool — supervised continuously by the APSS — connects rwaUSD to the broader stablecoin economy, so capital moves in and out of the RWA sector without friction. rwaUSD held externally remains fully backed at all times; the protocol's obligations to external holders are identical to its obligations to participants inside the system.</p>
+<h4 class="sub">4.4 Direct Minting for Institutions</h4><p>Institutions and RWA issuers can mint and redeem rwaUSD directly against USDC through the Bound Core at protocol-defined fees, without routing through the pool. Direct minting serves treasury-scale flows — an issuer preparing distributions, a fund entering the RWA economy, a market maker balancing inventory — and its fees are one of the protocol's revenue streams (Chapter 8). Direct minting is subject to the compliance requirements applicable in the participant's jurisdiction; the protocol's access framework is specified in Chapter 11.</p>
+<h4 class="sub">4.5 Launch Mechanism</h4><p>rwaUSD enters circulation progressively, in step with the capitalization of the Bound Liquidity Layer and the onboarding of RWA markets. At launch, minting is available through the Bound Core against USDC, and the rwaUSD/USDC pool is seeded and placed under APSS supervision. RWA markets are then onboarded on a staggered schedule (Chapter 6.5), each adding transactional demand for rwaUSD. The protocol does not bootstrap circulation through emissions, incentives, or any mechanism that pays holders for holding — circulation growth is driven by utility alone.</p>
+</section>
+<section id="bli"><div class="sec-head"><div class="sec-num">5</div><h2>BLI — The Bound Liquidity Index</h2></div>
+<h4 class="sub">5.1 Definition and Characteristics</h4><p>The Bound Liquidity Index (BLI) is an index token representing proportional participation in the protocol's capital base. Holders of BLI hold the risk side of BOUND: the Bound Liquidity Layer's assets, its acquired RWA inventory, and the protocol's accumulated fee surplus are all reflected in the BLI's on-chain net asset value. BLI is explicitly not money, not a deposit, and not an interest-bearing account. Its value can rise and it can fall. The protocol reports its historical performance through a single defined metric — Annualized Index Growth — which describes realized growth of the index value over a trailing period and implies nothing about future performance.</p>
+<p>BLI's price is not set by a market maker or an oracle. It is computed on-chain as net asset value per token:</p>
+<div class="formula">BLI Price = (Bound Liquidity Layer NAV + BLI Surplus Account) ÷ BLI Supply</div>
+<p>The Bound Liquidity Layer NAV is the marked value of the Layer's four tiers (Chapter 6), including acquired RWA inventory valued under the protocol's conservative valuation rules. The BLI Surplus Account accumulates the protocol's fee revenue allocated to the index (Chapter 8). Because the price is a bookkeeping identity rather than a quote, BLI cannot trade at a protocol-imposed discount, cannot depeg — it has no peg — and cannot misrepresent its backing: the calculation is verifiable by anyone at any time.</p>
+<h4 class="sub">5.2 Conversion Mechanism</h4><p>Participants enter BLI by converting rwaUSD through the protocol at the prevailing on-chain index price, and exit by converting BLI back to rwaUSD the same way. Conversions are subject to a conversion fee (initially 0.88%, governance-adjustable), which accrues to the protocol's fee system. Holders of BND receive a discount on conversion fees, paid for by burning BND (Chapter 9) — linking governance-token demand directly to protocol usage. Access to BLI at launch is structured privately for professional and qualified participants, consistent with the protocol's regulatory positioning (Chapter 11); broader access follows only as the applicable legal framework permits.</p>
+<h4 class="sub">5.3 Redemption Mechanism and Seniority</h4><p>BLI redemptions are honored from the Bound Liquidity Layer's liquid tiers at the on-chain index price. Redemption capacity is protected by the same liquidity-coverage discipline that governs the whole Layer, with a deliberate seniority rule: the protocol sizes its RWA acquisition capacity after reserving coverage for projected BLI redemptions — index-holder exits are senior to new RWA intake. In practical terms, the protocol will decline additional RWA inflow before it will impair its ability to honor BLI redemptions. Under the stress regimes defined in Chapter 6.4, redemption processing can be extended in time but is never repriced below the on-chain index value: BLI holders bear market performance of the index, not liquidity penalties invented under stress. This is the structural opposite of discounted-claim designs, and it is enforced by the coverage engine rather than by policy discretion.</p>
+<h4 class="sub">5.4 What BLI Holders Actually Hold</h4><ul class="find"><li><b>Asset side:</b> The Layer's USDC tiers deployed at conservative on-chain venues, its enhanced tier, and its acquired RWA inventory — marked under protocol valuation rules.</li><li><b>Fee side:</b> The defined share of every protocol fee stream allocated to the BLI Surplus Account: haircut spreads, market trading fees, conversion fees, direct-minting fees, and the protocol's other revenue streams (Chapter 8).</li><li><b>Risk side:</b> RWA credit and duration risk on acquired inventory, within hard concentration caps; market performance of the Layer's deployments; and the protocol-level risks disclosed in Chapter 10. Losses flow through the loss waterfall (Chapter 6.6) — the Emergency Reserve absorbs first losses within its capacity, and remaining losses are reflected in the index value.</li></ul>
+</section>
+<section id="layer"><div class="sec-head"><div class="sec-num">6</div><h2>The Bound Liquidity Layer</h2></div>
+<h4 class="sub">6.1 Purpose and Principles</h4><p>The Bound Liquidity Layer is the protocol-owned capital structure that makes instant exits possible. It exists to do one job under all market conditions: stand on the dollar side of every RWA exit the protocol has committed to serve. Three principles govern it. Capital is owned, not rented — the Layer is funded by BLI participants and belongs to the protocol under strict rules, so it cannot be withdrawn by third parties under stress. Capital is productive, not idle — between exits, the Layer's tiers are deployed at conservative, blue-chip on-chain venues rather than sitting unencumbered. And capital is governed, not discretionary — every deployment and every RWA acquisition is constrained by the liquidity-coverage engine described below.</p>
+<h4 class="sub">6.2 The Four-Tier Structure</h4><div class="tbl-scroll"><table><thead><tr><th>Tier</th><th>Contents</th><th>Function</th><th>Key Constraint (initial, governance-adjustable)</th></tr></thead><tbody><tr><td>Tier 1 — Immediate Buffer</td><td>USDC, instantly available (incl. conservative money-market deployment)</td><td>Same-block servicing of exits and BLI redemptions</td><td>Hard floor as a share of Layer assets; replenished first in the waterfall</td></tr><tr><td>Tier 2 — Reserve Tier</td><td>USDC at conservative blue-chip lending venues</td><td>Primary liquidity depth; recallable on demand</td><td>Minimum reserve share of Layer assets</td></tr><tr><td>Tier 3 — Enhanced Tier</td><td>USDC in vetted enhanced on-chain venues</td><td>Improves Layer productivity within strict cap</td><td>Hard maximum share of Layer assets</td></tr><tr><td>Tier 4 — RWA Inventory</td><td>RWA tokens acquired through exits, pending resale or issuer redemption</td><td>The protocol's working inventory; source of haircut revenue</td><td>Hard category cap on total RWA share; hard per-market concentration cap</td></tr></tbody></table></div>
+<p>Tier boundaries, floors, and caps are protocol parameters with initial values enforced in code and adjustable only through governance within defined hard bounds. Exact live values are published on-chain.</p>
+<p>Liquidity flows through the tiers as a waterfall: exits and redemptions draw on Tier 1 first, refill from Tier 2, and only then touch Tier 3; RWA acquisition capacity is computed last, after all senior demands are covered. Returns generated by the deployed tiers are distributed by fixed rule — the substantial majority to the BLI Surplus Account, with defined shares to the Protocol Reserve and the Emergency Reserve — and are never silently compounded into participant balances: all value accrual to participants is visible in the single on-chain index price.</p>
+<h4 class="sub">6.3 RWA Markets and the Recycling Model</h4><p>Each integrated RWA token receives a dedicated BOUND market denominated in rwaUSD. In that market, holders sell RWA to the protocol at the published risk-tiered haircut and receive rwaUSD in the same transaction; buyers purchase RWA from protocol inventory at market terms, subject to trading fees. This is the recycling model: an exit does not obligate the protocol to hold the asset to issuer redemption — inventory can be resold to willing buyers the moment demand exists, releasing capital immediately and converting the haircut into realized revenue. Issuer redemption pipelines — each market is onboarded with its issuer's actual settlement profile, from roughly one month to four months — remain the terminal exit for residual inventory, processed continuously in the background. Haircuts are tiered by asset class and published in advance: they are a transparent price for time and risk, not a quote that widens when the holder is desperate.</p>
+<p>Issuer onboarding requires zero capital pre-allocation from the issuer. Issuers pay an integration fee and ongoing maintenance economics, and receive in return a dedicated liquid market for their token, instant-exit capability for their clients, and membership in a shared liquidity standard — a structurally lighter proposition than funding proprietary redemption facilities.</p>
+<h4 class="sub">6.4 The Liquidity Coverage Engine</h4><p>The Layer is governed by a Basel-inspired liquidity coverage ratio (LCR): the ratio of the Layer's available liquidity, weighted by tier quality, to its projected short-term obligations — anticipated exits, BLI redemptions, and pipeline settlements. The engine operates continuously and enforces four regimes:</p>
+<div class="tbl-scroll"><table><thead><tr><th>Regime</th><th>Trigger</th><th>Protocol Behavior</th></tr></thead><tbody><tr><td>HEALTHY</td><td>LCR at or above the policy floor with margin</td><td>Full operations; RWA acceptance up to the coverage-implied capacity</td></tr><tr><td>WARNING</td><td>LCR approaching the floor</td><td>RWA acceptance tightens; Tier rebalancing toward liquidity; parameters bias conservative</td></tr><tr><td>STRESS</td><td>LCR below the floor</td><td>New RWA acceptance suspended; inventory resale and issuer redemption prioritized; BLI redemptions honored with extended processing</td></tr><tr><td>EMERGENCY</td><td>Severe coverage breach or external shock</td><td>Exit-servicing only; Emergency Reserve engaged; Security Council empowered per Chapter 9 safeguards</td></tr></tbody></table></div>
+<p>The engine's most important rule acts before stress ever arrives: every prospective RWA acquisition is tested against a coverage multiple — the protocol accepts new RWA only while projected coverage remains comfortably above the floor after the acquisition. Capacity is therefore a computed output of demonstrated liquidity, not a target. In the protocol's 36-month reference simulation implementing this engine, coverage remains in the HEALTHY regime in all 36 months at baseline parameters.</p>
+<h4 class="sub">6.5 Market Onboarding</h4><p>RWA markets are onboarded on a staggered schedule, beginning with the deepest and most redeemable asset classes — tokenized Treasury and money-market products — and extending to private credit and fund structures as Layer capitalization grows. The protocol's reference model spans ten markets across the major issuer archetypes now live on-chain, onboarded across the first 28 months of operation. Each onboarding is a governance decision informed by a defined due-diligence framework: issuer standing, legal structure, redemption mechanics, custody, valuation cadence, and the market's projected flow against Layer capacity.</p>
+<h4 class="sub">6.6 The Emergency Reserve and Loss Waterfall</h4><p>The protocol maintains a dedicated Emergency Reserve, seeded at protocol launch and funded continuously by a defined share of Layer returns and Protocol Reserve allocations, scaling with protocol size by a published schedule. Losses — an RWA credit event, a venue failure in a deployed tier — flow through a strict waterfall: the Emergency Reserve absorbs first losses to the extent of its capacity; the Protocol Reserve absorbs next; residual losses are reflected in the BLI index value. At no point in the waterfall is rwaUSD backing available to absorb losses: the settlement dollar sits entirely outside the loss-bearing structure, by construction.</p>
+</section>
+<section id="apss"><div class="sec-head"><div class="sec-num">7</div><h2>The Atomic Peg Stabilization System (APSS)</h2></div>
+<h4 class="sub">7.1 The Mechanism</h4><p>Conventional stablecoins outsource their peg. When price deviates from $1 in a liquidity pool, external arbitrageurs perform the correcting trades and keep the profit; the issuer's stability depends on those third parties showing up. The APSS internalizes this function. The Bound Core smart contract supervises the rwaUSD/USDC pool continuously; when the pool price deviates beyond a defined threshold, the APSS executes the correcting operation atomically — detection, mint-and-sell (when rwaUSD trades above peg) or buy-and-burn (when it trades below), and settlement occur within a single transaction. There is no interval in which the deviation persists awaiting an external actor, no dependence on market-maker inventory, and no leakage of the correction spread to third parties: the stabilization revenue is retained by the protocol and flows into the fee system (Chapter 8).</p>
+<p>Because minting in an above-peg correction is performed against value received into backing within the same atomic operation, and burning in a below-peg correction retires rwaUSD against backing released, the APSS never operates the supply unbacked at any point in any transaction — the 100% USDC backing invariant of Chapter 4 holds through every stabilization cycle. Each cycle in fact realizes a small collateral surplus — the spread between the deviated pool price and par — which accrues to the protocol.</p>
+<h4 class="sub">7.2 Mainnet Validation</h4><div class="tbl-scroll"><table><thead><tr><th>Metric</th><th>Measured Result</th></tr></thead><tbody><tr><td>Deployment status</td><td>Live on mainnet (Uniswap v4 pool infrastructure)</td></tr><tr><td>Stabilization transactions executed</td><td>2,000+</td></tr><tr><td>Average gas cost per stabilization</td><td>≈ $0.10</td></tr><tr><td>Measured collateral surplus</td><td>≈ 0.8% of stabilization volume</td></tr><tr><td>Peg defense model</td><td>Atomic detection and correction; no external market makers</td></tr></tbody></table></div><div class="cap">Figures are protocol telemetry from the mainnet APSS deployment as of July 2026. Contract addresses and live telemetry are published in the protocol's technical documentation.</div>
+<h4 class="sub">7.3 Properties and Limits</h4><p>The APSS defends the pool peg; the Bound Core's 1:1 USDC redemption defends the floor. Together they give rwaUSD two independent lines of defense: any holder can always redeem at par through the protocol regardless of pool conditions, and the pool itself is corrected atomically whenever it strays. The APSS's capacity in any single operation is bounded by pool depth and backing mechanics, and its parameters — deviation thresholds, operation sizing — are governance-controlled within hard bounds. The system's failure modes and mitigations are treated in the Risk Framework (Chapter 10); its economics — stabilization revenue scales with pool volume and volatility — make the peg defense self-funding and, distinctively, most active precisely when markets are most stressed.</p>
+</section>
+<section id="economics"><div class="sec-head"><div class="sec-num">8</div><h2>Protocol Economics</h2></div>
+<h4 class="sub">8.1 Revenue Architecture</h4><p>BOUND earns predominantly from transaction flow rather than from holding assets. Ten revenue streams are implemented in the protocol's economic design:</p>
+<div class="tbl-scroll"><table><thead><tr><th>#</th><th>Stream</th><th>Source</th></tr></thead><tbody><tr><td>1</td><td>RWA haircut spread</td><td>Discount captured when acquiring RWA in an instant exit, realized on resale or issuer redemption</td></tr><tr><td>2</td><td>RWA market trading fees</td><td>Fees on buy/sell activity in each dedicated RWA market</td></tr><tr><td>3</td><td>Conversion fees</td><td>rwaUSD ↔ BLI conversions (initial 0.88%, governance-adjustable; BND discount available)</td></tr><tr><td>4</td><td>Direct minting/redemption fees</td><td>Institutional rwaUSD mint/redeem through the Bound Core</td></tr><tr><td>5</td><td>APSS stabilization revenue</td><td>Collateral surplus captured in atomic peg corrections</td></tr><tr><td>6</td><td>rwaUSD/USDC pool fees</td><td>Protocol-owned liquidity position in the settlement pool</td></tr><tr><td>7</td><td>Layer deployment returns</td><td>Conservative on-chain deployment of Tiers 1–3</td></tr><tr><td>8</td><td>Bound Core backing returns</td><td>Conservative deployment of the non-buffer share of rwaUSD backing</td></tr><tr><td>9</td><td>Issuer integration fees</td><td>One-time onboarding fee per RWA market</td></tr><tr><td>10</td><td>Issuer maintenance economics</td><td>Ongoing per-market fees for maintained liquidity infrastructure</td></tr></tbody></table></div>
+<h4 class="sub">8.2 Fee Distribution</h4><p>Every revenue stream is split by fixed, published rule between the BLI Surplus Account — which accrues to index participants through the on-chain price — and the Protocol Reserve, which funds operations, the Emergency Reserve top-up, and the BND value mechanisms of Chapter 9. Transaction-driven streams allocate their substantial majority to the BLI Surplus Account, aligning the index's growth with the protocol's actual usage; Layer deployment returns are likewise distributed by fixed rule among the Surplus Account, the Protocol Reserve, and the Emergency Reserve. All splits are protocol parameters: initial values are enforced in code, published on-chain, and adjustable only through governance. The protocol publishes no forward performance projections in this document; its 36-month reference simulation, implementing every stream and split above, is maintained separately and available to counterparties under its own assumptions and disclaimers.</p>
+<h4 class="sub">8.3 Why the Economics Are Counter-Cyclical</h4><p>The protocol's revenue concentrates in exactly the conditions that break rented-liquidity models. When markets stress, exit demand rises — haircut volume grows; peg volatility rises — APSS revenue grows; spreads on inventory resale widen — realized haircut margins grow. The coverage engine simultaneously throttles new intake, so rising revenue meets constrained risk. A liquidity provider of last resort that is paid in proportion to demand for last-resort liquidity is a stable economic design; a market maker who must quote into panic is not. This asymmetry — stress makes BOUND more active and better compensated, while it makes quote-driven alternatives retreat — is the protocol's core economic moat.</p>
+</section>
+<section id="bnd"><div class="sec-head"><div class="sec-num">9</div><h2>BND — The Governance Token</h2></div>
+<h4 class="sub">9.1 Role and Utility</h4><p>BND is the governance and coordination token of the BOUND Protocol. Its design aligns protocol governance, economic incentives, and long-term ecosystem sustainability through four principal functions.</p>
+<ul class="find"><li><b>Governance:</b> BND serves as the exclusive governance asset of the protocol. Holders participate in governance through the mechanisms described in the Governance chapter, including voting on protocol parameters, treasury allocation, market onboarding, and other governance proposals.</li><li><b>Fee Utility:</b> BND may be used to pay designated protocol fees, including conversion fees, at a governance-defined discount. BND used for fee payments is permanently burned, creating a direct relationship between protocol activity and token supply reduction.</li><li><b>Revenue Participation:</b> Holders who voluntarily lock BND into xBND become eligible to receive a governance-defined share of Protocol Reserve revenue, distributed in rwaUSD. Revenue participation is exclusive to xBND and does not extend automatically to unlocked BND holders.</li><li><b>Governance Security:</b> Public Representatives participating in protocol governance are required to lock BND as economic security. Locked balances may be subject to governance-defined slashing mechanisms in cases of malicious or unauthorized behavior.</li></ul>
+<h4 class="sub">9.2 Sustainable Economics and a Fixed, Deflationary Supply</h4><p>BND has a fixed maximum supply of 1,000,000,000 tokens. No mechanism exists to increase the maximum supply following deployment.</p>
+<ul class="find"><li><b>Fixed Supply:</b> All allocations are established at genesis. Participation incentives, including staking rewards, are distributed from pre-allocated ecosystem reserves rather than through additional token issuance.</li><li><b>Deflationary Mechanics:</b> The protocol permanently removes BND from circulation through two mechanisms: the burning of BND used to pay eligible protocol fees and the perpetual buy-and-burn program operated by the Burn Engine.</li><li><b>Governance-Controlled Distribution:</b> Protocol Reserve revenue is allocated according to governance-approved parameters between treasury retention, the Burn Engine, and xBND revenue distribution. These allocation percentages remain subject to governance decisions.</li><li><b>Adaptive Supply Cap:</b> As tokens are permanently burned, the effective maximum supply decreases accordingly. Burned tokens cannot be reissued.</li></ul>
+<h4 class="sub">9.3 Capital Formation and the Burn Engine</h4><p>BND is distributed through three successive funding rounds consisting of the Seed Round, Extended Seed Round, and Public Sale, with pricing increasing in each subsequent round.</p>
+<ul class="find"><li><b>Capital Allocation:</b> Public Sale proceeds are allocated between protocol liquidity, company operations, the Emergency Reserve, and the Burn Engine according to governance-approved allocation percentages. Extended Seed proceeds are allocated to protocol liquidity.</li><li><b>Burn Engine:</b> The Burn Engine operates as the protocol’s perpetual buy-and-burn mechanism. Capital allocated to the Burn Engine is maintained as principal and invested conservatively. Only the investment income generated by the principal is used to purchase BND on the open market, after which the acquired tokens are permanently burned.</li><li><b>Long-Term Operation:</b> Protocol Reserve revenue periodically replenishes the Burn Engine, allowing the buy-and-burn mechanism to continue without reducing the underlying principal.</li><li><b>Vesting:</b> All token allocations are subject to on-chain vesting schedules as described in the Tokenomics section.</li></ul>
+<h4 class="sub">9.4 Value Accrual and Governance</h4><p>The economic design of BND is based on governance participation, protocol utility, and permanent supply reduction.</p>
+<ul class="find"><li><b>Supply Reduction:</b> Protocol usage contributes to permanent reductions in circulating supply through fee burns and purchases executed by the Burn Engine.</li><li><b>Revenue Participation:</b> Private holders who voluntarily convert BND into xBND receive a governance-defined share of realized Protocol Reserve revenue, distributed in rwaUSD.</li><li><b>Governance Rights:</b> BND is the exclusive governance asset of the protocol. Governance participants determine protocol parameters, treasury deployment, market onboarding, and other governance matters through the procedures described in the Governance chapter.</li></ul>
+<p>The protocol does not represent BND as providing guaranteed appreciation or automatic entitlement to protocol revenue. Any economic benefit derived from holding BND results exclusively from the operation of the protocol’s governance mechanisms, the permanent reduction of circulating supply, and the optional revenue-sharing framework applicable to xBND holders. These mechanisms operate independently and remain subject to governance decisions where applicable.</p>
+<h4 class="sub">9.5 Tokenomics</h4><div class="tbl-scroll"><table><thead><tr><th>Allocation</th><th>Tokens</th><th>Share</th><th>Vesting</th></tr></thead><tbody><tr><td>Public Sale (price $0.05)</td><td>150M</td><td>15%</td><td>15% TGE, no cliff, 12-month linear</td></tr><tr><td>Extended Seed (price $0.046)</td><td>80.4 M</td><td>8.04%</td><td>0% TGE, 12-month cliff, 36-month linear</td></tr><tr><td>Seed (price $0.0248)</td><td>100 M</td><td>10%</td><td>0% TGE, 6-month cliff, 24-month linear</td></tr><tr><td>Community &amp; Ecosystem</td><td>300 M</td><td>30%</td><td>5% TGE, 24-month linear; includes the staking-reward slice, released on its own emission schedule</td></tr><tr><td>Team</td><td>120 M</td><td>12%</td><td>0% TGE, 12-month cliff, 36-month linear</td></tr><tr><td>Liquidity &amp; Market Making</td><td>120 M</td><td>12%</td><td>100% at TGE (deployed to seed the market; not sellable float)</td></tr><tr><td>Treasury</td><td>90 M</td><td>9%</td><td>5% TGE, 12-month cliff, 48-month linear; governance-controlled</td></tr><tr><td>Marketing &amp; Growth</td><td>20 M</td><td>2%</td><td>5% TGE, no cliff, 24-month linear</td></tr><tr><td>Advisors</td><td>20 M</td><td>2%</td><td>0% TGE, 12-month cliff, 24-month linear</td></tr></tbody></table></div><div class="cap">Allocation figures as published in the current protocol documentation; final token counts, percentages, and the resulting total supply are subject to reconciliation and on-chain enforcement at token generation. Private-stage proceeds fund protocol liquidity provision and go-to-market execution.</div>
+</section>
+<section id="governance"><div class="sec-head"><div class="sec-num">10</div><h2>Governance</h2></div>
+<p>The BOUND Protocol implements a multi-layered governance system that balances community control with security safeguards, ensuring decentralized decision-making while protecting against malicious actions. Through BND tokens, the community exercises direct control over protocol parameters, treasury management, and strategic direction.</p>
+<p>BOUND's governance operates through three interconnected layers designed to maximize participation while maintaining security. At the foundation, BND holders possess voting rights that can be exercised directly or delegated to representatives. The middle layer consists of Public Representatives who aggregate voting power and make decisions. The top layer provides security oversight through an elected council that protects against exploits without compromising decentralization.</p>
+<p>This structure ensures that governance remains accessible to all token holders while creating efficiency through delegation and maintaining safety through oversight. Every decision follows transparent on-chain processes with built-in time delays, allowing the community to review and respond to changes before implementation.</p>
+<h4 class="sub">Public Representatives (P-Reps)</h4><p>To scale governance participation, BOUND introduces Public Representatives, community delegates who aggregate voting power and drive protocol decisions. Any address can become a P-Rep by locking 100,000 BND tokens as a security bond, making them eligible to receive delegated voting power from the community.</p>
+<p>Token holders delegate their voting power by staking BND with chosen P-Reps, maintaining full ownership of their tokens while amplifying their governance voice through experienced representatives. This delegation creates a merit-based system where P-Reps with strong track records attract more delegated power, while poor performers lose support. P-Reps earn rewards for active participation, successful proposals, and alignment with community interests, sharing these rewards with their delegators. This creates aligned incentives where representatives succeed by serving their constituents well.</p>
+<p>Conversely, malicious behavior results in permanent banning and burning of the 100,000 BND bond, with delegators facing a 10% penalty on their staked amount, ensuring careful selection of representatives. To prevent governance capture, no single P-Rep can control more than 35% of voting power on any proposal, maintaining decentralization even as voting power aggregates through delegation.</p>
+<h4 class="sub">Proposal Lifecycle</h4><p>Every protocol change follows a structured seven-day minimum process ensuring thorough review and community consensus. Only active P-Reps can create proposals, which must include clear descriptions, rationale, and implementation details. Proposals enter a two-day review period where the Security Council examines them for potential risks, vulnerabilities, or destabilizing factors. The Council may veto proposals that pose clear security threats, preventing malicious changes from proceeding.</p>
+<p>Approved proposals advance to a three-day voting period where delegated BND determines outcomes. Passage requires both a simple majority and participation from at least two distinct P-Reps, ensuring broad support rather than concentrated power. Successful proposals enter a two-day timelock before execution, providing a final opportunity for security review. After this cooling-off period, changes execute automatically through smart contracts, completing the transparent governance process.</p>
+<h4 class="sub">Security Council</h4><p>The Security Council serves as the protocol's defensive layer, protecting against governance attacks while respecting community sovereignty. Composed of ten members with proven expertise in DeFi security, smart contract auditing, and risk management, the Council provides professional oversight without controlling the protocol. Council members are elected by BND holders for two-year terms, with the ability to recall members who fail to fulfill their duties.</p>
+<p>This ensures the Council remains accountable to the community it protects. The Council's powers are deliberately limited and reactive. They can veto malicious proposals, pause protocol functions during active attacks, and review governance decisions for security implications. They cannot spend treasury funds, propose upgrades directly, or override legitimate community decisions on non-technical matters.</p>
+<p>All Council actions occur on-chain with full transparency, maintaining the protocol's commitment to verifiable governance while providing essential security safeguards against both malicious actors and unintentional errors.</p>
+<h4 class="sub">Governance Powers</h4><p>BND holders exercise control over critical protocol functions through graduated decision-making authority. BND holders powers include:</p>
+<ul class="find"><li><b>Treasury and Economic Parameters:</b> Direct community control over treasury allocation, fee adjustments, reward distribution. The community determines how protocol revenue supports governance sustainability.</li><li><b>Asset Management:</b> Authority to add or modify collateral strategies rests fully with governance. The community decides which tokenized strategies are accepted as collateral and approves the overall investment mandate for the BOUND Treasury, while the asset-management partner is limited to proposing strategies and executing allocations strictly within the parameters set by governance.</li><li><b>Risk Management:</b> Setting collateralization ratios, buffer requirements, and liquidation parameters that maintain protocol stability. The community balances security with capital efficiency through these critical decisions.</li></ul>
+<p>These powers ensure BND holders maintain genuine control over protocol evolution, from routine parameter adjustments to fundamental strategic decisions.</p>
+<h4 class="sub">Progressive Decentralization</h4><p>BOUND governance follows a carefully planned transition to full decentralization, prioritizing security and stability while building toward complete community control. During the Genesis Stage, before BND launch, governance remains under team control to enable rapid iteration and ensure secure protocol deployment. This temporary centralization allows quick responses to early challenges while establishing stable operations. Following BND launch, the protocol enters a Hybrid Governance phase where community voting begins while the team maintains emergency intervention capabilities through multisig controls.</p>
+<p>This balanced approach allows genuine community participation while retaining safeguards during the critical early period. The final transition to Full Governance transfers complete control to BND holders, removing team privileges entirely. This progressive approach ensures the protocol achieves true decentralization without compromising security during vulnerable early stages.</p>
+<h4 class="sub">Decentralized Future</h4><p>Through this governance framework, BOUND Protocol achieves true decentralization where token holders control their financial infrastructure. The system balances efficiency through delegation, security through oversight, and sovereignty through transparent on-chain execution. As the protocol evolves, governance adapts to community needs while maintaining the security and stability essential for managing billions in value. This isn't theoretical decentralization, it's practical, protected, and powerful governance that puts protocol control directly in the hands of those who use and support it.</p>
+</section>
+<section id="risk"><div class="sec-head"><div class="sec-num">11</div><h2>Risk Framework</h2></div>
+<p>This chapter names the protocol's material risks and the concrete mechanism that mitigates each. It is an engineering disclosure, not a legal disclaimer; the legal disclaimer appears at the end of this document.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Risk</th><th>Description</th><th>Mitigation Mechanism</th></tr></thead><tbody><tr><td>Smart contract risk</td><td>Defects in the Bound Core, market, or Layer contracts</td><td>External audits prior to launch (auditor and scope to be published); staged deployment; bug bounty; Security Council pause powers; APSS already validated on mainnet</td></tr><tr><td>RWA credit risk</td><td>Default or impairment of an acquired RWA position</td><td>Risk-tiered haircuts priced before acquisition; hard category and per-market concentration caps; issuer due-diligence framework; Emergency Reserve first-loss; loss waterfall isolates rwaUSD entirely</td></tr><tr><td>Liquidity risk</td><td>Exit or redemption demand exceeding liquid capacity</td><td>Four-tier structure with hard Tier 1 floor; LCR engine with pre-emptive intake throttling; BLI-senior sizing rule; stress regimes with defined behaviors</td></tr><tr><td>Peg risk</td><td>rwaUSD deviating from $1</td><td>Two independent defenses: atomic APSS correction on the pool, and unconditional 1:1 USDC redemption at the Bound Core; backing never contains RWA</td></tr><tr><td>Valuation risk</td><td>Mis-marking of RWA inventory</td><td>Conservative protocol valuation rules; issuer NAV cadence incorporated into haircut tiers; BLI price computed on-chain from published marks</td></tr><tr><td>Counterparty/venue risk</td><td>Failure of a deployment venue in Tiers 1–3</td><td>Blue-chip venue whitelist under governance; per-venue caps; recallability requirements; Emergency Reserve</td></tr><tr><td>Regulatory risk</td><td>Adverse classification or enforcement in a key jurisdiction</td><td>EMT-aligned rwaUSD design (no interest, full backing, par redemption); BLI private placement at launch; ongoing counsel review (VD Law Group); jurisdiction gating</td></tr><tr><td>Governance risk</td><td>Capture or malicious proposals</td><td>P-Rep bonding and slashing; 35% voting-power cap; Security Council veto and pause; timelocks on all executions</td></tr><tr><td>Oracle/MEV risk</td><td>Manipulation of prices the protocol acts on</td><td>BLI price is an internal NAV identity, not an external oracle; APSS acts atomically on pool state, minimizing MEV windows; deviation thresholds bound single-operation exposure</td></tr></tbody></table></div>
+</section>
+<section id="legal"><div class="sec-head"><div class="sec-num">12</div><h2>Regulatory and Legal Framework</h2></div>
+<p>BOUND is developed by an operating company incorporated in the European Union, which employs the engineering team and bears the operating cost, under a development and services agreement with Nexus Technologies Foundation, a private-interest foundation incorporated under the laws of the Republic of Panama. The Foundation owns the protocol and its intellectual property, and grants the token delegation. The tokens are issued and distributed by BITSWIFT TECHNOLOGIES INC., a corporation incorporated under the laws of the Republic of Panama, which holds the raise proceeds and is the counterparty on the SAFT. The protocol has been structured with the European Union as its primary regulatory framework, and its token architecture has been designed to align with the legal principles established under Regulation (EU) 2023/1114 (MiCA). Rather than adapting the protocol to regulation after launch, the architecture has been developed to reflect the legal characterization of its tokens from inception.</p>
+<p><b>MiCA – rwaUSD:</b> rwaUSD is designed primarily as an “other crypto-asset” (utility token) under MiCA. Its principal function is to act as the exclusive access token of the BOUND Protocol, enabling users to convert rwaUSD into BLI and participate in the protocol’s collateral-performance mechanism. rwaUSD does not grant governance rights, ownership interests, dividend rights, profit-sharing, or contractual redemption rights against the issuer. According to the legal opinion issued by VD Law Group, these characteristics support its qualification as a utility-oriented crypto-asset rather than a financial instrument. The opinion further notes that, due to its stable-value design and collateral mechanisms, competent authorities could alternatively interpret rwaUSD as an Asset-Referenced Token (ART) under MiCA, although this is presented as a secondary regulatory outcome.</p>
+<p><b>MiCA – BLI:</b> BLI serves as the protocol’s collateral-performance token, providing exposure to the appreciation of protocol-managed collateral following conversion from BLI. Participation is available exclusively through the protocol, and all communications describe performance without using terminology associated with deposits, guaranteed returns, interest, or savings products. European Regulatory Framework: The legal assessment concludes that rwaUSD does not constitute a financial instrument under MiFID II because it does not confer ownership rights, voting rights, profit participation, or claims against the issuer.</p>
+<p>Should competent authorities ultimately classify rwaUSD as an Asset-Referenced Token under MiCA or EMT, BITSWIFT TECHNOLOGIES INC. intends to comply with the applicable regulatory obligations, including the MiCA authorization regime where required.</p>
+<p><b>Access Controls:</b> The protocol applies jurisdictional restrictions and risk-based eligibility controls where required by applicable law. Certain protocol functions may require additional verification depending on the user’s jurisdiction and applicable regulatory requirements.</p>
+<p>All regulatory positioning statements in this document reflect the protocol’s current design and the legal analysis provided by VD Law Group. Regulatory treatment remains subject to the interpretation of competent authorities and may evolve alongside MiCA implementation and supervisory guidance. This whitepaper is not an offer document under MiCA or any other regulatory framework. Where a MiCA-compliant whitepaper or other regulated disclosure document is required, it will be published separately before any public offering or admission to trading.</p>
+</section>
+<section id="roadmap"><div class="sec-head"><div class="sec-num">13</div><h2>Roadmap</h2></div>
+<div class="tbl-scroll"><table><thead><tr><th>Phase</th><th>Milestone</th><th>Status</th></tr></thead><tbody><tr><td>Phase 1</td><td>Protocol architecture; APSS design and mainnet deployment; 2,000+ stabilization transactions validated</td><td>Completed</td></tr><tr><td>Phase 2</td><td>Full economic design; 36-month reference simulation of the four-tier Layer, LCR engine, and ten-market onboarding model</td><td>Completed</td></tr><tr><td>Phase 3</td><td>Core contract development (Bound Core two-tier backing, Layer, RWA markets); legal structuring with VD Law Group</td><td>Completed</td></tr><tr><td>Phase 4</td><td>External security audits; private BLI capitalization; first RWA market integrations</td><td>Planned</td></tr><tr><td>Phase 5</td><td>Public rwaUSD availability; staggered market onboarding; progressive decentralization per the Governance chapter</td><td>Planned</td></tr></tbody></table></div><div class="cap">Calendar dates are deliberately not attached to planned phases in this document; they are maintained in the protocol's public roadmap and depend on audit outcomes and regulatory confirmations.</div>
+</section>
+<section id="conclusion"><div class="sec-head"><div class="sec-num">14</div><h2>Conclusion</h2></div>
+<p>The tokenized-asset economy has an architecture gap. It can issue, custody, transfer, and verify real-world assets on-chain — and it cannot exit them. Every credible forecast says the asset base grows by orders of magnitude from here; nothing in the sector's current infrastructure says exits keep pace. The solutions funded to date rent their liquidity — from committed facilities, market makers, or partner rails — and rented liquidity has one universal property: it is repriced or withdrawn under stress.</p>
+<p>BOUND's answer is structural. A settlement dollar that is never contaminated by the assets it serves. A risk instrument that is honestly labeled as one, priced on-chain as an identity rather than a promise. A protocol-owned liquidity layer governed by coverage rules that throttle intake before capacity is threatened. A peg defended atomically by code that is already live, rather than by market makers who may not show up. And an economic engine that is paid in proportion to demand for exactly what it supplies — liquidity when liquidity is scarce.</p>
+<p>If tokenization is to become the operating system of traditional finance, the sector needs a common liquid dollar and a common exit. That is the position this protocol is built to occupy: rwaUSD as the settlement standard of the RWA economy, and BOUND as its liquidity layer. This document has specified how — mechanism by mechanism, constraint by constraint. The protocol asks to be verified, not believed: the APSS telemetry is on-chain today, the index price will be an on-chain identity from its first block, and every parameter this document calls governance-adjustable will be governed exactly as the Governance chapter describes.</p>
+</section>
+<section id="disclaimer"><div class="sec-head"><div class="sec-num">§</div><h2>Legal Disclaimer</h2></div>
+<p>This whitepaper is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security, or financial instrument, in any jurisdiction. Nothing in this document constitutes investment, legal, tax, or accounting advice. rwaUSD makes no return promise of any kind. The Bound Liquidity Index is an index token whose value can rise or fall; Annualized Index Growth is a historical metric and implies nothing about future performance; participants can lose value. BND confers governance utility only and no claim on protocol revenue. Statements about regulatory alignment describe design intent, are subject to ongoing legal review by VD Law Group, and do not constitute a representation that any authorization has been obtained. Forward-looking statements — including the roadmap and all descriptions of planned functionality — are subject to material uncertainty and change. Access to protocol features is restricted in certain jurisdictions. © 2026 BOUND Protocol.</p>
+</section>
+<footer><div class="disc"><b>Note.</b> This page is a faithful transcription of BOUND Protocol Whitepaper Version 2.0 — July 2026. Regenerate via <span class="mono">node scripts/build-whitepaper.mjs</span> after any change to the source document.</div>
+<div>BOUND Protocol · Whitepaper Version 2.0 — July 2026 · Bucharest, Romania</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>

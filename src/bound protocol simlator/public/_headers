@@ -1,0 +1,34 @@
+# Cloudflare Pages response headers.
+#
+# Access control itself is enforced by the Access policies in front of the paths —
+# see DEPLOYMENT.md. These headers are defence in depth, not the gate.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+
+# Confidential material must never be cached by an intermediary, and must never be
+# indexed if a policy is ever misconfigured.
+/legal/*
+  Cache-Control: private, no-store, max-age=0
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+# The gated documents are equally not for indexing.
+/bound-cost-analysis.html
+  X-Robots-Tag: noindex, nofollow
+/bound-business-plan.html
+  X-Robots-Tag: noindex, nofollow
+/bound-gtm-strategy.html
+  X-Robots-Tag: noindex, nofollow
+/bound-delivery-roadmap.html
+  X-Robots-Tag: noindex, nofollow
+/bound-market-analysis.html
+  X-Robots-Tag: noindex, nofollow
+/bound-competitors-analysis.html
+  X-Robots-Tag: noindex, nofollow
+/bound-architecture.html
+  X-Robots-Tag: noindex, nofollow
+/bound-tokenomics-audit.html
+  X-Robots-Tag: noindex, nofollow

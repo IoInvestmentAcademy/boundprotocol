@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investment Q&amp;A — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+:root{--ink4:#6E756C}
+@media(prefers-color-scheme:dark){:root{--ink4:#AFB8AD}}
+:root[data-theme="dark"]{--ink4:#AFB8AD}
+:root[data-theme="light"]{--ink4:#6E756C}
+.qa{margin:0 0 30px;padding:0 0 26px;border-bottom:1px solid var(--line2)}
+.qa:last-child{border-bottom:none;padding-bottom:6px}
+.q{font-weight:700;font-size:15px;color:var(--ink);line-height:1.45;margin-bottom:12px;
+   padding-left:18px;position:relative}
+.q::before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:2px;background:var(--accent2)}
+.a{font-size:14px;line-height:1.65;color:var(--ink2)}
+.a p{margin:0 0 11px}.a p:last-child{margin-bottom:0}
+.a ul{margin:10px 0 12px 18px;padding:0}
+.a li{margin:6px 0;font-size:14px;line-height:1.6;color:var(--ink2)}
+.num{text-align:right;font-family:var(--mono)}th.num{text-align:right}
+.note{margin:14px 0 4px;padding:13px 15px;border-radius:11px;background:var(--raise);border:1px solid var(--line)}
+.note.warn{border-color:color-mix(in srgb,#B07A1E 42%,transparent);background:color-mix(in srgb,#B07A1E 8%,transparent)}
+.nt{font-weight:700;font-size:12.5px;color:var(--ink);margin-bottom:4px}
+.nb{font-size:13px;color:var(--ink2);line-height:1.55}
+.tbl-scroll{overflow-x:auto;margin:12px 0}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;
+  border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;color:var(--ink2);font-size:13px;border:1px solid transparent}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;padding:44px 44px 34px}
+.content .wrap{max-width:940px;padding:0 44px}
+@media(max-width:880px){.layout{flex-direction:column}
+ .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+ .snav{display:flex;flex-wrap:wrap;gap:4px}
+ .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Investment Q&amp;A</div>
+    <div class="sb-sub">Investor Questionnaire</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a href="#overview"><span class="snav-num">1</span><span>Overview</span></a><a href="#tokens"><span class="snav-num">2</span><span>Three Tokens</span></a><a href="#funding"><span class="snav-num">3</span><span>Financials & Fundraising</span></a><a href="#captable"><span class="snav-num">4</span><span>Cap Table</span></a><a href="#business"><span class="snav-num">5</span><span>Business</span></a><a href="#strategy"><span class="snav-num">6</span><span>Strategy & Operations</span></a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Investment Q&amp;A</div><h1>Investor Questionnaire</h1>
+<p class="lede">Standard diligence questions answered against the current protocol, entity structure and tokenomics. Every figure is generated from the live simulation engine rather than restated from an earlier document.</p>
+<div class="metarow">
+<div><div class="k">Issuer</div><div class="v">BITSWIFT TECHNOLOGIES INC.</div></div>
+<div><div class="k">Total supply</div><div class="v">1,000,000,000 BND</div></div>
+<div><div class="k">Launch FDV</div><div class="v">$50,000,000</div></div>
+<div><div class="k">Basis</div><div class="v">Live simulation engine</div></div>
+</div></div></div>
+<section id="overview" class="wrap"><h2><span class="sec-num">1</span>Overview</h2><div class="qa"><div class="q">Location and incorporation — where is the company headquartered, and how is it structured legally?</div><div class="a"><p>BOUND operates through a three-entity structure that separates ownership of the protocol from token issuance and from operations. The separation is deliberate: protocol revenue and operating cost sit in different entities and are never netted against one another.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Entity</th><th class="num">Jurisdiction</th><th class="num">Role</th></tr></thead><tbody><tr><td><b>Nexus Technologies Foundation</b></td><td>Panama</td><td class="num">Private-interest foundation. Owns the protocol and its intellectual property, and grants the token delegation.</td></tr><tr><td><b>BITSWIFT TECHNOLOGIES INC.</b></td><td>Panama</td><td class="num">Issues and distributes the token, holds raise proceeds, and is the counterparty on the SAFT.</td></tr><tr><td><b>Operating company</b></td><td>European Union</td><td class="num">Develops the protocol, employs the engineering team, runs go-to-market, and bears all operating cost.</td></tr></tbody></table></div><div class="cap">BITSWIFT is registered with the Public Registry of Panama, Mercantile Section, Folio No. 155773464, incorporated under Public Deed No. 21,201 of 22 September 2025.</div>
+<p>The operating company is paid under a development-and-services agreement with the Foundation and the Issuer at cost plus 8%. Intellectual property created by that work vests in the Foundation; the operating company is a service provider, not the owner of what it builds.</p></div></div><div class="qa"><div class="q">Foundation date and operational duration — when were the entities formed, and how long have they been operating?</div><div class="a"><p>The <b>operating company</b> has been active since <b>2022</b>. The two Panama entities were incorporated in September 2025 as part of the formal structuring for launch and fundraising.</p>
+<p><b>BITSWIFT TECHNOLOGIES INC.</b> was incorporated on 22 September 2025 under Public Deed No. 21,201, executed before the Third Notary Public of the Circuit of Panama, and registered with the Public Registry of Panama on 23 September 2025 under Folio No. 155773464.</p>
+<p><b>Nexus Technologies Foundation</b> was incorporated as a Panama private-interest foundation through Mata &amp; Pitti. Its certificate of incorporation, foundation deed, regulations and certificate of incumbency are available in the Legal and Corporate section of this library.</p>
+<p>The Atomic Peg Stabilization System is already deployed and operating, and the MVP is live. The delivery programme documented in the Delivery Roadmap covers the extension of that infrastructure to real-world asset liquidity, scheduled across 22–25 weeks to mainnet inclusive of audit and launch buffer.</p></div></div><div class="qa"><div class="q">Value proposition — in one sentence, what is the product, and who does it create value for?</div><div class="a"><p>BOUND gives holders of tokenized real-world assets an instant exit: a holder brings an RWA token to a BOUND market and receives rwaUSD at a small, transparent discount, with the protocol's own reserve on the other side of the trade every time.</p>
+<p>The value accrues to three parties. <b>RWA holders</b> get liquidity that does not exist today — the alternative is a 30-to-90-day issuer redemption window. <b>RWA issuers</b> get a liquidity layer they plug into with no capital pre-allocation, which makes their product easier to allocate to. <b>Liquidity providers</b> get transparent exposure, through BLI, to the growth of RWA liquidity infrastructure.</p></div></div></section><section id="tokens" class="wrap"><h2><span class="sec-num">2</span>The Three Tokens</h2><div class="qa"><div class="q">What are the protocol's tokens, and what does each one do?</div><div class="a"><p>Functions are separated across three tokens so that risk is never carried by the instrument used as money.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Token</th><th class="num">Role</th><th class="num">Description</th></tr></thead><tbody><tr><td><b>rwaUSD</b></td><td>Settlement dollar</td><td class="num">Always minted against USDC and always backed 100% by USDC. Built to be the settlement dollar of the RWA sector.</td></tr><tr><td><b>BLI</b></td><td>Bound Liquidity Index</td><td class="num">The index token for those who capitalise the system. Its value reflects the reserve's performance and the fees the protocol earns.</td></tr><tr><td><b>BND</b></td><td>Governance token</td><td class="num">The tool holders use to steer the protocol — which RWA markets are onboarded, and what the risk parameters are. Pays protocol fees at a discount and is burned through protocol activity.</td></tr></tbody></table></div>
+<div class="note "><div class="nt">Naming</div><div class="nb">Earlier material referred to the index token as BCI (Bound Collateralization Index) and to rwaUSD as BOUND. Both were renamed; BLI and rwaUSD are the current names and are the names used in the two counsel opinions.</div></div></div></div></section><section id="funding" class="wrap"><h2><span class="sec-num">3</span>Financials and Fundraising</h2><div class="qa"><div class="q">Funding history — how much has been raised to date?</div><div class="a"><p><b>$600,000</b> of invested capital to date. No public token sale, presale or IDO has been conducted, so no marketing capital has been deployed for fundraising purposes.</p></div></div><div class="qa"><div class="q">Current fundraising — how much are you seeking, and across which rounds?</div><div class="a"><p>The full capital programme totals <b>$13,680,000</b> across three rounds.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Round</th><th class="num">Price</th><th class="num">Raise</th><th class="num">Tokens</th><th class="num">% of supply</th><th class="num">Vesting</th></tr></thead><tbody><tr><td>Seed</td><td>$0.0248</td><td>$2,480,000</td><td>100,000,000</td><td>10.00%</td><td class="num">0% at TGE, 6-month cliff, 24-month linear</td></tr><tr><td>Extended Seed</td><td>$0.0400</td><td>$3,700,000</td><td>92,500,000</td><td>9.25%</td><td class="num">0% at TGE, 8-month cliff, 24-month linear</td></tr><tr><td>Public</td><td>$0.0500</td><td>$7,500,000</td><td>150,000,000</td><td>15.00%</td><td class="num">15% at TGE, 12-month linear</td></tr><tr><td><b>Total</b></td><td>—</td><td><b>$13,680,000</b></td><td><b>342,500,000</b></td><td><b>34.25%</b></td><td class="num">—</td></tr></tbody></table></div><div class="cap">Generated from the live tokenomics engine. Seed prices at a 50.4% discount to launch.</div></div></div><div class="qa"><div class="q">Expected valuation — pre-money, post-money, and FDV?</div><div class="a"><p>This is a token financing, so traditional pre- and post-money equity valuations do not apply unless structured separately at the corporate level.</p>
+<ul>
+<li>Seed prices at <b>$0.0248</b>, implying an FDV of <b>$24,800,000</b>.</li>
+<li>Extended Seed prices at <b>$0.0400</b>, implying an FDV of <b>$40,000,000</b>.</li>
+<li>Public and launch price is <b>$0.0500</b>, a launch FDV of <b>$50,000,000</b> on the fixed 1,000,000,000 supply.</li>
+</ul>
+<p>Equity participation in the operating company can be structured separately for strategic investors, subject to agreement.</p></div></div><div class="qa"><div class="q">Investment structure — what instrument is offered?</div><div class="a"><p>A <b>Simple Agreement for Future Tokens (SAFT)</b>, with BITSWIFT TECHNOLOGIES INC. as counterparty. The executed SAFT and its schedules govern any subscription and prevail over any summary document, including this one.</p>
+<p>The SAFT caps any single buyer at 15% of Fully Diluted Token Supply and preserves each buyer's Proportional Entitlement against subsequent supply changes.</p></div></div><div class="qa"><div class="q">Use of funds — how is the raise allocated?</div><div class="a"><div class="tbl-scroll"><table><thead><tr><th>Use</th><th class="num">Amount</th><th class="num">% of raise</th></tr></thead><tbody><tr><td>AMM liquidity — rwaUSD/USDC and BND/USDC</td><td>$4,975,000</td><td class="num">36.4%</td></tr><tr><td>Operating company</td><td>$4,730,000</td><td class="num">34.6%</td></tr><tr><td>Burn Engine seed</td><td>$3,225,000</td><td class="num">23.6%</td></tr><tr><td>Emergency Reserve</td><td>$750,000</td><td class="num">5.5%</td></tr><tr><td><b>Total</b></td><td><b>$13,680,000</b></td><td class="num"><b>100.0%</b></td></tr></tbody></table></div><div class="cap">Seed proceeds are directed to operations. The public raise splits 17 / 30 / 10 / 43 across liquidity, company, emergency reserve and the Burn Engine.</div>
+<p>Within the Seed tranche specifically, proceeds are applied as follows.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Use of Seed investment</th><th class="num">Share</th></tr></thead><tbody><tr><td>Development</td><td class="num">26%</td></tr><tr><td>BD and Sales</td><td class="num">26%</td></tr><tr><td>Legal</td><td class="num">13%</td></tr><tr><td>Security</td><td class="num">13%</td></tr><tr><td>Operational</td><td class="num">13%</td></tr><tr><td>Marketing</td><td class="num">9%</td></tr></tbody></table></div><div class="cap">As stated in the investor pitch deck.</div>
+<p>The operating company runs a <b>24-month funded plan</b> — a horizon of its own, separate from the protocol's 36-month simulation. Against a cost to month 24 of $6,252,226 it holds $7,023,750 of available funding, a surplus of <b>$771,524</b>.</p></div></div><div class="qa"><div class="q">Current financial runway — how long can operations be sustained if this round does not close?</div><div class="a"><p>The operating structure is lean and the protocol infrastructure is already deployed, so recurring cost is limited to infrastructure, hosting and essential administration. On that minimal basis the company can sustain development activity well beyond the round timeline without external financing.</p>
+<div class="note warn"><div class="nt">This is the minimal-operation runway</div><div class="nb">It assumes no hiring, no marketing and no audit spend. The funded plan above — $6,252,226 to month 24 — is the cost of executing the delivery programme, not of remaining dormant.</div></div></div></div><div class="qa"><div class="q">Round timeline — when do you expect to close?</div><div class="a"><p>The Seed round is the current priority. Launch timing is governed by the Delivery Roadmap, which schedules external audit and a public security competition before RWA markets go live.</p></div></div></section><section id="captable" class="wrap"><h2><span class="sec-num">4</span>Cap Table and Token Allocation</h2><div class="qa"><div class="q">Cap table — who owns the operating company?</div><div class="a"><div class="tbl-scroll"><table><thead><tr><th>Shareholder</th><th class="num">Role</th><th class="num">% ownership</th></tr></thead><tbody><tr><td><b>Georgian Ionita</b></td><td>Lead Founder</td><td class="num">70%</td></tr><tr><td><b>Joshua Oloma</b></td><td>Technical Co-founder</td><td class="num">16%</td></tr><tr><td><b>Eugene Shakula</b></td><td>Growth Co-founder</td><td class="num">10%</td></tr><tr><td><b>Voicu Bianca-Andreea</b></td><td>Early Strategic Investor</td><td class="num">4%</td></tr><tr><td><b>Total</b></td><td>—</td><td class="num"><b>100%</b></td></tr></tbody></table></div><div class="cap">Founder cap table of the operating company, as at 23 January 2026.</div>
+<p>The structure keeps majority control within the founding leadership while giving the growth co-founder a meaningful ownership position, with a clear distribution of authority and accountability.</p></div></div><div class="qa"><div class="q">Team token allocation — how is the team's 12% distributed?</div><div class="a"><p>In parallel with the equity structure, the tokenomics allocates <b>12%</b> of total supply to the team, subject to multi-year vesting.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Name</th><th class="num">Role</th><th class="num">% of total supply</th></tr></thead><tbody><tr><td>Georgian Ionita</td><td>Lead Founder</td><td class="num">4.1%</td></tr><tr><td>Joshua Oloma</td><td>Technical Co-founder</td><td class="num">2.7%</td></tr><tr><td>Eugene Shakula</td><td>Growth Co-founder</td><td class="num">2.2%</td></tr><tr><td>Bianca Voicu</td><td>Early Investor</td><td class="num">1.0%</td></tr><tr><td>Core Team Pool</td><td>Contributors and external experts</td><td class="num">2.0%</td></tr><tr><td><b>Total</b></td><td>—</td><td class="num"><b>12%</b></td></tr></tbody></table></div><div class="cap">Named allocations total 10%; the remaining 2% is a Core Team Pool reserved for essential contributors and external experts. Team vesting: 0% at TGE, 12-month cliff, 36-month linear.</div></div></div><div class="qa"><div class="q">Tokenomics — what is the full allocation?</div><div class="a"><p>Fixed maximum supply of <b>1,000,000,000 BND</b>, with no inflationary minting authority. Supply moves in one direction only — downward, as burns retire it.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Allocation</th><th class="num">% of supply</th><th class="num">Tokens</th><th class="num">Notes</th></tr></thead><tbody><tr><td>Community & Ecosystem</td><td>28.75%</td><td>287,500,000</td><td class="num">Ecosystem growth, LP incentives, issuer partnerships. Funds the staking-reward carve-out.</td></tr><tr><td>Public</td><td>15.00%</td><td>150,000,000</td><td class="num">Public sale at $0.0500</td></tr><tr><td>Team</td><td>12%</td><td>120,000,000</td><td class="num">0% at TGE, 12-month cliff, 36-month linear</td></tr><tr><td>Liquidity & MM</td><td>12%</td><td>120,000,000</td><td class="num">Deployed into the AMM pool at launch. Not sellable float.</td></tr><tr><td>Seed</td><td>10.00%</td><td>100,000,000</td><td class="num">0% at TGE, 6-month cliff, 24-month linear</td></tr><tr><td>Extended Seed</td><td>9.25%</td><td>92,500,000</td><td class="num">0% at TGE, 8-month cliff, 24-month linear</td></tr><tr><td>Treasury</td><td>9%</td><td>90,000,000</td><td class="num">Protocol-owned reserve for future spend, grants or emergencies.</td></tr><tr><td>Marketing & Growth</td><td>2%</td><td>20,000,000</td><td class="num">Go-to-market and paid campaigns.</td></tr><tr><td>Advisors</td><td>2%</td><td>20,000,000</td><td class="num">Standard 12-month cliff.</td></tr><tr><td><b>Total</b></td><td><b>100.00%</b></td><td><b>1,000,000,000</b></td><td class="num"></td></tr></tbody></table></div><div class="cap">Generated from the live tokenomics engine. Rounds account for 34.25% and the allocation buckets for the remaining 65.75%.</div></div></div><div class="qa"><div class="q">Are other investors confirmed for this round?</div><div class="a"><p>No participants are confirmed at the time of writing.</p></div></div><div class="qa"><div class="q">Investment terms — anything specific investors should know?</div><div class="a"><p>Terms are set out in full in the SAFT, which is available in the Legal and Corporate section of this library. Two provisions are worth naming here: a single buyer may not acquire more than <b>15% of Fully Diluted Token Supply</b> without written consent, and the buyer's Proportional Entitlement is preserved against subsequent changes to supply.</p>
+<div class="note warn"><div class="nt">No capital protection</div><div class="nb">No portion of a token subscription is guaranteed, insured, escrowed or principal-protected. The full amount is at risk.</div></div></div></div></section><section id="business" class="wrap"><h2><span class="sec-num">5</span>Business Considerations</h2><div class="qa"><div class="q">Market differentiation — what sets BOUND apart?</div><div class="a"><p>Tokenization has succeeded at putting real-world assets on-chain and failed at making them liquid. Competing architectures address this in ways that leave structural gaps: permissioned pools are cut off from public DeFi by KYC restrictions, and credit-line models depend on facilities that can falter precisely when they are needed.</p>
+<p>BOUND's difference is that <b>liquidity is owned rather than rented</b>. The protocol's own reserve stands on the other side of every exit, so it cannot reprice or withdraw under stress — which is exactly when exits are demanded. A holder needs no approval and no counterparty to exit.</p>
+<p>Peg integrity is enforced by the <b>Atomic Peg Stabilization System (APSS)</b>, which detects and corrects deviation atomically within a single transaction, capturing arbitrage that would otherwise go to external bots.</p></div></div><div class="qa"><div class="q">Revenue model — how does the protocol generate revenue?</div><div class="a"><p>Revenue comes predominantly from transaction flow rather than from balance-sheet risk. Across the 36-month modelled horizon the protocol generates <b>$6,828,594</b>.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Stream</th><th class="num">36-month</th><th class="num">Share</th></tr></thead><tbody><tr><td>RWA trade and haircut revenue</td><td>$2,196,952</td><td class="num">31.7%</td></tr><tr><td>Pool trading and APSS stabilization</td><td>$2,018,176</td><td class="num">29.1%</td></tr><tr><td>Deployed-capital yield</td><td>$1,542,345</td><td class="num">22.3%</td></tr><tr><td>Conversion fees</td><td>$627,236</td><td class="num">9.1%</td></tr><tr><td>Maintenance fees (per market, recurring)</td><td>$225,000</td><td class="num">3.2%</td></tr><tr><td>Mint and redemption fees</td><td>$168,024</td><td class="num">2.4%</td></tr><tr><td>Integration fees (one-time, per market)</td><td>$150,000</td><td class="num">2.2%</td></tr></tbody></table></div><div class="cap">Simulator default case. Streams are gross of the split between BLI surplus capital and the Protocol Reserve.</div>
+<p>Revenue scales with capital under custody and with transaction volume rather than with token inflation. Value reaches BND through three rule-bound flows off Protocol Reserve revenue — the Burn Engine, the xBND Revenue Switch, and the Public Staking Pool — rather than through discretionary treasury action.</p></div></div><div class="qa"><div class="q">Customer acquisition — how do you acquire and grow?</div><div class="a"><p>A staged opening of both sides of a two-sided market, governed by stage gates rather than by calendar dates. The protocol opens B2B first and retail second, on both the supply and the demand side.</p>
+<ul>
+<li><b>Stage 1 — private only.</b> Liquidity from private investors, DAOs and companies. The rwaUSD pool is not open; mint and redeem run through the contract directly.</li>
+<li><b>Stage 2 — DeFi liquidity.</b> Opens liquidity provision to DeFi users seeking yield.</li>
+<li><b>Stage 3 — open market.</b> Opens the client side to all RWA holders and the pool to retail.</li>
+</ul>
+<p>Marketing is budgeted at <b>$1,500,000</b> across the horizon, rebuilt from published B2B benchmarks rather than as a percentage of raise.</p></div></div><div class="qa"><div class="q">Traction — what has been achieved so far?</div><div class="a"><p>The protocol is deployed and the APSS is operating. Internal validation has been conducted through live transaction testing; the transaction logs are published in the Test Evidence section of this library and are the measured basis for the arbitrage-capture coefficient the simulation engine applies.</p>
+<ul>
+<li>Core contracts deployed and functional, with access controls in place</li>
+<li>MVP live and accessible at <a href="https://app.boundprotocol.com/">app.boundprotocol.com</a></li>
+<li>Two finalised counsel opinions covering the rwaUSD and BLI tokens</li>
+<li>Corporate structuring complete across all three entities</li>
+<li>Full financial model and go-to-market strategy defined and published</li>
+</ul>
+<div class="note warn"><div class="nt">Pre-revenue</div><div class="nb">The protocol is pre-public-launch, so revenue generation has not commenced. External smart-contract audit and a public security competition are scheduled in the delivery programme and are not yet complete.</div></div></div></div><div class="qa"><div class="q">Team — who is building this?</div><div class="a"><p><b>Georgian Ionita — Founder &amp; CEO.</b> 9+ years across financial markets, crypto and DeFi. Financial Consultant at OVB, a €400M+ group. Derivatives trader who transitioned to DeFi yield strategies in 2022. Founder of IO Investment development firm.</p>
+<p><b>Joshua Oloma — Co-founder &amp; CTO.</b> 10+ years building blockchain and distributed systems. Led infrastructure for UK Government and the National Galleries of Scotland. Co-founder of IO Investment development firm.</p>
+<p><b>Eugene Shakula — Co-founder.</b> 10+ years in business development and sales. Grew a VC portfolio from zero to 70 projects. Sales and implementation with Microsoft, Epson and Panasonic.</p>
+<p>The delivery programme is executed by a ~3.5 FTE blended engineering team across four parallel layers, with a fixed development budget of $320,000 across 22 weeks.</p></div></div></section><section id="strategy" class="wrap"><h2><span class="sec-num">6</span>Strategy and Operations</h2><div class="qa"><div class="q">Exit strategy — TGE and listing?</div><div class="a"><p>For token investors the primary liquidity event is the <b>Token Generation Event</b>, followed by decentralised listing at launch and progressive centralised listings as liquidity and volume scale. The Uniswap v4 BND/USDC pool is committed and seeded directly from the raise; centralised venues are targets under discussion with no executed agreement.</p>
+<p>Private participants receive tokens under the vesting schedules above; Seed liquidity begins after its 6-month cliff. For equity investors in the operating company, exit scenarios include strategic acquisition, secondary sale in later rounds, or long-term participation as the protocol scales.</p></div></div><div class="qa"><div class="q">Six-month plan — key objectives and milestones?</div><div class="a"><ul>
+<li>Complete external smart-contract audits and the public security competition</li>
+<li>Close the Seed and Extended Seed rounds</li>
+<li>Launch the protocol publicly and establish the BND/USDC pool</li>
+<li>Begin B2B onboarding of RWA issuers and private liquidity</li>
+<li>Open Stage 2 liquidity provision to DeFi users once the stage gate is met</li>
+</ul>
+<p>The modelled trajectory takes the Liquidity Layer to <b>$37,791,553</b> and total value under custody to <b>$46,060,161</b> by month 36, with Annualized Index Growth of 11.0% at the close of the period.</p></div></div><div class="qa"><div class="q">Path to the next funding round — how do you reduce execution risk?</div><div class="a"><ul>
+<li>Audited, fully operational protocol launch</li>
+<li>Active B2B integrations with onboarded RWA issuers</li>
+<li>Demonstrated fee revenue across the live streams</li>
+<li>Published contract addresses and verified on-chain history</li>
+</ul>
+<p>Entering the public round with live infrastructure, real capital under custody and verifiable performance materially reduces execution risk relative to entering on projections alone.</p></div></div><div class="qa"><div class="q">Intellectual property — does the company hold patents or other IP?</div><div class="a"><p>No registered patents. The core intellectual property is the protocol architecture, the smart-contract design, the yield-optimisation mechanisms and the Atomic Peg Stabilization System, all developed internally.</p>
+<p>Ownership sits with <b>Nexus Technologies Foundation</b>. The operating company creates the IP under the development-and-services agreement, and it vests in the Foundation; the operating company is a service provider, not the owner of what it builds. Certain components may be open-source in line with blockchain norms, while strategy design, infrastructure architecture and business logic remain internally controlled.</p></div></div></section>
+<section class="wrap"><h2><span class="sec-num">7</span>Important Notice</h2>
+<p>This document answers standard diligence questions and is provided for information only. It is not an offer, solicitation, or recommendation to buy any instrument, and does not constitute investment, legal, or tax advice.</p>
+<p>Forward-looking figures are model outputs generated from internal assumptions on the simulation engine's default preset. They are not guarantees of future performance, and actual results may vary materially through market volatility, regulatory developments, liquidity conditions, delivery risk, or other factors.</p>
+<p>Any subscription is governed exclusively by the executed SAFT and its schedules, which prevail over this document in the event of any inconsistency.</p>
+<p class="cap">Generated 2026-07-28 from the BOUND Protocol simulation engine, default preset, 36-month horizon. Cap tables as at 23 January 2026. Regenerate with <code>node scripts/build-qa.mjs</code>.</p>
+</section>
+<footer class="foot"><div class="wrap"><div>Investment Q&amp;A · BOUND Protocol · Generated from the live simulation engine</div></div></footer>
+</div></div>
+<script>
+(function(){var ls=document.querySelectorAll('.snav a'),ss=document.querySelectorAll('section[id]');
+function u(){var y=window.scrollY+120,c=null;ss.forEach(function(s){if(s.offsetTop<=y)c=s.id;});
+ls.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+c);});}
+window.addEventListener('scroll',u,{passive:true});u();})();
+</script>
+</body></html>

@@ -1,0 +1,1647 @@
+{
+  "front": {
+    "brand": "BOUND Protocol",
+    "kind": "Operating Cost & Company Analysis",
+    "tagline": "Cost Base, Entity Attribution and the Operating Company",
+    "version": "FY2026–FY2028 — July 2026",
+    "place": "Bucharest, Romania"
+  },
+  "chapters": [
+    {
+      "num": "",
+      "id": "abstract",
+      "title": "Abstract",
+      "nav": "Abstract",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "A cost model is only as good as the revenue series it is indexed to. The financial model behind this document scaled its largest cost line against an investment balance that the protocol does not operate — a portfolio fee series unrelated to the liquidity engine the simulator actually models. This document rebases every revenue-scaling cost onto the simulator’s default case and reports what the cost base looks like once that correction is made.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "Over the thirty-six months the simulator covers, the rebased operating cost base totals $9,407,335, against protocol revenue of $6,828,594. Personnel accounts for $2,938,869 of that at full employer cost, spread across nine roles that reach their steady-state headcount within the first five months and do not grow thereafter. The cost-to-revenue ratio falls from 2.63× in the first year to 0.97× in the third. It does not reach parity inside the horizon; the cumulative position at month thirty-six is −$2,578,741.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "This document specifies the scope of the analysis, the rebasing that was performed and why, the composition of the cost base, the personnel plan at gross-to-net detail under Romanian payroll law, and the external benchmarks each material line was tested against. Where the model is understated, that is stated. Where an assumption carries no supporting plan, that is stated too. The figures are model outputs on the assumptions recorded here — not forecasts, and not a budget that has been committed.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "1",
+      "id": "scope",
+      "title": "Scope and Method",
+      "nav": "Scope and Method",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "1.1 Sources",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Two sheets of the financial model are in scope: <b>Costs</b>, which holds the cost forecast and its assumptions, and <b>Personnel costs</b>, which holds the roster, the hiring flags and the salary escalation. No other sheet is quoted, including where the cost sheets reference one. The third source is the simulator itself: the default preset against the default OUSG market, dumped to a fixed series so that every rebased figure in this document can be re-derived rather than trusted.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The financial model runs sixty months. The simulator runs thirty-six. This document is bounded by the shorter of the two — FY2026 through FY2028 — because a cost line rebased onto a series that does not exist is an extrapolation, not a measurement. Years four and five of the financial model are outside this analysis.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "1.2 Reconciliation performed",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Two structural traps in the workbook were identified and corrected before any figure was taken. The <b>Costs</b> sheet begins its monthly series at column I; <b>Personnel costs</b> begins at column H. Reading both from the same column drops December from every year. And personnel must be read from the summary block, which applies the hiring flags, rather than the gross block, which prices all twelve defined roles whether or not they are hired — the difference over five years is $721,268.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "With both corrected, the personnel line inside the cost forecast ties to the personnel sheet in all sixty months, and the category totals tie to the model’s own total-expenses row in every year. Every figure below descends from those two reconciled series.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "2",
+      "id": "rebasing",
+      "title": "Rebasing the Model onto Protocol Results",
+      "nav": "Rebasing",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "2.1 What the model was indexed to",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The financial model computes its largest cost line — payment fees — as one tenth of one percent of a series labelled <i>TVL for portfolios</i>. That series is an investment closing balance carried on a different sheet; it is a custody and portfolio-management fee base, and it moves independently of RWA liquidations, minting, conversions and pool trading. The protocol’s cost of processing flow was therefore indexed to a balance the protocol does not charge against.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The consequence is not a small calibration error. Measured against the simulator’s default case, the balance the model assumes exceeds protocol value under custody by 2.3× in the first year, 3.8× in the second and 5.0× in the third — a gap that widens rather than closes.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Year",
+                "Model implied balance",
+                "Simulator TVL",
+                "Ratio"
+              ],
+              "rows": [
+                [
+                  "FY2026",
+                  "$18,281,483",
+                  "$8,057,981",
+                  "2.3×"
+                ],
+                [
+                  "FY2027",
+                  "$62,926,034",
+                  "$16,677,245",
+                  "3.8×"
+                ],
+                [
+                  "FY2028",
+                  "$164,928,739",
+                  "$32,747,212",
+                  "5.0×"
+                ]
+              ],
+              "cap": "Model implied balance is back-solved from the payment-fee line at its own 0.1% rate. Simulator TVL is the monthly average of Liquidity Layer plus Bound Core balance, default preset. Source: Costs rows 16 and 50; scripts/sim-default.json."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.2 What was replaced",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Three lines are driven by the model’s own revenue series and are rebased here. Payment fees are recomputed at the same one-tenth-of-one-percent rate against protocol transaction volume — the flow the protocol actually processes. Cloud infrastructure and infrastructure maintenance retain the model’s recipe, seeding at one twelfth of their annual assumption and compounding monthly, but compound against the simulator’s volume growth rather than the model’s.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "Everything else is carried unchanged. Personnel, software licences, general and administrative expenses, legal, sales and marketing, and development are not indexed to revenue anywhere in the model, and rebasing them would invent a relationship the source does not contain.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Line",
+                "Original basis",
+                "Rebased basis",
+                "Original 3-yr",
+                "Rebased 3-yr"
+              ],
+              "rows": [
+                [
+                  "Payment fees",
+                  "0.1% × investment balance",
+                  "0.1% × transaction volume",
+                  "$2,953,635",
+                  "$723,687"
+                ],
+                [
+                  "Cloud infrastructure",
+                  "compounds on model revenue growth",
+                  "compounds on simulator volume growth",
+                  "$987,356",
+                  "$1,183,307"
+                ],
+                [
+                  "Maintenance infrastructure",
+                  "compounds on model revenue growth",
+                  "compounds on simulator volume growth",
+                  "$1,175,424",
+                  "$1,408,699"
+                ]
+              ],
+              "cap": "Source: Costs rows 46, 47 and 50, against scripts/sim-default.json. Rates and seeding recipes are unchanged; only the driver series differs."
+            },
+            {
+              "t": "p",
+              "text": "The net effect on the three-year cost base is a reduction of $3,976,052, from $13,383,387 as modelled to $9,407,335 as rebased. Almost all of that reduction is the payment-fee line alone.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.3 Limits of the rebasing",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The rebasing inherits every assumption of the simulator’s default preset, including its single OUSG market, its growth path and its fee schedule. A different preset produces a different cost base, and the sensitivity is roughly linear in volume for payment fees and compounding for the two infrastructure lines. The rebasing also cannot repair a cost line the model never contained: it corrects what is indexed to the wrong series, not what is absent, and the absences are set out in Chapter 9.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "3",
+      "id": "shape",
+      "title": "The Shape of the Cost Base",
+      "nav": "Cost Base",
+      "blocks": [
+        {
+          "t": "kpis",
+          "items": [
+            {
+              "n": "$9,407,335",
+              "l": "Rebased 3-year cost base"
+            },
+            {
+              "n": "$2,938,869",
+              "l": "Personnel at employer cost"
+            },
+            {
+              "n": "31.2%",
+              "l": "Personnel share of base"
+            },
+            {
+              "n": "9",
+              "l": "Steady-state headcount"
+            },
+            {
+              "n": "0.97×",
+              "l": "Cost-to-revenue, FY2028"
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "3.1 Composition",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The cost base is dominated by cost of goods sold, which carries personnel, the two infrastructure lines, software licences and payment fees. Sales and marketing is the largest single discretionary commitment; legal is concentrated almost entirely in the launch year.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Category",
+                "FY2026",
+                "FY2027",
+                "FY2028",
+                "3-year total",
+                "Share"
+              ],
+              "rows": [
+                [
+                  "Cost of goods sold",
+                  "$1,396,303",
+                  "$2,075,182",
+                  "$2,815,786",
+                  "$6,287,271",
+                  "66.8%"
+                ],
+                [
+                  "Sales and marketing",
+                  "$711,429",
+                  "$394,286",
+                  "$394,286",
+                  "$1,500,000",
+                  "15.9%"
+                ],
+                [
+                  "Legal",
+                  "$872,000",
+                  "$72,000",
+                  "$72,000",
+                  "$1,016,000",
+                  "10.8%"
+                ],
+                [
+                  "General and administrative",
+                  "$137,551",
+                  "$58,256",
+                  "$58,256",
+                  "$254,064",
+                  "2.7%"
+                ],
+                [
+                  "Development",
+                  "$250,000",
+                  "$50,000",
+                  "$50,000",
+                  "$350,000",
+                  "3.7%"
+                ],
+                [
+                  "Total",
+                  "$3,367,283",
+                  "$2,649,724",
+                  "$3,390,328",
+                  "$9,407,335",
+                  "100.0%"
+                ]
+              ],
+              "cap": "Rebased. Source: Costs rows 51, 59, 66, 71, 76 and 78, with revenue-scaling lines replaced per Chapter 2."
+            },
+            {
+              "t": "chart",
+              "title": "Cost composition — three-year total",
+              "bars": [
+                {
+                  "lab": "Cost of goods sold",
+                  "val": "$6,287,271",
+                  "pct": 66.83370839317318
+                },
+                {
+                  "lab": "Sales and marketing",
+                  "val": "$1,500,000",
+                  "pct": 15.945004901905472
+                },
+                {
+                  "lab": "Legal",
+                  "val": "$1,016,000",
+                  "pct": 10.800083320223973
+                },
+                {
+                  "lab": "General and administrative",
+                  "val": "$254,064",
+                  "pct": 2.700702240600521
+                },
+                {
+                  "lab": "Development",
+                  "val": "$350,000",
+                  "pct": 3.7205011440968443
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "3.2 The second-year decline",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Costs fall in the second year. This is structural rather than an efficiency: the launch year carries regulatory licensing, the smart-contract audit, the bug-bounty allocation, equipment and application development, and those obligations do not recur on the model’s schedule. The base then resumes growing in the third year as the volume-linked lines compound.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Year",
+                "Total cost",
+                "Change",
+                "Protocol revenue",
+                "Cost-to-revenue"
+              ],
+              "rows": [
+                [
+                  "FY2026",
+                  "$3,367,283",
+                  "—",
+                  "$1,279,599",
+                  "2.63×"
+                ],
+                [
+                  "FY2027",
+                  "$2,649,724",
+                  "−$717,559",
+                  "$2,043,708",
+                  "1.30×"
+                ],
+                [
+                  "FY2028",
+                  "$3,390,328",
+                  "$740,604",
+                  "$3,505,287",
+                  "0.97×"
+                ]
+              ],
+              "cap": "Rebased costs against simulator default-case protocol revenue (BCI surplus capital plus Protocol Reserve)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "4",
+      "id": "cogs",
+      "title": "Cost of Goods Sold",
+      "nav": "Cost of Goods Sold",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Cost of goods sold carries five lines. Two are fixed against headcount, two compound with protocol volume, and one is a direct function of it. Each is stated below with the driver that produces it.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Line",
+            "FY2026",
+            "FY2027",
+            "FY2028",
+            "3-year total",
+            "Driver"
+          ],
+          "rows": [
+            [
+              "Personnel (employer cost)",
+              "$894,391",
+              "$993,135",
+              "$1,051,343",
+              "$2,938,869",
+              "Roster, flags and salary escalation"
+            ],
+            [
+              "Payment fees",
+              "$107,320",
+              "$233,713",
+              "$382,654",
+              "$723,687",
+              "0.1% of protocol transaction volume"
+            ],
+            [
+              "Maintenance infrastructure",
+              "$208,904",
+              "$454,936",
+              "$744,858",
+              "$1,408,699",
+              "Seeded at $50,000/yr, compounds on volume growth"
+            ],
+            [
+              "Cloud infrastructure",
+              "$175,480",
+              "$382,147",
+              "$625,681",
+              "$1,183,307",
+              "Seeded at $42,000/yr, compounds on volume growth"
+            ],
+            [
+              "Software licences",
+              "$10,208",
+              "$11,250",
+              "$11,250",
+              "$32,708",
+              "Headcount-driven, $15,000/yr at full roster"
+            ],
+            [
+              "Total",
+              "$1,396,303",
+              "$2,075,182",
+              "$2,815,786",
+              "$6,287,271",
+              "—"
+            ]
+          ],
+          "cap": "Rebased. Source: Costs rows 45–51; Personnel costs row 85 plus employer contribution."
+        },
+        {
+          "t": "p",
+          "text": "The composition changes materially across the horizon. Personnel is 64.1% of cost of goods sold in the first year and 37.3% in the third, not because the team shrinks but because the volume-linked lines compound around it. That is operating leverage, and it is the single most important structural property of this cost base.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "5",
+      "id": "personnel",
+      "title": "Personnel and Compensation",
+      "nav": "Personnel",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "5.1 The roster",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The model defines twelve roles and hires nine. Headcount reaches five in the first month, nine by the fifth, and does not change again for the remainder of the horizon. Salary is the only escalator: gross pay is indexed at 5.5% in 2026, 6.0% in 2027 and 5.7% thereafter, following the Romanian national forecast, and every role except the founder carries a 10% bonus.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Role",
+                "Allocation",
+                "Gross start salary",
+                "Bonus",
+                "Hire",
+                "3-year gross"
+              ],
+              "rows": [
+                [
+                  "Founder / CEO",
+                  "G&A",
+                  "$162,000",
+                  "0%",
+                  "2026-01",
+                  "$527,455"
+                ],
+                [
+                  "CMO",
+                  "S&M",
+                  "$97,200",
+                  "10%",
+                  "2026-01",
+                  "$348,120"
+                ],
+                [
+                  "CTO / Co-founder",
+                  "R&D",
+                  "$129,600",
+                  "10%",
+                  "2026-01",
+                  "$464,160"
+                ],
+                [
+                  "Content & Education Lead",
+                  "S&M",
+                  "$42,728",
+                  "10%",
+                  "2026-05",
+                  "$137,230"
+                ],
+                [
+                  "Head of BD (Business Development)",
+                  "S&M",
+                  "$94,500",
+                  "10%",
+                  "2026-02",
+                  "$329,768"
+                ],
+                [
+                  "Community Manager",
+                  "S&M",
+                  "$30,780",
+                  "10%",
+                  "2026-05",
+                  "$98,857"
+                ],
+                [
+                  "Institutional Relations Manager",
+                  "S&M",
+                  "$87,750",
+                  "10%",
+                  "2026-02",
+                  "$306,213"
+                ],
+                [
+                  "Product Designer (UX/UI)",
+                  "R&D",
+                  "$56,700",
+                  "10%",
+                  "2026-01",
+                  "$203,070"
+                ],
+                [
+                  "Smart Contract Engineer",
+                  "R&D",
+                  "$128,250",
+                  "10%",
+                  "2026-01",
+                  "$459,325"
+                ]
+              ],
+              "cap": "Source: Personnel costs rows 9–20 (roster and flags) and rows 73–84 (summary). Gross is salary plus bonus, before employer contributions."
+            },
+            {
+              "t": "p",
+              "text": "Three defined roles are never hired: Co-founder, DeFi Strategist, Marketing Lead. They carry salary assumptions in the model and contribute nothing to its cost. They are disclosed here rather than dropped, because a roster that prices twelve roles and staffs nine is a hiring decision that has already been taken.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "5.2 Gross-to-net under Romanian payroll law",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The model records gross pay. Gross pay is not what the protocol spends, and it is not what anyone receives. Under Romanian law an employee contributes 25% of gross to the pension fund and 10% to health insurance, both uncapped; income tax of 10% is then charged on what remains, which is 6.5% of gross. The employer adds a work-insurance contribution of 2.25% on top of gross and owes no pension contribution under normal working conditions.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The arithmetic that follows is therefore fixed: an employee receives 58.5% of gross, the State Budget receives 41.5% of gross from within it, and the employer pays 102.25% of gross in total.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Role",
+                "Gross",
+                "Pension 25%",
+                "Health 10%",
+                "Income tax",
+                "Net received",
+                "Employer 2.25%",
+                "Total employer cost"
+              ],
+              "rows": [
+                [
+                  "Founder / CEO",
+                  "$527,455",
+                  "$131,864",
+                  "$52,746",
+                  "$34,285",
+                  "$308,561",
+                  "$11,868",
+                  "$539,323"
+                ],
+                [
+                  "CMO",
+                  "$348,120",
+                  "$87,030",
+                  "$34,812",
+                  "$22,628",
+                  "$203,650",
+                  "$7,833",
+                  "$355,953"
+                ],
+                [
+                  "CTO / Co-founder",
+                  "$464,160",
+                  "$116,040",
+                  "$46,416",
+                  "$30,170",
+                  "$271,534",
+                  "$10,444",
+                  "$474,604"
+                ],
+                [
+                  "Content & Education Lead",
+                  "$137,230",
+                  "$34,307",
+                  "$13,723",
+                  "$8,920",
+                  "$80,279",
+                  "$3,088",
+                  "$140,317"
+                ],
+                [
+                  "Head of BD (Business Development)",
+                  "$329,768",
+                  "$82,442",
+                  "$32,977",
+                  "$21,435",
+                  "$192,914",
+                  "$7,420",
+                  "$337,188"
+                ],
+                [
+                  "Community Manager",
+                  "$98,857",
+                  "$24,714",
+                  "$9,886",
+                  "$6,426",
+                  "$57,832",
+                  "$2,224",
+                  "$101,082"
+                ],
+                [
+                  "Institutional Relations Manager",
+                  "$306,213",
+                  "$76,553",
+                  "$30,621",
+                  "$19,904",
+                  "$179,135",
+                  "$6,890",
+                  "$313,103"
+                ],
+                [
+                  "Product Designer (UX/UI)",
+                  "$203,070",
+                  "$50,768",
+                  "$20,307",
+                  "$13,200",
+                  "$118,796",
+                  "$4,569",
+                  "$207,639"
+                ],
+                [
+                  "Smart Contract Engineer",
+                  "$459,325",
+                  "$114,831",
+                  "$45,933",
+                  "$29,856",
+                  "$268,705",
+                  "$10,335",
+                  "$469,660"
+                ],
+                [
+                  "Total",
+                  "$2,874,200",
+                  "$718,550",
+                  "$287,420",
+                  "$186,823",
+                  "$1,681,407",
+                  "$64,669",
+                  "$2,938,869"
+                ]
+              ],
+              "cap": "Thirty-six months, FY2026–FY2028, USD. Rates verified against PwC Worldwide Tax Summaries (Romania, 2026): employee CAS 25% and CASS 10%, both uncapped; income tax 10% flat on the post-contribution base; employer CAM 2.25%."
+            },
+            {
+              "t": "kpis",
+              "items": [
+                {
+                  "n": "$2,938,869",
+                  "l": "Total employer cost"
+                },
+                {
+                  "n": "$1,681,407",
+                  "l": "Net reaching employees",
+                  "c": "g"
+                },
+                {
+                  "n": "$1,257,462",
+                  "l": "Total to State Budget",
+                  "c": "w"
+                },
+                {
+                  "n": "42.8%",
+                  "l": "Effective tax wedge"
+                }
+              ]
+            },
+            {
+              "t": "chart",
+              "title": "Where each dollar of employer cost goes",
+              "bars": [
+                {
+                  "lab": "Net to employees",
+                  "val": "$1,681,407",
+                  "pct": 57.21271393643032
+                },
+                {
+                  "lab": "Pension (CAS)",
+                  "val": "$718,550",
+                  "pct": 24.449877750611247
+                },
+                {
+                  "lab": "Health (CASS)",
+                  "val": "$287,420",
+                  "pct": 9.7799511002445
+                },
+                {
+                  "lab": "Income tax",
+                  "val": "$186,823",
+                  "pct": 6.356968215158925
+                },
+                {
+                  "lab": "Work insurance",
+                  "val": "$64,669",
+                  "pct": 2.2004889975550124
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "5.3 What the model omits",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The model carries a 35% payroll-tax assumption that no formula references. That figure is the employee contribution — pension and health combined — and it is deducted from gross rather than added to it, so its absence from the formulas is correct and the personnel line is not understated by 35%. What the model does omit is the employer’s own contribution: 2.25% of gross, or $64,669 across the horizon. That amount is added to every personnel figure in this document and is the only adjustment made to the model’s personnel series.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Year",
+                "Model gross",
+                "Employer contribution",
+                "True employer cost",
+                "Net to staff"
+              ],
+              "rows": [
+                [
+                  "FY2026",
+                  "$874,710",
+                  "$19,681",
+                  "$894,391",
+                  "$511,705"
+                ],
+                [
+                  "FY2027",
+                  "$971,282",
+                  "$21,854",
+                  "$993,135",
+                  "$568,200"
+                ],
+                [
+                  "FY2028",
+                  "$1,028,208",
+                  "$23,135",
+                  "$1,051,343",
+                  "$601,502"
+                ],
+                [
+                  "Total",
+                  "$2,874,200",
+                  "$64,669",
+                  "$2,938,869",
+                  "$1,681,407"
+                ]
+              ],
+              "cap": "Source: Personnel costs row 85, with employer CAM applied."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "6",
+      "id": "opex",
+      "title": "Operating Expenses",
+      "nav": "Operating Expenses",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Outside cost of goods sold the base carries four categories, none of which is indexed to protocol activity. Their shape is dominated by what happens once at launch and what recurs thereafter.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Category",
+            "FY2026",
+            "FY2027",
+            "FY2028",
+            "3-year total",
+            "Character"
+          ],
+          "rows": [
+            [
+              "Sales and marketing",
+              "$711,429",
+              "$394,286",
+              "$394,286",
+              "$1,500,000",
+              "$1.5M launch year, $1.0M recurring"
+            ],
+            [
+              "Legal",
+              "$872,000",
+              "$72,000",
+              "$72,000",
+              "$1,016,000",
+              "Licensing, audit and bounty at launch; advisory recurring"
+            ],
+            [
+              "Development",
+              "$250,000",
+              "$50,000",
+              "$50,000",
+              "$350,000",
+              "Application build at launch; integrations recurring"
+            ],
+            [
+              "General and administrative",
+              "$137,551",
+              "$58,256",
+              "$58,256",
+              "$254,064",
+              "Equipment at launch; office, accounting and recruiting recurring"
+            ]
+          ],
+          "cap": "Source: Costs rows 53–76. Not rebased — none of these lines is revenue-indexed in the model."
+        },
+        {
+          "t": "p",
+          "text": "Sales and marketing is 15.9% of the three-year base and the largest discretionary commitment in the model. It is also the reason personnel accounts for a smaller share of this cost base than is typical, a point taken up in Chapter 8.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "7",
+      "id": "entities",
+      "title": "Entity Attribution",
+      "nav": "Entity Attribution",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Cost belongs to an entity. So does revenue. Until this chapter existed, this document reported a single cost base and the business plan set protocol revenue against it — money that accrues to index holders, netted against costs borne by a company that has no revenue at all. The two sit in different entities and cannot be combined.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Entity",
+            "Jurisdiction",
+            "Role",
+            "Bears"
+          ],
+          "rows": [
+            [
+              "Nexus Technologies Foundation",
+              "Panama",
+              "Owns the protocol and its intellectual property; grants the token delegation",
+              "Capitalised development IP"
+            ],
+            [
+              "BITSWIFT TECHNOLOGIES INC.",
+              "Panama",
+              "Distributes the token; holds raise proceeds; counterparty on the SAFT",
+              "Token legal"
+            ],
+            [
+              "Operating company",
+              "European Union",
+              "Develops the protocol, employs the team, runs go-to-market",
+              "All operating cost"
+            ]
+          ],
+          "cap": "Entity roles as recorded in the corporate documents and the SAFT."
+        },
+        {
+          "t": "sub",
+          "title": "7.1 Every cost line, and who bears it",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "Line",
+                "FY2026",
+                "FY2027",
+                "FY2028",
+                "36-month total",
+                "Borne by"
+              ],
+              "rows": [
+                [
+                  "Personnel (employer cost)",
+                  "$894,391",
+                  "$993,135",
+                  "$1,051,343",
+                  "$2,938,869",
+                  "Operating company"
+                ],
+                [
+                  "Sales and marketing",
+                  "$711,429",
+                  "$394,286",
+                  "$394,286",
+                  "$1,500,000",
+                  "Operating company"
+                ],
+                [
+                  "Maintenance infrastructure",
+                  "$208,904",
+                  "$454,936",
+                  "$744,858",
+                  "$1,408,699",
+                  "Operating company"
+                ],
+                [
+                  "Cloud infrastructure",
+                  "$175,480",
+                  "$382,147",
+                  "$625,681",
+                  "$1,183,307",
+                  "Operating company"
+                ],
+                [
+                  "Legal",
+                  "$872,000",
+                  "$72,000",
+                  "$72,000",
+                  "$1,016,000",
+                  "Split — token legal to Issuer"
+                ],
+                [
+                  "Development",
+                  "$250,000",
+                  "$50,000",
+                  "$50,000",
+                  "$350,000",
+                  "Operating company — billed on, IP to Foundation"
+                ],
+                [
+                  "General and administrative",
+                  "$137,551",
+                  "$58,256",
+                  "$58,256",
+                  "$254,064",
+                  "Operating company"
+                ],
+                [
+                  "Software licences",
+                  "$10,208",
+                  "$11,250",
+                  "$11,250",
+                  "$32,708",
+                  "Operating company"
+                ],
+                [
+                  "Payment fees",
+                  "$107,320",
+                  "$233,713",
+                  "$382,654",
+                  "$723,687",
+                  "Protocol"
+                ],
+                [
+                  "Total",
+                  "$3,367,283",
+                  "$2,649,724",
+                  "$3,390,328",
+                  "$9,407,335",
+                  ""
+                ]
+              ],
+              "cap": "Payment fees scale with on-chain volume and are netted against protocol revenue, not carried by the company."
+            },
+            {
+              "t": "table",
+              "head": [
+                "Bearer",
+                "FY2026",
+                "FY2027",
+                "FY2028",
+                "36-month total",
+                "Share"
+              ],
+              "rows": [
+                [
+                  "Operating company",
+                  "$3,259,963",
+                  "$2,416,011",
+                  "$3,007,674",
+                  "$8,683,648",
+                  "92.3%"
+                ],
+                [
+                  "Protocol",
+                  "$107,320",
+                  "$233,713",
+                  "$382,654",
+                  "$723,687",
+                  "7.7%"
+                ]
+              ],
+              "cap": "The operating company bears 92.3% of the base."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "7.2 Development is billed on, not absorbed",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The Foundation owns the protocol. Development work creates that protocol. So the operating company bills the Foundation for it and the Foundation capitalises the result as intellectual property — $378,000 over the horizon, inclusive of the services margin. Treating it as a bare expense of the operating company would mean one entity paying to build an asset another entity owns, with nothing recorded against it.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "8",
+      "id": "opco",
+      "title": "The Operating Company",
+      "nav": "Operating Company",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The operating company is paid under a development-and-services agreement with the Foundation and the Issuer, at cost plus 8%. That agreement is what gives it a revenue line. Without one it is a cost centre with no income — commercially wrong, and indefensible on transfer pricing, since an EU company performing real work for a Panama principal at zero margin is the textbook challenge.",
+          "boldLabel": false
+        },
+        {
+          "t": "kpis",
+          "items": [
+            {
+              "n": "$9,378,339",
+              "l": "Services revenue, 36 months"
+            },
+            {
+              "n": "$694,692",
+              "l": "Margin at 8%",
+              "c": "g"
+            },
+            {
+              "n": "$111,151",
+              "l": "EU tax at 16%",
+              "c": "w"
+            },
+            {
+              "n": "$260,509",
+              "l": "Monthly cost"
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.1 Profit and loss",
+          "blocks": [
+            {
+              "t": "table",
+              "head": [
+                "USD",
+                "FY2026",
+                "FY2027",
+                "FY2028",
+                "36-month total"
+              ],
+              "rows": [
+                [
+                  "Services revenue",
+                  "$3,520,760",
+                  "$2,609,291",
+                  "$3,248,288",
+                  "$9,378,339"
+                ],
+                [
+                  "Operating cost",
+                  "−$3,259,963",
+                  "−$2,416,011",
+                  "−$3,007,674",
+                  "−$8,683,648"
+                ],
+                [
+                  "Margin",
+                  "$260,797",
+                  "$193,281",
+                  "$240,614",
+                  "$694,692"
+                ],
+                [
+                  "EU corporate tax",
+                  "−$41,728",
+                  "−$30,925",
+                  "−$38,498",
+                  "−$111,151"
+                ],
+                [
+                  "Net result",
+                  "$219,070",
+                  "$162,356",
+                  "$202,116",
+                  "$583,541"
+                ]
+              ],
+              "cap": "Cost plus 8%, taxed at the Romanian corporate rate of 16%. The company is deliberately close to break-even: it is a service provider, not a profit centre."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.2 How it is funded, and for how long",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The company runs a <b>24-month funded plan</b>. That horizon is its own — the protocol's 36-month simulation is a different entity on a different clock, and the two are reported separately throughout this document set.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Source",
+                "Amount",
+                "Form"
+              ],
+              "rows": [
+                [
+                  "Seed raise, directed to operations",
+                  "$2,480,000",
+                  "Cash at token generation"
+                ],
+                [
+                  "Company share of the public raise, 30%",
+                  "$2,250,000",
+                  "Cash at token generation"
+                ],
+                [
+                  "Marketing allocation, 2% of supply",
+                  "$1,000,000",
+                  "Tokens, liquidated on schedule"
+                ],
+                [
+                  "Treasury allocation vested by month 24",
+                  "$1,293,750",
+                  "Tokens, liquidated on schedule"
+                ],
+                [
+                  "Total available",
+                  "$7,023,750",
+                  ""
+                ]
+              ],
+              "cap": "Token figures are valued at the launch price and vest on the schedules in the tokenomics model."
+            },
+            {
+              "t": "note",
+              "text": "Two of the four sources above are token allocations valued at the launch price. They are shown here because they are already allocated and already vesting, not because the plan requires them to be sold. The operating company also holds an equity route: it can raise against its own equity to cover working capital, and that option substitutes for some or all of the token allocations shown above. The company therefore has more than one path to the same funded position.",
+              "kind": "",
+              "head": "More than one funding route"
+            },
+            {
+              "t": "table",
+              "head": [
+                "24-month position",
+                "Amount"
+              ],
+              "rows": [
+                [
+                  "Cost to month 24, including margin",
+                  "$6,252,226"
+                ],
+                [
+                  "Funding available by month 24",
+                  "$7,023,750"
+                ],
+                [
+                  "Surplus",
+                  "$771,524"
+                ]
+              ],
+              "cap": "Monthly cost $260,509. The plan is funded for its stated horizon."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "9",
+      "id": "marketing",
+      "title": "The Marketing Budget",
+      "nav": "Marketing Budget",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Sales and marketing is $1,500,000 over the horizon, rebuilt from published benchmarks rather than carried across from the financial model, which had it at $3,740,000. The first two stages of the go-to-market plan are a direct sales motion — institutional liquidity providers and RWA issuers closed one relationship at a time — and that motion does not consume a mass-market budget.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "At $5,000 to $15,000 per sourced opportunity, the ten to fifteen relationships the first stage needs cost between $75,000 and $225,000 to source. The old budget spent $1,580,000 in the launch year on a motion that cannot absorb it.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Phase",
+            "When",
+            "Line",
+            "Amount"
+          ],
+          "rows": [
+            [
+              "Phase 1 — B2B institutional",
+              "Months 1–5",
+              "Brand system and institutional collateral",
+              "$60,000"
+            ],
+            [
+              "Phase 1 — B2B institutional",
+              "Months 1–5",
+              "Category research and thought leadership",
+              "$50,000"
+            ],
+            [
+              "Phase 1 — B2B institutional",
+              "Months 1–5",
+              "Two Tier-2 conferences",
+              "$120,000"
+            ],
+            [
+              "Phase 1 — B2B institutional",
+              "Months 1–5",
+              "Public relations and analyst relations",
+              "$40,000"
+            ],
+            [
+              "Phase 1 — B2B institutional",
+              "Months 1–5",
+              "Issuer business-development materials and data room",
+              "$30,000"
+            ],
+            [
+              "Phase 2 — Pool launch",
+              "Months 6–8",
+              "Launch campaign",
+              "$120,000"
+            ],
+            [
+              "Phase 2 — Pool launch",
+              "Months 6–8",
+              "One Tier-2 conference",
+              "$60,000"
+            ],
+            [
+              "Phase 2 — Pool launch",
+              "Months 6–8",
+              "Public relations and earned media",
+              "$40,000"
+            ],
+            [
+              "Phase 2 — Pool launch",
+              "Months 6–8",
+              "DeFi ecosystem and integrations",
+              "$60,000"
+            ],
+            [
+              "Phase 3 — Open market",
+              "Months 9–36",
+              "Content and search, $12,000 a month",
+              "$336,000"
+            ],
+            [
+              "Phase 3 — Open market",
+              "Months 9–36",
+              "Community and education, $7,000 a month",
+              "$196,000"
+            ],
+            [
+              "Phase 3 — Open market",
+              "Months 9–36",
+              "Conferences, two a year",
+              "$240,000"
+            ],
+            [
+              "Phase 3 — Open market",
+              "Months 9–36",
+              "Performance marketing, retail acquisition",
+              "$148,000"
+            ],
+            [
+              "Total",
+              "",
+              "",
+              "$1,500,000"
+            ]
+          ],
+          "cap": "Benchmarks, July 2026: Tier-2 conference $50,000–150,000 all-in; events 5–15% of B2B marketing budgets; $5,000–15,000 per sourced opportunity; median B2B sales-led customer acquisition cost $11,400."
+        },
+        {
+          "t": "chart",
+          "title": "Marketing by phase",
+          "bars": [
+            {
+              "lab": "B2B institutional",
+              "val": "$300,000",
+              "pct": 20.0
+            },
+            {
+              "lab": "Pool launch",
+              "val": "$280,000",
+              "pct": 18.666666666666668
+            },
+            {
+              "lab": "Open market",
+              "val": "$920,000",
+              "pct": 61.333333333333336
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "The <b>Marketing token allocation covers $1,000,000</b> of this — 66.7% of the budget. Marketing is funded from that allocation first and from cash second. Spending cash while the allocation intended for exactly this purpose sits idle would be the wrong way round.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "10",
+      "id": "coverage",
+      "title": "Cost Coverage",
+      "nav": "Cost Coverage",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Coverage is an entity-level question, and Chapter 7 established that this document set reports two entities on two clocks. Reporting a single blended coverage ratio would repeat exactly the error this document exists to correct: protocol revenue accrues to index holders and to the Protocol Reserve, while the operating cost base is reimbursed under a services agreement. The two are stated separately below and are never netted.",
+          "boldLabel": false
+        },
+        {
+          "t": "sub",
+          "title": "10.1 The protocol",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The protocol bears payment processing fees and nothing else. Every other line in Chapter 7 belongs to the operating company. Against that, protocol revenue is the BCI surplus and the Protocol Reserve.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Year",
+                "Protocol revenue",
+                "Protocol-borne cost",
+                "Net",
+                "Coverage"
+              ],
+              "rows": [
+                [
+                  "FY2026",
+                  "$1,279,599",
+                  "$107,320",
+                  "$1,172,280",
+                  "11.92×"
+                ],
+                [
+                  "FY2027",
+                  "$2,043,708",
+                  "$233,713",
+                  "$1,809,994",
+                  "8.74×"
+                ],
+                [
+                  "FY2028",
+                  "$3,505,287",
+                  "$382,654",
+                  "$3,122,633",
+                  "9.16×"
+                ],
+                [
+                  "Cumulative",
+                  "$6,828,594",
+                  "$723,687",
+                  "$6,104,907",
+                  "9.44×"
+                ]
+              ],
+              "cap": "Protocol revenue is BCI surplus capital plus Protocol Reserve, simulator default case. Protocol-borne cost is payment processing fees, per Chapter 7."
+            },
+            {
+              "t": "p",
+              "text": "The protocol covers its own costs in every year of the horizon. This is a structural result rather than a favourable one: the protocol is not the entity that employs the team or runs go-to-market, so almost none of the cost base sits here. What this line does establish is that the fee engine is self-sustaining on its own terms, and that protocol revenue is available in full to index holders and the Reserve.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "10.2 The operating company",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The operating company is reimbursed at cost plus 8% under the development-and-services agreement. Its revenue is that fee, not protocol revenue, which it never receives.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Year",
+                "Services revenue",
+                "Operating cost",
+                "Margin",
+                "Net after EU tax"
+              ],
+              "rows": [
+                [
+                  "FY2026",
+                  "$3,520,760",
+                  "−$3,259,963",
+                  "$260,797",
+                  "$219,070"
+                ],
+                [
+                  "FY2027",
+                  "$2,609,291",
+                  "−$2,416,011",
+                  "$193,281",
+                  "$162,356"
+                ],
+                [
+                  "FY2028",
+                  "$3,248,288",
+                  "−$3,007,674",
+                  "$240,614",
+                  "$202,116"
+                ],
+                [
+                  "Cumulative",
+                  "$9,378,339",
+                  "−$8,683,648",
+                  "$694,692",
+                  "$583,541"
+                ]
+              ],
+              "cap": "Cost plus 8%, taxed at the EU corporate rate of 16%."
+            },
+            {
+              "t": "p",
+              "text": "The company returns $583,541 across the horizon. It cannot report a loss on this structure, because its revenue is defined as its cost plus a margin. That is the point of a cost-plus service company and not evidence of commercial strength. The question that matters for the company is funding, not profitability, and it is answered in Chapter 8: the plan is funded to month twenty-four with a surplus.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "10.3 Why these are not combined",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Setting $6,828,594 of protocol revenue against $9,407,335 of total cost base would produce a deficit of −$2,578,741 and a coverage ratio of 1.38×. That figure is stated here only so that it is not derived independently and misread. It has no economic meaning: it charges money owed to index holders against costs borne by a company those holders do not own, and it counts protocol-borne payment fees on the cost side while counting protocol revenue on the other. Chapter 7 rules the combination out, and this chapter observes that ruling.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "note",
+          "text": "These are model outputs on the default preset, not forecasts and not a funding plan. A different preset, a different market set, or a different marketing commitment moves every figure in this chapter.",
+          "kind": "warn",
+          "head": "Read these numbers carefully"
+        }
+      ]
+    },
+    {
+      "num": "11",
+      "id": "validation",
+      "title": "External Validation",
+      "nav": "External Validation",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Every material line was tested against published market ranges for 2026. The results divide cleanly: the security budget is adequate, the regulatory budget is not, and the technical salaries sit below the bands they are competing in.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Line",
+            "Model figure",
+            "Market range",
+            "Assessment",
+            "Source"
+          ],
+          "rows": [
+            [
+              "Smart-contract audit",
+              "$200,000, launch year",
+              "$50K–$100K typical DeFi; $60K–$120K realistic pre-launch",
+              "Adequate to conservative",
+              "Sherlock; Zealynx; QuillAudits (2026)"
+            ],
+            [
+              "Bug bounty",
+              "$300,000, launch year only",
+              "$80K–$100K max reward mid-size; $1M+ at scale",
+              "Budget reasonable; recurrence missing",
+              "Immunefi; Sherlock (2026)"
+            ],
+            [
+              "Regulatory licensing",
+              "$300,000, launch year only",
+              "€350K–€900K first year; €150K–€250K annually to hold",
+              "Understated on both counts",
+              "Crassula; Pharos; InnReg (2026)"
+            ],
+            [
+              "Legal advisory",
+              "$72,000 per year",
+              "€80K–€200K for authorisation preparation alone",
+              "Plausible steady state; light at launch",
+              "Crassula; InnReg (2026)"
+            ],
+            [
+              "Smart-contract engineer",
+              "$128,250 base",
+              "$150K–$200K mid-level; $200K–$300K senior, plus tokens",
+              "Below the mid-level floor",
+              "InterviewPal; CryptoRecruit; Metana (2026)"
+            ],
+            [
+              "Chief technology officer",
+              "$129,600 base",
+              "Senior individual contributors alone command $200K–$300K",
+              "Materially below market",
+              "InterviewPal; CryptoRecruit (2026)"
+            ]
+          ],
+          "cap": "Benchmarks gathered July 2026. Ranges are as published by the cited sources and are indicative, not quotations for this protocol."
+        },
+        {
+          "t": "sub",
+          "title": "8.1 Regulatory licensing",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The model books regulatory licensing once, at $300,000, in the launch year and nothing thereafter. Published first-year costs for a MiCA authorisation run from €350,000 to €900,000 all-in, and holding the authorisation costs a further €150,000 to €250,000 every year. The model is therefore light in the year it spends and silent in the four years it must keep spending. This is the largest single omission identified in the cost base.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.2 Technical compensation",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The smart-contract engineer is budgeted at $128,250 and the chief technology officer at $129,600. Published 2026 ranges place mid-level smart-contract engineers at $150,000 to $200,000 and senior engineers who own protocol architecture at $200,000 to $300,000 before token compensation. Lifting both roles to a $200,000 floor adds approximately $142,150 of base salary a year, or roughly $875,000 across five years once bonus and employer contributions are included.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "The consequence is not that the model is wrong — it is that the model prices a team it may not be able to recruit at these levels. That is a hiring risk carried inside a cost assumption, and it belongs in the cost document rather than outside it.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "8.3 Payroll share",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Payroll typically accounts for 60% to 75% of an early-stage company’s burn. In this model it is 31.2% of the three-year base. The difference is almost entirely the $1.5 million launch marketing commitment and the $1.0 million a year that follows it. Whether that allocation is correct is a strategic question rather than an accounting one; what the comparison establishes is that this cost base is not shaped like a typical early-stage company’s, and the divergence is deliberate and locatable.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "12",
+      "id": "limits",
+      "title": "Model Limits and Open Items",
+      "nav": "Limits",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This chapter names what the cost model does not contain or does not support. It is an engineering disclosure of the model’s boundaries, not a criticism of it.",
+          "boldLabel": false
+        },
+        {
+          "t": "ul",
+          "items": [
+            "Recurring regulatory cost: licensing is booked once at launch. Holding a MiCA authorisation costs €150,000 to €250,000 a year and appears nowhere in the base.",
+            "Recurring security cost: the bug bounty is booked once at launch. A bounty programme that closes after year one is not a bounty programme.",
+            "Headcount plan: the roster reaches nine in month five and never changes, across a horizon in which value under custody grows from $3.6 million to $46.1 million. No hiring is funded against that growth.",
+            "Technical compensation: two of the three engineering-side salaries sit below published market floors, as set out in Chapter 8.",
+            "Cost allocation: every role carries a G&A, S&M or R&D tag, but the cost forecast routes all personnel into cost of goods sold. The tags are unused, so no functional cost split is available from this model.",
+            "Horizon: the analysis stops at month thirty-six because the simulator does. Years four and five of the financial model are unexamined here.",
+            "Scenario dependence: every rebased figure inherits the default preset. No scenario range is presented, and none should be inferred.",
+            "Unhired roles: three defined roles carry salary assumptions and no hiring flag. If the plan intends to hire them, the cost base is understated by their fully loaded cost."
+          ],
+          "boldLabel": true
+        }
+      ]
+    },
+    {
+      "num": "",
+      "id": "disclaimer",
+      "title": "Legal Disclaimer",
+      "nav": "Legal Disclaimer",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. All figures are outputs of a financial model and of the BOUND simulation engine on the assumptions recorded in this document; they are not forecasts, budgets, commitments or guarantees of actual results. Cost figures rebased onto the simulator inherit every assumption of its default preset. Payroll figures apply Romanian statutory rates as published for 2026 and are illustrative of the model’s roster rather than a statement of any individual’s compensation; the applicable jurisdiction, entity of employment and engagement structure are matters of fact not determined by this document. Market benchmarks are drawn from third-party published sources as at July 2026, are indicative rather than quotations, and may change. Forward-looking statements are subject to material uncertainty and change. © 2026 BOUND Protocol.",
+          "boldLabel": false
+        }
+      ]
+    }
+  ]
+}

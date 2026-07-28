@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Contract Architecture — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+body{background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;background-repeat:no-repeat;}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+table{font-size:13px}th,td{padding:8px 10px}
+/* Most tables in this document carry prose, not figures. base.css right-aligns
+   every body cell for financial tables, so these overrides have to match its
+   tbody-td specificity to take effect. Numeric columns are opted back in. */
+tbody td{font-family:var(--sans);white-space:normal;text-align:left}
+thead th{text-align:left}
+/* numeric columns, per table */
+/* contract artefacts and fee rates read as code, not prose */
+#system tbody td:nth-child(2),#migration tbody td:nth-child(2),
+#fees tbody td:nth-child(2),#access tbody td:nth-child(2){font-family:var(--mono);
+  font-size:12px;white-space:nowrap}
+/* Categorical chart ramp — base.css ships only greens. */
+:root{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;--c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+@media (prefers-color-scheme:dark){
+  :root{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;--c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}}
+:root[data-theme="light"]{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;--c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+:root[data-theme="dark"]{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;--c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}
+.cv{width:100%;height:auto;display:block;overflow:visible}
+.cv .grid{stroke:var(--line);stroke-width:1}
+.cv .axis{stroke:var(--line2);stroke-width:1.5}
+.cv .stem{stroke:var(--line2);stroke-width:1;stroke-dasharray:2 3}
+.cv .ax{fill:var(--ink3);font-family:var(--mono);font-size:10.5px}
+.cv .ac{text-anchor:middle}.cv .ar{text-anchor:end}
+.cv .vl{fill:var(--ink);font-family:var(--mono);font-size:12px;font-weight:600;text-anchor:middle}
+.cv .lg{fill:var(--ink2);font-family:var(--sans);font-size:12.5px}
+.cv .lg.strong{fill:var(--ink);font-family:var(--mono);font-size:12px;font-weight:600}
+.cv .pb{fill:#fff;font-family:var(--sans);font-size:12.5px;font-weight:600;text-anchor:middle}
+.cv .gn{fill:var(--ink);font-family:var(--sans);font-size:14px;font-weight:600}
+.cv .gns{fill:var(--ink3);font-family:var(--sans);font-size:11.5px}
+.cv .lnm{fill:var(--ink);font-family:var(--sans);font-size:12.5px;font-weight:600}
+.cv .swc{fill:var(--ink2);font-family:var(--sans);font-size:10.5px}
+.cv .gid{fill:#fff;font-family:var(--mono);font-size:10.5px;font-weight:700}
+.cv .gidbg{fill:var(--accent2)}
+.cv .gtl{fill:var(--ink);font-family:var(--sans);font-size:12.5px}
+.cv .gwk{fill:var(--ink3);font-family:var(--mono);font-size:10.5px;font-variant-numeric:tabular-nums}
+/* milestone cards */
+.mstones{display:grid;gap:16px;margin:16px 0}
+.ms{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px 16px;box-shadow:var(--shadow)}
+.ms-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ms-id{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;color:#fff;
+  background:var(--accent2);border-radius:5px;padding:3px 8px}
+.ms-wk{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.ms h5{margin:0 0 7px;font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.ms-i{font-size:14px;color:var(--ink2);margin:0 0 10px;line-height:1.55}
+.ms ul{margin:0 0 12px;padding-left:18px}
+.ms li{font-size:13.5px;color:var(--ink2);line-height:1.5;margin:4px 0}
+.ms-o{border-left:3px solid var(--accent2);background:var(--raise);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink2);line-height:1.5}
+.ms-o span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:700;color:var(--ink3);margin-bottom:4px}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Smart Contract Architecture</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="abstract" href="#abstract"><span class="snav-num">§</span>Abstract</a><a data-id="system" href="#system"><span class="snav-num">1</span>System Architecture</a><a data-id="components" href="#components"><span class="snav-num">2</span>Component Reference</a><a data-id="access" href="#access"><span class="snav-num">3</span>Access Control</a><a data-id="fees" href="#fees"><span class="snav-num">4</span>Fee Structure</a><a data-id="integrations" href="#integrations"><span class="snav-num">5</span>Integrations</a><a data-id="migration" href="#migration"><span class="snav-num">6</span>RWA Migration</a><a data-id="status" href="#status"><span class="snav-num">7</span>Status</a><a data-id="limits" href="#limits"><span class="snav-num">8</span>Limits</a><a data-id="disclaimer" href="#disclaimer"><span class="snav-num">§</span>Legal Disclaimer</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Smart Contract Architecture</div><h1>The Deployed Contract System</h1>
+<p class="lede">BOUND Protocol — the deployed contract system, and what the RWA migration extends.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Smart Contract Architecture</div></div>
+<div><div class="k">Status</div><div class="v">Confidential — July 2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+<div><div class="k">Origin</div><div class="v">Bucharest, Romania</div></div>
+</div></div></div>
+<div class="wrap">
+<section id="abstract"><div class="sec-head"><div class="sec-num">§</div><h2>Abstract</h2></div>
+<p>BOUND is a modular contract system built on Uniswap V4. Six contracts divide the work: a settlement dollar, a pool hook that defends its peg, an asset manager that deploys the reserve, a calculator that values every position, a converter between the dollar and the index, and the index token itself. This document specifies what each does and how they depend on one another.</p>
+<p>The system described here is <b>deployed and operating</b>. It is the foundation the RWA migration extends rather than replaces, and Chapter 6 maps each component onto the delivery milestones that touch it. What the system does not yet contain — the RWA registry, the oracle engine, the haircut model — is named there rather than implied.</p>
+<p>Two things follow from the architecture and are worth stating at the outset. Peg defence is a hook rather than a service, so it executes inside the user's own transaction and cannot be outbid or front-run. And conversion between the settlement dollar and the index runs through a contract rather than a market, which is what allows the index price to be an on-chain identity rather than a quote.</p>
+<div class="kpis"><div class="kpi"><div class="kn">6</div><div class="kl">Core contracts</div></div><div class="kpi"><div class="kn">4</div><div class="kl">Access levels</div></div><div class="kpi"><div class="kn">5</div><div class="kl">Protocol integrations</div></div><div class="kpi"><div class="kn">Ethereum</div><div class="kl">Deployment network</div></div></div>
+</section>
+<section id="system"><div class="sec-head"><div class="sec-num">1</div><h2>System Architecture</h2></div>
+<p>The dependency graph is deliberately shallow. The token, the asset manager and the index never call one another directly; they meet at the calculator, which is the single place where value is computed. That shape keeps the arithmetic auditable in one contract rather than distributed across five.</p>
+<div class="chart"><div class="ct">Core contract architecture</div><svg viewBox="0 0 880 354" role="img" aria-label="Core contract architecture" class="cv"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ink3)"/></marker></defs><line x1="548.0" y1="56.0" x2="600.0" y2="56.0" stroke="var(--ink3)" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/><line x1="440.0" y1="90.0" x2="440.0" y2="146.0" stroke="var(--ink3)" stroke-width="1.6" marker-end="url(#ah)"/><line x1="280.0" y1="180.0" x2="332.0" y2="180.0" stroke="var(--ink3)" stroke-width="1.6" marker-end="url(#ah)" marker-start="url(#ah)"/><line x1="440.0" y1="214.0" x2="440.0" y2="270.0" stroke="var(--ink3)" stroke-width="1.6" marker-end="url(#ah)"/><line x1="708.0" y1="90.0" x2="708.0" y2="146.0" stroke="var(--ink3)" stroke-width="1.6" marker-end="url(#ah)"/><rect x="332.0" y="22.0" width="216" height="68" rx="9" fill="var(--c1)" fill-opacity=".13" stroke="var(--c1)" stroke-width="1.5"/><text x="440.0" y="52.0" class="gn ac">rwaUSD Token</text><text x="440.0" y="70.0" class="gns ac">Settlement dollar</text><rect x="600.0" y="22.0" width="216" height="68" rx="9" fill="var(--c2)" fill-opacity=".13" stroke="var(--c2)" stroke-width="1.5"/><text x="708.0" y="52.0" class="gn ac">Price Hook</text><text x="708.0" y="70.0" class="gns ac">Peg monitoring</text><rect x="64.0" y="146.0" width="216" height="68" rx="9" fill="var(--c3)" fill-opacity=".13" stroke="var(--c3)" stroke-width="1.5"/><text x="172.0" y="176.0" class="gn ac">Asset Manager</text><text x="172.0" y="194.0" class="gns ac">Reserve deployment</text><rect x="332.0" y="146.0" width="216" height="68" rx="9" fill="var(--c4)" fill-opacity=".13" stroke="var(--c4)" stroke-width="1.5"/><text x="440.0" y="176.0" class="gn ac">Calculator</text><text x="440.0" y="194.0" class="gns ac">Valuation and risk</text><rect x="600.0" y="146.0" width="216" height="68" rx="9" fill="var(--c5)" fill-opacity=".13" stroke="var(--c5)" stroke-width="1.5"/><text x="708.0" y="176.0" class="gn ac">Converter</text><text x="708.0" y="194.0" class="gns ac">rwaUSD ↔ BLI</text><rect x="332.0" y="270.0" width="216" height="68" rx="9" fill="var(--c6)" fill-opacity=".13" stroke="var(--c6)" stroke-width="1.5"/><text x="440.0" y="300.0" class="gn ac">BLI Token</text><text x="440.0" y="318.0" class="gns ac">Liquidity index</text></svg></div><div class="cap">Arrows show call direction; double-headed arrows are bidirectional dependencies. Source: BOUND Smart Contract Architecture overview.</div>
+<div class="tbl-scroll"><table><thead><tr><th>Component</th><th>Source artefact</th><th>Responsibility</th></tr></thead><tbody><tr><td>rwaUSD Token</td><td>BOUND.sol</td><td>Settlement dollar</td></tr><tr><td>Price Monitoring Hook</td><td>BOUNDHook.sol</td><td>Peg surveillance and correction trigger</td></tr><tr><td>Asset Management System</td><td>BAMS.sol</td><td>Reserve deployment</td></tr><tr><td>Conversion Contract</td><td>BOUNDExchange.sol</td><td>rwaUSD ↔ BLI conversion</td></tr><tr><td>Financial Calculator</td><td>BOUNDCalculator.sol</td><td>Valuation and risk arithmetic</td></tr><tr><td>BLI Token</td><td>SBOUNDToken.sol</td><td>Bound Liquidity Index</td></tr></tbody></table></div><div class="cap">Contract filenames are retained as deployed. Component names are given in current protocol terminology: the source predates the rename of BOUND to rwaUSD and sBOUND to BLI.</div>
+</section>
+<section id="components"><div class="sec-head"><div class="sec-num">2</div><h2>Component Reference</h2></div>
+<p>Each contract, its responsibility, and what it carries. Filenames are the deployed artefacts; names are current protocol terminology.</p>
+<h4 class="sub">2.1 rwaUSD Token — BOUND.sol</h4><p>The protocol's ERC20 settlement dollar. It carries the supply accounting the rest of the system settles against, exposes mint and burn to the liquidity pool under access control, and holds the reserve linkage that backs circulating supply.</p>
+<ul class="find"><li>Automatic price stabilization through Uniswap V4 hooks</li><li>Reserve management through the Emergency Reserve mechanism</li><li>Direct minter system for controlled, access-gated exchanges</li></ul>
+<h4 class="sub">2.2 Price Monitoring Hook — BOUNDHook.sol</h4><p>The Uniswap V4 hook that gives the protocol its atomic peg defence. It observes pool state on every interaction and triggers the correcting operation when a deviation crosses threshold — the mechanism the whitepaper describes as the Atomic Peg Stabilization System.</p>
+<ul class="find"><li>Monitors real-time price deviations</li><li>Triggers synchronization when thresholds are exceeded</li><li>Handles Uniswap fee collection (withdrawFeesNoUnlock)</li></ul>
+<h4 class="sub">2.3 Asset Management System — BAMS.sol</h4><p>Deploys reserve capital into the yield-bearing tiers of the Liquidity Layer and routes trades across venues. This is the contract that turns idle collateral into the deployed-capital yield recorded in the protocol's economic model.</p>
+<ul class="find"><li>Integrates with Morpho for lending and borrowing positions</li><li>Connects with Enzyme for vault-based fund management</li><li>Universal Router for V2, V3 and V4 swap routing</li><li>Emergency control features for reserve recovery</li></ul>
+<h4 class="sub">2.4 Conversion Contract — BOUNDExchange.sol</h4><p>The only route between the settlement dollar and the index. Conversion is executed here rather than on a market, which is what allows the index price to be an on-chain identity rather than a quote.</p>
+<ul class="find"><li>Facilitates rwaUSD ↔ BLI conversions</li><li>Fee management on both entry and exit</li><li>Queue-based pending exchange system</li></ul>
+<h4 class="sub">2.5 Financial Calculator — BOUNDCalculator.sol</h4><p>The arithmetic core. Every figure that determines what a participant receives — index price, collateral surplus, position value across venues — is computed here, which is why it sits between the token, the asset manager and the index.</p>
+<ul class="find"><li>Precise handling of multi-decimal assets</li><li>Collateral surplus and risk calculations</li><li>Morpho and Enzyme balance and profit computation</li></ul>
+<h4 class="sub">2.6 BLI Token — SBOUNDToken.sol</h4><p>The index token representing a claim on reserve performance. Its value rises and falls with the reserve; it is an index, not a deposit, and the contract carries no redemption guarantee.</p>
+<ul class="find"><li>Represents index positions in the Liquidity Layer</li><li>Issued and retired in tandem with the conversion contract</li></ul>
+</section>
+<section id="access"><div class="sec-head"><div class="sec-num">3</div><h2>Access Control</h2></div>
+<p>Four access levels, enforced by four modifiers. The design intent is that normal protocol operation requires no privileged key: administrative control exists for emergency and configuration paths, and everything a participant does routinely sits under the public tier.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Access level</th><th>Modifier</th><th>Scope</th></tr></thead><tbody><tr><td>Owner only</td><td>onlyOwner</td><td>Administrative and critical operations</td></tr><tr><td>Direct minters</td><td>onlyDirectMinter</td><td>Authorized entities executing direct exchanges</td></tr><tr><td>Controllers</td><td>onlyOwnerOrControllers</td><td>Hook and asset-manager integrations</td></tr><tr><td>Public</td><td>—</td><td>Standard ERC20 interactions</td></tr></tbody></table></div><div class="cap">Source: BOUND Smart Contract Architecture overview, section 3.</div>
+<p>A fourth modifier, <b>nonReentrant</b>, is not an access level but a safety property: it guards state-changing paths against reentrancy. It appears alongside the access modifiers because every externally callable value-moving function carries both.</p>
+</section>
+<section id="fees"><div class="sec-head"><div class="sec-num">4</div><h2>Fee Structure</h2></div>
+<p>Fees are charged at two points: conversion between the settlement dollar and the index, and direct mint or redemption of the settlement dollar. The rates below are those the protocol's economic model and whitepaper specify, and are the authoritative schedule.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Operation</th><th>Rate</th><th>Applies to</th><th>Destination</th></tr></thead><tbody><tr><td>Conversion — standard</td><td>0.88%</td><td>rwaUSD ↔ BLI, paid in rwaUSD</td><td>Surplus capital; the fee amount is burned</td></tr><tr><td>Conversion — discounted</td><td>0.44%</td><td>rwaUSD ↔ BLI, paid in BND</td><td>Governance token burned; supply reduced</td></tr><tr><td>Direct mint / redemption</td><td>0.30%</td><td>Large direct transactions bypassing the pool</td><td>Split between surplus capital and Protocol Reserve</td></tr></tbody></table></div><div class="cap">Source: protocol whitepaper and simulation engine. Conversion fees apply symmetrically on entry and exit.</div>
+<h4 class="sub">4.1 Fee handling in the contracts</h4><ul class="find"><li>Internal fees denominated in the protocol's own tokens are burned, which raises the backing per remaining unit rather than accruing to any party</li><li>External fees are collected into the reserve</li><li>The Emergency Reserve mechanism holds capital held back from deployment, available for stress conditions</li></ul>
+<div class="note warn"><span class="nh">Recorded discrepancy</span>The source architecture overview records a single exchange fee of 0.30% on conversion. That figure predates the current fee schedule, which prices conversion at 0.88% and 0.44% and reserves 0.30% for direct mint and redemption. The rates above are the authoritative ones; the deployed constant should be confirmed against them before this document is relied on for integration work.</div>
+</section>
+<section id="integrations"><div class="sec-head"><div class="sec-num">5</div><h2>Integrations and Deployment</h2></div>
+<h4 class="sub">5.1 Protocol integrations</h4><p>Five external integrations. One is the venue the protocol defends; three are the yield-bearing tiers of the Liquidity Layer; one is execution routing.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Protocol</th><th>Function</th><th>Role in the architecture</th></tr></thead><tbody><tr><td>Uniswap V4</td><td>Pool management and the hook that carries peg stabilization</td><td>The venue the APSS defends</td></tr><tr><td>Aave</td><td>Liquid lending yield</td><td>Liquidity Layer tier — 3.5% assumed</td></tr><tr><td>Morpho</td><td>Curated lending and borrowing positions</td><td>Liquidity Layer tier — 4.5% assumed</td></tr><tr><td>Enzyme</td><td>Vault-based fund management</td><td>Liquidity Layer enhanced tier — 7.5% assumed</td></tr><tr><td>Universal Router</td><td>Multi-venue swap routing across V2, V3 and V4</td><td>Execution</td></tr></tbody></table></div><div class="cap">Tier yield assumptions are those configured in the simulation engine. Integration set reconciled to the four-tier Liquidity Layer described in the whitepaper.</div>
+<h4 class="sub">5.2 Deployment</h4><p>The protocol deploys on <b>Ethereum</b>. A single-network deployment keeps the peg defence, the reserve and the index price on one state machine, which is the precondition for the atomicity the stabilization system depends on — a correction that spans chains is not a correction that can complete or revert as one operation.</p>
+<p>Earlier architecture drafts described a multi-chain deployment with cross-chain execution routing. That is not the current architecture, and the cross-chain execution dependency it required has been removed from scope.</p>
+</section>
+<section id="migration"><div class="sec-head"><div class="sec-num">6</div><h2>Relationship to the RWA Migration</h2></div>
+<p>This system is the starting point of the delivery programme, not its output. The migration extends the deployed contracts and adds the modules that make real-world assets tradeable; it does not rebuild the peg, the pool or the index.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Component</th><th>Artefact</th><th>Milestones</th><th>What the migration does to it</th></tr></thead><tbody><tr><td>rwaUSD Token</td><td>BOUND.sol</td><td>M1, M2</td><td>Baseline catalogued, then extended for RWA collateral and settlement flows</td></tr><tr><td>Price Monitoring Hook</td><td>BOUNDHook.sol</td><td>M1</td><td>APSS behaviour documented; unchanged by the migration</td></tr><tr><td>Asset Management System</td><td>BAMS.sol</td><td>M2, M4</td><td>Extended for RWA collateral tiers and oracle-driven settlement</td></tr><tr><td>Conversion Contract</td><td>BOUNDExchange.sol</td><td>M2</td><td>Conversion path retained; fee handling aligned to the current schedule</td></tr><tr><td>Financial Calculator</td><td>BOUNDCalculator.sol</td><td>M2, M4</td><td>Extended with haircut computation from oracle data</td></tr><tr><td>BLI Token</td><td>SBOUNDToken.sol</td><td>M1</td><td>Index structure already formed; not a build item in the migration</td></tr><tr><td>— (net new)</td><td>RWA registry</td><td>M2</td><td>Onboarding, eligibility enforcement and haircut assignment on-chain</td></tr><tr><td>— (net new)</td><td>Oracle engine</td><td>M4</td><td>NAV feeds, haircut automation, background settlement processor</td></tr></tbody></table></div><div class="cap">Milestone references are to the Delivery Roadmap.</div>
+<p>Two entries are net new. The RWA registry carries onboarding, eligibility enforcement and haircut assignment on-chain; the oracle engine carries NAV feeds, automated haircut recalculation and the background settlement processor. Everything else in the table already exists and is extended in place.</p>
+</section>
+<section id="status"><div class="sec-head"><div class="sec-num">7</div><h2>Status and Recent Changes</h2></div>
+<h4 class="sub">7.1 Recent changes</h4><ul class="find"><li>Direct minter system — access-controlled exchanges</li><li>Exchange fee handling with safe arithmetic throughout</li><li>Emergency Reserve — additional reserve functionality</li><li>Access control strengthened with fine-grained modifiers</li><li>Decimal precision — multi-decimal compatibility corrected</li></ul>
+<h4 class="sub">7.2 Current status</h4><div class="tbl-scroll"><table><thead><tr><th>Area</th><th>Status</th></tr></thead><tbody><tr><td>Core contracts</td><td>Fully functional</td></tr><tr><td>Security</td><td>Reinforced with access controls</td></tr><tr><td>Integration</td><td>Operational across the integrated protocols</td></tr><tr><td>Testing</td><td>Coverage across modules</td></tr><tr><td>Deployment</td><td>Active</td></tr></tbody></table></div><div class="cap">As characterised in the source architecture overview. These are the engineering team's own descriptions rather than measured results; see Chapter 8.</div>
+<h4 class="sub">7.3 Who builds and who owns</h4><p>The contracts described in this document are built and maintained by the operating company, incorporated in the European Union, which employs the engineering team. The intellectual property vests in Nexus Technologies Foundation, a Panama private-interest foundation that owns the protocol and grants the token delegation. BITSWIFT TECHNOLOGIES INC., also incorporated in Panama, issues and distributes the tokens. Deployment authority and the access-control roles described in Chapter 3 are held by the operating company and are separate from ownership.</p>
+</section>
+<section id="limits"><div class="sec-head"><div class="sec-num">8</div><h2>Limits and Open Items</h2></div>
+<p>What this document does not establish.</p>
+<ul class="find"><li>Fee constant: the deployed conversion fee should be confirmed against the 0.88% and 0.44% schedule recorded in Chapter 4.</li><li>Test coverage: the source characterises coverage as comprehensive but records no figure. No coverage percentage is claimed here.</li><li>Audit status: no external audit of these contracts is recorded in the source. The delivery programme schedules a first-party audit and a public competition before RWA markets go live.</li><li>Contract addresses: no deployed addresses are recorded. Any integration work must take them from the protocol's technical documentation rather than from this overview.</li><li>Function-level detail: this is an architecture overview, not an interface specification. Only the function names the source records appear here.</li><li>Governance token: BND is outside the scope of these contracts and is not described.</li></ul>
+</section>
+<section id="disclaimer"><div class="sec-head"><div class="sec-num">§</div><h2>Legal Disclaimer</h2></div>
+<p>This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. It is an architecture overview and not an interface specification, an audit, or a representation that the described system is free of defects. Statements of status and test coverage are the engineering team's characterisations and have not been independently verified. No external security audit of these contracts is recorded. rwaUSD makes no return promise of any kind; the Bound Liquidity Index is an index whose value can rise or fall. Descriptions of planned extension work are forward-looking and subject to material uncertainty and change. © 2026 BOUND Protocol.</p>
+</section>
+<footer><div class="disc"><b>Note.</b> Component descriptions are parsed from the source architecture overview. Token naming, deployment scope and the fee schedule are rendered in current protocol terms, as recorded in Chapters 4, 5 and 8. Regenerate via <span class="mono">python3 scripts/gen-architecture-content.py</span>, then <span class="mono">node scripts/build-architecture.mjs</span>.</div>
+<div>BOUND Protocol · Smart Contract Architecture · Confidential — July 2026 · Bucharest, Romania</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>

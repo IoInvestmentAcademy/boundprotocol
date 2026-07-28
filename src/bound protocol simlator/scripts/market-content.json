@@ -1,0 +1,807 @@
+{
+ "front": {
+  "brand": "BOUND Protocol",
+  "kind": "Market Analysis",
+  "tagline": "The Liquidity Layer for Tokenized Real-World Assets",
+  "date": "July 2026",
+  "confidential": "Confidential — Prepared for investor and partner distribution"
+ },
+ "chapters": [
+  {
+   "num": "",
+   "id": "exec",
+   "title": "Executive Summary",
+   "nav": "Executive Summary",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Tokenization has solved issuance. It has not solved liquidity. As of July 2026, the distributed on-chain value of tokenized real-world assets (RWAs) stands at approximately $33.5 billion, having roughly tripled year-over-year, with a further ~$389 billion of representative asset value committed to tokenization pipelines. Yet the defining structural weakness of the asset class remains unchanged: between issuance and maturity, most tokenized fixed-income instruments can be exited only through the issuer, on settlement windows that typically run from T+30 to T+90 days. Independent research consistently documents thin secondary markets, wide spreads, and turnover measured in single transfers per year for entire asset categories.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "The market has now priced this problem. In March 2026, Midas — a Berlin-based RWA issuance platform — raised a $50 million Series A led by RRE Ventures and Creandum, with participation from Franklin Templeton, Coinbase Ventures, and Framework Ventures, explicitly to build an instant-liquidity layer for tokenized assets. Midas's own thesis, stated publicly at the raise, is that liquidity — not issuance — is the primary bottleneck for tokenized finance. RWA infrastructure attracted more than $2.5 billion in funding in 2025. The problem BOUND addresses is therefore not speculative: it is the most heavily validated unsolved problem in the tokenized-asset sector.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "BOUND Protocol is positioned as the liquidity layer for tokenized real-world assets. Its architecture rests on a strict separation of functions: rwaUSD, a digital dollar minted only against USDC and backed 100% by USDC, serves as the senior settlement asset — RWA exposure never enters its backing; the Bound Liquidity Index (BLI) quarantines all RWA exposure in a junior, at-risk index token; and the Bound Liquidity Layer supplies the capital that converts locked RWA positions into instant dollar liquidity, recycling acquired inventory rather than depending on issuer redemption alone. Peg integrity is defended by the protocol's Atomic Peg Stabilization System (APSS) rather than by external market makers.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "This report sizes the opportunity using a flow-based framework consistent with how the protocol generates revenue — transaction volume, not idle assets under management. The total addressable market is the tokenized RWA asset base itself, projected by major institutions to reach between $2 trillion (McKinsey, base case) and $18.9 trillion (BCG–Ripple, 2033) over the coming decade. The serviceable market is the issuer-redeemable fixed-income segment — tokenized Treasuries, private credit, and institutional funds — where the redemption-window problem is structural. The obtainable market is modeled bottom-up through BOUND's internal 36-month financial model, driven by onboarded RWA markets and their transaction flows rather than by assumed percentage capture.",
+     "boldLabel": false
+    },
+    {
+     "t": "sub",
+     "title": "Key Findings",
+     "blocks": [
+      {
+       "t": "ul",
+       "items": [
+        "Market scale: The distributed on-chain RWA market reached ~$33.5 billion in July 2026, up from ~$11.8 billion a year earlier; institutional forecasts for 2030–2034 range from $2 trillion to $30 trillion.",
+        "The gap: In one July 2026 snapshot, 56% of tokenized asset positions above $100,000 showed zero weekly on-chain activity; only ~10% of tokenized RWA value circulates in DeFi. Liquidity, not issuance, is the binding constraint.",
+        "Validation: Midas's $50M Series A (March 2026) — backed by Franklin Templeton and Coinbase Ventures — was raised specifically to solve instant redemption, confirming both the problem and investor willingness to fund solutions at scale.",
+        "Competitive openings: Every existing approach imposes a structural cost: pre-allocated capital that must sit idle (Midas MSL), scope limited to near-liquid Treasuries (Ondo Nexus), credit risk inside the dollar (RWA-backed stablecoins), or discounted claims that break under stress (Usual USD0++, January 2025).",
+        "BOUND's position: BOUND supplies protocol-native liquidity with zero issuer pre-allocation, keeps RWA risk fully outside the settlement dollar, and positions rwaUSD as the native stablecoin of the RWA sector — a category with no incumbent."
+       ],
+       "boldLabel": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "1",
+   "id": "scope",
+   "title": "Scope, Methodology, and Data Foundations",
+   "nav": "Scope & Methodology",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "This market analysis has been developed using consolidated institutional and sector datasets to ensure methodological rigor, transparency, and analytical credibility. Its objective is to assess the structural opportunity in on-chain liquidity provision for tokenized real-world assets and to evaluate its relevance to BOUND's positioning as the liquidity layer for the RWA sector.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "The primary quantitative foundation is the RWA.xyz analytics platform, the sector's most widely cited aggregator of tokenized-asset data, which distinguishes between distributed value (tokens issued and freely tradable on-chain) and representative value (assets committed to tokenization but not yet freely transferable). This distinction is applied consistently throughout the report: distributed value is used as the measure of the live market; representative value is treated as pipeline. Long-range projections are drawn from four institutional forecasts — McKinsey & Company (2024), Citi GPS (2023), Boston Consulting Group with Ripple (2025), and Standard Chartered with Synpulse (2024) — presented as a range rather than a point estimate, with the scope differences between them stated explicitly. Evidence on secondary-market liquidity draws on peer-reviewed and institutional research, including academic turnover studies, IOSCO findings on secondary-market fragmentation, and issuer-disclosed redemption mechanics.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "Three methodological disciplines are applied throughout. First, the analysis is anchored to the tokenized-asset flow economy — subscription, redemption, and secondary transaction volumes — rather than to static assets under management, because BOUND's revenue derives predominantly from transactional activity. Second, competitive pools are strictly separated from adoption assumptions: figures describe where capital and flows currently sit, not what BOUND will capture. Third, no forward capture rate is assumed anywhere in this document; the obtainable market is described exclusively through the bottom-up methodology of BOUND's internal 36-month financial model, and no output of that model is presented here as an externally validated figure.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "This analysis deliberately excludes the retail savings and household wealth-allocation framing used in earlier BOUND market materials. Following the protocol's strategic repositioning, the economically relevant market is the tokenized RWA sector and its liquidity flows — the population of RWA holders, issuers, and capital providers — rather than the global retail deposit base. All terminology follows BOUND's compliance language standards: rwaUSD is described as a stable-value settlement asset, and the Bound Liquidity Index is described as an index token whose value can rise or fall; no instrument described in this report is characterized as a deposit, interest-bearing account, or guaranteed-return product. Regulatory positioning statements are subject to ongoing legal review by VD Law Group.",
+     "boldLabel": false
+    }
+   ]
+  },
+  {
+   "num": "2",
+   "id": "context",
+   "title": "Market Context: Tokenization Solved Issuance, Not Liquidity",
+   "nav": "Market Context",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "The tokenized RWA market has moved from experiment to institutional infrastructure. Distributed on-chain value (excluding stablecoins) reached approximately $33.5 billion in early July 2026 — up roughly 400% since January 2025 and nearly triple the level of a year earlier — held by close to one million on-chain wallets across 167 platforms. A further ~$389 billion in representative asset value sits in committed tokenization pipelines. BlackRock's BUIDL fund exceeds $2.5 billion across eight blockchains; the DTCC launched a tokenized-securities pilot in May 2026 covering Russell 1000 equities with more than 50 participating firms; and the SEC approved Nasdaq's proposal to trade and settle certain stocks via tokens.",
+     "boldLabel": false
+    },
+    {
+     "t": "table",
+     "head": [
+      "Metric",
+      "Value (mid-2026)",
+      "Significance"
+     ],
+     "rows": [
+      [
+       "Distributed on-chain RWA value (ex-stablecoins)",
+       "~$33.5 billion",
+       "The live, tradable market BOUND serves"
+      ],
+      [
+       "Representative (pipeline) asset value",
+       "~$389 billion",
+       "Committed but not yet freely transferable — the near-term issuance wave"
+      ],
+      [
+       "Tokenized U.S. Treasuries",
+       "~$15 billion",
+       "Largest single category; led by BlackRock BUIDL (>$2.5B)"
+      ],
+      [
+       "Tokenized private credit (on-chain outstanding)",
+       "~$3.2 billion",
+       "Fastest-growing credit segment; longest redemption cycles"
+      ],
+      [
+       "Tokenized equities",
+       "~$2.2 billion",
+       "Grew ~50% in 30 days; DTCC and Nasdaq pilots underway"
+      ],
+      [
+       "RWA holders / platforms",
+       "~960,000 / 167",
+       "Adoption breadth; fragmentation across venues"
+      ],
+      [
+       "Share of RWA value active in DeFi",
+       "~10%",
+       "Utility gap: most tokenized value sits idle"
+      ]
+     ],
+     "cap": "Sources: RWA.xyz (July 2026); CryptoBriefing; Cryptonomist; Blockchainreporter. Figures are distributed on-chain values unless stated otherwise; category totals vary modestly across trackers due to inclusion criteria."
+    },
+    {
+     "t": "p",
+     "text": "Growth has been resilient to the broader crypto cycle: tokenized RWA value continued climbing through the first half of 2026 even as the wider digital-asset market corrected sharply. The category's expansion is driven by institutional demand for on-chain settlement, regulatory clarity in the EU and the US, and the entry of the world's largest asset managers — over half of the top 20 global asset managers are expected to have launched tokenized products by end-2026.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "What this growth has not delivered is liquidity. Issuance infrastructure is mature; exit infrastructure is not. The next section quantifies that gap, because it — not the headline market size — defines BOUND's opportunity.",
+     "boldLabel": false
+    }
+   ]
+  },
+  {
+   "num": "3",
+   "id": "gap",
+   "title": "The RWA Liquidity Gap: Defining and Evidencing the Problem",
+   "nav": "The RWA Liquidity Gap",
+   "blocks": [
+    {
+     "t": "sub",
+     "title": "3.1 The Structural Contradiction",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Institutional fixed-income RWAs — tokenized Treasuries, money-market funds, and private credit — redeem primarily through the issuer. Redemption is typically gated through the fund administrator, operates on business-day cycles, and for large positions requires advance notice; for private credit and comparable structures, effective settlement windows run from T+30 to T+90 days or longer. The token transfers in seconds; the cash does not. This is the central contradiction of the category: assets marketed as liquid and 24/7, whose realisable exit depends on a slow, bilateral, issuer-controlled process. As industry analysis has put it, a token that settles instantly but requires weeks to redeem is not liquid in any useful sense.",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "Even the most liquid products in the category illustrate the constraint. Ondo's OUSG — one of the few tokenized Treasury products offering 24/7 instant redemption — caps instant transactions and applies $100,000 / $50,000 minimums to non-instant subscriptions and redemptions; its sister product USDY redeems via T+1 bank wire with a $100,000 minimum, below which holders depend entirely on secondary-market depth. In March 2025, Circle's instant BUIDL redemption facility — provisioned with up to 20 million USDC — experienced a 23-hour period of limited availability, demonstrating that even Treasury-grade instant liquidity depends on facilities that can falter precisely when they are needed.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "3.2 The Evidence Base",
+     "blocks": [
+      {
+       "t": "table",
+       "head": [
+        "Indicator",
+        "Finding",
+        "Source"
+       ],
+       "rows": [
+        [
+         "Dormancy",
+         "56% of tokenized asset positions above $100,000 showed zero weekly on-chain activity in a July 2026 snapshot",
+         "RWA.xyz-derived sector reporting, 2026"
+        ],
+        [
+         "Turnover",
+         "Tokenized real-estate tokens changed ownership on average once per year — versus multiple annual turnovers for listed equities",
+         "Academic study (Swinkels), cited in arXiv 2508.11651"
+        ],
+        [
+         "DeFi utility",
+         "Only ~10% of tokenized RWA value circulates in DeFi protocols; Standard Chartered projects 30% by 2030 — contingent on liquidity infrastructure",
+         "Standard Chartered, 2026"
+        ],
+        [
+         "Fragmentation",
+         "1–3% pricing gaps for identical assets across chains; 2–5% friction cost when moving capital cross-chain",
+         "Canton, State of RWA Tokenization 2026"
+        ],
+        [
+         "Flow character",
+         "Largest RWA transfers cluster around ~$10M each — consistent with institutional allocation batching, not active trading",
+         "RWA.xyz transfer data via CoinDesk / PYMNTS, 2026"
+        ],
+        [
+         "Regulatory finding",
+         "Many RWA tokens face low secondary-market liquidity and fragmented trading across chains and venues; no single architecture resolves it alone",
+         "IOSCO research, cited 2026"
+        ]
+       ],
+       "cap": null
+      },
+      {
+       "t": "p",
+       "text": "The pattern across all six indicators is consistent: tokenization creates the possibility of liquidity, not liquidity itself. Secondary venues are fragmented, market-maker incentives are thin, and most tokenized instruments are legally restricted to accredited or whitelisted investors — which shrinks the trading base and concentrates all real exit demand back onto the issuer's redemption calendar. The liquidity problem also scales with the market: every dollar of new issuance in the ~$389 billion pipeline adds to the stock of assets whose holders will eventually require an exit that current infrastructure cannot provide on demand.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "3.3 Why the Gap Persists",
+     "blocks": [
+      {
+       "t": "ul",
+       "items": [
+        "Fragmented pools: Per-asset DEX pools fragment liquidity into isolated, shallow pairs and expose liquidity providers to impermanent loss on instruments they cannot hedge.",
+        "Idle buffers: Idle redemption buffers held by issuers are capital-inefficient and structurally difficult to sustain: liquidity is already the scarcest resource in the RWA sector, and locking it up compounds the problem it is meant to solve.",
+        "Market-maker dependence: Market-maker (RFQ) models depend on external firms continuing to quote; spreads widen and quotes are withdrawn precisely in stress, when exits are demanded most.",
+        "Risk-in-the-dollar designs: Placing RWAs directly into a stablecoin's backing imports credit risk into the dollar itself and pushes the instrument toward asset-referenced-token treatment under MiCA."
+       ],
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "The market therefore still lacks a clean dollar liquidity layer for the illiquid end of tokenized fixed income — one that keeps credit risk entirely out of the settlement dollar, requires no external market makers, imposes no pre-allocation burden on issuers, and can recycle acquired assets rather than always redeeming them. This is the gap BOUND is built to close.",
+       "boldLabel": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "4",
+   "id": "sizing",
+   "title": "Market Sizing: A Flow-Based Framework",
+   "nav": "Market Sizing",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "BOUND's revenue is generated predominantly by transactional activity — RWA liquidation and minting flows through its markets, conversion activity, pool trading, and stabilization operations — rather than by holding assets under management. The sizing framework below therefore defines the addressable universe in terms of the tokenized asset base and the exit and transaction flows it generates, and explicitly avoids assuming any percentage capture of either.",
+     "boldLabel": false
+    },
+    {
+     "t": "sub",
+     "title": "4.1 Total Addressable Market — the Tokenized RWA Asset Base",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "The total addressable market is the tokenized RWA asset base whose liquidity BOUND can serve. Its current distributed value is ~$33.5 billion (July 2026). Its projected trajectory is presented as a range across the four most-cited institutional forecasts, which differ primarily in scope rather than in conviction:",
+       "boldLabel": false
+      },
+      {
+       "t": "table",
+       "head": [
+        "Institution",
+        "Forecast",
+        "Scope Notes"
+       ],
+       "rows": [
+        [
+         "McKinsey & Company (2024)",
+         "$1.9T base / $4T optimistic by 2030",
+         "Narrowest scope: bonds, loans, funds, equities; excludes stablecoins and CBDCs"
+        ],
+        [
+         "Citi GPS (2023)",
+         "$4–5T tokenized digital securities by 2030",
+         "Private-market securities focus, plus ~$1T DLT trade finance"
+        ],
+        [
+         "BCG × Ripple (2025)",
+         "$9.4T by 2030; $18.9T by 2033 (~53% CAGR)",
+         "Broadest scope: includes parts of the tokenized money layer"
+        ],
+        [
+         "Standard Chartered × Synpulse (2024)",
+         "$30.1T by 2034",
+         "Demand-side framing; heavy trade-finance weighting"
+        ]
+       ],
+       "cap": null
+      },
+      {
+       "t": "p",
+       "text": "All four forecasts imply growth of roughly two orders of magnitude from the current ~$33.5B distributed base. This report treats them as scenario bounds, not predictions.",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "Two additional flow-side projections matter for a liquidity protocol specifically: Standard Chartered projects that assets deployed in DeFi could reach $2.7 trillion by 2030, with the share of tokenized RWAs active in DeFi rising from ~10% today to ~30% — a shift that is conditional on exactly the liquidity infrastructure BOUND provides. Under every scenario in the table, the stock of tokenized assets requiring exit liquidity grows faster than issuer redemption infrastructure, meaning the liquidity gap widens in absolute terms even in the most conservative case.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "4.2 Serviceable Addressable Market — Issuer-Redeemable Fixed Income",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "BOUND's serviceable market is the segment where the redemption-window problem is structural: tokenized instruments that redeem through the issuer on delayed settlement cycles. As of mid-2026 this segment comprises tokenized U.S. Treasuries (~$15 billion), tokenized private credit (~$3.2 billion on-chain outstanding), and institutional fund and money-market structures, together representing the substantial majority of distributed non-stablecoin RWA value. Private credit is the highest-friction sub-segment — redemption cycles of T+45 to T+90+ are standard — while Treasuries are the largest and provide the volume base. This is precisely the segment represented in BOUND's onboarding pipeline model, which spans money-market funds, tokenized Treasuries, private credit, and comparable issuer-redeemable structures across staggered launch cohorts.",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "The serviceable market should be read as a flow universe rather than a static pool: the economic quantity BOUND monetizes is the exit and entry demand generated by this asset base each month — a function of the assets' size, holder composition, and liquidity behavior — plus the secondary transaction volume that becomes possible once instant exit exists. Because the segment is projected to grow with the overall market under every institutional scenario above, the serviceable flow base compounds accordingly.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "4.3 Obtainable Market — Bottom-Up, Model-Driven",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Consistent with the methodological discipline stated in Section 1, this report does not assume a fixed percentage capture of the serviceable segment. BOUND's obtainable market is instead modeled bottom-up in the protocol's internal 36-month financial model, which simulates: (i) a staggered onboarding schedule of individual RWA markets, each parameterized by assets under management, monthly liquidation and minting rates, and issuer redemption timelines; (ii) liquidity-provider capital formation in the Bound Liquidity Layer; (iii) conversion and stabilization flows; and (iv) the protocol's full fee architecture. The model enforces Basel-style liquidity-coverage discipline on every projection: RWA acceptance is capped so that projected liquidity coverage never falls below policy floors, meaning modeled volumes are constrained by demonstrated capital capacity rather than by market-share aspiration.",
+       "boldLabel": false
+      },
+      {
+       "t": "p",
+       "text": "Outputs of that model — protocol revenue, reserve growth, and index performance across bear-to-bull parameter ranges — are maintained in BOUND's financial and business plan and its interactive simulator, and are available to counterparties under separate cover. They are deliberately not restated in this market analysis, so that the market evidence presented here remains fully independent of internal projections.",
+       "boldLabel": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "5",
+   "id": "demand",
+   "title": "Demand-Side Segments",
+   "nav": "Demand-Side Segments",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "BOUND serves three participant groups whose needs are distinct and complementary. Unlike retail-savings framings, each segment below is already active in the tokenized RWA economy today.",
+     "boldLabel": false
+    },
+    {
+     "t": "sub",
+     "title": "5.1 RWA Holders — the Liquidity Demand Side",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Institutions, funds, treasuries, and qualified investors holding tokenized fixed-income positions face the structural exit problem documented in Section 3. Their base is measurable: ~960,000 on-chain RWA holders as of July 2026, up 13% in a single month, with position sizes at the institutional end clustering around multi-million-dollar allocations. For this segment, BOUND's proposition is unambiguous: instant exit from an RWA position into rwaUSD at a transparent, risk-tiered haircut — at any time, without waiting on the issuer's calendar, and without negotiating with a market maker. The value of that option grows with position size and with the illiquidity of the underlying instrument, which is why private credit holders represent the highest-willingness-to-pay cohort.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "5.2 RWA Issuers — the B2B Channel",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Issuers of tokenized Treasuries, credit funds, and money-market products compete on distribution, and secondary liquidity has become a first-order selling point in institutional due diligence. Every incumbent liquidity approach asks issuers to pay for it structurally — by pre-allocating reserve capital (the Midas MSL model), by maintaining idle redemption buffers, or by contracting external market makers. BOUND's issuer proposition inverts this: a dedicated rwaUSD trading market for the issuer's token, integration into a shared liquidity standard, and instant-exit capability for the issuer's clients, with zero pre-allocation of issuer capital. The issuer relationship is monetized through integration and maintenance fees and per-transaction economics, making issuers a recurring B2B revenue channel rather than a subsidy burden. BOUND's onboarding model contemplates ten reference markets in its first three years, spanning the major issuer archetypes now live on-chain.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "5.3 Liquidity Providers — the Capital Supply Side",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "The Bound Liquidity Layer is capitalized by professional and qualified participants who provide the dollars that fund RWA exits, with access at launch structured private-first in line with the protocol's regulatory positioning. For this segment, BOUND offers exposure to the collateral performance of the protocol through the Bound Liquidity Index — an index token whose value reflects reserve performance and protocol-generated fees, reported transparently as Annualized Index Growth. BLI is explicitly not marketed as a deposit or interest product, and its value can rise or fall; the addressable pool is the professional on-chain capital already allocating to RWA and stablecoin infrastructure, a sector that attracted over $2.5 billion in dedicated funding in 2025.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "5.4 Retail rwaUSD Users — the Long-Term Standard",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "The long-term vision positions rwaUSD as the native stablecoin of the RWA sector: the common settlement unit that RWA participants hold, transact in, and denominate positions in, with a maintained rwaUSD/USDC pool connecting it to the broader stablecoin economy. Because rwaUSD is minted only against USDC and backed 100% by USDC, it inherits the security profile of the most institutionally accepted regulated stablecoin while adding sector-specific utility. Retail participation in this vision is as users of a payment- and settlement-grade digital dollar — not as purchasers of a return-bearing product — which is what makes the design durable under both MiCA and the post-GENIUS US framework (Section 8).",
+       "boldLabel": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "6",
+   "id": "midas",
+   "title": "Competitive Validation: Midas and the $50 Million Signal",
+   "nav": "Competitive Validation — Midas",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "The single most important competitive event in the RWA sector in 2026 was not a product launch — it was a funding round. On 30 March 2026, Midas closed a $50 million Series A led by RRE Ventures and Creandum, with participation from Framework Ventures, HV Capital, Ledger Cathay, Franklin Templeton, Coinbase Ventures, GSR, Anchorage Digital, and others, bringing its total funding to $58.75 million. The stated purpose of the round was to build and launch Midas Staked Liquidity (MSL) — a dedicated redemption facility with up to $40 million in initial capacity, designed to let holders of Midas's tokenized products exit instantly instead of waiting days for settlement.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "Midas's public framing of the raise is, in effect, BOUND's problem statement delivered by a competitor: liquidity, rather than issuance, is the primary bottleneck for tokenized finance; tokenized products can be minted at scale but are hard to exit at scale. That a platform with $1.7 billion in cumulative issuance, EU regulatory approval for retail distribution, and Franklin Templeton on its cap table chose to spend its Series A on this specific problem is the clearest available market evidence that (i) the RWA liquidity gap is real and urgent, and (ii) sophisticated investors will fund solutions to it at significant valuations.",
+     "boldLabel": false
+    },
+    {
+     "t": "sub",
+     "title": "6.1 Why the MSL Model Does Not Close the Gap",
+     "blocks": [
+      {
+       "t": "ul",
+       "items": [
+        "Pre-allocation burden: MSL works by pre-allocating dedicated staked capital against redemptions. Liquidity is already the scarcest resource in the RWA sector; requiring capital to sit reserved against exits is structurally inconvenient and compounds the problem it addresses. Facility capacity — up to $40 million initially — scales only as far as providers are willing to commit, against $1.7 billion of issued assets.",
+        "Closed perimeter: MSL serves Midas's own mToken suite. It is a feature of one issuer's product line, not shared infrastructure for the sector; every other issuer's liquidity problem remains unsolved by it.",
+        "Stress dependence: A facility funded by committed liquidity providers concentrates redemption demand onto a finite pool exactly when exits spike. The model's stress behavior is untested at scale, and its economics depend on providers remaining committed through drawdowns.",
+        "No retail standard: MSL remains a DeFi-native construct accessed through protocol interfaces. It improves exit mechanics for existing holders; it does not create a simple, sector-wide liquid settlement asset that retail, institutions, and issuers can all use without protocol knowledge."
+       ],
+       "boldLabel": true
+      },
+      {
+       "t": "p",
+       "text": "BOUND's read is therefore that Midas has validated the problem and funded the wrong architecture for solving it sector-wide. BOUND builds the liquidity layer natively into the protocol: dollars are supplied by a protocol-owned reserve that earns a conservative base return when idle, acquired RWA inventory is recycled through the protocol's own markets rather than parked against redemptions, and the settlement asset — rwaUSD — is usable by anyone, for any integrated RWA market, with no pre-allocation demanded of issuers and no external market makers to withdraw in stress. Midas's own issuance data is additionally useful to BOUND commercially: it demonstrates per-platform issuance of $1.7 billion and 20,000+ holders in under two years, calibrating the scale a single well-executed RWA platform can reach — and therefore the flow volume a shared liquidity layer can address across many such platforms.",
+       "boldLabel": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "7",
+   "id": "landscape",
+   "title": "Competitive Landscape",
+   "nav": "Competitive Landscape",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "The competitive set consists of every architecture attempting to convert locked RWA positions into usable dollars. Six approaches are live in the market; each imposes a structural cost that BOUND's design avoids.",
+     "boldLabel": false
+    },
+    {
+     "t": "table",
+     "head": [
+      "Approach (exemplar)",
+      "Mechanism",
+      "Core Limitation"
+     ],
+     "rows": [
+      [
+       "Per-asset DEX pools",
+       "Isolated liquidity pool per RWA token",
+       "Fragmented and shallow; impermanent-loss exposure for LPs; 1–3% cross-chain pricing gaps"
+      ],
+      [
+       "Issuer redemption buffers",
+       "Pre-held cash reserved for exits",
+       "Capital-inefficient; unsustainable at scale; the buffer is idle by design"
+      ],
+      [
+       "Ondo Nexus",
+       "Shared instant redemption for tokenized Treasuries via OUSG mint/redeem rails",
+       "Scope limited to near-liquid Treasuries; depends on facilities that have faltered (Circle BUIDL facility, March 2025); does not address illiquid credit"
+      ],
+      [
+       "Midas MSL",
+       "Pre-allocated staked liquidity facility (up to $40M initial) for Midas mTokens",
+       "Issuer/LP pre-allocation burden; closed to one platform; scales only with committed capital"
+      ],
+      [
+       "Market-maker / RFQ models",
+       "Institutional market makers quote exits on request",
+       "Quotes widen or vanish in stress; liquidity is rented, not owned"
+      ],
+      [
+       "RWA-backed stablecoins",
+       "RWA placed directly in dollar backing, over-collateralised",
+       "Credit risk inside the dollar; pushes toward asset-referenced-token treatment under MiCA; issuer-level permissioning"
+      ],
+      [
+       "Discounted staked claims (Usual USD0++)",
+       "Early exit at a floor price below par",
+       "January 2025: floor cut to $0.87 without notice; token depegged to ~$0.89–0.935; cascading Morpho liquidations and a 92% Curve pool imbalance"
+      ]
+     ],
+     "cap": "Sources: Ondo Finance disclosures; Midas Series A materials; MiCA Regulation (EU) 2023/1114; contemporaneous coverage of the USD0++ event, January 2025."
+    },
+    {
+     "t": "sub",
+     "title": "7.1 Case Study — USD0++: What Happens When Stress Meets a Discounted Claim",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "The Usual USD0++ event of January 2025 is the sector's clearest controlled experiment in liquidity design failure. USD0++ offered holders of an RWA-backed position an early-exit mechanism that the market treated as par-redeemable money. On 9–10 January 2025, the protocol replaced unconditional 1:1 redemption with a $0.87 floor — without advance notice. The token depegged within hours to approximately $0.89–0.935; the largest Curve pool reached a 92% imbalance; more than $200 million of Morpho borrows collateralized by USD0++ crossed liquidation thresholds; and a Pendle market's TVL halved in hours. The structural lesson is directly relevant to BOUND's architecture: an illiquid, discounted claim must never be allowed to masquerade as stable money. BOUND enforces that lesson by construction — rwaUSD is never backed by RWA and never trades at a protocol-imposed discount, while all RWA exposure is quarantined in the BLI, an index token that is explicitly not money and whose value can rise or fall.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "7.2 BOUND's Structural Position",
+     "blocks": [
+      {
+       "t": "table",
+       "head": [
+        "Dimension",
+        "BOUND",
+        "Midas MSL",
+        "RWA-backed stablecoins"
+       ],
+       "rows": [
+        [
+         "Settlement-dollar security",
+         "rwaUSD 100% USDC-backed; RWA risk fully isolated in BLI",
+         "N/A (no settlement dollar)",
+         "RWA in backing = credit risk in the dollar"
+        ],
+        [
+         "Liquidity source",
+         "Protocol-owned reserve + APSS; no external market makers",
+         "Pre-allocated capital from committed LPs",
+         "Issuer-controlled redemption buffers"
+        ],
+        [
+         "Issuer burden",
+         "Zero pre-allocation",
+         "Capital must be reserved against redemptions",
+         "Varies; typically issuer-permissioned"
+        ],
+        [
+         "Scope",
+         "Any integrated RWA market, incl. illiquid credit",
+         "Midas mTokens only",
+         "Single issuer's asset base"
+        ],
+        [
+         "Stress behavior",
+         "Stabilization operations become more active — and more profitable — under stress",
+         "Finite facility; provider commitment untested in drawdown",
+         "Dependent on collateral performance"
+        ],
+        [
+         "Accessibility",
+         "Same UX as any stablecoin; retail-usable settlement asset",
+         "DeFi-native; protocol knowledge required",
+         "Permissioned at issuer level"
+        ]
+       ],
+       "cap": null
+      },
+      {
+       "t": "p",
+       "text": "The core narrative for investors and partners follows directly: Midas raised $50 million to prove this problem is real and worth solving. Its solution asks capital to sit pre-allocated and users to navigate DeFi complexity. BOUND builds the liquidity layer natively into the protocol — no pre-allocation, no market makers, no complexity — and delivers it through rwaUSD, the liquid dollar designed for the RWA sector.",
+       "boldLabel": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "8",
+   "id": "stablecoin",
+   "title": "Stablecoin Market Context: Positioning rwaUSD",
+   "nav": "Stablecoin Market Context",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Stablecoins are the settlement layer of on-chain finance. Total circulating supply reached a record ~$322 billion in June 2026, with on-chain transfer volume in 2025 exceeding $27 trillion — surpassing the combined annual volume of Visa and Mastercard. Institutional forecasts see the market reaching $1.9 trillion (Citi base case, 2030; $4 trillion bull case) to $2 trillion as early as end-2028 (Standard Chartered). USDT (~59% share) and USDC (~24%) dominate supply, but the regulated segment is consolidating rapidly around MiCA- and GENIUS-aligned issuers following the EU's July 2026 enforcement deadline and the associated USDT delistings on major European venues.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "rwaUSD does not compete in the yield-bearing stablecoin race, and this is a deliberate strategic and regulatory choice. JPMorgan analysts have projected that yield-bearing stablecoins could eventually capture up to 50% of the stablecoin market — but that entire category now sits in the crosshairs of both regimes: the GENIUS Act prohibits issuer-paid interest on payment stablecoins, and MiCA restricts interest tied to holding e-money tokens, with the ongoing CLARITY Act debate in the US centering precisely on where permissible rewards end and prohibited passive interest begins. rwaUSD's design — a digital dollar minted only against USDC, backed 100% by USDC, making no return promise of any kind — is on the durable side of that regulatory line in both jurisdictions.",
+     "boldLabel": false
+    },
+    {
+     "t": "p",
+     "text": "Its differentiation is instead functional: rwaUSD is the settlement asset purpose-built for the RWA sector. General-purpose stablecoins connect crypto markets to dollars; none provides native exit liquidity for tokenized RWAs, dedicated per-asset RWA markets, or a protocol-level stabilization system that defends the peg without external market makers. As the tokenized-asset base grows toward the institutional forecasts in Section 4, the sector's need for a common, clean, always-liquid settlement unit grows with it — a category position that is currently unoccupied. The maintained rwaUSD/USDC pool ties this position into the broader ~$322 billion stablecoin economy, allowing capital to move seamlessly between the general stablecoin ecosystem and the RWA ecosystem.",
+     "boldLabel": false
+    }
+   ]
+  },
+  {
+   "num": "9",
+   "id": "regulatory",
+   "title": "Regulatory Environment",
+   "nav": "Regulatory Environment",
+   "blocks": [
+    {
+     "t": "sub",
+     "title": "9.1 European Union — MiCA",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "The Markets in Crypto-Assets Regulation (EU) 2023/1114 has been fully applicable since 30 December 2024, with stablecoin (EMT/ART) provisions live since 30 June 2024 and all transitional arrangements ended on 1 July 2026 — a deadline that produced the largest delisting wave in European market history for non-compliant tokens. Three features of the regime map directly onto BOUND's design choices. First, e-money tokens must honor redemption at par at all times and be fully backed by segregated reserves — a standard rwaUSD's 100% USDC backing and atomic peg defense are engineered to meet. Second, MiCA's treatment of asset-referenced tokens penalizes designs that place risk assets inside a dollar-denominated token — precisely the architecture BOUND rejects by quarantining all RWA exposure in the BLI. Third, MiCA restricts interest tied to holding a token, which BOUND's no-yield-language design and index-token framing respect by construction. BOUND's MiCA positioning, including the classification of rwaUSD and the private-placement treatment of BLI access at launch, is under ongoing legal review with VD Law Group; statements in this section describe design intent, not a completed authorization.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "9.2 United States — GENIUS Act and CLARITY Act",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "The GENIUS Act (Public Law 119-27, signed 18 July 2025) created the first US federal framework for payment stablecoins: issuance restricted to permitted issuers, 1:1 reserves in high-quality liquid assets, monthly disclosures — and a prohibition on paying interest to holders. Final agency rules across six regulators face a statutory deadline of 18 July 2026, with the full regime operational by early 2027. The subsequent CLARITY Act debate has focused on stablecoin yield delivered through indirect channels, with proposals to close the gap between prohibited passive interest and permitted activity-based rewards. The direction of US policy is therefore unambiguous: non-yield-bearing, fully reserved payment dollars are the compliant category, and yield-embedded dollar instruments face structural headwinds. rwaUSD's architecture aligns with the compliant category by design.",
+       "boldLabel": false
+      }
+     ]
+    },
+    {
+     "t": "sub",
+     "title": "9.3 The Regulatory Moat",
+     "blocks": [
+      {
+       "t": "p",
+       "text": "Regulation is commonly framed as a constraint on stablecoin innovation; for BOUND it functions as a moat. Both major regimes now actively disadvantage the two competing architectures closest to BOUND's territory — yield-bearing dollars (interest prohibitions) and RWA-collateralized dollars (asset-referenced-token treatment and reserve-composition rules) — while rewarding exactly the separation BOUND enforces between a clean settlement dollar and a clearly labeled at-risk index instrument. Sustained regulatory convergence on these principles raises the cost of entry for architecturally non-compliant competitors over time.",
+       "boldLabel": false
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": "10",
+   "id": "whynow",
+   "title": "Why Now",
+   "nav": "Why Now",
+   "blocks": [
+    {
+     "t": "p",
+     "text": "Four independent developments converge to make 2026 the entry window for a sector-wide RWA liquidity layer:",
+     "boldLabel": false
+    },
+    {
+     "t": "ul",
+     "items": [
+      "Scale: The asset base has reached escape velocity: distributed on-chain RWA value roughly tripled year-over-year to ~$33.5 billion, with a ~$389 billion committed pipeline, DTCC and Nasdaq settlement pilots underway, and the majority of top-20 global asset managers launching tokenized products. Every incremental dollar of issuance adds to the stock of locked positions requiring exit infrastructure.",
+      "Capital signal: The liquidity problem has been priced by the market: Midas's $50 million Series A — with Franklin Templeton and Coinbase Ventures participating — and over $2.5 billion of RWA infrastructure funding in 2025 demonstrate that the specific problem BOUND solves now commands institutional capital. Validation has arrived before a sector-wide solution has.",
+      "Regulatory alignment: Regulatory clarity has crystallized on both sides of the Atlantic — MiCA fully enforced from July 2026, GENIUS Act final rules due July 2026 — and the rules favor BOUND's architecture while structurally penalizing the closest alternatives.",
+      "Open category: The category position of “native stablecoin of the RWA sector” remains unoccupied: incumbent stablecoins are general-purpose, incumbent liquidity solutions are single-platform or single-asset-class, and no participant has yet established the shared settlement standard the sector's own growth requires."
+     ],
+     "boldLabel": true
+    },
+    {
+     "t": "p",
+     "text": "Windows of this shape close quickly. The combination of a validated problem, funded competitor experiments with structural flaws, favorable regulation, and an unoccupied category standard defines a first-mover opportunity that narrows as issuance — and issuer-by-issuer point solutions — compound.",
+     "boldLabel": false
+    }
+   ]
+  },
+  {
+   "num": "11",
+   "id": "conclusions",
+   "title": "Conclusions",
+   "nav": "Conclusions",
+   "blocks": [
+    {
+     "t": "ul",
+     "items": [
+      "1. Liquidity is the binding constraint of the tokenized-asset economy. The market has tripled in a year to ~$33.5 billion of distributed value, yet 56% of large positions show zero weekly activity and effective exits still run T+30 to T+90 through issuers. Issuance infrastructure matured; exit infrastructure did not.",
+      "2. The problem is now institutionally validated and funded. Midas's $50 million Series A, raised explicitly to solve instant redemption, and $2.5 billion+ of 2025 RWA infrastructure funding establish both urgency and investor appetite — while the funded solutions (pre-allocated facilities, Treasuries-only rails, discounted claims) each carry structural limitations that leave the sector-wide problem open.",
+      "3. The opportunity scales with every credible forecast. Whether the tokenized-asset base reaches McKinsey's $2 trillion or BCG–Ripple's $18.9 trillion, the flow of capital requiring instant exit grows by roughly two orders of magnitude, and a liquidity layer monetizing transaction flow scales with it — independent of which forecast proves correct.",
+      "4. BOUND's architecture is aligned with where regulation is going. A 100% USDC-backed settlement dollar with no return promise, strict quarantine of RWA risk in a labeled index token, and protocol-native peg defense sit on the compliant side of both MiCA and the GENIUS framework — while the closest competing architectures sit on the wrong side.",
+      "5. The strategic prize is the standard, not the feature. Instant redemption is a feature individual issuers will keep rebuilding platform-by-platform; a common liquid settlement asset for the entire RWA sector is a standard, and standards are winner-take-most. rwaUSD is positioned for that role, and this window — validated, funded, regulated, and unoccupied — is when it is decided."
+     ],
+     "boldLabel": false
+    }
+   ]
+  },
+  {
+   "num": "",
+   "id": "sources",
+   "title": "Works Cited",
+   "nav": "Works Cited",
+   "blocks": [
+    {
+     "t": "cite",
+     "text": "1. RWA.xyz — Analytics on Tokenized Real-World Assets, distributed and representative on-chain value data, July 2026. https://app.rwa.xyz/"
+    },
+    {
+     "t": "cite",
+     "text": "2. CoinDesk, “Midas raises $50 million to tackle pain point for tokenized asset investors,” 30 March 2026. https://www.coindesk.com/business/2026/03/30/midas-raises-usd50-million-to-tackle-pain-point-for-tokenized-asset-investors"
+    },
+    {
+     "t": "cite",
+     "text": "3. Midas / Cathay Capital, “Midas Raises $50M Series A Led by RRE and Creandum,” 30 March 2026. https://www.cathaycapital.com/midas-raises-50m-series-a-led-by-rre-and-creandum/"
+    },
+    {
+     "t": "cite",
+     "text": "4. Cointelegraph, “Midas raises $50M to build ‘instant liquidity layer’ for tokenized RWAs,” March 2026 (incl. $2.5B+ 2025 RWA infrastructure funding figure and IOSCO secondary-liquidity finding)."
+    },
+    {
+     "t": "cite",
+     "text": "5. CoinMarketCap Academy, “Midas Raises $50M To Build Instant Liquidity Layer for Tokenized Assets” (MSL facility capacity up to $40M), 2026."
+    },
+    {
+     "t": "cite",
+     "text": "6. Cryptonomist, “Tokenized Real-World Assets Market Surges to $32 Billion,” 8 July 2026 (Standard Chartered / Geoff Kendrick DeFi-RWA projections; US Treasuries ~$15B)."
+    },
+    {
+     "t": "cite",
+     "text": "7. CryptoBriefing, “Real world assets tokenization surges across five key sectors,” 8 July 2026 (distributed value ~$33.5B; representative asset value $388.55B)."
+    },
+    {
+     "t": "cite",
+     "text": "8. Blockchainreporter, “RWA Tokenization News Today: Market Size & Trends 2026,” July 2026 (56% zero-weekly-activity snapshot; ~10% of RWA value in DeFi)."
+    },
+    {
+     "t": "cite",
+     "text": "9. Cryptic, “RWA Tokenization 2026: Market Size, Trends & Data,” July 2026 (167 platforms; ~960,000 holders; growth vs. January 2025; private credit ~$3.2B)."
+    },
+    {
+     "t": "cite",
+     "text": "10. McKinsey & Company, “From ripples to waves: The transformational power of tokenizing assets,” June 2024 ($1.9T base / $4T optimistic 2030 scenario)."
+    },
+    {
+     "t": "cite",
+     "text": "11. Boston Consulting Group & Ripple, “Approaching the Tokenization Tipping Point,” April 2025 ($9.4T by 2030; $18.9T by 2033; ~53% CAGR)."
+    },
+    {
+     "t": "cite",
+     "text": "12. Citi GPS, “Money, Tokens, and Games,” March 2023 ($4–5T tokenized digital securities by 2030)."
+    },
+    {
+     "t": "cite",
+     "text": "13. Standard Chartered & Synpulse, “Real-World Asset Tokenisation,” 2024 ($30.1T by 2034)."
+    },
+    {
+     "t": "cite",
+     "text": "14. a16z crypto, “7 Charts: Tokenized assets have proved the concept. Now comes the hard part,” May 2026 (forecast comparison and scope differences)."
+    },
+    {
+     "t": "cite",
+     "text": "15. Ondo Finance, “Introducing Ondo Nexus,” February 2025; “The Liquidity Advantage,” April 2025 (facility scope; Circle BUIDL instant-redemption facility disruption of 27 March 2025)."
+    },
+    {
+     "t": "cite",
+     "text": "16. Gate Research / CryptoCadet / Coin360 coverage of the Usual USD0++ redemption-floor event, 9–15 January 2025 (floor $0.87; depeg to ~$0.89–0.935; Curve pool imbalance; Morpho liquidations)."
+    },
+    {
+     "t": "cite",
+     "text": "17. arXiv 2508.11651, “Tokenize Everything, But Can You Sell It? RWA Liquidity Challenges and the Road Ahead,” 2025 (turnover, fragmentation, and redemption-restriction findings)."
+    },
+    {
+     "t": "cite",
+     "text": "18. PYMNTS, “Tokenization’s Institutional Pitch Hits a Liquidity Wall,” February 2026; “Tokenized Real-World Asset Value Jumps Fourfold,” March 2026 (institutional allocation batching; thin secondary volumes)."
+    },
+    {
+     "t": "cite",
+     "text": "19. VaaSBlock, “Tokenized Real-World Assets Crossed $20 Billion. Now Comes the Hard Part,” 2026 (redemption gating via fund administrators; business-day cycles; advance-notice requirements)."
+    },
+    {
+     "t": "cite",
+     "text": "20. MetaMask / Consensys citing Canton, “State of RWA Tokenization 2026” (1–3% cross-chain pricing gaps; 2–5% cross-chain friction costs)."
+    },
+    {
+     "t": "cite",
+     "text": "21. DefiLlama / Transak, “Stablecoin Market Cap in 2026,” June 2026 (~$316B market cap; USDT ~59%, USDC ~24%); Stablecoin Insider, “Q2 2026 Stablecoin Market Report” (record $322B, June 2026)."
+    },
+    {
+     "t": "cite",
+     "text": "22. Citi (September 2025 revision): $1.9T stablecoin base case / $4T bull case by 2030; Standard Chartered (April 2025): $2T by end-2028."
+    },
+    {
+     "t": "cite",
+     "text": "23. The Block, “JPMorgan sees yield-bearing stablecoins growing from 6% to 50% of the market” (analyst scenario)."
+    },
+    {
+     "t": "cite",
+     "text": "24. US Public Law 119-27, GENIUS Act, signed 18 July 2025; agency rulemaking through July 2026 (OCC, FDIC, Treasury, FinCEN, OFAC)."
+    },
+    {
+     "t": "cite",
+     "text": "25. Regulation (EU) 2023/1114 (MiCA); EMT/ART provisions applicable from 30 June 2024; end of transitional arrangements 1 July 2026; par-redemption requirement for e-money tokens."
+    },
+    {
+     "t": "cite",
+     "text": "26. Ondo Finance product documentation, OUSG (instant vs. non-instant transaction minimums; qualified-purchaser access) and USDY (T+1 redemption; $100,000 minimum), 2026."
+    },
+    {
+     "t": "cite",
+     "text": "27. BOUND Protocol internal 36-month financial model (v8 simulator), July 2026 — proprietary; referenced for bottom-up target-market methodology only."
+    },
+    {
+     "t": "cite",
+     "text": "28. BOUND Protocol APSS mainnet deployment data, 2026 — proprietary protocol telemetry."
+    },
+    {
+     "t": "note",
+     "text": "This document is provided for informational purposes only and does not constitute an offer to sell or a solicitation of an offer to buy any asset, nor investment, legal, or tax advice. Forward-looking statements reflect third-party projections or design intent and are subject to material uncertainty. Regulatory positioning is subject to ongoing legal review. © 2026 BOUND Protocol / IO Investment."
+    }
+   ]
+  }
+ ]
+}

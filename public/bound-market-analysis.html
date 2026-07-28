@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Market Analysis — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+/* Ambient abstract-green background — identical recipe to the audit page */
+body{
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;
+  background-repeat:no-repeat;
+}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);
+}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+/* Confidentiality marker in the masthead */
+.confidential{display:inline-block;margin-top:14px;padding:5px 11px;border-radius:999px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;
+  color:var(--warn);background:var(--warnSoft);border:1px solid color-mix(in srgb,var(--warn) 34%,transparent)}
+/* Works Cited entries */
+.cite{font-size:12.5px;line-height:1.6;color:var(--ink2);margin:0 0 9px;padding-left:2px}
+.cite a{color:var(--accent2);text-decoration:none;word-break:break-word}
+.cite a:hover{text-decoration:underline}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Market Analysis</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="exec" href="#exec"><span class="snav-num">§</span>Executive Summary</a><a data-id="scope" href="#scope"><span class="snav-num">1</span>Scope &amp; Methodology</a><a data-id="context" href="#context"><span class="snav-num">2</span>Market Context</a><a data-id="gap" href="#gap"><span class="snav-num">3</span>The RWA Liquidity Gap</a><a data-id="sizing" href="#sizing"><span class="snav-num">4</span>Market Sizing</a><a data-id="demand" href="#demand"><span class="snav-num">5</span>Demand-Side Segments</a><a data-id="midas" href="#midas"><span class="snav-num">6</span>Competitive Validation — Midas</a><a data-id="landscape" href="#landscape"><span class="snav-num">7</span>Competitive Landscape</a><a data-id="stablecoin" href="#stablecoin"><span class="snav-num">8</span>Stablecoin Market Context</a><a data-id="regulatory" href="#regulatory"><span class="snav-num">9</span>Regulatory Environment</a><a data-id="whynow" href="#whynow"><span class="snav-num">10</span>Why Now</a><a data-id="conclusions" href="#conclusions"><span class="snav-num">11</span>Conclusions</a><a data-id="sources" href="#sources"><span class="snav-num">§</span>Works Cited</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Market Analysis</div><h1>The Liquidity Layer for Tokenized Real-World Assets</h1>
+<p class="lede">BOUND Protocol — the RWA liquidity opportunity, sized from the tokenized-asset flow economy.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Market Analysis</div></div>
+<div><div class="k">Date</div><div class="v">July 2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+</div>
+<div class="confidential">Confidential — Prepared for investor and partner distribution</div>
+</div></div>
+<div class="wrap">
+<section id="exec"><div class="sec-head"><div class="sec-num">§</div><h2>Executive Summary</h2></div>
+<p>Tokenization has solved issuance. It has not solved liquidity. As of July 2026, the distributed on-chain value of tokenized real-world assets (RWAs) stands at approximately $33.5 billion, having roughly tripled year-over-year, with a further ~$389 billion of representative asset value committed to tokenization pipelines. Yet the defining structural weakness of the asset class remains unchanged: between issuance and maturity, most tokenized fixed-income instruments can be exited only through the issuer, on settlement windows that typically run from T+30 to T+90 days. Independent research consistently documents thin secondary markets, wide spreads, and turnover measured in single transfers per year for entire asset categories.</p>
+<p>The market has now priced this problem. In March 2026, Midas — a Berlin-based RWA issuance platform — raised a $50 million Series A led by RRE Ventures and Creandum, with participation from Franklin Templeton, Coinbase Ventures, and Framework Ventures, explicitly to build an instant-liquidity layer for tokenized assets. Midas's own thesis, stated publicly at the raise, is that liquidity — not issuance — is the primary bottleneck for tokenized finance. RWA infrastructure attracted more than $2.5 billion in funding in 2025. The problem BOUND addresses is therefore not speculative: it is the most heavily validated unsolved problem in the tokenized-asset sector.</p>
+<p>BOUND Protocol is positioned as the liquidity layer for tokenized real-world assets. Its architecture rests on a strict separation of functions: rwaUSD, a digital dollar minted only against USDC and backed 100% by USDC, serves as the senior settlement asset — RWA exposure never enters its backing; the Bound Liquidity Index (BLI) quarantines all RWA exposure in a junior, at-risk index token; and the Bound Liquidity Layer supplies the capital that converts locked RWA positions into instant dollar liquidity, recycling acquired inventory rather than depending on issuer redemption alone. Peg integrity is defended by the protocol's Atomic Peg Stabilization System (APSS) rather than by external market makers.</p>
+<p>This report sizes the opportunity using a flow-based framework consistent with how the protocol generates revenue — transaction volume, not idle assets under management. The total addressable market is the tokenized RWA asset base itself, projected by major institutions to reach between $2 trillion (McKinsey, base case) and $18.9 trillion (BCG–Ripple, 2033) over the coming decade. The serviceable market is the issuer-redeemable fixed-income segment — tokenized Treasuries, private credit, and institutional funds — where the redemption-window problem is structural. The obtainable market is modeled bottom-up through BOUND's internal 36-month financial model, driven by onboarded RWA markets and their transaction flows rather than by assumed percentage capture.</p>
+<h4 class="sub">Key Findings</h4><ul class="find"><li><b>Market scale:</b> The distributed on-chain RWA market reached ~$33.5 billion in July 2026, up from ~$11.8 billion a year earlier; institutional forecasts for 2030–2034 range from $2 trillion to $30 trillion.</li><li><b>The gap:</b> In one July 2026 snapshot, 56% of tokenized asset positions above $100,000 showed zero weekly on-chain activity; only ~10% of tokenized RWA value circulates in DeFi. Liquidity, not issuance, is the binding constraint.</li><li><b>Validation:</b> Midas's $50M Series A (March 2026) — backed by Franklin Templeton and Coinbase Ventures — was raised specifically to solve instant redemption, confirming both the problem and investor willingness to fund solutions at scale.</li><li><b>Competitive openings:</b> Every existing approach imposes a structural cost: pre-allocated capital that must sit idle (Midas MSL), scope limited to near-liquid Treasuries (Ondo Nexus), credit risk inside the dollar (RWA-backed stablecoins), or discounted claims that break under stress (Usual USD0++, January 2025).</li><li><b>BOUND's position:</b> BOUND supplies protocol-native liquidity with zero issuer pre-allocation, keeps RWA risk fully outside the settlement dollar, and positions rwaUSD as the native stablecoin of the RWA sector — a category with no incumbent.</li></ul>
+</section>
+<section id="scope"><div class="sec-head"><div class="sec-num">1</div><h2>Scope, Methodology, and Data Foundations</h2></div>
+<p>This market analysis has been developed using consolidated institutional and sector datasets to ensure methodological rigor, transparency, and analytical credibility. Its objective is to assess the structural opportunity in on-chain liquidity provision for tokenized real-world assets and to evaluate its relevance to BOUND's positioning as the liquidity layer for the RWA sector.</p>
+<p>The primary quantitative foundation is the RWA.xyz analytics platform, the sector's most widely cited aggregator of tokenized-asset data, which distinguishes between distributed value (tokens issued and freely tradable on-chain) and representative value (assets committed to tokenization but not yet freely transferable). This distinction is applied consistently throughout the report: distributed value is used as the measure of the live market; representative value is treated as pipeline. Long-range projections are drawn from four institutional forecasts — McKinsey &amp; Company (2024), Citi GPS (2023), Boston Consulting Group with Ripple (2025), and Standard Chartered with Synpulse (2024) — presented as a range rather than a point estimate, with the scope differences between them stated explicitly. Evidence on secondary-market liquidity draws on peer-reviewed and institutional research, including academic turnover studies, IOSCO findings on secondary-market fragmentation, and issuer-disclosed redemption mechanics.</p>
+<p>Three methodological disciplines are applied throughout. First, the analysis is anchored to the tokenized-asset flow economy — subscription, redemption, and secondary transaction volumes — rather than to static assets under management, because BOUND's revenue derives predominantly from transactional activity. Second, competitive pools are strictly separated from adoption assumptions: figures describe where capital and flows currently sit, not what BOUND will capture. Third, no forward capture rate is assumed anywhere in this document; the obtainable market is described exclusively through the bottom-up methodology of BOUND's internal 36-month financial model, and no output of that model is presented here as an externally validated figure.</p>
+<p>This analysis deliberately excludes the retail savings and household wealth-allocation framing used in earlier BOUND market materials. Following the protocol's strategic repositioning, the economically relevant market is the tokenized RWA sector and its liquidity flows — the population of RWA holders, issuers, and capital providers — rather than the global retail deposit base. All terminology follows BOUND's compliance language standards: rwaUSD is described as a stable-value settlement asset, and the Bound Liquidity Index is described as an index token whose value can rise or fall; no instrument described in this report is characterized as a deposit, interest-bearing account, or guaranteed-return product. Regulatory positioning statements are subject to ongoing legal review by VD Law Group.</p>
+</section>
+<section id="context"><div class="sec-head"><div class="sec-num">2</div><h2>Market Context: Tokenization Solved Issuance, Not Liquidity</h2></div>
+<p>The tokenized RWA market has moved from experiment to institutional infrastructure. Distributed on-chain value (excluding stablecoins) reached approximately $33.5 billion in early July 2026 — up roughly 400% since January 2025 and nearly triple the level of a year earlier — held by close to one million on-chain wallets across 167 platforms. A further ~$389 billion in representative asset value sits in committed tokenization pipelines. BlackRock's BUIDL fund exceeds $2.5 billion across eight blockchains; the DTCC launched a tokenized-securities pilot in May 2026 covering Russell 1000 equities with more than 50 participating firms; and the SEC approved Nasdaq's proposal to trade and settle certain stocks via tokens.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Metric</th><th>Value (mid-2026)</th><th>Significance</th></tr></thead><tbody><tr><td>Distributed on-chain RWA value (ex-stablecoins)</td><td>~$33.5 billion</td><td>The live, tradable market BOUND serves</td></tr><tr><td>Representative (pipeline) asset value</td><td>~$389 billion</td><td>Committed but not yet freely transferable — the near-term issuance wave</td></tr><tr><td>Tokenized U.S. Treasuries</td><td>~$15 billion</td><td>Largest single category; led by BlackRock BUIDL (&gt;$2.5B)</td></tr><tr><td>Tokenized private credit (on-chain outstanding)</td><td>~$3.2 billion</td><td>Fastest-growing credit segment; longest redemption cycles</td></tr><tr><td>Tokenized equities</td><td>~$2.2 billion</td><td>Grew ~50% in 30 days; DTCC and Nasdaq pilots underway</td></tr><tr><td>RWA holders / platforms</td><td>~960,000 / 167</td><td>Adoption breadth; fragmentation across venues</td></tr><tr><td>Share of RWA value active in DeFi</td><td>~10%</td><td>Utility gap: most tokenized value sits idle</td></tr></tbody></table></div><div class="cap">Sources: RWA.xyz (July 2026); CryptoBriefing; Cryptonomist; Blockchainreporter. Figures are distributed on-chain values unless stated otherwise; category totals vary modestly across trackers due to inclusion criteria.</div>
+<p>Growth has been resilient to the broader crypto cycle: tokenized RWA value continued climbing through the first half of 2026 even as the wider digital-asset market corrected sharply. The category's expansion is driven by institutional demand for on-chain settlement, regulatory clarity in the EU and the US, and the entry of the world's largest asset managers — over half of the top 20 global asset managers are expected to have launched tokenized products by end-2026.</p>
+<p>What this growth has not delivered is liquidity. Issuance infrastructure is mature; exit infrastructure is not. The next section quantifies that gap, because it — not the headline market size — defines BOUND's opportunity.</p>
+</section>
+<section id="gap"><div class="sec-head"><div class="sec-num">3</div><h2>The RWA Liquidity Gap: Defining and Evidencing the Problem</h2></div>
+<h4 class="sub">3.1 The Structural Contradiction</h4><p>Institutional fixed-income RWAs — tokenized Treasuries, money-market funds, and private credit — redeem primarily through the issuer. Redemption is typically gated through the fund administrator, operates on business-day cycles, and for large positions requires advance notice; for private credit and comparable structures, effective settlement windows run from T+30 to T+90 days or longer. The token transfers in seconds; the cash does not. This is the central contradiction of the category: assets marketed as liquid and 24/7, whose realisable exit depends on a slow, bilateral, issuer-controlled process. As industry analysis has put it, a token that settles instantly but requires weeks to redeem is not liquid in any useful sense.</p>
+<p>Even the most liquid products in the category illustrate the constraint. Ondo's OUSG — one of the few tokenized Treasury products offering 24/7 instant redemption — caps instant transactions and applies $100,000 / $50,000 minimums to non-instant subscriptions and redemptions; its sister product USDY redeems via T+1 bank wire with a $100,000 minimum, below which holders depend entirely on secondary-market depth. In March 2025, Circle's instant BUIDL redemption facility — provisioned with up to 20 million USDC — experienced a 23-hour period of limited availability, demonstrating that even Treasury-grade instant liquidity depends on facilities that can falter precisely when they are needed.</p>
+<h4 class="sub">3.2 The Evidence Base</h4><div class="tbl-scroll"><table><thead><tr><th>Indicator</th><th>Finding</th><th>Source</th></tr></thead><tbody><tr><td>Dormancy</td><td>56% of tokenized asset positions above $100,000 showed zero weekly on-chain activity in a July 2026 snapshot</td><td>RWA.xyz-derived sector reporting, 2026</td></tr><tr><td>Turnover</td><td>Tokenized real-estate tokens changed ownership on average once per year — versus multiple annual turnovers for listed equities</td><td>Academic study (Swinkels), cited in arXiv 2508.11651</td></tr><tr><td>DeFi utility</td><td>Only ~10% of tokenized RWA value circulates in DeFi protocols; Standard Chartered projects 30% by 2030 — contingent on liquidity infrastructure</td><td>Standard Chartered, 2026</td></tr><tr><td>Fragmentation</td><td>1–3% pricing gaps for identical assets across chains; 2–5% friction cost when moving capital cross-chain</td><td>Canton, State of RWA Tokenization 2026</td></tr><tr><td>Flow character</td><td>Largest RWA transfers cluster around ~$10M each — consistent with institutional allocation batching, not active trading</td><td>RWA.xyz transfer data via CoinDesk / PYMNTS, 2026</td></tr><tr><td>Regulatory finding</td><td>Many RWA tokens face low secondary-market liquidity and fragmented trading across chains and venues; no single architecture resolves it alone</td><td>IOSCO research, cited 2026</td></tr></tbody></table></div>
+<p>The pattern across all six indicators is consistent: tokenization creates the possibility of liquidity, not liquidity itself. Secondary venues are fragmented, market-maker incentives are thin, and most tokenized instruments are legally restricted to accredited or whitelisted investors — which shrinks the trading base and concentrates all real exit demand back onto the issuer's redemption calendar. The liquidity problem also scales with the market: every dollar of new issuance in the ~$389 billion pipeline adds to the stock of assets whose holders will eventually require an exit that current infrastructure cannot provide on demand.</p>
+<h4 class="sub">3.3 Why the Gap Persists</h4><ul class="find"><li><b>Fragmented pools:</b> Per-asset DEX pools fragment liquidity into isolated, shallow pairs and expose liquidity providers to impermanent loss on instruments they cannot hedge.</li><li><b>Idle buffers:</b> Idle redemption buffers held by issuers are capital-inefficient and structurally difficult to sustain: liquidity is already the scarcest resource in the RWA sector, and locking it up compounds the problem it is meant to solve.</li><li><b>Market-maker dependence:</b> Market-maker (RFQ) models depend on external firms continuing to quote; spreads widen and quotes are withdrawn precisely in stress, when exits are demanded most.</li><li><b>Risk-in-the-dollar designs:</b> Placing RWAs directly into a stablecoin's backing imports credit risk into the dollar itself and pushes the instrument toward asset-referenced-token treatment under MiCA.</li></ul>
+<p>The market therefore still lacks a clean dollar liquidity layer for the illiquid end of tokenized fixed income — one that keeps credit risk entirely out of the settlement dollar, requires no external market makers, imposes no pre-allocation burden on issuers, and can recycle acquired assets rather than always redeeming them. This is the gap BOUND is built to close.</p>
+</section>
+<section id="sizing"><div class="sec-head"><div class="sec-num">4</div><h2>Market Sizing: A Flow-Based Framework</h2></div>
+<p>BOUND's revenue is generated predominantly by transactional activity — RWA liquidation and minting flows through its markets, conversion activity, pool trading, and stabilization operations — rather than by holding assets under management. The sizing framework below therefore defines the addressable universe in terms of the tokenized asset base and the exit and transaction flows it generates, and explicitly avoids assuming any percentage capture of either.</p>
+<h4 class="sub">4.1 Total Addressable Market — the Tokenized RWA Asset Base</h4><p>The total addressable market is the tokenized RWA asset base whose liquidity BOUND can serve. Its current distributed value is ~$33.5 billion (July 2026). Its projected trajectory is presented as a range across the four most-cited institutional forecasts, which differ primarily in scope rather than in conviction:</p>
+<div class="tbl-scroll"><table><thead><tr><th>Institution</th><th>Forecast</th><th>Scope Notes</th></tr></thead><tbody><tr><td>McKinsey &amp; Company (2024)</td><td>$1.9T base / $4T optimistic by 2030</td><td>Narrowest scope: bonds, loans, funds, equities; excludes stablecoins and CBDCs</td></tr><tr><td>Citi GPS (2023)</td><td>$4–5T tokenized digital securities by 2030</td><td>Private-market securities focus, plus ~$1T DLT trade finance</td></tr><tr><td>BCG × Ripple (2025)</td><td>$9.4T by 2030; $18.9T by 2033 (~53% CAGR)</td><td>Broadest scope: includes parts of the tokenized money layer</td></tr><tr><td>Standard Chartered × Synpulse (2024)</td><td>$30.1T by 2034</td><td>Demand-side framing; heavy trade-finance weighting</td></tr></tbody></table></div>
+<p>All four forecasts imply growth of roughly two orders of magnitude from the current ~$33.5B distributed base. This report treats them as scenario bounds, not predictions.</p>
+<p>Two additional flow-side projections matter for a liquidity protocol specifically: Standard Chartered projects that assets deployed in DeFi could reach $2.7 trillion by 2030, with the share of tokenized RWAs active in DeFi rising from ~10% today to ~30% — a shift that is conditional on exactly the liquidity infrastructure BOUND provides. Under every scenario in the table, the stock of tokenized assets requiring exit liquidity grows faster than issuer redemption infrastructure, meaning the liquidity gap widens in absolute terms even in the most conservative case.</p>
+<h4 class="sub">4.2 Serviceable Addressable Market — Issuer-Redeemable Fixed Income</h4><p>BOUND's serviceable market is the segment where the redemption-window problem is structural: tokenized instruments that redeem through the issuer on delayed settlement cycles. As of mid-2026 this segment comprises tokenized U.S. Treasuries (~$15 billion), tokenized private credit (~$3.2 billion on-chain outstanding), and institutional fund and money-market structures, together representing the substantial majority of distributed non-stablecoin RWA value. Private credit is the highest-friction sub-segment — redemption cycles of T+45 to T+90+ are standard — while Treasuries are the largest and provide the volume base. This is precisely the segment represented in BOUND's onboarding pipeline model, which spans money-market funds, tokenized Treasuries, private credit, and comparable issuer-redeemable structures across staggered launch cohorts.</p>
+<p>The serviceable market should be read as a flow universe rather than a static pool: the economic quantity BOUND monetizes is the exit and entry demand generated by this asset base each month — a function of the assets' size, holder composition, and liquidity behavior — plus the secondary transaction volume that becomes possible once instant exit exists. Because the segment is projected to grow with the overall market under every institutional scenario above, the serviceable flow base compounds accordingly.</p>
+<h4 class="sub">4.3 Obtainable Market — Bottom-Up, Model-Driven</h4><p>Consistent with the methodological discipline stated in Section 1, this report does not assume a fixed percentage capture of the serviceable segment. BOUND's obtainable market is instead modeled bottom-up in the protocol's internal 36-month financial model, which simulates: (i) a staggered onboarding schedule of individual RWA markets, each parameterized by assets under management, monthly liquidation and minting rates, and issuer redemption timelines; (ii) liquidity-provider capital formation in the Bound Liquidity Layer; (iii) conversion and stabilization flows; and (iv) the protocol's full fee architecture. The model enforces Basel-style liquidity-coverage discipline on every projection: RWA acceptance is capped so that projected liquidity coverage never falls below policy floors, meaning modeled volumes are constrained by demonstrated capital capacity rather than by market-share aspiration.</p>
+<p>Outputs of that model — protocol revenue, reserve growth, and index performance across bear-to-bull parameter ranges — are maintained in BOUND's financial and business plan and its interactive simulator, and are available to counterparties under separate cover. They are deliberately not restated in this market analysis, so that the market evidence presented here remains fully independent of internal projections.</p>
+</section>
+<section id="demand"><div class="sec-head"><div class="sec-num">5</div><h2>Demand-Side Segments</h2></div>
+<p>BOUND serves three participant groups whose needs are distinct and complementary. Unlike retail-savings framings, each segment below is already active in the tokenized RWA economy today.</p>
+<h4 class="sub">5.1 RWA Holders — the Liquidity Demand Side</h4><p>Institutions, funds, treasuries, and qualified investors holding tokenized fixed-income positions face the structural exit problem documented in Section 3. Their base is measurable: ~960,000 on-chain RWA holders as of July 2026, up 13% in a single month, with position sizes at the institutional end clustering around multi-million-dollar allocations. For this segment, BOUND's proposition is unambiguous: instant exit from an RWA position into rwaUSD at a transparent, risk-tiered haircut — at any time, without waiting on the issuer's calendar, and without negotiating with a market maker. The value of that option grows with position size and with the illiquidity of the underlying instrument, which is why private credit holders represent the highest-willingness-to-pay cohort.</p>
+<h4 class="sub">5.2 RWA Issuers — the B2B Channel</h4><p>Issuers of tokenized Treasuries, credit funds, and money-market products compete on distribution, and secondary liquidity has become a first-order selling point in institutional due diligence. Every incumbent liquidity approach asks issuers to pay for it structurally — by pre-allocating reserve capital (the Midas MSL model), by maintaining idle redemption buffers, or by contracting external market makers. BOUND's issuer proposition inverts this: a dedicated rwaUSD trading market for the issuer's token, integration into a shared liquidity standard, and instant-exit capability for the issuer's clients, with zero pre-allocation of issuer capital. The issuer relationship is monetized through integration and maintenance fees and per-transaction economics, making issuers a recurring B2B revenue channel rather than a subsidy burden. BOUND's onboarding model contemplates ten reference markets in its first three years, spanning the major issuer archetypes now live on-chain.</p>
+<h4 class="sub">5.3 Liquidity Providers — the Capital Supply Side</h4><p>The Bound Liquidity Layer is capitalized by professional and qualified participants who provide the dollars that fund RWA exits, with access at launch structured private-first in line with the protocol's regulatory positioning. For this segment, BOUND offers exposure to the collateral performance of the protocol through the Bound Liquidity Index — an index token whose value reflects reserve performance and protocol-generated fees, reported transparently as Annualized Index Growth. BLI is explicitly not marketed as a deposit or interest product, and its value can rise or fall; the addressable pool is the professional on-chain capital already allocating to RWA and stablecoin infrastructure, a sector that attracted over $2.5 billion in dedicated funding in 2025.</p>
+<h4 class="sub">5.4 Retail rwaUSD Users — the Long-Term Standard</h4><p>The long-term vision positions rwaUSD as the native stablecoin of the RWA sector: the common settlement unit that RWA participants hold, transact in, and denominate positions in, with a maintained rwaUSD/USDC pool connecting it to the broader stablecoin economy. Because rwaUSD is minted only against USDC and backed 100% by USDC, it inherits the security profile of the most institutionally accepted regulated stablecoin while adding sector-specific utility. Retail participation in this vision is as users of a payment- and settlement-grade digital dollar — not as purchasers of a return-bearing product — which is what makes the design durable under both MiCA and the post-GENIUS US framework (Section 8).</p>
+</section>
+<section id="midas"><div class="sec-head"><div class="sec-num">6</div><h2>Competitive Validation: Midas and the $50 Million Signal</h2></div>
+<p>The single most important competitive event in the RWA sector in 2026 was not a product launch — it was a funding round. On 30 March 2026, Midas closed a $50 million Series A led by RRE Ventures and Creandum, with participation from Framework Ventures, HV Capital, Ledger Cathay, Franklin Templeton, Coinbase Ventures, GSR, Anchorage Digital, and others, bringing its total funding to $58.75 million. The stated purpose of the round was to build and launch Midas Staked Liquidity (MSL) — a dedicated redemption facility with up to $40 million in initial capacity, designed to let holders of Midas's tokenized products exit instantly instead of waiting days for settlement.</p>
+<p>Midas's public framing of the raise is, in effect, BOUND's problem statement delivered by a competitor: liquidity, rather than issuance, is the primary bottleneck for tokenized finance; tokenized products can be minted at scale but are hard to exit at scale. That a platform with $1.7 billion in cumulative issuance, EU regulatory approval for retail distribution, and Franklin Templeton on its cap table chose to spend its Series A on this specific problem is the clearest available market evidence that (i) the RWA liquidity gap is real and urgent, and (ii) sophisticated investors will fund solutions to it at significant valuations.</p>
+<h4 class="sub">6.1 Why the MSL Model Does Not Close the Gap</h4><ul class="find"><li><b>Pre-allocation burden:</b> MSL works by pre-allocating dedicated staked capital against redemptions. Liquidity is already the scarcest resource in the RWA sector; requiring capital to sit reserved against exits is structurally inconvenient and compounds the problem it addresses. Facility capacity — up to $40 million initially — scales only as far as providers are willing to commit, against $1.7 billion of issued assets.</li><li><b>Closed perimeter:</b> MSL serves Midas's own mToken suite. It is a feature of one issuer's product line, not shared infrastructure for the sector; every other issuer's liquidity problem remains unsolved by it.</li><li><b>Stress dependence:</b> A facility funded by committed liquidity providers concentrates redemption demand onto a finite pool exactly when exits spike. The model's stress behavior is untested at scale, and its economics depend on providers remaining committed through drawdowns.</li><li><b>No retail standard:</b> MSL remains a DeFi-native construct accessed through protocol interfaces. It improves exit mechanics for existing holders; it does not create a simple, sector-wide liquid settlement asset that retail, institutions, and issuers can all use without protocol knowledge.</li></ul>
+<p>BOUND's read is therefore that Midas has validated the problem and funded the wrong architecture for solving it sector-wide. BOUND builds the liquidity layer natively into the protocol: dollars are supplied by a protocol-owned reserve that earns a conservative base return when idle, acquired RWA inventory is recycled through the protocol's own markets rather than parked against redemptions, and the settlement asset — rwaUSD — is usable by anyone, for any integrated RWA market, with no pre-allocation demanded of issuers and no external market makers to withdraw in stress. Midas's own issuance data is additionally useful to BOUND commercially: it demonstrates per-platform issuance of $1.7 billion and 20,000+ holders in under two years, calibrating the scale a single well-executed RWA platform can reach — and therefore the flow volume a shared liquidity layer can address across many such platforms.</p>
+</section>
+<section id="landscape"><div class="sec-head"><div class="sec-num">7</div><h2>Competitive Landscape</h2></div>
+<p>The competitive set consists of every architecture attempting to convert locked RWA positions into usable dollars. Six approaches are live in the market; each imposes a structural cost that BOUND's design avoids.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Approach (exemplar)</th><th>Mechanism</th><th>Core Limitation</th></tr></thead><tbody><tr><td>Per-asset DEX pools</td><td>Isolated liquidity pool per RWA token</td><td>Fragmented and shallow; impermanent-loss exposure for LPs; 1–3% cross-chain pricing gaps</td></tr><tr><td>Issuer redemption buffers</td><td>Pre-held cash reserved for exits</td><td>Capital-inefficient; unsustainable at scale; the buffer is idle by design</td></tr><tr><td>Ondo Nexus</td><td>Shared instant redemption for tokenized Treasuries via OUSG mint/redeem rails</td><td>Scope limited to near-liquid Treasuries; depends on facilities that have faltered (Circle BUIDL facility, March 2025); does not address illiquid credit</td></tr><tr><td>Midas MSL</td><td>Pre-allocated staked liquidity facility (up to $40M initial) for Midas mTokens</td><td>Issuer/LP pre-allocation burden; closed to one platform; scales only with committed capital</td></tr><tr><td>Market-maker / RFQ models</td><td>Institutional market makers quote exits on request</td><td>Quotes widen or vanish in stress; liquidity is rented, not owned</td></tr><tr><td>RWA-backed stablecoins</td><td>RWA placed directly in dollar backing, over-collateralised</td><td>Credit risk inside the dollar; pushes toward asset-referenced-token treatment under MiCA; issuer-level permissioning</td></tr><tr><td>Discounted staked claims (Usual USD0++)</td><td>Early exit at a floor price below par</td><td>January 2025: floor cut to $0.87 without notice; token depegged to ~$0.89–0.935; cascading Morpho liquidations and a 92% Curve pool imbalance</td></tr></tbody></table></div><div class="cap">Sources: Ondo Finance disclosures; Midas Series A materials; MiCA Regulation (EU) 2023/1114; contemporaneous coverage of the USD0++ event, January 2025.</div>
+<h4 class="sub">7.1 Case Study — USD0++: What Happens When Stress Meets a Discounted Claim</h4><p>The Usual USD0++ event of January 2025 is the sector's clearest controlled experiment in liquidity design failure. USD0++ offered holders of an RWA-backed position an early-exit mechanism that the market treated as par-redeemable money. On 9–10 January 2025, the protocol replaced unconditional 1:1 redemption with a $0.87 floor — without advance notice. The token depegged within hours to approximately $0.89–0.935; the largest Curve pool reached a 92% imbalance; more than $200 million of Morpho borrows collateralized by USD0++ crossed liquidation thresholds; and a Pendle market's TVL halved in hours. The structural lesson is directly relevant to BOUND's architecture: an illiquid, discounted claim must never be allowed to masquerade as stable money. BOUND enforces that lesson by construction — rwaUSD is never backed by RWA and never trades at a protocol-imposed discount, while all RWA exposure is quarantined in the BLI, an index token that is explicitly not money and whose value can rise or fall.</p>
+<h4 class="sub">7.2 BOUND's Structural Position</h4><div class="tbl-scroll"><table><thead><tr><th>Dimension</th><th>BOUND</th><th>Midas MSL</th><th>RWA-backed stablecoins</th></tr></thead><tbody><tr><td>Settlement-dollar security</td><td>rwaUSD 100% USDC-backed; RWA risk fully isolated in BLI</td><td>N/A (no settlement dollar)</td><td>RWA in backing = credit risk in the dollar</td></tr><tr><td>Liquidity source</td><td>Protocol-owned reserve + APSS; no external market makers</td><td>Pre-allocated capital from committed LPs</td><td>Issuer-controlled redemption buffers</td></tr><tr><td>Issuer burden</td><td>Zero pre-allocation</td><td>Capital must be reserved against redemptions</td><td>Varies; typically issuer-permissioned</td></tr><tr><td>Scope</td><td>Any integrated RWA market, incl. illiquid credit</td><td>Midas mTokens only</td><td>Single issuer's asset base</td></tr><tr><td>Stress behavior</td><td>Stabilization operations become more active — and more profitable — under stress</td><td>Finite facility; provider commitment untested in drawdown</td><td>Dependent on collateral performance</td></tr><tr><td>Accessibility</td><td>Same UX as any stablecoin; retail-usable settlement asset</td><td>DeFi-native; protocol knowledge required</td><td>Permissioned at issuer level</td></tr></tbody></table></div>
+<p>The core narrative for investors and partners follows directly: Midas raised $50 million to prove this problem is real and worth solving. Its solution asks capital to sit pre-allocated and users to navigate DeFi complexity. BOUND builds the liquidity layer natively into the protocol — no pre-allocation, no market makers, no complexity — and delivers it through rwaUSD, the liquid dollar designed for the RWA sector.</p>
+</section>
+<section id="stablecoin"><div class="sec-head"><div class="sec-num">8</div><h2>Stablecoin Market Context: Positioning rwaUSD</h2></div>
+<p>Stablecoins are the settlement layer of on-chain finance. Total circulating supply reached a record ~$322 billion in June 2026, with on-chain transfer volume in 2025 exceeding $27 trillion — surpassing the combined annual volume of Visa and Mastercard. Institutional forecasts see the market reaching $1.9 trillion (Citi base case, 2030; $4 trillion bull case) to $2 trillion as early as end-2028 (Standard Chartered). USDT (~59% share) and USDC (~24%) dominate supply, but the regulated segment is consolidating rapidly around MiCA- and GENIUS-aligned issuers following the EU's July 2026 enforcement deadline and the associated USDT delistings on major European venues.</p>
+<p>rwaUSD does not compete in the yield-bearing stablecoin race, and this is a deliberate strategic and regulatory choice. JPMorgan analysts have projected that yield-bearing stablecoins could eventually capture up to 50% of the stablecoin market — but that entire category now sits in the crosshairs of both regimes: the GENIUS Act prohibits issuer-paid interest on payment stablecoins, and MiCA restricts interest tied to holding e-money tokens, with the ongoing CLARITY Act debate in the US centering precisely on where permissible rewards end and prohibited passive interest begins. rwaUSD's design — a digital dollar minted only against USDC, backed 100% by USDC, making no return promise of any kind — is on the durable side of that regulatory line in both jurisdictions.</p>
+<p>Its differentiation is instead functional: rwaUSD is the settlement asset purpose-built for the RWA sector. General-purpose stablecoins connect crypto markets to dollars; none provides native exit liquidity for tokenized RWAs, dedicated per-asset RWA markets, or a protocol-level stabilization system that defends the peg without external market makers. As the tokenized-asset base grows toward the institutional forecasts in Section 4, the sector's need for a common, clean, always-liquid settlement unit grows with it — a category position that is currently unoccupied. The maintained rwaUSD/USDC pool ties this position into the broader ~$322 billion stablecoin economy, allowing capital to move seamlessly between the general stablecoin ecosystem and the RWA ecosystem.</p>
+</section>
+<section id="regulatory"><div class="sec-head"><div class="sec-num">9</div><h2>Regulatory Environment</h2></div>
+<h4 class="sub">9.1 European Union — MiCA</h4><p>The Markets in Crypto-Assets Regulation (EU) 2023/1114 has been fully applicable since 30 December 2024, with stablecoin (EMT/ART) provisions live since 30 June 2024 and all transitional arrangements ended on 1 July 2026 — a deadline that produced the largest delisting wave in European market history for non-compliant tokens. Three features of the regime map directly onto BOUND's design choices. First, e-money tokens must honor redemption at par at all times and be fully backed by segregated reserves — a standard rwaUSD's 100% USDC backing and atomic peg defense are engineered to meet. Second, MiCA's treatment of asset-referenced tokens penalizes designs that place risk assets inside a dollar-denominated token — precisely the architecture BOUND rejects by quarantining all RWA exposure in the BLI. Third, MiCA restricts interest tied to holding a token, which BOUND's no-yield-language design and index-token framing respect by construction. BOUND's MiCA positioning, including the classification of rwaUSD and the private-placement treatment of BLI access at launch, is under ongoing legal review with VD Law Group; statements in this section describe design intent, not a completed authorization.</p>
+<h4 class="sub">9.2 United States — GENIUS Act and CLARITY Act</h4><p>The GENIUS Act (Public Law 119-27, signed 18 July 2025) created the first US federal framework for payment stablecoins: issuance restricted to permitted issuers, 1:1 reserves in high-quality liquid assets, monthly disclosures — and a prohibition on paying interest to holders. Final agency rules across six regulators face a statutory deadline of 18 July 2026, with the full regime operational by early 2027. The subsequent CLARITY Act debate has focused on stablecoin yield delivered through indirect channels, with proposals to close the gap between prohibited passive interest and permitted activity-based rewards. The direction of US policy is therefore unambiguous: non-yield-bearing, fully reserved payment dollars are the compliant category, and yield-embedded dollar instruments face structural headwinds. rwaUSD's architecture aligns with the compliant category by design.</p>
+<h4 class="sub">9.3 The Regulatory Moat</h4><p>Regulation is commonly framed as a constraint on stablecoin innovation; for BOUND it functions as a moat. Both major regimes now actively disadvantage the two competing architectures closest to BOUND's territory — yield-bearing dollars (interest prohibitions) and RWA-collateralized dollars (asset-referenced-token treatment and reserve-composition rules) — while rewarding exactly the separation BOUND enforces between a clean settlement dollar and a clearly labeled at-risk index instrument. Sustained regulatory convergence on these principles raises the cost of entry for architecturally non-compliant competitors over time.</p>
+</section>
+<section id="whynow"><div class="sec-head"><div class="sec-num">10</div><h2>Why Now</h2></div>
+<p>Four independent developments converge to make 2026 the entry window for a sector-wide RWA liquidity layer:</p>
+<ul class="find"><li><b>Scale:</b> The asset base has reached escape velocity: distributed on-chain RWA value roughly tripled year-over-year to ~$33.5 billion, with a ~$389 billion committed pipeline, DTCC and Nasdaq settlement pilots underway, and the majority of top-20 global asset managers launching tokenized products. Every incremental dollar of issuance adds to the stock of locked positions requiring exit infrastructure.</li><li><b>Capital signal:</b> The liquidity problem has been priced by the market: Midas's $50 million Series A — with Franklin Templeton and Coinbase Ventures participating — and over $2.5 billion of RWA infrastructure funding in 2025 demonstrate that the specific problem BOUND solves now commands institutional capital. Validation has arrived before a sector-wide solution has.</li><li><b>Regulatory alignment:</b> Regulatory clarity has crystallized on both sides of the Atlantic — MiCA fully enforced from July 2026, GENIUS Act final rules due July 2026 — and the rules favor BOUND's architecture while structurally penalizing the closest alternatives.</li><li><b>Open category:</b> The category position of “native stablecoin of the RWA sector” remains unoccupied: incumbent stablecoins are general-purpose, incumbent liquidity solutions are single-platform or single-asset-class, and no participant has yet established the shared settlement standard the sector's own growth requires.</li></ul>
+<p>Windows of this shape close quickly. The combination of a validated problem, funded competitor experiments with structural flaws, favorable regulation, and an unoccupied category standard defines a first-mover opportunity that narrows as issuance — and issuer-by-issuer point solutions — compound.</p>
+</section>
+<section id="conclusions"><div class="sec-head"><div class="sec-num">11</div><h2>Conclusions</h2></div>
+<ul class="find"><li>1. Liquidity is the binding constraint of the tokenized-asset economy. The market has tripled in a year to ~$33.5 billion of distributed value, yet 56% of large positions show zero weekly activity and effective exits still run T+30 to T+90 through issuers. Issuance infrastructure matured; exit infrastructure did not.</li><li>2. The problem is now institutionally validated and funded. Midas's $50 million Series A, raised explicitly to solve instant redemption, and $2.5 billion+ of 2025 RWA infrastructure funding establish both urgency and investor appetite — while the funded solutions (pre-allocated facilities, Treasuries-only rails, discounted claims) each carry structural limitations that leave the sector-wide problem open.</li><li>3. The opportunity scales with every credible forecast. Whether the tokenized-asset base reaches McKinsey's $2 trillion or BCG–Ripple's $18.9 trillion, the flow of capital requiring instant exit grows by roughly two orders of magnitude, and a liquidity layer monetizing transaction flow scales with it — independent of which forecast proves correct.</li><li>4. BOUND's architecture is aligned with where regulation is going. A 100% USDC-backed settlement dollar with no return promise, strict quarantine of RWA risk in a labeled index token, and protocol-native peg defense sit on the compliant side of both MiCA and the GENIUS framework — while the closest competing architectures sit on the wrong side.</li><li>5. The strategic prize is the standard, not the feature. Instant redemption is a feature individual issuers will keep rebuilding platform-by-platform; a common liquid settlement asset for the entire RWA sector is a standard, and standards are winner-take-most. rwaUSD is positioned for that role, and this window — validated, funded, regulated, and unoccupied — is when it is decided.</li></ul>
+</section>
+<section id="sources"><div class="sec-head"><div class="sec-num">§</div><h2>Works Cited</h2></div>
+<p class="cite">1. RWA.xyz — Analytics on Tokenized Real-World Assets, distributed and representative on-chain value data, July 2026. <a href="https://app.rwa.xyz/" target="_blank" rel="noopener noreferrer">https://app.rwa.xyz/</a></p>
+<p class="cite">2. CoinDesk, “Midas raises $50 million to tackle pain point for tokenized asset investors,” 30 March 2026. <a href="https://www.coindesk.com/business/2026/03/30/midas-raises-usd50-million-to-tackle-pain-point-for-tokenized-asset-investors" target="_blank" rel="noopener noreferrer">https://www.coindesk.com/business/2026/03/30/midas-raises-usd50-million-to-tackle-pain-point-for-tokenized-asset-investors</a></p>
+<p class="cite">3. Midas / Cathay Capital, “Midas Raises $50M Series A Led by RRE and Creandum,” 30 March 2026. <a href="https://www.cathaycapital.com/midas-raises-50m-series-a-led-by-rre-and-creandum/" target="_blank" rel="noopener noreferrer">https://www.cathaycapital.com/midas-raises-50m-series-a-led-by-rre-and-creandum/</a></p>
+<p class="cite">4. Cointelegraph, “Midas raises $50M to build ‘instant liquidity layer’ for tokenized RWAs,” March 2026 (incl. $2.5B+ 2025 RWA infrastructure funding figure and IOSCO secondary-liquidity finding).</p>
+<p class="cite">5. CoinMarketCap Academy, “Midas Raises $50M To Build Instant Liquidity Layer for Tokenized Assets” (MSL facility capacity up to $40M), 2026.</p>
+<p class="cite">6. Cryptonomist, “Tokenized Real-World Assets Market Surges to $32 Billion,” 8 July 2026 (Standard Chartered / Geoff Kendrick DeFi-RWA projections; US Treasuries ~$15B).</p>
+<p class="cite">7. CryptoBriefing, “Real world assets tokenization surges across five key sectors,” 8 July 2026 (distributed value ~$33.5B; representative asset value $388.55B).</p>
+<p class="cite">8. Blockchainreporter, “RWA Tokenization News Today: Market Size &amp; Trends 2026,” July 2026 (56% zero-weekly-activity snapshot; ~10% of RWA value in DeFi).</p>
+<p class="cite">9. Cryptic, “RWA Tokenization 2026: Market Size, Trends &amp; Data,” July 2026 (167 platforms; ~960,000 holders; growth vs. January 2025; private credit ~$3.2B).</p>
+<p class="cite">10. McKinsey &amp; Company, “From ripples to waves: The transformational power of tokenizing assets,” June 2024 ($1.9T base / $4T optimistic 2030 scenario).</p>
+<p class="cite">11. Boston Consulting Group &amp; Ripple, “Approaching the Tokenization Tipping Point,” April 2025 ($9.4T by 2030; $18.9T by 2033; ~53% CAGR).</p>
+<p class="cite">12. Citi GPS, “Money, Tokens, and Games,” March 2023 ($4–5T tokenized digital securities by 2030).</p>
+<p class="cite">13. Standard Chartered &amp; Synpulse, “Real-World Asset Tokenisation,” 2024 ($30.1T by 2034).</p>
+<p class="cite">14. a16z crypto, “7 Charts: Tokenized assets have proved the concept. Now comes the hard part,” May 2026 (forecast comparison and scope differences).</p>
+<p class="cite">15. Ondo Finance, “Introducing Ondo Nexus,” February 2025; “The Liquidity Advantage,” April 2025 (facility scope; Circle BUIDL instant-redemption facility disruption of 27 March 2025).</p>
+<p class="cite">16. Gate Research / CryptoCadet / Coin360 coverage of the Usual USD0++ redemption-floor event, 9–15 January 2025 (floor $0.87; depeg to ~$0.89–0.935; Curve pool imbalance; Morpho liquidations).</p>
+<p class="cite">17. arXiv 2508.11651, “Tokenize Everything, But Can You Sell It? RWA Liquidity Challenges and the Road Ahead,” 2025 (turnover, fragmentation, and redemption-restriction findings).</p>
+<p class="cite">18. PYMNTS, “Tokenization’s Institutional Pitch Hits a Liquidity Wall,” February 2026; “Tokenized Real-World Asset Value Jumps Fourfold,” March 2026 (institutional allocation batching; thin secondary volumes).</p>
+<p class="cite">19. VaaSBlock, “Tokenized Real-World Assets Crossed $20 Billion. Now Comes the Hard Part,” 2026 (redemption gating via fund administrators; business-day cycles; advance-notice requirements).</p>
+<p class="cite">20. MetaMask / Consensys citing Canton, “State of RWA Tokenization 2026” (1–3% cross-chain pricing gaps; 2–5% cross-chain friction costs).</p>
+<p class="cite">21. DefiLlama / Transak, “Stablecoin Market Cap in 2026,” June 2026 (~$316B market cap; USDT ~59%, USDC ~24%); Stablecoin Insider, “Q2 2026 Stablecoin Market Report” (record $322B, June 2026).</p>
+<p class="cite">22. Citi (September 2025 revision): $1.9T stablecoin base case / $4T bull case by 2030; Standard Chartered (April 2025): $2T by end-2028.</p>
+<p class="cite">23. The Block, “JPMorgan sees yield-bearing stablecoins growing from 6% to 50% of the market” (analyst scenario).</p>
+<p class="cite">24. US Public Law 119-27, GENIUS Act, signed 18 July 2025; agency rulemaking through July 2026 (OCC, FDIC, Treasury, FinCEN, OFAC).</p>
+<p class="cite">25. Regulation (EU) 2023/1114 (MiCA); EMT/ART provisions applicable from 30 June 2024; end of transitional arrangements 1 July 2026; par-redemption requirement for e-money tokens.</p>
+<p class="cite">26. Ondo Finance product documentation, OUSG (instant vs. non-instant transaction minimums; qualified-purchaser access) and USDY (T+1 redemption; $100,000 minimum), 2026.</p>
+<p class="cite">27. BOUND Protocol internal 36-month financial model (v8 simulator), July 2026 — proprietary; referenced for bottom-up target-market methodology only.</p>
+<p class="cite">28. BOUND Protocol APSS mainnet deployment data, 2026 — proprietary protocol telemetry.</p>
+<div class="note">This document is provided for informational purposes only and does not constitute an offer to sell or a solicitation of an offer to buy any asset, nor investment, legal, or tax advice. Forward-looking statements reflect third-party projections or design intent and are subject to material uncertainty. Regulatory positioning is subject to ongoing legal review. © 2026 BOUND Protocol / IO Investment.</div>
+</section>
+<footer><div class="disc"><b>Note.</b> This page is a faithful transcription of BOUND Protocol Market Analysis, July 2026. Regenerate via <span class="mono">node scripts/build-market.mjs</span> after any change to the source document.</div>
+<div>BOUND Protocol · Market Analysis · July 2026</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>

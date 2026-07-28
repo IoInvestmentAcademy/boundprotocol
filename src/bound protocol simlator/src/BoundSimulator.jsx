@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, createContext, useContext, useCallback } from "react";
 import {
-  LineChart, Line, BarChart, Bar,
+  LineChart, Line, BarChart, Bar, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, LabelList
 } from "recharts";
@@ -31,6 +31,202 @@ const T = {
 };
 
 const SHADOW = "0 1px 0 rgba(20,20,15,.02), 0 1px 2px rgba(20,20,15,.04)";
+
+/* ------------------------------------------------------------------- PDF EXPORT
+   Export goes through the browser's own print pipeline (window.print → "Save as
+   PDF") rather than a canvas library. That keeps text selectable, charts vector,
+   and file sizes small; html2canvas/jsPDF would rasterise everything.
+
+   Two things have to happen before the dialog opens:
+     1. every CollapsibleSection must render its children, because collapsed
+        content is absent from the DOM entirely and CSS cannot reveal it;
+     2. Recharts must re-measure, since ResponsiveContainer caches a width.
+   PrintCtx carries the active report so components can respond to both. */
+const PrintCtx = createContext(null);
+const usePrinting = () => useContext(PrintCtx);
+
+/* Recharts animates series in from zero on mount. During an export every chart
+   mounts at once and the export reflow fires a resize mid-animation, which
+   cancels it and leaves bar geometry stuck at zero height — charts printed with
+   axes and gridlines but no data. Disabling animation for the export render
+   makes the geometry final immediately.
+
+   This is a module-level flag rather than state because it must be true for the
+   very first export render, before any effect has had a chance to run. */
+let EXPORTING = false;
+const chartAnim = () => !EXPORTING;
+
+function usePdfExport() {
+  const [printing, setPrinting] = useState(null); // null | "simulator" | "tokenomics"
+  const pending = useRef(null);
+
+  useEffect(() => {
+    if (!printing) return;
+    let cancelled = false;
+
+    // Constrain the document to the printable column width while still on screen.
+    // Recharts sizes its <svg> from a ResizeObserver, and Chrome only reflows to
+    // paper width after window.print() — too late for the observer. Reflowing here
+    // makes the charts re-render at page width before the dialog snapshots them.
+    document.documentElement.classList.add("exporting-pdf");
+    window.dispatchEvent(new Event("resize"));
+
+    // Give the observer and the resulting re-render time to settle, then print.
+    const t = setTimeout(() => {
+      if (cancelled) return;
+      window.print();
+      setPrinting(null);
+    }, 350);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+      document.documentElement.classList.remove("exporting-pdf");
+      EXPORTING = false;   // restore animated charts for the on-screen view
+    };
+  }, [printing]);
+
+  // Restore the collapsed view if the user cancels the dialog.
+  useEffect(() => {
+    const done = () => setPrinting(null);
+    window.addEventListener("afterprint", done);
+    return () => window.removeEventListener("afterprint", done);
+  }, []);
+
+  // EXPORTING is set synchronously so the charts' very first export render
+  // already has animation disabled.
+  const exportPdf = useCallback(kind => {
+    pending.current = kind;
+    EXPORTING = true;
+    setPrinting(kind);
+  }, []);
+  return { printing, exportPdf };
+}
+
+/* Print-only cover sheet. Rendered into the flow but hidden on screen. */
+function PrintCover({ eyebrow, title, subtitle, meta, note }) {
+  return (
+    <div className="print-only print-cover">
+      <div className="pc-rule" />
+      <div className="pc-eyebrow">{eyebrow}</div>
+      <h1>{title}</h1>
+      <p className="pc-sub">{subtitle}</p>
+      <div className="pc-meta">
+        {meta.map(m => (
+          <div key={m.k}><div className="k">{m.k}</div><div className="v">{m.v}</div></div>
+        ))}
+      </div>
+      {note && <div className="pc-note">{note}</div>}
+    </div>
+  );
+}
+
+/* Opens the simulation-engine reference — the formulas behind every number on
+   this page. Sits beside Export rather than in the document hub, because it is
+   reference material for the engine and not a standalone report. */
+function EngineDocsBtn({ onClick }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <button className="no-print" onClick={onClick}
+      title="The canonical reference for the economic model — assets, revenue streams, the liquidity waterfall, and every formula behind the numbers"
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ display:"flex", alignItems:"center", gap:6, flexShrink:0,
+        padding:"6px 13px", borderRadius:8, cursor:"pointer", fontSize:12, fontWeight:600,
+        fontFamily:"inherit", whiteSpace:"nowrap",
+        background: hover ? T.bgInset : "transparent",
+        color: hover ? T.ink : T.ink2,
+        border:`1px solid ${hover ? T.borderH : T.border}`,
+        transition:"background .14s, color .14s, border-color .14s" }}>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M2 3.5h5.5A3.5 3.5 0 0 1 11 7v13.5a3 3 0 0 0-3-3H2z"/>
+        <path d="M22 3.5h-5.5A3.5 3.5 0 0 0 13 7v13.5a3 3 0 0 1 3-3h6z"/>
+      </svg>
+      Engine Documentation
+    </button>
+  );
+}
+
+/* Export-PDF control. Hidden on paper by .no-print. */
+function ExportPdfBtn({ onClick, label = "Export PDF" }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <button className="no-print" onClick={onClick}
+      title='Opens your browser print dialog — choose "Save as PDF"'
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ display:"flex", alignItems:"center", gap:6, flexShrink:0,
+        padding:"6px 13px", borderRadius:8, cursor:"pointer", fontSize:12, fontWeight:600,
+        fontFamily:"inherit", whiteSpace:"nowrap",
+        background: hover ? T.green : T.greenSoft,
+        color: hover ? "#FFFFFF" : T.green,
+        border:`1px solid ${hover ? T.green : T.borderS}`,
+        transition:"background .14s, color .14s, border-color .14s" }}>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6 9V3.5h12V9"/>
+        <path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/>
+        <rect x="6" y="14" width="12" height="6.5" rx="1"/>
+      </svg>
+      {label}
+    </button>
+  );
+}
+/* Primary "Simulator" nav control. A single pill that opens a dropdown routing
+   to either the Protocol or the Tokenomics simulator, replacing the two separate
+   top-level buttons so the nav stays compact. */
+function SimulatorNav({ view, setView }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const active = view === "inputs" || view === "results" || view === "tokenomics";
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, [open]);
+  const go = (tab) => { setView(tab); window.scrollTo(0, 0); setOpen(false); };
+  const items = [
+    { key: "inputs",     label: "Protocol Simulator",   on: view === "inputs" || view === "results" },
+    { key: "tokenomics", label: "Tokenomics Simulator", on: view === "tokenomics" },
+  ];
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button onClick={() => setOpen(o => !o)} aria-haspopup="menu" aria-expanded={open}
+        style={{ padding: "6px 12px 6px 15px", borderRadius: 7, cursor: "pointer", fontSize: 12,
+          fontWeight: 600, border: "none", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 6,
+          background: active ? T.green : "transparent",
+          color:      active ? "#FFFFFF" : T.ink2,
+          boxShadow:  active ? "0 1px 2px rgba(31,77,63,0.25)" : "none",
+          transition: "background 0.15s, color 0.15s" }}>
+        Simulator
+        <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6"
+          strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }}>
+          <path d="M2 3.5 L5 6.5 L8 3.5" />
+        </svg>
+      </button>
+      {open && (
+        <div role="menu" style={{ position: "absolute", top: "calc(100% + 7px)", left: 0, minWidth: 196,
+          background: T.bgEl, border: `1px solid ${T.border}`, borderRadius: 9, padding: 4,
+          boxShadow: "0 6px 20px rgba(20,20,15,.14)", zIndex: 50 }}>
+          {items.map(it => (
+            <button key={it.key} role="menuitem" onClick={() => go(it.key)}
+              style={{ display: "block", width: "100%", textAlign: "left",
+                padding: "8px 12px", borderRadius: 6, cursor: "pointer", fontSize: 12, fontWeight: 600,
+                border: "none", whiteSpace: "nowrap", fontFamily: "inherit",
+                background: it.on ? T.greenSoft : "transparent",
+                color:      it.on ? T.green : T.ink2 }}>
+              {it.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const MONO   = "'Geist Mono','JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace";
 const SANS   = "'Geist','Inter',-apple-system,'Segoe UI',sans-serif";
 
@@ -164,7 +360,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
   let bcUsdcNav = 0;               // USDC asset NAV in BC (raw + yield position, separate from rwaUSD)
   let poolVol = 0;
   // v4 additional state
-  let bciQueueBal = 0;             // BCI redemption queue $
+  let bciQueueBal = 0;             // BLI redemption queue $
   let protocolReserveBal = 0;      // separate treasury for emergency
   let lcrHistory = [];             // last 7 LCR values for reserve trigger
   let prevVel = 0;                 // previous-month RWA velocity (seeds next iteration)
@@ -222,7 +418,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     //         from the buyer's principal, per the fee reference card.)
     const retailPoolFeeEntry = retailPoolVol * poolFeeRate;
     const retailRwaUSDRecv   = retailPoolVol - retailPoolFeeEntry;
-    // Step 2: retailConv% of the received rwaUSD converts to BCI
+    // Step 2: retailConv% of the received rwaUSD converts to BLI
     const retailConv         = (p.retailBCIConversion || 98) / 100;
     const convAmountRetail   = retailRwaUSDRecv * retailConv;
     // Step 3: conversion fee deducted FROM the converting amount (rwaUSD path only)
@@ -238,10 +434,10 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const mintFeeRevenue   = lpIn * mintRdmRate;            // 0.3% of full deposit
     const rwaUSDReceived   = lpIn - mintFeeRevenue;          // rwaUSD LP actually receives
 
-    // Step 2: 95% of rwaUSD received converts to BCI
+    // Step 2: 95% of rwaUSD received converts to BLI
     const convAmountEntry  = rwaUSDReceived * privConv;      // e.g. $1,994K x 95% = $1,894.3K
 
-    // Step 3: Conversion fee on converting amount (rwaUSD path only -> credited to BCI SC)
+    // Step 3: Conversion fee on converting amount (rwaUSD path only -> credited to BLI SC)
     const convFeeEntry     = convAmountEntry * (1-bnd) * convRateFull;
 
     // Step 4: Net USDC entering Liquidity Layer (after conversion fee deducted)
@@ -250,7 +446,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     // Step 5: Non-converting rwaUSD stays in Bound Core
     const privateBoundCore = rwaUSDReceived * (1 - privConv);
 
-    // -- LP EXIT — raw amounts. (BCI-redemption QUEUE throttling, which depends on
+    // -- LP EXIT — raw amounts. (BLI-redemption QUEUE throttling, which depends on
     // RWA capacity, is computed further below once layerUSDCAvailable is known; the
     // exit AMOUNTS themselves — and layerPostUpdate — do not depend on RWA at all.)
     // Private LP capital is locked for the first `lockPeriod` months (default 6) — no
@@ -293,7 +489,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     // pipeline at the start of the month (last month's overflow, which has been counting
     // down) — new overflow routed to the pipeline this month hasn't waited yet, so it
     // doesn't return until a later month. Computed early (pure function of prior state)
-    // so it can fund this month's BCI redemptions before RWA capacity is allocated.
+    // so it can fund this month's BLI redemptions before RWA capacity is allocated.
     // Each market's pipeline drains at ITS OWN issuerRedemptionDays (per-market ledger),
     // so the blended return speed is genuinely weighted by pipeline composition.
     const activeMarketsNow = rwaMarkets.filter(mk => mk.active && m >= mk.launchMonth);
@@ -358,7 +554,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const totalLiqDemand  = namedLiqDemand;
     const totalMintDemand = namedMintDemand;
 
-    // -- CAPACITY WATERFALL: BCI redemptions first, then an LCR guard, then demand --
+    // -- CAPACITY WATERFALL: BLI redemptions first, then an LCR guard, then demand --
     // USDC available = THIS MONTH's real layer (layerPostUpdate) minus what's already
     // committed to RWA (held inventory + issuer-redemption pipeline cash, both still
     // prior-month-end since this month's serving hasn't happened yet).
@@ -366,9 +562,9 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const estimatedUSDCPct   = Math.max(minBufferPct, 100 - (rwaInLayerNow / Math.max(layerPostUpdate, 1) * 100));
     const layerUSDCAvailable = layerPostUpdate * Math.min(estimatedUSDCPct, 80) / 100;
 
-    // 1) BCI redemptions are SENIOR. LP exits are an OBLIGATION the protocol already
+    // 1) BLI redemptions are SENIOR. LP exits are an OBLIGATION the protocol already
     // carries; RWA liquidation service is discretionary business it can decline.
-    // (Previously RWA liquidations had first claim and BCI exits took the leftover —
+    // (Previously RWA liquidations had first claim and BLI exits took the leftover —
     // that never bit in the default run only because pipeline returns happened to
     // cover exits, but under stress it would have delayed LP redemptions to keep
     // buying RWA inventory.)
@@ -394,7 +590,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
       (layerPostUpdate - rwaInLayerNow + rwaPipelineReturn + expectedMint - lcrGuardT * desiredBCITotal)
       / (1 + lcrGuardT * covFrac));
 
-    // 3) Liquidations are accepted up to min(funds left after BCI, LCR guard, demand).
+    // 3) Liquidations are accepted up to min(funds left after BLI, LCR guard, demand).
     // The maxRwaPct cap does NOT refuse them — excess above the cap is routed to the
     // issuer-redemption pipeline below. In EMERGENCY stress (prior month), acceptance
     // drops to rwaAcceptEmergency%.
@@ -425,9 +621,9 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const mintScale = totalMintDemand > 0 ? rwaMint / totalMintDemand : 0;
 
     // -- RETAIL LP EXIT -------------------------------------------------------
-    // BCI -> rwaUSD conversion fee comes out of the exiting amount; the seller
+    // BLI -> rwaUSD conversion fee comes out of the exiting amount; the seller
     // only has the net rwaUSD to sell on the pool.
-    const retailConvFeeExitBCI = retailLayerOut * (1-bnd) * convRateFull;  // -> BCI SC
+    const retailConvFeeExitBCI = retailLayerOut * (1-bnd) * convRateFull;  // -> BLI SC
     const retailConvFeeExitBND = retailLayerOut * bnd * (p.convFeeBND||0.44)/100; // BND burn
     const retailExitSellVol    = retailLayerOut - retailConvFeeExitBCI;
 
@@ -445,7 +641,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const pVol = retailPoolVol + retailExitSellVol + rwaPoolVol;
 
     // -- PRIVATE LP EXIT (correct formulas) ------------------------
-    // Step 1: LP converts BCI -> rwaUSD (BCI price x balance, fee deducted)
+    // Step 1: LP converts BLI -> rwaUSD (BLI price x balance, fee deducted)
     const convFeeExit      = lpOut * (1-bnd) * convRateFull;  // conversion fee on exit
     const rwaAfterConvExit = lpOut - convFeeExit;              // rwaUSD LP receives after conv fee
 
@@ -467,7 +663,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const rwaUSDIdle        = Math.max(0, boundCoreBal + newToBoundCore - boundCoreOutflow);
     // New idle rwaUSD is backed 1:1 by USDC; redemptions drain USDC 1:1. Yield earned
     // on the Yield Position is NOT retained in NAV — it is fully paid out 80/20 to
-    // BCI SC / Protocol Reserve below (same distribute-once rule as Layer yield;
+    // BLI SC / Protocol Reserve below (same distribute-once rule as Layer yield;
     // retaining it here AND crediting it as revenue would double-count the dollar).
     bcUsdcNav               = Math.max(0, bcUsdcNav + newToBoundCore - boundCoreOutflow);
     boundCoreBal            = rwaUSDIdle;
@@ -553,7 +749,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
       mkHeld = mkHeld.map(h => h * capScale);
     }
     rwaCollateralBal = mkHeld.reduce((a, b) => a + b, 0);
-    // rwaPipelineReturn (this month's cash-back) was already credited to the BCI
+    // rwaPipelineReturn (this month's cash-back) was already credited to the BLI
     // redemption/RWA capacity waterfall above. New overflow (rwaToPipeline) starts
     // its wait now — it returns in a future month at its own market's speed.
     const rwaRedemptionThisMonth = rwaPipelineReturn;
@@ -606,7 +802,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const rwaAcceptancePct        = stressThrottle * 100;
     prevStressMode                = stressMode;
 
-    // Step 8 - BCI lock extension (informational - actual queue mechanic handled outside)
+    // Step 8 - BLI lock extension (informational - actual queue mechanic handled outside)
     const bciLockExtension =
       stressMode === "HEALTHY"    ? 0
       : stressMode === "WARNING"  ? bciLockExtWarning
@@ -653,11 +849,11 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     // ER receives its 10% share of Layer yield directly (before general top-up).
     er += er_morpho;
 
-    // Float yield (Bound Core) — flat 80% BCI SC / 20% Protocol Reserve
+    // Float yield (Bound Core) — flat 80% BLI SC / 20% Protocol Reserve
     // Credited from actual Bound Core gross yield (USDC Yield Position only)
     const floatBCIPct = 0.80;
     const floatPRPct  = 0.20;
-    const floatPhase  = "Flat 80% BCI";
+    const floatPhase  = "Flat 80% BLI";
     const floatGross  = bcYieldGrossMo;
     const floatToBCI  = bcYieldToBCI;
     const floatToPR   = bcYieldToPR;
@@ -678,12 +874,12 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
 
     // Mint fee (on full lpIn) + private Redeem fee (rwaUSD after conversion fee)
     // + pre-pool RWA liquidation redemption fee (0.3%). All are redemption/entry-class fees,
-    // split 80% BCI SC / 20% Protocol Reserve (owner-directed flip 2026-07-10; was 20/80).
+    // split 80% BLI SC / 20% Protocol Reserve (owner-directed flip 2026-07-10; was 20/80).
     const rwaRedeemFee = rwaRedeemVol * mintRdmRate; // 0.3% on pre-pool RWA liquidation volume
     const bci_entry = (mintFeeRevenue + redeemFeeRevenue + rwaRedeemFee) * 0.80;
     const pr_entry  = (mintFeeRevenue + redeemFeeRevenue + rwaRedeemFee) * 0.20;
 
-    // Conversion fees -> 100% to BCI SC (private entry + exit, retail entry + exit)
+    // Conversion fees -> 100% to BLI SC (private entry + exit, retail entry + exit)
     const bci_conv = convFeeEntry
                    + convFeeExit
                    + retailConvFeeExitBCI
@@ -697,7 +893,7 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     const totalMaintFee = activeMarkets.reduce((s, mk) => s + (mk.maintFee ?? p.maintFee ?? 75_000), 0);
 
     const bci_maint = (totalMaintFee / 12) * 0.20;
-    // RWA trade + haircut: 80% BCI SC / 20% PR (owner-directed flip 2026-07-10; was 20/80)
+    // RWA trade + haircut: 80% BLI SC / 20% PR (owner-directed flip 2026-07-10; was 20/80)
     const bci_rwa   = (rwaTradeRevenue + haircutRevenue) * 0.80;
     const bci_float = floatToBCI;
     const totalBci  = bci_pool+bci_entry+bci_conv+bci_maint+bci_rwa+bci_morpho+bci_float;
@@ -716,8 +912,8 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     er += erTopUp;
     const totalPrAfterER = totalPrRaw - erTopUp;
 
-    // BCI SC = revenue surplus only (fees). LP collateral sits in the Liquidity Layer.
-    // Price = (Layer NAV + BCI SC) / supply — mint/burn at start-of-month price.
+    // BLI SC = revenue surplus only (fees). LP collateral sits in the Liquidity Layer.
+    // Price = (Layer NAV + BLI SC) / supply — mint/burn at start-of-month price.
     const priceStart = Math.max(bciPrice, 1e-9);
     const layerIn    = privateToLayer + retailToLayer;
     const layerOut   = privateLayerOut + retailLayerOut;
@@ -726,9 +922,9 @@ function simulate(p, rwaMarkets = [], layerConfig = {}) {
     bciSC            = Math.max(0, bciSC + totalBci);
     bciSupply        = Math.max(1e-9, bciSupply + mint - burn);
 
-    // Layer yield is fully distributed as protocol revenue (80/10/10 to BCI SC / PR / ER
+    // Layer yield is fully distributed as protocol revenue (80/10/10 to BLI SC / PR / ER
     // above) — it must NOT also compound into LP principal, or the same yield dollar
-    // would inflate both terms of the BCI price formula (Layer NAV and BCI SC) at once.
+    // would inflate both terms of the BLI price formula (Layer NAV and BLI SC) at once.
     privateLayerBal = Math.max(0, privateLayerBal + privateToLayer - privateLayerOut);
     retailLayerBal  = Math.max(0, retailLayerBal  + retailToLayer  - retailLayerOut);
 
@@ -901,7 +1097,7 @@ function KPI({ label, value, sub, tag, accent = false }) {
 //
 // Waterfall (mirrors the engine's own private/retail entry+exit sequence exactly):
 //   entry fee (mint or pool, on full amount) -> split converting/idle -> entry
-//   conversion fee (on converting share) -> grows with BCI price to the target month
+//   conversion fee (on converting share) -> grows with BLI price to the target month
 //   -> exit conversion fee -> exit fee (redeem or pool) -> + idle share (flat, no fee).
 function computeLpOutcome({ amount, years, entryFeeRate, convPct, convFeeRate, exitFeeRate, bciPriceEnd }) {
   const afterEntryFee  = amount * (1 - entryFeeRate);
@@ -910,7 +1106,7 @@ function computeLpOutcome({ amount, years, entryFeeRate, convPct, convFeeRate, e
   const entryFeeDollar = amount * entryFeeRate;
   const entryConvFee   = convertingAmt * convFeeRate;
   const netToLayer     = convertingAmt - entryConvFee;
-  const grown          = netToLayer * bciPriceEnd; // BCI starts at 1.0000 rwaUSD at entry
+  const grown          = netToLayer * bciPriceEnd; // BLI starts at 1.0000 rwaUSD at entry
   const exitConvFee    = grown * convFeeRate;
   const afterExitConv  = grown - exitConvFee;
   const exitFeeDollar  = afterExitConv * exitFeeRate;
@@ -976,10 +1172,10 @@ function CapitalCard({ name, blurb, amount, setAmount, years, setYears,
           </div>
         </div>
 
-        {/* BCI growth, total fee cost, and your actual annualized return */}
+        {/* BLI growth, total fee cost, and your actual annualized return */}
         <div style={{ display:"flex" }}>
           <div style={{ flex:1, padding:"4px 12px 4px 0" }}>
-            <div style={{ fontSize:9, color:T.ink4, textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:3 }}>BCI Index Growth</div>
+            <div style={{ fontSize:9, color:T.ink4, textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:3 }}>BLI Index Growth</div>
             <div style={{ fontSize:16, fontWeight:600, fontFamily:MONO, color:T.ink }}>{fp(grossApy)}<span style={{fontSize:10,color:T.ink4,fontWeight:400}}> /yr</span></div>
           </div>
           <div style={{ flex:1, padding:"4px 12px", borderLeft:`1px solid ${T.border}` }}>
@@ -992,7 +1188,7 @@ function CapitalCard({ name, blurb, amount, setAmount, years, setYears,
           </div>
         </div>
         <div style={{ fontSize:9.5, color:T.ink4, lineHeight:1.5 }}>
-          Your money grows at the BCI index rate ({fp(grossApy)}/yr) for {years} {years===1?"year":"years"}, then pays {fp(feePctOfPrincipal)} in fees ONCE — not every year — when it enters and exits. Net APY is what that nets out to per year, once the one-time fee cost is spread over the whole hold: the longer you hold, the smaller its annual bite.
+          Your money grows at the BLI index rate ({fp(grossApy)}/yr) for {years} {years===1?"year":"years"}, then pays {fp(feePctOfPrincipal)} in fees ONCE — not every year — when it enters and exits. Net APY is what that nets out to per year, once the one-time fee cost is spread over the whole hold: the longer you hold, the smaller its annual bite.
         </div>
 
         {/* Total fees paid on THIS amount over THIS holding period — these are
@@ -1034,7 +1230,7 @@ function CapitalCard({ name, blurb, amount, setAmount, years, setYears,
           </div>
         </div>
         <div style={{ fontSize:9, color:T.ink4, lineHeight:1.4 }}>
-          Illustrative only — assumes the BCI index keeps growing at the same pace it reached by month {years*12} ({fp(grossApy)} annualized). Entry and exit fees are the protocol's actual rates for this scenario, charged once each, not annually. The conversion-fee rate shown is net of the BND-paid share — that portion is paid in BND tokens and never deducted from your deposit. Not a guarantee or a forward-looking projection of actual returns.
+          Illustrative only — assumes the BLI index keeps growing at the same pace it reached by month {years*12} ({fp(grossApy)} annualized). Entry and exit fees are the protocol's actual rates for this scenario, charged once each, not annually. The conversion-fee rate shown is net of the BND-paid share — that portion is paid in BND tokens and never deducted from your deposit. Not a guarantee or a forward-looking projection of actual returns.
         </div>
       </div>
     </div>
@@ -1046,6 +1242,32 @@ function SectionTitle({ children, sub }) {
     <div style={{ marginBottom:10 }}>
       <div style={{ fontSize:12.5, fontWeight:600, color:T.ink }}>{children}</div>
       {sub && <div style={{ fontSize:11, color:T.ink3, marginTop:2 }}>{sub}</div>}
+    </div>
+  );
+}
+
+// Description card that mirrors the main simulator's "— What Each Row Means"
+// cards: an uppercase header bar, then a responsive grid of labelled cells
+// each explaining one row/column of the table it precedes. `items` = array of
+// { row, col?, what }. Use before any table whose row semantics aren't obvious.
+function RowMeaningCard({ title, items }) {
+  return (
+    <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8,
+      overflow:"hidden", marginBottom:10 }}>
+      <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
+        <span style={{ fontSize:10, fontWeight:600, color:T.ink3,
+          textTransform:"uppercase", letterSpacing:"0.08em" }}>{title}</span>
+      </div>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(230px, 1fr))" }}>
+        {items.map(({ row, col, what }) => (
+          <div key={row} style={{ padding:"11px 14px",
+            borderRight:`1px solid ${T.border}`, borderBottom:`1px solid ${T.border}` }}>
+            <div style={{ fontSize:11.5, fontWeight:600, color:col||T.ink,
+              marginBottom:5, paddingBottom:5, borderBottom:`1px solid ${T.border}` }}>{row}</div>
+            <div style={{ fontSize:10.5, color:T.ink4, lineHeight:1.5 }}>{what}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -1075,18 +1297,23 @@ function FmtTip(prefix="", suffix="") {
 
 function CollapsibleSection({ title, defaultOpen = false, children }) {
   const [open, setOpen] = useState(defaultOpen);
+  // Collapsed children are not in the DOM, so a print stylesheet could never
+  // reveal them. During a PDF export every section renders regardless of state,
+  // which is what guarantees the exported report is complete.
+  const printing = usePrinting();
+  const show = open || Boolean(printing);
   return (
-    <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10,
-      marginBottom:10, boxShadow:SHADOW, overflow:"hidden" }}>
-      <button onClick={() => setOpen(o => !o)}
+    <div className="avoid-break" style={{ background:T.bgEl, border:`1px solid ${T.border}`,
+      borderRadius:10, marginBottom:10, boxShadow:SHADOW, overflow:"hidden" }}>
+      <button className="cs-head" onClick={() => setOpen(o => !o)}
         style={{ width:"100%", display:"flex", alignItems:"center", gap:10,
           padding:"11px 16px", cursor:"pointer", background:"transparent",
           border:"none", textAlign:"left" }}>
-        <span style={{ fontSize:14, color:T.ink, transition:"transform .2s",
-          display:"inline-block", transform: open ? "rotate(90deg)" : "rotate(0deg)" }}>{'>'}</span>
+        <span className="cs-chev" style={{ fontSize:14, color:T.ink, transition:"transform .2s",
+          display:"inline-block", transform: show ? "rotate(90deg)" : "rotate(0deg)" }}>{'>'}</span>
         <span style={{ fontSize:12.5, fontWeight:600, color:T.ink, flex:1 }}>{title}</span>
       </button>
-      {open && (
+      {show && (
         <div style={{ padding:"0 16px 16px", borderTop:`1px solid ${T.border}` }}>
           {children}
         </div>
@@ -1148,8 +1375,11 @@ function FeeTable({ title, legend, rows, months, year = 1, years = 5, onYear }) 
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ key, calc, label, col, bg, bold, sep }) => (
-              <tr key={label} style={{
+            {rows.map(({ key, calc, label, col, bg, bold, sep }, ri) => (
+              // Keyed by row index: labels can repeat (e.g. two "-> BND Burn"
+              // rows) and calc-only rows carry no `key`, so neither is unique.
+              // The row list is positionally stable, so the index is safe.
+              <tr key={ri} style={{
                 borderBottom: sep ? `2px solid ${T.borderS}` : `1px solid ${T.border}`, background:bg,
               }}>
                 <td style={{ padding:"5px 12px", color: bold ? col : T.ink3,
@@ -1174,9 +1404,1364 @@ function FeeTable({ title, legend, rows, months, year = 1, years = 5, onYear }) 
   );
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   TOKENOMICS PAGE — BND scenario simulator.
+   Every number below is a control default, not a constant — the whole page
+   is a "what happens if" tool. Protocol Reserve revenue (`prSeries`) is the
+   ONE input that is never editable here: it is read live from the engine's
+   own `sim` array (same `totalPr` series the Protocol Reserve Revenue chart
+   uses), so changing assumptions on the Inputs page changes this page too.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+const TOKENOMICS_BUCKETS = ["community","team","liquidity","treasury","marketing","seed","extSeed","public","advisors"];
+
+function bucketMonthlyUnlock(totalTokens, tgePct, cliff, vestMonths, m) {
+  const tge = totalTokens * tgePct / 100;
+  if (m === 0) return tge;
+  if (vestMonths <= 0) return 0;
+  if (m <= cliff) return 0;
+  const remaining = totalTokens - tge;
+  const perMonth = remaining / vestMonths;
+  if (m >= cliff + 1 && m <= cliff + vestMonths) return perMonth;
+  return 0;
+}
+
+// Public staking-pool rewards: pays a TARGET annualized rate on the currently
+// staked balance (so implied APY reads as the target, e.g. 8-12%, from month
+// one — not an arbitrary front-loaded curve), drawn from a fixed capped budget.
+// Once the budget is exhausted the payout is whatever's left, then zero —
+// a hard sunset, no new supply minted.
+function stakingEmission(remainingBudget, targetApyPct, currentStaked) {
+  if (remainingBudget <= 0 || targetApyPct <= 0) return 0;
+  const desired = currentStaked * (targetApyPct / 100) / 12;
+  return Math.min(remainingBudget, Math.max(0, desired));
+}
+
+function runTokenomicsSim(a, prSeries) {
+  const months = prSeries.length;
+  const TOTAL = a.totalSupply;
+
+  const catTokens = {
+    seed:     a.seedPrice    > 0 ? a.seedRaised    / a.seedPrice    : 0,
+    extSeed:  a.extSeedOn && a.extSeedPrice > 0 ? a.extSeedRaised / a.extSeedPrice : 0,
+    public:   a.publicPrice  > 0 ? a.publicRaised  / a.publicPrice  : 0,
+    community: TOTAL * a.alloc.community / 100,
+    team:      TOTAL * a.alloc.team / 100,
+    liquidity: TOTAL * a.alloc.liquidity / 100,
+    treasury:  TOTAL * a.alloc.treasury / 100,
+    marketing: TOTAL * a.alloc.marketing / 100,
+    advisors:  TOTAL * a.alloc.advisors / 100,
+  };
+
+  // Public staking-pool rewards are carved OUT of the Community & Ecosystem
+  // allocation — there is no separate reward budget; the rewards ARE a slice of
+  // Community supply. That carved slice follows its own target-APY emission
+  // schedule instead of Community's normal TGE/cliff/vesting terms, so it must
+  // not also unlock as ordinary Community supply.
+  const stakingBudget = catTokens.community * Math.max(0, Math.min(100, a.stakingRewardPct || 0)) / 100;
+  const vestTokens = { ...catTokens, community: catTokens.community - stakingBudget };
+
+  // AMM seeding — cash-constrained. The pool's USDC side is ONLY the real cash
+  // routed to it from the raise (Extended Seed proceeds + the public-sale
+  // liquidity split); there is no external treasury top-up. The BND side is that
+  // USDC divided by launch price, drawn from the Liquidity & MM allocation — so
+  // pool depth is bounded by the USDC that actually exists, not by the token
+  // allocation. Any Liquidity-allocation tokens beyond what this USDC pairs stay
+  // as reserve; they cannot be added as depth without more real USDC to pair them.
+  const liquidityUsdSeed = (a.extSeedOn ? a.extSeedRaised : 0) + a.publicRaised * a.publicSplitLiquidity / 100;
+  // Only the BND/USDC slice is pool depth for this model. The balance seeds the
+  // rwaUSD/USDC pool, which this engine does not simulate — it is protocol
+  // liquidity, not BND market depth, and pairing it here would overstate how much
+  // sell pressure the BND market can absorb.
+  const bndPoolUsd = Math.min(a.bndPoolSeed ?? liquidityUsdSeed, liquidityUsdSeed);
+  let usdcReserve = Math.max(1, bndPoolUsd);
+  let bndReserve  = Math.max(1, usdcReserve / a.publicPrice);
+  let burnEngineBalance = a.publicRaised * Math.max(0, 100 - a.publicSplitLiquidity - a.publicSplitCompany - (a.publicSplitEmergency || 0)) / 100;
+  let cumBurned = 0;
+  let cumBurnUsd = 0;
+  let cumXbndRedirected = 0;
+  let publicStaked = 0;
+  let cumStakingEmissions = 0;
+
+  const vestedCum = {}; TOKENOMICS_BUCKETS.forEach(k => { vestedCum[k] = 0; });
+  const lockedXbnd = { seed: 0, extSeed: 0 };
+  const cumDistUsd = { seed: 0, extSeed: 0 };
+  const cumSellProceeds = { seed: 0, extSeed: 0, public: 0 };
+  const cumSoldTokens = { seed: 0, extSeed: 0, public: 0 };
+
+  TOKENOMICS_BUCKETS.forEach(k => {
+    if (k === "liquidity" || !a.vest[k]) return;
+    const v = a.vest[k];
+    vestedCum[k] += bucketMonthlyUnlock(vestTokens[k], v.tge, v.cliff, v.vest, 0);
+  });
+
+  const sellRate = (a, k) => {
+    if (k === "seed" || k === "extSeed") return a.sellThrough.investor;
+    if (k === "public") return a.sellThrough.public;
+    if (k === "team" || k === "advisors") return a.sellThrough.team;
+    if (k === "treasury") return 0;
+    return a.sellThrough.community;
+  };
+
+  const rows = [];
+  for (let m = 1; m <= months; m++) {
+    const prRevenue = prSeries[m - 1]?.totalPr || 0;
+    const burnFlow  = prRevenue * a.burnSplitPct / 100;
+    const xbndFlow  = prRevenue - burnFlow;
+    burnEngineBalance += burnFlow;
+    const yieldUsd = burnEngineBalance * a.burnApy / 100 / 12;
+
+    const newUnlocked = {};
+    TOKENOMICS_BUCKETS.forEach(k => {
+      if (k === "liquidity") { newUnlocked[k] = 0; return; }
+      const v = a.vest[k];
+      const rel = bucketMonthlyUnlock(vestTokens[k], v.tge, v.cliff, v.vest, m);
+      newUnlocked[k] = rel; vestedCum[k] += rel;
+    });
+
+    // --- xBND (investor-only) unstake churn — tracked per cohort so sell
+    // proceeds can be attributed correctly below ---
+    const soldByCohort = { seed: 0, extSeed: 0, public: 0 };
+    ["seed", "extSeed"].forEach(k => {
+      const unstaked = lockedXbnd[k] * a.unstakeChurn / 100;
+      lockedXbnd[k] -= unstaked;
+      soldByCohort[k] += unstaked * a.unstakeSoldPct / 100;
+    });
+
+    // --- Public staking-pool unstake churn (open to anyone, separate pool;
+    // not attributed to the Public cohort specifically — it's a mixed pool
+    // fed by Community/Team/Treasury/Marketing/Advisors/Public alike) ---
+    // Churn is an LP exit now, not a bare unstake: it removes the position's BND
+    // and its paired USDC from the pool further down, so the counter and the
+    // reserves cannot drift apart.
+    const unstakedPublic = publicStaked * a.publicUnstakeChurn / 100;
+    publicStaked -= unstakedPublic;
+    const soldFromUnstakePublic = unstakedPublic * a.publicUnstakeSoldPct / 100;
+
+    soldByCohort.seed    += newUnlocked.seed    * (sellRate(a, "seed")    / 100);
+    soldByCohort.extSeed += newUnlocked.extSeed * (sellRate(a, "extSeed") / 100);
+    soldByCohort.public  += newUnlocked.public  * (sellRate(a, "public")  / 100);
+
+    let tokensSold = soldByCohort.seed + soldByCohort.extSeed + soldByCohort.public + soldFromUnstakePublic;
+    TOKENOMICS_BUCKETS.forEach(k => {
+      if (k === "liquidity" || k === "seed" || k === "extSeed" || k === "public") return;
+      tokensSold += newUnlocked[k] * (sellRate(a, k) / 100);
+    });
+
+    // --- Organic market volume: a % of circulating market cap trades every
+    // month regardless of vesting, split by the buy/sell balance slider ---
+    const priorPrice = usdcReserve / bndReserve;
+    const priorCirculating = TOKENOMICS_BUCKETS.reduce((s, k) => k === "liquidity" ? s : s + vestedCum[k], 0) - cumBurned + cumStakingEmissions;
+    const orgVolumeUsd = Math.max(0, priorCirculating * priorPrice) * (a.orgVolumePct / 100);
+    const orgSellUsd = orgVolumeUsd * (1 - a.orgBuyBalance / 100);
+    const orgSellTokens = priorPrice > 0 ? orgSellUsd / priorPrice : 0;
+    const orgBuyUsd = orgVolumeUsd * (a.orgBuyBalance / 100);
+    tokensSold += orgSellTokens;
+
+    let sellUsdOut = 0;
+    if (tokensSold > 0) {
+      sellUsdOut = (usdcReserve * tokensSold * (1 - 0.003)) / (bndReserve + tokensSold);
+      bndReserve += tokensSold; usdcReserve -= sellUsdOut;
+    }
+    let price = usdcReserve / bndReserve;
+
+    // --- Attribute this month's combined sell trade back to each cohort at
+    // the trade's actual average execution price (total USDC out / total
+    // tokens sold) — accurate for slippage, since all sells this month clear
+    // through one blended AMM trade rather than individually. ---
+    const avgSellPrice = tokensSold > 0 ? sellUsdOut / tokensSold : price;
+    const sellProceedsNow = {
+      seed:    soldByCohort.seed    * avgSellPrice,
+      extSeed: soldByCohort.extSeed * avgSellPrice,
+      public:  soldByCohort.public  * avgSellPrice,
+    };
+    cumSellProceeds.seed    += sellProceedsNow.seed;
+    cumSellProceeds.extSeed += sellProceedsNow.extSeed;
+    cumSellProceeds.public  += sellProceedsNow.public;
+    cumSoldTokens.seed    += soldByCohort.seed;
+    cumSoldTokens.extSeed += soldByCohort.extSeed;
+    cumSoldTokens.public  += soldByCohort.public;
+
+    // --- xBND staking: Seed / Extended Seed only (the only cohorts allowed to hold xBND) ---
+    ["seed", "extSeed"].forEach(k => {
+      const soldFrac = sellRate(a, k) / 100;
+      lockedXbnd[k] += newUnlocked[k] * (1 - soldFrac) * a.stakePct / 100;
+    });
+
+    // --- Public staking pool: open to everyone, funded by whoever holds
+    // unsold, unlocked non-investor BND (Community, Team, Treasury, Marketing,
+    // Advisors, Public) ---
+    let publicNewStake = 0;
+    ["community", "team", "treasury", "marketing", "advisors", "public"].forEach(k => {
+      const soldFrac = sellRate(a, k) / 100;
+      publicNewStake += newUnlocked[k] * (1 - soldFrac) * a.publicStakePct / 100;
+    });
+    publicStaked += publicNewStake;
+
+    // --- Public staking-pool emission: pays the target APY on the currently
+    // staked balance, drawn from the remaining capped budget. The rate must be
+    // measured against the PRE-emission balance (what was actually staked when
+    // the reward accrued) — using the post-emission balance as the denominator
+    // understates the displayed rate below the true target. ---
+    const publicStakedBeforeEmission = publicStaked;
+    const remainingStakingBudget = stakingBudget - cumStakingEmissions;
+    const stakingEmissionNow = stakingEmission(remainingStakingBudget, a.targetStakingApy, publicStakedBeforeEmission);
+    publicStaked += stakingEmissionNow;
+    cumStakingEmissions += stakingEmissionNow;
+    const impliedPublicApy = publicStakedBeforeEmission > 0 ? (stakingEmissionNow * 12 / publicStakedBeforeEmission) * 100 : 0;
+
+    // --- Yield-seeking demand: while the public staking pool is actively paying
+    // rewards, outside capital buys BND and stakes it (the only pool outside
+    // capital can access, since xBND is investor-only). Its monthly inflow is
+    // sized organically as a fraction of the token's circulating market cap —
+    // no fixed dollar cap and no benchmark gate: it scales with the token's own
+    // size and switches off once the reward budget is exhausted. ---
+    // Anchored to the circulating float valued at LAUNCH price, not the live
+    // price, so demand tracks adoption (supply unlocked into circulation) rather
+    // than chasing the price it is itself moving — anchoring to live market cap
+    // creates a runaway price↑→demand↑→price↑ feedback loop.
+    const demandNotional = Math.max(0, priorCirculating * a.publicPrice);
+    const demandUsd = stakingEmissionNow > 0 ? demandNotional * (a.demandStrengthPct || 0) / 100 : 0;
+
+    // --- Combined buy side: Burn Engine yield (burned) + organic buy + demand buy (staked) ---
+    const totalBuyUsd = yieldUsd + orgBuyUsd + demandUsd;
+    let tokensBought = 0;
+    if (totalBuyUsd > 0) {
+      tokensBought = (bndReserve * totalBuyUsd * (1 - 0.003)) / (usdcReserve + totalBuyUsd);
+      bndReserve -= tokensBought; usdcReserve += totalBuyUsd;
+    }
+    const burnedNow    = totalBuyUsd > 0 ? tokensBought * (yieldUsd   / totalBuyUsd) : 0;
+    const demandBought = totalBuyUsd > 0 ? tokensBought * (demandUsd  / totalBuyUsd) : 0;
+    cumBurned += burnedNow;
+    cumBurnUsd += yieldUsd;
+    publicStaked += demandBought;
+    price = usdcReserve / bndReserve;
+
+    // --- Liquidity provision -------------------------------------------------
+    // Rewards are earned by providing BND/USDC liquidity and staking the LP token,
+    // so the staked balance is an LP position and the pool deepens as it grows.
+    //
+    // An LP position is half USDC. Only the outside-capital share is new money;
+    // the remainder is raised by selling BND into the pool, which moves the price
+    // before the deposit lands. Assuming 100% outside capital would be the single
+    // most flattering unstated assumption in this model, so it is a parameter.
+    //
+    // Sequenced deliberately: the funding sell is a trade and moves price; the
+    // deposit that follows adds to both reserves in ratio and does not.
+    const lpBndCommitted = publicNewStake + demandBought;
+    let lpFundingSold = 0, lpBndIn = 0, lpUsdcIn = 0;
+    if (lpBndCommitted > 0 && price > 0) {
+      const selfFundedFrac = Math.max(0, 100 - (a.lpOutsideUsdcPct ?? 100)) / 100;
+      // BND set aside and sold to raise the USDC side the provider does not bring.
+      lpFundingSold = lpBndCommitted * selfFundedFrac / (1 + selfFundedFrac);
+      if (lpFundingSold > 0) {
+        const out = (usdcReserve * lpFundingSold * (1 - 0.003)) / (bndReserve + lpFundingSold);
+        bndReserve += lpFundingSold; usdcReserve -= out;
+        price = usdcReserve / bndReserve;
+      }
+      // What remains is deposited, paired at the prevailing price.
+      lpBndIn  = lpBndCommitted - lpFundingSold;
+      lpUsdcIn = lpBndIn * price;
+      bndReserve  += lpBndIn;
+      usdcReserve += lpUsdcIn;
+      // A deposit in ratio leaves price unchanged; recomputed for clarity.
+      price = usdcReserve / bndReserve;
+      // The BND sold to raise USDC is no longer held — it must not also be
+      // counted as staked, or the position and the pool drift apart.
+      publicStaked = Math.max(0, publicStaked - lpFundingSold);
+    }
+
+    // --- Ongoing LP churn: withdraw this month's exits from the pool ---------
+    let churnBndOut = 0, churnUsdcOut = 0;
+    if (unstakedPublic > 0 && bndReserve > 0) {
+      churnBndOut  = Math.min(unstakedPublic, bndReserve * 0.5);
+      churnUsdcOut = churnBndOut * price;
+      if (churnUsdcOut < usdcReserve) {
+        bndReserve  -= churnBndOut;
+        usdcReserve -= churnUsdcOut;
+        price = usdcReserve / bndReserve;
+      } else { churnBndOut = 0; churnUsdcOut = 0; }
+    }
+
+    // --- Liquidity withdrawal ------------------------------------------------
+    // When the emission budget is exhausted the reason to remain an LP goes with
+    // it. Positions leave at a stated rate, removing both sides — a pool that only
+    // ever grows would be the second most flattering assumption here.
+    let lpBndOut = 0, lpUsdcOut = 0;
+    if (stakingEmissionNow <= 0 && publicStaked > 0 && (a.lpExitChurnPct || 0) > 0) {
+      const exitFrac = Math.min(1, (a.lpExitChurnPct || 0) / 100);
+      lpBndOut  = Math.min(publicStaked, bndReserve * 0.5) * exitFrac;
+      lpUsdcOut = lpBndOut * price;
+      if (lpUsdcOut < usdcReserve && lpBndOut < bndReserve) {
+        bndReserve  -= lpBndOut;
+        usdcReserve -= lpUsdcOut;
+        publicStaked = Math.max(0, publicStaked - lpBndOut);
+        price = usdcReserve / bndReserve;
+      } else { lpBndOut = 0; lpUsdcOut = 0; }
+    }
+
+    // --- xBND Revenue Switch: investor-only distribution, pro-rata by locked value ---
+    const lockedVal = { seed: lockedXbnd.seed * price, extSeed: lockedXbnd.extSeed * price };
+    const totalLockedVal = lockedVal.seed + lockedVal.extSeed;
+    const dist = { seed: 0, extSeed: 0 };
+    // While no xBND is locked (before the Seed cliff ends) the Revenue Switch has
+    // no recipients — that slice is redirected into the Burn Engine principal
+    // instead of being dropped, so every Protocol Reserve dollar keeps a real
+    // destination (owner-directed, audit finding F-1). It starts earning yield
+    // from the following month, like any other Burn Engine top-up.
+    let xbndRedirected = 0;
+    if (totalLockedVal > 0 && xbndFlow > 0) {
+      dist.seed    = xbndFlow * (lockedVal.seed    / totalLockedVal);
+      dist.extSeed = xbndFlow * (lockedVal.extSeed / totalLockedVal);
+    } else if (xbndFlow > 0) {
+      xbndRedirected = xbndFlow;
+      burnEngineBalance += xbndRedirected;
+      cumXbndRedirected += xbndRedirected;
+    }
+    cumDistUsd.seed += dist.seed; cumDistUsd.extSeed += dist.extSeed;
+
+    const circulating = TOKENOMICS_BUCKETS.reduce((s, k) => k === "liquidity" ? s : s + vestedCum[k], 0) - cumBurned + cumStakingEmissions;
+    const remainingSupply = TOTAL - cumBurned;
+
+    rows.push({
+      m, price, prRevenue, burnFlow, xbndFlow, burnEngineBalance, yieldUsd, burnedNow, cumBurned, cumBurnUsd,
+      circulating, floatSupply: circulating - lockedXbnd.seed - lockedXbnd.extSeed - publicStaked,
+      remainingSupply, marketCap: circulating * price, fdv: remainingSupply * price,
+      lockedSeed: lockedXbnd.seed, lockedExtSeed: lockedXbnd.extSeed,
+      distSeed: dist.seed, distExtSeed: dist.extSeed,
+      cumDistSeed: cumDistUsd.seed, cumDistExtSeed: cumDistUsd.extSeed,
+      apySeed:    lockedVal.seed    > 0 ? (dist.seed    * 12) / lockedVal.seed    : 0,
+      apyExtSeed: lockedVal.extSeed > 0 ? (dist.extSeed * 12) / lockedVal.extSeed : 0,
+      publicStaked, stakingEmissionNow, cumStakingEmissions, impliedPublicApy,
+      lpBndIn, lpUsdcIn, lpFundingSold, lpBndOut, lpUsdcOut, churnBndOut, churnUsdcOut,
+      poolUsdDepth: usdcReserve, poolBndDepth: bndReserve,
+      xbndRedirected, cumXbndRedirected,
+      demandUsd, orgBuyUsd, orgSellTokens,
+      usdcReserve, bndReserve,
+      byBucket: { ...vestedCum },
+      sellProceedsSeed: sellProceedsNow.seed, sellProceedsExtSeed: sellProceedsNow.extSeed, sellProceedsPublic: sellProceedsNow.public,
+      cumSellProceedsSeed: cumSellProceeds.seed, cumSellProceedsExtSeed: cumSellProceeds.extSeed, cumSellProceedsPublic: cumSellProceeds.public,
+      cumSoldSeed: cumSoldTokens.seed, cumSoldExtSeed: cumSoldTokens.extSeed, cumSoldPublic: cumSoldTokens.public,
+    });
+  }
+  return { rows, catTokens, stakingBudget };
+}
+
+// Caps every row at 3 items (never "however many fit"), with a light divider
+// between rows so a long slider list reads as distinct groups, not a wall.
+function SliderGrid({ items, minWidth = 200 }) {
+  const rowsOf3 = [];
+  for (let i = 0; i < items.length; i += 3) rowsOf3.push(items.slice(i, i + 3));
+  return (
+    <div style={{ marginTop:14 }}>
+      {rowsOf3.map((row, ri) => (
+        <div key={ri} style={{ display:"flex", gap:20, flexWrap:"wrap",
+          paddingBottom: ri < rowsOf3.length - 1 ? 16 : 0,
+          marginBottom:  ri < rowsOf3.length - 1 ? 16 : 0,
+          borderBottom:  ri < rowsOf3.length - 1 ? `1px dashed ${T.border}` : "none" }}>
+          {row.map((el, ci) => <div key={ci} style={{ flex:1, minWidth }}>{el}</div>)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TokenomicsPage({ sim, exportBtn }) {
+  const [tView, setTView] = useState("assumptions"); // "assumptions" | "results"
+  // During an export both halves render — assumptions first, then results —
+  // so the PDF is the whole model rather than whichever half was on screen.
+  const printing = usePrinting();
+  const goToTResults = () => { setTView("results");     window.scrollTo(0, 0); };
+  const goToTInputs  = () => { setTView("assumptions"); window.scrollTo(0, 0); };
+  // Pricing right-sized to a ~$50M launch FDV (public $0.05 × 1B). Seed and
+  // Extended Seed sit at a discount to public (Seed $20M FDV, Ext-Seed $35M),
+  // matching the institutional RWA benchmark and shrinking the overhang that a
+  // higher-FDV launch would carry.
+  const [seedRaised, setSeedRaised]   = useState(2_480_000);
+  const [seedPrice, setSeedPrice]     = useState(0.0248);
+  const [extSeedOn, setExtSeedOn]     = useState(true);
+  const [extSeedRaised, setExtSeedRaised] = useState(3_700_000);
+  const [extSeedPrice, setExtSeedPrice]   = useState(0.040);
+  const [extSeedCliff, setExtSeedCliff]   = useState(8);
+  const [publicRaised, setPublicRaised] = useState(7_500_000);
+  const [publicPrice, setPublicPrice]   = useState(0.05);
+
+  const [vestState, setVestState] = useState({
+    seed:      { tge:0,  cliff:6,  vest:24 },
+    extSeed:   { tge:0,  cliff:8,  vest:24 },
+    public:    { tge:15, cliff:0,  vest:12 },
+    team:      { tge:0,  cliff:12, vest:36 },
+    advisors:  { tge:0,  cliff:12, vest:24 },
+    community: { tge:5,  cliff:0,  vest:24 },
+    treasury:  { tge:5,  cliff:12, vest:48 },
+    marketing: { tge:5,  cliff:0,  vest:24 },
+  });
+  const setVest = (k, field, val) => setVestState(s => ({ ...s, [k]: { ...s[k], [field]: val } }));
+
+  // Sums to exactly 100% with the round sizes above: fixed 65.75% + Seed 10%
+  // + Extended Seed 9.25% + Public 15%. Extended Seed at $0.040 buys more supply
+  // than it did at $0.046, so Community absorbs the difference.
+  const [alloc, setAllocState] = useState({
+    community:28.75, team:12, liquidity:12, treasury:9, marketing:2, advisors:2,
+  });
+  const setAlloc = (k, val) => setAllocState(s => ({ ...s, [k]: val }));
+
+  const [burnSplitPct, setBurnSplitPct] = useState(80);
+  const [burnApy, setBurnApy] = useState(4);
+  // Public-raise use of funds. Liquidity 17% + the Extended Seed proceeds gives
+  // $4,975,000 of AMM depth; of that, bndPoolSeed goes to BND/USDC and the balance
+  // to rwaUSD/USDC. rwaUSD needs the larger share because it has no natural outside
+  // liquidity provider — the protocol is the depth — while BND/USDC attracts
+  // third-party LPs who want BND exposure. Because rwaUSD/USDC is a stable pair on
+  // concentrated liquidity, that capital sits in a tight band around par and buys
+  // far more effective depth than the nominal figure suggests.
+  const [publicSplitLiquidity, setPublicSplitLiquidity] = useState(17);
+  const [publicSplitCompany, setPublicSplitCompany]     = useState(30);
+  const [publicSplitEmergency, setPublicSplitEmergency] = useState(10);
+  // Of the total AMM allocation, the slice seeding BND/USDC. The remainder seeds
+  // rwaUSD/USDC and is not modelled as BND pool depth.
+  const [bndPoolSeed, setBndPoolSeed] = useState(1_000_000);
+  const burnSeedPct = Math.max(0, 100 - publicSplitLiquidity - publicSplitCompany - publicSplitEmergency);
+
+  const [sellThrough, setSellThrough] = useState({ investor:18, public:25, team:18, community:20 });
+  const setSell = (k, v) => setSellThrough(s => ({ ...s, [k]: v }));
+  const [stakePct, setStakePct]           = useState(100);
+  const [unstakeChurn, setUnstakeChurn]   = useState(3);
+  const [unstakeSoldPct, setUnstakeSoldPct] = useState(50);
+
+  // Public staking pool: open to anyone (not gated to investors, unlike xBND).
+  // Rewards are a slice of the Community & Ecosystem allocation — there is no
+  // separate reward budget; the rewards ARE a carved-out % of Community supply,
+  // released on a target-APY schedule. No new supply is minted.
+  const [stakingRewardPct, setStakingRewardPct]       = useState(15);
+  const [targetStakingApy, setTargetStakingApy]       = useState(10);
+  // Rewards are earned by providing BND/USDC liquidity and staking the LP token,
+  // not by staking bare BND. That makes pool depth grow with the programme instead
+  // of sitting fixed for 36 months. Participation is set below a bare-stake rate
+  // because an LP carries impermanent-loss risk that a bare stake does not.
+  const [publicStakePct, setPublicStakePct]           = useState(12);
+  // An LP position is half USDC. Whatever share is not brought as outside capital
+  // is raised by selling BND into the pool — real sell pressure that partly offsets
+  // the deepening, and the most flattering thing to leave unstated.
+  const [lpOutsideUsdcPct, setLpOutsideUsdcPct]       = useState(60);
+  // When the emission budget is exhausted the reason to stay an LP goes with it.
+  const [lpExitChurnPct, setLpExitChurnPct]           = useState(8);
+  const [publicUnstakeChurn, setPublicUnstakeChurn]   = useState(3);
+  const [publicUnstakeSoldPct, setPublicUnstakeSoldPct] = useState(50);
+  // Yield-seeking demand: organic outside capital that buys BND and stakes it
+  // while the pool is paying rewards, sized as a % of circulating market cap
+  // per month — no fixed dollar cap, no benchmark gate.
+  const [demandStrengthPct, setDemandStrengthPct]     = useState(1.5);
+  const [orgVolumePct, setOrgVolumePct]               = useState(3);
+  const [orgBuyBalance, setOrgBuyBalance]             = useState(50);
+
+  const assumptions = useMemo(() => ({
+    totalSupply: 1_000_000_000,
+    seedRaised, seedPrice, extSeedOn, extSeedRaised, extSeedPrice, publicRaised, publicPrice,
+    vest: { ...vestState, extSeed: { ...vestState.extSeed, cliff: extSeedCliff } },
+    alloc, burnSplitPct, burnApy, publicSplitLiquidity, publicSplitCompany, publicSplitEmergency, bndPoolSeed,
+    sellThrough, stakePct, unstakeChurn, unstakeSoldPct,
+    stakingRewardPct, targetStakingApy, publicStakePct, publicUnstakeChurn, publicUnstakeSoldPct,
+    lpOutsideUsdcPct, lpExitChurnPct,
+    demandStrengthPct, orgVolumePct, orgBuyBalance,
+  }), [seedRaised, seedPrice, extSeedOn, extSeedRaised, extSeedPrice, publicRaised, publicPrice,
+      vestState, extSeedCliff, alloc, burnSplitPct, burnApy, publicSplitLiquidity, publicSplitCompany, publicSplitEmergency, bndPoolSeed,
+      sellThrough, stakePct, unstakeChurn, unstakeSoldPct,
+      stakingRewardPct, targetStakingApy, publicStakePct, publicUnstakeChurn, publicUnstakeSoldPct,
+      lpOutsideUsdcPct, lpExitChurnPct,
+      demandStrengthPct, orgVolumePct, orgBuyBalance]);
+
+  const { rows: tRows, catTokens, stakingBudget: stakingBudgetClamped } = useMemo(() => runTokenomicsSim(assumptions, sim), [assumptions, sim]);
+
+  const seedPct    = (catTokens.seed    / assumptions.totalSupply) * 100;
+  const extSeedPct = (catTokens.extSeed / assumptions.totalSupply) * 100;
+  const publicPct  = (catTokens.public  / assumptions.totalSupply) * 100;
+  const allocTotal = alloc.community + alloc.team + alloc.liquidity + alloc.treasury + alloc.marketing
+    + alloc.advisors + seedPct + extSeedPct + publicPct;
+
+  const months = tRows.length;
+  const m12 = tRows[Math.min(11, months - 1)], m24 = tRows[Math.min(23, months - 1)], mLast = tRows[months - 1];
+  const launchPrice = publicPrice;
+  const maxDrawdown = tRows.reduce((min, r) => Math.min(min, r.price / launchPrice - 1), 0);
+  const pctSupplyBurned = mLast ? mLast.cumBurned / assumptions.totalSupply : 0;
+  // Community's TGE float must be computed off the VESTABLE portion (full
+  // allocation minus the staking-reward carve-out), matching what the engine
+  // itself actually unlocks at TGE — using the full bucket here would overstate it.
+  // Includes Treasury's TGE slice (owner-directed, audit F-7) so this KPI equals
+  // the engine's actual m=0 unlocks — treasury never sells (sellRate 0) but its
+  // TGE tokens are unlocked and circulating from day one.
+  const communityVestable = catTokens.community - stakingBudgetClamped;
+  const tgeFloat = catTokens.public * (vestState.public.tge/100) + communityVestable * (vestState.community.tge/100)
+    + catTokens.marketing * (vestState.marketing.tge/100) + catTokens.treasury * (vestState.treasury.tge/100);
+  const tgeFloatPct = tgeFloat / assumptions.totalSupply;
+
+  const priceChart = tRows.map(r => ({ m:r.m, price:+r.price.toFixed(5) }));
+  const burnChart  = tRows.map(r => ({ m:r.m, burnedNow: r.burnedNow, cumBurned: r.cumBurned }));
+
+  const BUCKET_COLORS = { community:T.green, team:T.blue, liquidity:T.amber, treasury:T.ink3, marketing:RC.integ, seed:T.red, extSeed:RC.entry, public:RC.pool, advisors:T.ink5, stakingEmissions:T.amber };
+  const BUCKET_LABELS = { community:"Community & Ecosystem", team:"Team", liquidity:"Liquidity & MM", treasury:"Treasury", marketing:"Marketing & Growth", seed:"Seed", extSeed:"Extended Seed", public:"Public", advisors:"Advisors", stakingEmissions:"Public Staking Emissions (from Community carve-out)" };
+  // Includes cumulative public-staking-pool emissions as their own series —
+  // those tokens are carved OUT of Community's normal vesting schedule (see
+  // runTokenomicsSim) and unlock via a separate emission curve instead, so
+  // without this line this chart (and the unlock totals derived from it)
+  // would silently under-report circulating supply relative to every other
+  // figure on this page that already includes them.
+  const vestingAreaData = tRows.map(r => {
+    const o = { m:r.m };
+    TOKENOMICS_BUCKETS.forEach(k => { if (k!=="liquidity" && (k!=="extSeed"||extSeedOn)) o[k] = r.byBucket[k]; });
+    o.stakingEmissions = r.cumStakingEmissions;
+    return o;
+  });
+
+  let prCumRunning = 0;
+  const prRevChart = tRows.map(r => { prCumRunning += r.prRevenue; return { m:r.m, prRevenue:r.prRevenue, prCum:prCumRunning }; });
+
+  let prevUnlockTotal = 0;
+  const unlockChart = vestingAreaData.map(o => {
+    const total = Object.keys(o).filter(k=>k!=="m").reduce((s,k)=>s+o[k], 0);
+    const monthly = total - prevUnlockTotal; prevUnlockTotal = total;
+    return { m:o.m, monthly, cumulative:total };
+  });
+
+  // Third band added (owner-directed, audit F-6): without it the Public Staking
+  // Pool balance (28.9% of circulating at M36 on defaults) sat in neither band
+  // and the stack silently under-reported circulating supply.
+  const supplyStackData = tRows.map(r => ({ m:r.m, unstaked: r.floatSupply, locked: r.lockedSeed + r.lockedExtSeed, publicStaked: r.publicStaked }));
+
+  const xbndRateChart = tRows.map(r => ({ m:r.m, seedRate: r.apySeed*100, extSeedRate: r.apyExtSeed*100 }));
+  const xbndCumDistChart = tRows.map(r => ({ m:r.m, seed: r.cumDistSeed, extSeed: r.cumDistExtSeed, total: r.cumDistSeed + r.cumDistExtSeed }));
+
+  const burnTreasuryChart = tRows.map(r => ({ m:r.m, balance: r.burnEngineBalance, cumBurnUsd: r.cumBurnUsd }));
+  const burnTreasuryRows = [
+    { key:"prRevenue",  label:"Protocol Reserve revenue (live)",       col:T.ink,  bold:true,  sep:false, bg:T.bgSoft },
+    { key:"burnFlow",   label:`Inflow → Burn Engine (${burnSplitPct}%)`, col:T.green, bold:false, sep:false, bg:T.bgEl },
+    { key:"xbndRedirected", label:`Inflow → redirected xBND slice (${100-burnSplitPct}%, only while no xBND is locked)`, col:T.green, bold:false, sep:true, bg:T.bgEl },
+    { key:"burnEngineBalance", label:"Balance (end of month)",         col:T.ink,  bold:true,  sep:false, bg:T.bgSoft },
+    { key:"yieldUsd",   label:`Yield earned (${burnApy}% APY on balance)`, col:T.blue, bold:false, sep:false, bg:T.bgEl },
+    { key:"yieldUsd",   label:"Outflow → spent on buyback & burn (100% of yield)", col:T.red, bold:false, sep:true, bg:T.bgEl },
+    { key:"cumBurnUsd", label:"Cumulative $ spent on buyback & burn",  col:T.red,  bold:false, sep:false, bg:T.bgEl },
+  ];
+
+  const publicPoolChart = tRows.map(r => ({ m:r.m, staked: r.publicStaked, apy: r.impliedPublicApy }));
+
+  // $10,000 buys BND at launch and stakes immediately into the public pool —
+  // forward-compounds at each month's prevailing implied APY (paid in kind, in BND).
+  const publicStakeIllustration = (() => {
+    let tokens = launchPrice > 0 ? 10000 / launchPrice : 0;
+    const out = [];
+    for (const r of tRows) {
+      tokens *= (1 + r.impliedPublicApy / 12 / 100);
+      out.push({ m: r.m, tokens, value: tokens * r.price });
+    }
+    return out;
+  })();
+  const stakingBudgetRemaining = Math.max(0, stakingBudgetClamped - (mLast?.cumStakingEmissions || 0));
+
+  const investorCashFlowRows = [
+    { key:"distSeed",         label:"Seed — xBND distributions (rwaUSD)",        col:T.green, bold:false, sep:false, bg:T.bgEl },
+    { key:"sellProceedsSeed", label:"Seed — sell proceeds ($)",                  col:T.blue,  bold:false, sep:false, bg:T.bgEl },
+    { calc: d => (d.distSeed||0) + (d.sellProceedsSeed||0), label:"Seed — total cash flow (this month)", col:T.ink, bold:false, sep:false, bg:T.bgEl },
+    { calc: d => (d.cumDistSeed||0) + (d.cumSellProceedsSeed||0), label:"Seed — cumulative total received", col:T.ink, bold:true, sep:true, bg:T.bgSoft },
+    ...(extSeedOn ? [
+      { key:"distExtSeed",         label:"Extended Seed — xBND distributions (rwaUSD)", col:T.green, bold:false, sep:false, bg:T.bgEl },
+      { key:"sellProceedsExtSeed", label:"Extended Seed — sell proceeds ($)",           col:T.blue,  bold:false, sep:false, bg:T.bgEl },
+      { calc: d => (d.distExtSeed||0) + (d.sellProceedsExtSeed||0), label:"Extended Seed — total cash flow (this month)", col:T.ink, bold:false, sep:false, bg:T.bgEl },
+      { calc: d => (d.cumDistExtSeed||0) + (d.cumSellProceedsExtSeed||0), label:"Extended Seed — cumulative total received", col:T.ink, bold:true, sep:true, bg:T.bgSoft },
+    ] : []),
+    { key:"sellProceedsPublic", label:"Public — sell proceeds ($, no xBND eligibility)", col:T.blue, bold:false, sep:false, bg:T.bgEl },
+    { key:"cumSellProceedsPublic", label:"Public — cumulative sell proceeds", col:T.ink, bold:true, sep:false, bg:T.bgSoft },
+  ];
+
+  // Cohort summary: remaining (unsold) holdings + all xBND paid + all sell
+  // proceeds realized to date = overall value, against original capital in.
+  const investorSummary = [
+    { label:"Seed",           key:"seed",    invested:seedRaised,    hasDist:true },
+    ...(extSeedOn ? [{ label:"Extended Seed", key:"extSeed", invested:extSeedRaised, hasDist:true }] : []),
+    { label:"Public",         key:"public",  invested:publicRaised,  hasDist:false },
+  ].map(r => {
+    const vested = mLast?.byBucket?.[r.key] || 0;
+    const sold = r.key==="seed" ? mLast?.cumSoldSeed||0 : r.key==="extSeed" ? mLast?.cumSoldExtSeed||0 : mLast?.cumSoldPublic||0;
+    const remainingTokens = Math.max(0, vested - sold);
+    const remainingValue = remainingTokens * (mLast?.price||0);
+    const cumDist = r.key==="seed" ? mLast?.cumDistSeed||0 : r.key==="extSeed" ? mLast?.cumDistExtSeed||0 : 0;
+    const cumSell = r.key==="seed" ? mLast?.cumSellProceedsSeed||0 : r.key==="extSeed" ? mLast?.cumSellProceedsExtSeed||0 : mLast?.cumSellProceedsPublic||0;
+    const overall = remainingValue + cumDist + cumSell;
+    const totalReturn = r.invested>0 ? (overall/r.invested - 1)*100 : 0;
+    // Cash yield on ORIGINAL capital, annualized — unlike the "implied APY" shown
+    // elsewhere (which divides by the current, price-shrunk locked value and
+    // balloons as price falls), this stays sane and shows the real cash income
+    // rate an investor actually earned, independent of what happened to price.
+    const xbndYieldOnCapitalPct = (r.invested>0 && months>0) ? (cumDist / r.invested) * (12 / months) * 100 : 0;
+    // BND side, kept fully separate from xBND: what the token position itself
+    // (what's still held + what was realized selling) is worth against capital
+    // — simple-annualized the same way as the xBND yield above, for an
+    // apples-to-apples comparison between the two categories. Can be negative
+    // (price down) unlike the xBND column, which is pure income and never is.
+    const bndValue = remainingValue + cumSell;
+    const bndReturnPct = r.invested>0 ? (bndValue/r.invested - 1) * 100 : 0;
+    const bndYieldOnCapitalPct = months>0 ? bndReturnPct * (12/months) : 0;
+    // Overall APY on initial investment — compounded annual growth rate (CAGR)
+    // of the FULL position (remaining tokens + xBND + sell proceeds) against
+    // what was originally put in, not the cumulative total-return % above.
+    const years = months / 12;
+    const overallApyPct = (r.invested>0 && years>0) ? (Math.pow(Math.max(0, overall) / r.invested, 1/years) - 1) * 100 : 0;
+    return { ...r, vested, sold, remainingTokens, remainingValue, cumDist, cumSell, bndValue, bndReturnPct,
+      overall, totalReturn, xbndYieldOnCapitalPct, bndYieldOnCapitalPct, overallApyPct };
+  });
+
+  const allocSummary = [
+    { label:"Seed", pct:seedPct, tokens:catTokens.seed },
+    ...(extSeedOn ? [{ label:"Extended Seed", pct:extSeedPct, tokens:catTokens.extSeed }] : []),
+    { label:"Public", pct:publicPct, tokens:catTokens.public },
+    ...["community","team","liquidity","treasury","marketing","advisors"].map(k => ({ label:BUCKET_LABELS[k], pct:alloc[k], tokens:catTokens[k] })),
+  ];
+
+  const [tableYear, setTableYear] = useState(1);
+  const yearMonths = Array.from({length:12}, (_,i) => tRows[(tableYear-1)*12+i] || null);
+
+  const tokenomicsRows = [
+    { key:"prRevenue",  label:"Protocol Reserve revenue (live)", col:T.ink,   bold:true,  sep:false, bg:T.bgSoft },
+    { key:"burnFlow",   label:`  → Burn Engine (${burnSplitPct}%)`, col:T.red,   bold:false, sep:false, bg:T.bgEl },
+    { key:"xbndFlow",   label:`  → xBND pool (${100-burnSplitPct}%)`, col:T.blue,  bold:false, sep:false, bg:T.bgEl },
+    { key:"xbndRedirected", label:"    of which redirected → Burn Engine (no xBND locked yet)", col:T.ink3, bold:false, sep:true, bg:T.bgEl },
+    { key:"burnEngineBalance", label:"Burn Engine balance",       col:T.ink3,  bold:false, sep:false, bg:T.bgEl },
+    { key:"yieldUsd",   label:"  Yield this month ($ spent on buyback & burn)", col:T.red, bold:false, sep:true, bg:T.bgEl },
+    { key:"cumDistSeed",    label:"Cumulative xBND paid — Seed",     col:T.green, bold:false, sep:false, bg:T.bgEl },
+    { key:"cumDistExtSeed", label:"Cumulative xBND paid — Ext. Seed", col:T.green, bold:false, sep:true,  bg:T.bgEl },
+    { key:"marketCap", label:"Market cap",  col:T.ink,  bold:false, sep:false, bg:T.bgEl },
+    { key:"fdv",        label:"FDV (reduced supply)", col:T.ink,  bold:true,  sep:false, bg:T.bgSoft },
+  ];
+
+  const warnings = [];
+  if (Math.abs(allocTotal - 100) > 0.6) warnings.push(`Allocation sums to ${allocTotal.toFixed(1)}%, not 100% — adjust the sliders above until the total reads 100%.`);
+  if (extSeedOn && extSeedPrice <= seedPrice) warnings.push("Extended Seed price is at or below the Seed price — later rounds should price above earlier ones.");
+  if (publicPrice <= (extSeedOn ? extSeedPrice : seedPrice)) warnings.push("Public price is at or below the last private round — 2025–26 data shows public sales now price at a discount to private, but pricing below the immediately preceding round with no discount logic can still misprice risk.");
+  if (tgeFloat * launchPrice > (m12?.usdcReserve || 0) * 3 && months > 0) warnings.push("Float value unlocked at TGE exceeds 3× the pool's month-12 USDC depth — expect meaningful day-one price impact.");
+
+  return (
+    <>
+      <div style={{ padding:"16px 24px 4px" }}>
+        <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between",
+          gap:16, flexWrap:"wrap", marginBottom:2 }}>
+          <div style={{ fontSize:18, fontWeight:700, color:T.ink, letterSpacing:"-0.01em" }}>
+            BND Tokenomics — Scenario Simulator
+          </div>
+          {exportBtn}
+        </div>
+        <div style={{ fontSize:11.5, color:T.ink3 }}>
+          {tView === "assumptions"
+            ? "Every number below is an assumption you can change. Protocol Reserve revenue is pulled live from the Inputs page's current configuration — change assumptions there and this page recomputes."
+            : "Results computed from the assumptions on the previous page and the live Protocol Reserve revenue feed."}
+        </div>
+      </div>
+
+      {printing === "tokenomics" && <div className="print-part">Part I — Assumptions</div>}
+      {(tView === "assumptions" || printing === "tokenomics") && <>
+      <div style={{ padding:"12px 24px 4px" }}>
+        <CollapsibleSection title="1 · Capital Formation — Rounds" defaultOpen={true}>
+          <div style={{ display:"flex", flexDirection:"column", gap:20, marginTop:14 }}>
+            <div style={{ display:"flex", gap:24, flexWrap:"wrap" }}>
+              <div style={{ flex:1, minWidth:220 }}>
+                <SectionTitle sub={`${fd(seedRaised)} raised · ${seedPct.toFixed(2)}% of supply · FDV ${fd(seedPrice*assumptions.totalSupply)}`}>Seed</SectionTitle>
+                <Slider label="Amount raised" value={seedRaised} min={200000} max={10000000} step={10000}
+                  onChange={setSeedRaised} fmt={fd}
+                  hint="Total capital raised in this round. Together with price, this sets how many tokens the round issues and its % of total supply." />
+                <Slider label="Price" value={seedPrice} min={0.002} max={0.1} step={0.0001}
+                  onChange={setSeedPrice} fmt={v=>`$${v.toFixed(4)}`}
+                  hint="Per-token price for this round — the earliest, most discounted price in the cap table. Everything else (Extended Seed, Public) should price above it." />
+              </div>
+              <div style={{ flex:1, minWidth:220 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <SectionTitle sub={extSeedOn ? `${fd(extSeedRaised)} raised · ${extSeedPct.toFixed(2)}% of supply · FDV ${fd(extSeedPrice*assumptions.totalSupply)}` : "disabled"}>Extended Seed</SectionTitle>
+                  <label style={{ fontSize:11, color:T.ink3, display:"flex", alignItems:"center", gap:5, cursor:"pointer" }}>
+                    <input type="checkbox" checked={extSeedOn} onChange={e=>setExtSeedOn(e.target.checked)} /> active
+                  </label>
+                </div>
+                {extSeedOn && <>
+                  <Slider label="Amount raised" value={extSeedRaised} min={500000} max={20000000} step={100000}
+                    onChange={setExtSeedRaised} fmt={fd}
+                    hint="This round's proceeds are treated as 100% liquidity seeding (Flow C) — they fund the AMM pool's USDC side rather than company operations." />
+                  <Slider label="Price" value={extSeedPrice} min={0.005} max={0.15} step={0.0001}
+                    onChange={setExtSeedPrice} fmt={v=>`$${v.toFixed(4)}`}
+                    hint="Should sit between Seed and Public. A price at or below Seed's is flagged below as inconsistent round pricing." />
+                </>}
+              </div>
+              <div style={{ flex:1, minWidth:220 }}>
+                <SectionTitle sub={`${fd(publicRaised)} raised · ${publicPct.toFixed(2)}% of supply · FDV ${fd(publicPrice*assumptions.totalSupply)}`}>Public</SectionTitle>
+                <Slider label="Amount raised" value={publicRaised} min={500000} max={30000000} step={250000}
+                  onChange={setPublicRaised} fmt={fd}
+                  hint="Capital raised in the public sale. Its 3-way split (Section 4) determines pool depth, company cash, and the Burn Engine's starting balance." />
+                <Slider label="Price (= launch price)" value={publicPrice} min={0.01} max={0.3} step={0.0001}
+                  onChange={setPublicPrice} fmt={v=>`$${v.toFixed(4)}`}
+                  hint="The day-one market price — the reference point every drawdown, KPI, and warning below is measured against." />
+              </div>
+            </div>
+            <div style={{ fontSize:11, color:T.ink3, borderTop:`1px solid ${T.border}`, paddingTop:10 }}>
+              Total raise: <b style={{color:T.ink}}>{fd(seedRaised + (extSeedOn?extSeedRaised:0) + publicRaised)}</b>
+              {"  ·  "}Seed→Public step-up: <b style={{color:T.ink}}>{(publicPrice/seedPrice).toFixed(2)}×</b>
+              {extSeedOn && <>{"  ·  "}Seed→ExtSeed step-up: <b style={{color:T.ink}}>{(extSeedPrice/seedPrice).toFixed(2)}×</b></>}
+            </div>
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="2 · Allocation">
+          <SliderGrid items={[
+            <Slider label={extSeedOn ? "Seed + Extended Seed" : "Seed"} value={+(seedPct+extSeedPct).toFixed(2)} min={0} max={40} step={0.1}
+              onChange={v => {
+                const combined = seedPct + extSeedPct;
+                const scale = combined > 0 ? v / combined : 1;
+                setSeedRaised(seedRaised * scale);
+                if (extSeedOn) setExtSeedRaised(extSeedRaised * scale);
+              }} fmt={v=>`${v}%`}
+              hint="Linked to Capital Formation — scales Seed and Extended Seed raised amounts together, keeping their relative split and both prices fixed." />,
+            <Slider label="Public" value={+publicPct.toFixed(2)} min={0} max={30} step={0.1}
+              onChange={v => setPublicRaised(v/100 * assumptions.totalSupply * publicPrice)} fmt={v=>`${v}%`}
+              hint="Linked to Capital Formation — moving this keeps Public price fixed and recomputes the amount raised." />,
+            ...["community","team","liquidity","treasury","marketing","advisors"].map(k => (
+              <Slider key={k} label={BUCKET_LABELS[k]}
+                value={alloc[k]} min={0} max={50} step={0.25} onChange={v=>setAlloc(k,v)} fmt={v=>`${v}%`}
+                hint={{
+                  community: "Ecosystem growth, LP incentives, RWA-issuer partnerships, community programs. Market benchmarks put this above 30% for a token to read as community-owned rather than investor-owned.",
+                  team:      "Team & founder allocation. Paired with the Team vesting schedule below — a cliff under 12 months reads as a soft rug to sophisticated buyers.",
+                  liquidity: "Deployed directly into the AMM pool at launch (see Section 5, Market Structure) — not sellable float, and excluded from every circulating-supply figure on this page.",
+                  treasury:  "Protocol-owned reserve for future spend, grants, or emergencies. Always treated as 0% sold in this model — real deployment should require on-chain governance approval.",
+                  marketing: "Funds and tokens for go-to-market and paid campaigns — commonly sized at 10–20% of the Public raise target.",
+                  advisors:  "Advisor allocation — kept small on purpose, typically 2–3% of supply with a standard 12-month cliff.",
+                }[k]} />
+            )),
+          ]} />
+          <div style={{ fontSize:11, color: Math.abs(allocTotal-100)>0.6?T.red:T.green, marginTop:10, fontWeight:600 }}>
+            Total allocation: {allocTotal.toFixed(1)}%
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="3 · Vesting">
+          <SliderGrid minWidth={220} items={
+            ["seed","extSeed","public","team","advisors","community","treasury","marketing"]
+              .filter(k => k!=="extSeed" || extSeedOn)
+              .map(k => (
+                <div key={k}>
+                  <SectionTitle>{({seed:"Seed",extSeed:"Extended Seed",public:"Public",team:"Team",advisors:"Advisors",community:"Community & Ecosystem",treasury:"Treasury",marketing:"Marketing & Growth"})[k]}</SectionTitle>
+                  <Slider label="TGE unlock" value={vestState[k].tge} min={0} max={50} step={1}
+                    onChange={v=>setVest(k,"tge",v)} fmt={v=>`${v}%`}
+                    hint="% of this bucket's tokens that unlock immediately at launch, before any cliff or vesting starts — this is what shows up in the TGE float KPI above." />
+                  <Slider label="Cliff" value={k==="extSeed"?extSeedCliff:vestState[k].cliff} min={0} max={24} step={1}
+                    onChange={v=> k==="extSeed" ? setExtSeedCliff(v) : setVest(k,"cliff",v)} fmt={v=>`${v} mo`}
+                    hint="Months of zero unlocks after TGE. Team/Treasury cliffs under 12 months are read by the market as a soft rug — 0 months is normal only for Public and Community." />
+                  <Slider label="Linear vesting" value={vestState[k].vest} min={0} max={48} step={1}
+                    onChange={v=>setVest(k,"vest",v)} fmt={v=>`${v} mo`}
+                    hint="Months over which the remaining (non-TGE) tokens release in equal monthly installments once the cliff ends. Longer = smoother unlock pressure, but a longer total lockup." />
+                </div>
+              ))
+          } />
+        </CollapsibleSection>
+
+        <CollapsibleSection title="4 · Revenue Split & Burn Engine">
+          <SliderGrid items={[
+            <Slider label="PR split — Burn Engine vs xBND" value={burnSplitPct} min={0} max={100} step={5}
+              onChange={setBurnSplitPct} fmt={v=>`${v}% burn / ${100-v}% xBND`}
+              hint="The single most important lever on this page — search for the split that best balances investor APY against buyback pressure." />,
+            <Slider label="Burn Engine portfolio APY" value={burnApy} min={2} max={12} step={0.5}
+              onChange={setBurnApy} fmt={v=>`${v}%`}
+              hint="Assumed yield on the Burn Engine's cash portfolio (e.g. T-bills, money market). Only this yield is spent on buybacks each month — the principal itself is never spent, only topped up." />,
+          ]} />
+          <SliderGrid items={[
+            <Slider label="Public raise → Liquidity" value={publicSplitLiquidity} min={0} max={80} step={1}
+              onChange={setPublicSplitLiquidity} fmt={v=>`${v}% · ${fd(publicRaised*v/100)}`}
+              hint={`Share of the Public raise routed to AMM liquidity at TGE, alongside the full Extended Seed proceeds. Total AMM allocation: ${fd((extSeedOn?extSeedRaised:0) + publicRaised*publicSplitLiquidity/100)} — split between the two pools below.`} />,
+            <Slider label="Public raise → Company" value={publicSplitCompany} min={0} max={80} step={1}
+              onChange={setPublicSplitCompany} fmt={v=>`${v}% · ${fd(publicRaised*v/100)}`}
+              hint={`Operations, development and running costs, paid to the operating company. With the Seed raise also directed to operations, the operating budget is ${fd(seedRaised + publicRaised*publicSplitCompany/100)}. No effect on token price, supply or the Burn Engine.`} />,
+            <Slider label="Public raise → Emergency Reserve" value={publicSplitEmergency} min={0} max={80} step={1}
+              onChange={setPublicSplitEmergency} fmt={v=>`${v}% · ${fd(publicRaised*v/100)}`}
+              hint="Protocol safety buffer — peg defence and shortfall backstop. A cash-use split held in reserve; no effect on token price, supply or the Burn Engine." />,
+            <div>
+              <div style={{ fontSize:10.5, color:T.ink3, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:600, marginBottom:4 }}>Public raise → Burn Engine seed</div>
+              <div style={{ fontSize:12, color:T.green, fontFamily:MONO, fontWeight:600 }}>{burnSeedPct}% · {fd(publicRaised*burnSeedPct/100)}</div>
+              <div style={{ fontSize:10.5, color:T.ink4, marginTop:2.5, lineHeight:1.4 }}>Automatically whatever's left of the Public raise after Liquidity, Company, and Emergency Reserve — this is the Burn Engine's starting balance, topped up monthly from Protocol Reserve revenue thereafter.</div>
+            </div>,
+          ]} />
+          <SliderGrid items={[
+            <Slider label="AMM allocation → BND/USDC pool" value={bndPoolSeed} min={250_000}
+              max={Math.max(250_000, Math.round(((extSeedOn?extSeedRaised:0) + publicRaised*publicSplitLiquidity/100)/50_000)*50_000)}
+              step={50_000} onChange={setBndPoolSeed} fmt={fd}
+              hint="The slice of the AMM allocation seeding BND/USDC. The balance seeds rwaUSD/USDC. BND/USDC attracts third-party liquidity providers who want BND exposure; rwaUSD/USDC has no natural outside provider, so the protocol supplies that depth itself." />,
+            <div>
+              <div style={{ fontSize:10.5, color:T.ink3, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:600, marginBottom:4 }}>AMM allocation → rwaUSD/USDC pool</div>
+              <div style={{ fontSize:12, color:T.green, fontFamily:MONO, fontWeight:600 }}>{fd(Math.max(0, (extSeedOn?extSeedRaised:0) + publicRaised*publicSplitLiquidity/100 - bndPoolSeed))}</div>
+              <div style={{ fontSize:10.5, color:T.ink4, marginTop:2.5, lineHeight:1.4 }}>Whatever remains of the AMM allocation. As a stable pair on concentrated liquidity this capital sits in a tight band around par, so effective depth is a large multiple of the nominal figure. This engine models BND market depth only — the rwaUSD pool is protocol liquidity and is not simulated here.</div>
+            </div>,
+            <div>
+              <div style={{ fontSize:10.5, color:T.ink3, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:600, marginBottom:4 }}>BND pool depth</div>
+              <div style={{ fontSize:12, color:T.green, fontFamily:MONO, fontWeight:600 }}>{fd(bndPoolSeed*2)} total</div>
+              <div style={{ fontSize:10.5, color:T.ink4, marginTop:2.5, lineHeight:1.4 }}>{fSupply(bndPoolSeed/publicPrice)} BND ({(100*(bndPoolSeed/publicPrice)/assumptions.totalSupply).toFixed(2)}% of supply) paired against {fd(bndPoolSeed)} USDC — {(100*bndPoolSeed*2/(publicPrice*assumptions.totalSupply)).toFixed(1)}% of launch FDV. The rest of the Liquidity &amp; MM allocation is held in reserve to deepen the pool if outside providers do not arrive.</div>
+            </div>,
+          ]} />
+          <div style={{ fontSize:10.5, color:T.ink4, marginTop:10, paddingTop:8, borderTop:`1px solid ${T.border}` }}>
+            Public raise {fd(publicRaised)} · Liquidity <b style={{color:T.ink2}}>{publicSplitLiquidity}% = {fd(publicRaised*publicSplitLiquidity/100)}</b> · Company <b style={{color:T.ink2}}>{publicSplitCompany}% = {fd(publicRaised*publicSplitCompany/100)}</b> · Emergency <b style={{color:T.ink2}}>{publicSplitEmergency}% = {fd(publicRaised*publicSplitEmergency/100)}</b> · Burn Engine <b style={{color:T.ink2}}>{burnSeedPct}% = {fd(publicRaised*burnSeedPct/100)}</b>
+            {(publicSplitLiquidity + publicSplitCompany + publicSplitEmergency) > 100 && <span style={{color:T.red}}> — Liquidity + Company + Emergency exceed 100%; Burn Engine seed is pinned at 0.</span>}
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="5 · Market Behavior">
+          <div style={{ fontSize:11, color:T.ink3, marginBottom:4 }}>
+            These assumptions decide how much of each month's new unlock gets sold into the pool (pushing price down) versus staked or held. There's no "right" answer — they're the honest-guess inputs the whole price simulation is built on, so try a few combinations and watch how the KPIs and charts above react.
+          </div>
+          <SliderGrid items={[
+            <Slider label="Sell-through — Investors (Seed/ExtSeed)" value={sellThrough.investor} min={0} max={100} step={5} onChange={v=>setSell("investor",v)} fmt={v=>`${v}%`}
+              hint="Of the Seed/Extended Seed tokens that newly unlock each month, the share assumed sold immediately rather than held or staked. Lower = investors show more conviction; higher = more day-one supply pressure." />,
+            <Slider label="Sell-through — Public" value={sellThrough.public} min={0} max={100} step={5} onChange={v=>setSell("public",v)} fmt={v=>`${v}%`}
+              hint="Same idea, applied to newly-unlocked Public-round tokens. Public buyers have no Revenue Switch access, so they typically have less reason to hold than investors do — this is usually set higher than the investor rate." />,
+            <Slider label="Sell-through — Team/Advisors" value={sellThrough.team} min={0} max={100} step={5} onChange={v=>setSell("team",v)} fmt={v=>`${v}%`}
+              hint="Applied to newly-unlocked Team and Advisor tokens. Insiders selling into every unlock is a common source of the 'cliff-day repricing' pattern seen across recent launches." />,
+            <Slider label="Sell-through — Community/Marketing" value={sellThrough.community} min={0} max={100} step={5} onChange={v=>setSell("community",v)} fmt={v=>`${v}%`}
+              hint="Applied to newly-unlocked Community and Marketing tokens (Treasury is always fixed at 0% sold in this model, since it's assumed to require governance approval to move)." />,
+            <Slider label="% of vested investor tokens staked" value={stakePct} min={0} max={100} step={5} onChange={setStakePct} fmt={v=>`${v}%`}
+              hint="Of the Seed/Extended Seed tokens that vest and aren't sold (100% − sell-through above), the share that gets staked into locked xBND, becoming eligible for Revenue Switch distributions." />,
+            <Slider label="Monthly unstake churn" value={unstakeChurn} min={0} max={20} step={1} onChange={setUnstakeChurn} fmt={v=>`${v}%`}
+              hint="Share of currently-locked xBND that unstakes every month in this simplified model (it doesn't track individual 1/3/6/12-month lock terms separately)." />,
+            <Slider label="% of unstaked tokens sold" value={unstakeSoldPct} min={0} max={100} step={5} onChange={setUnstakeSoldPct} fmt={v=>`${v}%`}
+              hint="Of the tokens that unstake each month (above), the share immediately sold into the pool rather than re-staked or simply held as float." />,
+          ]} />
+        </CollapsibleSection>
+
+        <CollapsibleSection title="6 · Public Staking Pool & Market Demand">
+          <div style={{ fontSize:11, color:T.ink3, marginBottom:4 }}>
+            xBND is investor-only — Seed and Extended Seed are the only cohorts that can lock BND for the Revenue Switch. Anyone else (Public, Team once vested, Community, Treasury, Marketing, Advisors) can instead stake into this separate, open public pool and earn BND-denominated rewards. This section also models organic open-market trading independent of vesting.
+          </div>
+          <SliderGrid items={[
+            <Slider label="Staking rewards (% of Community allocation)" value={stakingRewardPct} min={0} max={50} step={1} onChange={setStakingRewardPct} fmt={v=>`${v}%`}
+              hint={`The staking-pool rewards are a carved-out slice of the Community & Ecosystem allocation — there is no separate budget. ${fp(stakingRewardPct)} of Community = ${fSupply(catTokens.community * stakingRewardPct / 100)} BND, released on the target-APY schedule below. No new supply is minted.`} />,
+            <Slider label="Target staking APY" value={targetStakingApy} min={2} max={20} step={0.5} onChange={setTargetStakingApy} fmt={v=>`${v}%`}
+              hint="The rate the pool pays on staked BND, in BND — this is what reads as 'implied APY' below, from month one, not a front-loaded curve. It stays at this target as long as the carved-out Community slice lasts, then drops as it runs out." />,
+            <Slider label="LP participation" value={publicStakePct} min={0} max={100} step={1} onChange={setPublicStakePct} fmt={v=>`${v}%`}
+              hint="Rewards are earned by providing BND/USDC liquidity and staking the LP token, not by staking bare BND — so this share of newly-unlocked, unsold tokens is committed to the pool each month, and pool depth grows with the programme. Set below a bare-stake rate because an LP carries impermanent-loss risk that a bare stake does not." />,
+            <Slider label="LP — outside USDC share" value={lpOutsideUsdcPct} min={0} max={100} step={5} onChange={setLpOutsideUsdcPct} fmt={v=>`${v}%`}
+              hint="An LP position is half USDC. This is the share brought as new outside capital; the remainder is raised by selling BND into the pool, which moves the price before the deposit lands. Setting this to 100% assumes every provider arrives with fresh dollars — the most flattering assumption available here, which is why it is a control rather than a constant." />,
+            <Slider label="LP — exit rate once rewards end" value={lpExitChurnPct} min={0} max={30} step={1} onChange={setLpExitChurnPct} fmt={v=>`${v}%/mo`}
+              hint="The emission budget is capped and hard-stops. When it does, the reason to remain an LP goes with it and positions withdraw at this rate, removing both sides of the pool. A pool that only ever grows would overstate depth for the whole post-sunset period." />,
+            <Slider label="LP — monthly churn" value={publicUnstakeChurn} min={0} max={20} step={1} onChange={setPublicUnstakeChurn} fmt={v=>`${v}%`}
+              hint="Share of staked LP positions that exit each month while rewards are still running. Withdraws both the BND and the paired USDC from the pool, so the staked balance and the reserves cannot drift apart." />,
+            <Slider label="Public pool — % of unstaked sold" value={publicUnstakeSoldPct} min={0} max={100} step={5} onChange={setPublicUnstakeSoldPct} fmt={v=>`${v}%`}
+              hint="Of the tokens that unstake from the public pool each month, the share immediately sold into the pool rather than held." />,
+            <Slider label="Yield-seeking demand (% of float / mo)" value={demandStrengthPct} min={0} max={15} step={0.5} onChange={setDemandStrengthPct} fmt={v=>`${v}%`}
+              hint="While the staking pool is paying rewards, outside capital buys BND and stakes it. Sized organically as this % per month of the circulating float valued at LAUNCH price — no fixed dollar cap and no benchmark threshold. Anchoring to launch price (not the live price) keeps demand tracking real adoption instead of chasing the price it is itself moving, which would create a runaway feedback loop. Switches off once the reward slice is exhausted." />,
+            <Slider label="Organic monthly trading volume" value={orgVolumePct} min={0} max={20} step={0.5} onChange={setOrgVolumePct} fmt={v=>`${v}%`}
+              hint="Open-market trading volume each month, as a % of circulating market cap, independent of vesting unlocks — models ordinary traders and market-makers rather than insiders or stakers." />,
+            <Slider label="Organic buy/sell balance" value={orgBuyBalance} min={0} max={100} step={5} onChange={setOrgBuyBalance} fmt={v=>v<50?`${100-v}% net selling`:v>50?`${v-50}% net buying`:"balanced"}
+              hint="How that organic volume splits between buyers and sellers. 50% = balanced (no net price drift from this source alone); above 50% = net buying pressure; below 50% = net selling pressure." />,
+          ]} />
+        </CollapsibleSection>
+      </div>
+
+      <button className="no-print" onClick={goToTResults}
+        style={{ position:"fixed", right:24, bottom:24, zIndex:50,
+          display:"flex", alignItems:"center", gap:8,
+          padding:"12px 20px", borderRadius:999, cursor:"pointer",
+          border:"none", background:T.green, color:"#fff",
+          fontSize:13, fontWeight:600, letterSpacing:"-0.01em",
+          boxShadow:"0 4px 16px rgba(0,0,0,0.22), 0 1px 3px rgba(0,0,0,0.15)" }}>
+        See Tokenomics Results
+        <span aria-hidden="true" style={{ fontSize:15, lineHeight:1 }}>→</span>
+      </button>
+      </>}
+
+      {printing === "tokenomics" && <div className="print-part">Part II — Results</div>}
+      {(tView === "results" || printing === "tokenomics") && <>
+      <div style={{ padding:"0 24px", marginBottom:4, display:"flex",
+        justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
+        <button onClick={goToTInputs}
+          style={{ display:"flex", alignItems:"center", gap:8,
+            padding:"6px 14px", borderRadius:7, cursor:"pointer",
+            border:`1.5px solid ${T.border}`, background:T.bgEl, color:T.ink2,
+            fontSize:12, fontWeight:500, boxShadow:SHADOW }}>
+          <span aria-hidden="true" style={{ fontSize:14, lineHeight:1 }}>←</span>
+          Back to Tokenomics Inputs
+        </button>
+      </div>
+
+      {warnings.length > 0 && (
+        <div style={{ padding:"0 24px", marginBottom:16 }}>
+          {warnings.map((w,i) => (
+            <div key={i} style={{ background:T.amberSoft, border:`1px solid ${T.amber}`, borderRadius:8,
+              padding:"9px 14px", fontSize:11.5, color:T.ink2, marginBottom:6 }}>⚠ {w}</div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ padding:"0 24px", display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
+        <KPI label="Price @ M12" value={m12?`$${m12.price.toFixed(4)}`:"—"} sub={`launch $${launchPrice.toFixed(3)}`} />
+        <KPI label="Price @ M24" value={m24?`$${m24.price.toFixed(4)}`:"—"} />
+        <KPI label={`Price @ M${months}`} value={mLast?`$${mLast.price.toFixed(4)}`:"—"} accent />
+        <KPI label="Max drawdown vs launch" value={fp(maxDrawdown*100)} />
+        <KPI label="Supply burned" value={fp(pctSupplyBurned*100,2)} />
+        <KPI label="TGE float" value={fp(tgeFloatPct*100,1)} />
+      </div>
+
+      <div style={{ padding:"0 24px", marginBottom:16 }}>
+        <SectionTitle sub="Live to the Allocation and Capital Formation assumptions">Token Supply & Allocation</SectionTitle>
+        <RowMeaningCard title="Token Supply & Allocation — What Each Column Means" items={[
+          { row:"Bucket", col:T.ink,
+            what:"The allocation category. The three priced rounds (Seed, Extended Seed, Public) are derived from their raise ÷ price on the Capital Formation page; the remaining buckets are fixed % shares set on the Allocation page." },
+          { row:"% of supply", col:T.ink,
+            what:"This bucket's share of the fixed 1,000,000,000 BND maximum supply. Rounds + buckets total 100% (a small rounding overage is flagged if it exceeds ±0.6%)." },
+          { row:"Tokens", col:T.ink,
+            what:"The absolute token count for the bucket. For rounds this equals raise ÷ price; for buckets it is the % applied to total supply." },
+        ]} />
+        <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
+          <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11 }}>
+            <thead>
+              <tr style={{ background:T.bgSoft }}>
+                {["Bucket","% of supply","Tokens"].map(h=>(
+                  <th key={h} style={{ padding:"7px 10px", textAlign:h==="Bucket"?"left":"right", color:T.ink3,
+                    fontWeight:600, fontSize:9.5, textTransform:"uppercase", letterSpacing:"0.05em",
+                    borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {allocSummary.map(r => (
+                <tr key={r.label} style={{ borderBottom:`1px solid ${T.border}` }}>
+                  <td style={{ padding:"6px 10px", color:T.ink2 }}>{r.label}</td>
+                  <td style={{ padding:"6px 10px", textAlign:"right", fontFamily:MONO }}>{r.pct.toFixed(2)}%</td>
+                  <td style={{ padding:"6px 10px", textAlign:"right", fontFamily:MONO }}>{fSupply(r.tokens)}</td>
+                </tr>
+              ))}
+              <tr>
+                <td style={{ padding:"6px 10px", fontWeight:700, color:T.ink }}>Total</td>
+                <td style={{ padding:"6px 10px", textAlign:"right", fontFamily:MONO, fontWeight:700,
+                  color: Math.abs(allocTotal-100)>0.6?T.red:T.green }}>{allocTotal.toFixed(2)}%</td>
+                <td style={{ padding:"6px 10px", textAlign:"right", fontFamily:MONO, fontWeight:700 }}>{fSupply(assumptions.totalSupply)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{ fontSize:10.5, color:T.ink4, marginTop:6 }}>
+          Community & Ecosystem's {fSupply(catTokens.community)} shown above includes the {fSupply(stakingBudgetClamped)} carved out for Public Staking Pool rewards ({fp(stakingRewardPct)} of Community, Section 6) — that slice does not follow Community's Vesting terms below; it releases via its own target-APY emission schedule instead.
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", marginBottom:16 }}>
+        <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Cumulative unlocked tokens by bucket, live to the Vesting assumptions above. Dashed area = Public Staking Pool emissions, carved out of Community's allocation and released on its own schedule (Section 6), not the Vesting terms above.">Vesting Schedule — Cumulative Unlocks</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={vestingAreaData} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fSupply} />
+              <Tooltip formatter={(v,n)=>[fSupply(v), BUCKET_LABELS[n]||n]} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              {["community","team","treasury","marketing","advisors","seed","extSeed","public","stakingEmissions"]
+                .filter(k => k!=="extSeed" || extSeedOn)
+                .map(k => (
+                <Area isAnimationActive={chartAnim()} key={k} type="monotone" dataKey={k} stackId="1" stroke={BUCKET_COLORS[k]} fill={BUCKET_COLORS[k]}
+                  fillOpacity={k==="stakingEmissions"?0.4:0.75} strokeDasharray={k==="stakingEmissions"?"3 2":undefined} />
+              ))}
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", display:"flex", gap:16, flexWrap:"wrap", marginBottom:16 }}>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Total newly-unlocked tokens across all buckets, including Public Staking Pool emissions">Monthly Token Unlocks</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={unlockChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fSupply} />
+              <Tooltip formatter={v=>fSupply(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Bar isAnimationActive={chartAnim()} dataKey="monthly" fill={T.blue} radius={[2,2,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Running total of all unlocked tokens (incl. Public Staking Pool emissions)">Cumulative Token Unlocks</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={unlockChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fSupply} />
+              <Tooltip formatter={v=>fSupply(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="cumulative" stroke={T.blue} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", display:"flex", gap:16, flexWrap:"wrap", marginBottom:16 }}>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Live from the Inputs page's engine configuration">Protocol Reserve Revenue (monthly)</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={prRevChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fd} />
+              <Tooltip formatter={v=>fd(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Bar isAnimationActive={chartAnim()} dataKey="prRevenue" fill={T.green} radius={[2,2,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Sum of Protocol Reserve revenue since month 1">Cumulative Protocol Reserve</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={prRevChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fd} />
+              <Tooltip formatter={v=>fd(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="prCum" stroke={T.green} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", display:"flex", gap:16, flexWrap:"wrap", marginBottom:16 }}>
+        <div style={{ flex:2, minWidth:340, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Dashed line = public sale / launch price">BND Simulated Price</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={priceChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={v=>`$${v}`} />
+              <Tooltip formatter={v=>`$${(+v).toFixed(4)}`} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <ReferenceLine y={launchPrice} stroke={T.ink4} strokeDasharray="4 3" />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="price" stroke={T.green} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Tokens burned via Burn Engine yield">BND Burned</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={burnChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fSupply} />
+              <Tooltip formatter={v=>fSupply(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Bar isAnimationActive={chartAnim()} dataKey="burnedNow" fill={T.red} radius={[2,2,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", display:"flex", gap:16, flexWrap:"wrap", marginBottom:16 }}>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Unstaked (sellable float) vs. locked as xBND vs. staked in the Public Pool — the three bands stack to total circulating supply">Circulating vs. Locked (xBND) Supply</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <AreaChart data={supplyStackData} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fSupply} />
+              <Tooltip formatter={(v,n)=>[fSupply(v), n==="unstaked"?"Circulating (unstaked)":n==="locked"?"Locked as xBND":"Staked — Public Pool"]} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Area isAnimationActive={chartAnim()} type="monotone" dataKey="unstaked" stackId="1" stroke={T.blue} fill={T.blue} fillOpacity={0.7} />
+              <Area isAnimationActive={chartAnim()} type="monotone" dataKey="locked" stackId="1" stroke={T.green} fill={T.green} fillOpacity={0.7} />
+              <Area isAnimationActive={chartAnim()} type="monotone" dataKey="publicStaked" stackId="1" stroke={T.amber} fill={T.amber} fillOpacity={0.6} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Running total of all BND permanently destroyed">Cumulative BND Burned</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={burnChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fSupply} />
+              <Tooltip formatter={v=>fSupply(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="cumBurned" stroke={T.red} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", display:"flex", gap:16, flexWrap:"wrap", marginBottom:16 }}>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Dashed line = 15% reference threshold, for comparison only">Locked xBND — Implied Annualized Distribution Rate</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={xbndRateChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={v=>`${v}%`} />
+              <Tooltip formatter={v=>`${(+v).toFixed(1)}%`} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <ReferenceLine y={15} stroke={T.ink4} strokeDasharray="4 3" />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="seedRate" name="Seed" stroke={T.red} strokeWidth={2} dot={false} />
+              {extSeedOn && <Line isAnimationActive={chartAnim()} type="monotone" dataKey="extSeedRate" name="Ext. Seed" stroke={RC.entry} strokeWidth={2} dot={false} />}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div style={{ flex:1, minWidth:280, background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Paid monthly in rwaUSD to locked xBND holders">Cumulative rwaUSD Distributed to Locked xBND</SectionTitle>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={xbndCumDistChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fd} />
+              <Tooltip formatter={v=>fd(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="total" stroke={T.green} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", marginBottom:8 }}>
+        <SectionTitle sub="Flow A — the cash portfolio that buys BND with its yield and burns it. Principal only ever grows (seeded at TGE + topped up monthly from Protocol Reserve); only the yield it earns is ever spent.">Burn Engine Treasury</SectionTitle>
+      </div>
+      <div style={{ padding:"0 24px", display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
+        <KPI label="Balance today" value={fd(mLast?.burnEngineBalance)} sub={`seeded ${fd(assumptions.publicRaised * burnSeedPct/100)}`} />
+        <KPI label="Yield rate" value={`${burnApy}% APY`} sub={`${fd(mLast?.yieldUsd)}/mo currently`} />
+        <KPI label="Cumulative $ burned" value={fd(mLast?.cumBurnUsd)} accent />
+        <KPI label="Cumulative BND burned" value={fSupply(mLast?.cumBurned||0)} sub={fp(pctSupplyBurned*100,3)+" of supply"} />
+      </div>
+      <div style={{ padding:"0 24px", marginBottom:16 }}>
+        <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Principal balance (left axis logic: grows only from seeding + monthly Protocol Reserve top-ups, never spent) vs. cumulative $ spent on buyback-and-burn">Burn Engine — Balance vs. Cumulative Spend</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={burnTreasuryChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fd} />
+              <Tooltip formatter={v=>fd(v)} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="balance" name="Treasury balance" stroke={T.green} strokeWidth={2} dot={false} />
+              <Line isAnimationActive={chartAnim()} type="monotone" dataKey="cumBurnUsd" name="Cumulative $ burned" stroke={T.red} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      <div style={{ padding:"0 24px", marginBottom:16 }}>
+        <RowMeaningCard title="Burn Engine Treasury — What Each Row Means" items={[
+          { row:"Protocol Reserve revenue (live)", col:T.ink,
+            what:"The net Protocol Reserve revenue for the month, pulled live from the Inputs page's engine — the single source that funds the entire BND token economy." },
+          { row:`Inflow → Burn Engine (${burnSplitPct}%)`, col:T.green,
+            what:`The ${burnSplitPct}% of Protocol Reserve revenue routed into the Burn Engine's cash principal this month (the PR split slider in Section 4).` },
+          { row:"Inflow → redirected xBND slice", col:T.green,
+            what:`The xBND revenue slice (${100-burnSplitPct}%) has no recipients until the first xBND locks (post-Seed-cliff), so before then it is redirected here instead of dropped — shows a value only in those early months.` },
+          { row:"Balance (end of month)", col:T.ink,
+            what:"The Burn Engine principal after the month's inflows. It is never spent — only seeded at TGE and topped up from revenue — so it only ever grows." },
+          { row:`Yield earned (${burnApy}% APY)`, col:T.blue,
+            what:`The month's yield on the principal at ${burnApy}% annual. This yield — and only this yield — is what gets spent; the principal is left intact.` },
+          { row:"Outflow → buyback & burn", col:T.red,
+            what:"100% of the month's yield is spent buying BND on the open market and burning it — the sole outflow, converting portfolio yield into permanent supply reduction." },
+          { row:"Cumulative $ spent", col:T.red,
+            what:"Running total of all dollars spent on buyback-and-burn since launch." },
+        ]} />
+        <FeeTable title="Burn Engine Treasury — Monthly Breakdown" rows={burnTreasuryRows} months={yearMonths}
+          year={tableYear} years={Math.ceil(months/12)} onYear={setTableYear}
+          legend={[["Inflow",T.green],["Outflow",T.red]]} />
+      </div>
+
+      <div style={{ padding:"0 24px", marginBottom:8 }}>
+        <SectionTitle sub="Open to everyone — Public, Team (once vested), Community, Treasury, Marketing, and Advisors can all stake here. Rewards are paid in BND from the slice carved out of the Community & Ecosystem allocation; xBND remains investor-only.">Public Staking Pool</SectionTitle>
+      </div>
+      <div style={{ padding:"0 24px", display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
+        <KPI label="Currently staked" value={fSupply(mLast?.publicStaked||0)} sub={`${fd((mLast?.publicStaked||0)*(mLast?.price||0))} value`} />
+        <KPI label="Implied APY now" value={fp(mLast?.impliedPublicApy||0)} sub={`target ${targetStakingApy}%`} accent={(mLast?.impliedPublicApy||0) > 0} />
+        <KPI label="Reward slice remaining" value={fSupply(stakingBudgetRemaining)} sub={`of ${fSupply(stakingBudgetClamped)} (${fp(stakingRewardPct)} of Community)`} />
+        <KPI label="Cumulative demand-bought" value={fd(tRows.reduce((s,r)=>s+r.demandUsd,0))} sub="outside capital, self-triggered" />
+      </div>
+      <div style={{ padding:"0 24px", marginBottom:16 }}>
+        <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, padding:16, boxShadow:SHADOW }}>
+          <SectionTitle sub="Implied APY holds at the target rate while the carved-out Community reward slice lasts; yield-seeking demand flows in organically as a % of the circulating float valued at launch price (deliberately not live market cap, to avoid a price-chasing feedback loop) the whole time the pool pays.">Public Staking Pool — Balance &amp; Implied APY</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={publicPoolChart} margin={{top:8,right:8,bottom:4,left:-8}}>
+              <CartesianGrid stroke={T.border} strokeDasharray="2 4" vertical={false} />
+              <XAxis dataKey="m" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} />
+              <YAxis yAxisId="left" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={fSupply} />
+              <YAxis yAxisId="right" orientation="right" tick={{fill:T.ink3,fontSize:9,fontFamily:MONO}} tickFormatter={v=>`${v}%`} />
+              <Tooltip formatter={(v,n)=>n==="apy"?[`${(+v).toFixed(1)}%`,"Implied APY"]:[fSupply(v),"Staked"]} labelFormatter={l=>`Month ${l}`}
+                contentStyle={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, fontSize:11 }} />
+              <Line isAnimationActive={chartAnim()} yAxisId="left" type="monotone" dataKey="staked" stroke={T.blue} strokeWidth={2} dot={false} />
+              <Line isAnimationActive={chartAnim()} yAxisId="right" type="monotone" dataKey="apy" stroke={T.amber} strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px", marginBottom:16 }}>
+        <RowMeaningCard title="Monthly Tokenomics Breakdown — What Each Row Means" items={[
+          { row:"Protocol Reserve revenue (live)", col:T.ink,
+            what:"The month's net Protocol Reserve revenue — the top of the funnel that both the Burn Engine and the xBND Revenue Switch draw from." },
+          { row:`→ Burn Engine (${burnSplitPct}%)`, col:T.red,
+            what:`The share of that revenue sent to the Burn Engine's buyback-and-burn cash portfolio.` },
+          { row:`→ xBND pool (${100-burnSplitPct}%)`, col:T.blue,
+            what:`The share sent to the xBND Revenue Switch, distributed to locked xBND holders in rwaUSD.` },
+          { row:"of which redirected → Burn Engine", col:T.ink3,
+            what:"The portion of the xBND slice that is redirected to the Burn Engine in the early months when no xBND is locked yet (zero once lockers exist)." },
+          { row:"Burn Engine balance", col:T.ink3,
+            what:"The Burn Engine's principal at month end (same figure as the Burn Engine Treasury table above)." },
+          { row:"Yield this month", col:T.red,
+            what:"The dollars the principal earned this month and spent on buyback-and-burn." },
+          { row:"Cumulative xBND paid — Seed / Ext. Seed", col:T.green,
+            what:"Running total of rwaUSD distributed to each locked-investor cohort via the Revenue Switch." },
+          { row:"Market cap", col:T.ink,
+            what:"Circulating supply × the simulated BND price at month end." },
+          { row:"FDV (reduced supply)", col:T.ink,
+            what:"Fully-diluted value on the burn-reduced maximum supply (1B − cumulative burned) × price — falls relative to a static-supply FDV as burns accumulate." },
+        ]} />
+        <FeeTable title="Monthly Tokenomics Breakdown" rows={tokenomicsRows} months={yearMonths}
+          year={tableYear} years={Math.ceil(months/12)} onYear={setTableYear}
+          legend={[["Burn Engine",T.red],["xBND",T.blue]]} />
+      </div>
+
+      <div style={{ padding:"0 24px", marginBottom:8 }}>
+        <SectionTitle sub="Every cohort's cash flow broken into its two sources — xBND revenue-switch distributions (Seed/Extended Seed only) and realized proceeds from selling vested tokens (all three) — plus what's left still held. Public earns no xBND (investor-only, per design); its only cash-flow source here is selling.">Investor Economics</SectionTitle>
+      </div>
+      <div style={{ padding:"0 24px", display:"flex", gap:10, flexWrap:"wrap", marginBottom:16 }}>
+        <KPI label="Seed total return" value={fp(investorSummary.find(r=>r.key==="seed")?.totalReturn||0)}
+          accent={(investorSummary.find(r=>r.key==="seed")?.totalReturn||0)>=0} />
+        {extSeedOn && <KPI label="Ext. Seed total return" value={fp(investorSummary.find(r=>r.key==="extSeed")?.totalReturn||0)}
+          accent={(investorSummary.find(r=>r.key==="extSeed")?.totalReturn||0)>=0} />}
+        <KPI label="Public total return" value={fp(investorSummary.find(r=>r.key==="public")?.totalReturn||0)}
+          accent={(investorSummary.find(r=>r.key==="public")?.totalReturn||0)>=0} />
+        <KPI label="Total xBND paid (all investors)" value={fd((mLast?.cumDistSeed||0) + (mLast?.cumDistExtSeed||0))} />
+        <KPI label="Total sell proceeds (all cohorts)" value={fd((mLast?.cumSellProceedsSeed||0) + (mLast?.cumSellProceedsExtSeed||0) + (mLast?.cumSellProceedsPublic||0))} />
+      </div>
+
+      <div style={{ padding:"0 24px", marginBottom:16 }}>
+        <RowMeaningCard title="Investor Cash Flows — What Each Row Means" items={[
+          { row:"xBND distributions (rwaUSD)", col:T.green,
+            what:"The cohort's share of the Revenue Switch that month, paid in rwaUSD. Seed and Extended Seed only — Public holds no xBND. Price-independent income." },
+          { row:"Sell proceeds ($)", col:T.blue,
+            what:"Dollars the cohort realized selling vested tokens that month, at the trade's actual average execution price (net of pool slippage). All three cohorts." },
+          { row:"Total cash flow (this month)", col:T.ink,
+            what:"The cohort's two sources added together for the month — xBND distribution + sell proceeds." },
+          { row:"Cumulative total received", col:T.ink,
+            what:"Running total of everything the cohort has taken in cash to date (xBND + sell proceeds), against its original capital in." },
+        ]} />
+        <FeeTable title="Investor Cash Flows — Monthly Breakdown" rows={investorCashFlowRows} months={yearMonths}
+          year={tableYear} years={Math.ceil(months/12)} onYear={setTableYear}
+          legend={[["xBND (rwaUSD)",T.green],["Sell proceeds ($)",T.blue]]} />
+      </div>
+
+      <div style={{ padding:"0 24px 24px" }}>
+        <SectionTitle sub={`Final state at month ${months}, split into the two income categories kept fully separate throughout — xBND (rwaUSD, income only, immune to BND price) and BND (the token position itself: what's still held + what was realized selling, 100% exposed to price) — plus a Combined view. Each category gets its own annualized rate so you can see exactly where return is coming from.`}>Investor Economics — Cohort Summary</SectionTitle>
+        <RowMeaningCard title="Cohort Summary — What Each Row Group Means" items={[
+          { row:"Invested", col:T.ink,
+            what:"The capital the cohort put in — the round's raise (Seed $, Extended Seed $, Public $)." },
+          { row:"xBND (rwaUSD income)", col:T.green,
+            what:"The rwaUSD income leg: total distributions earned from the Revenue Switch, and its simple-annualized rate on capital. Immune to BND price; shows 'n/a' for Public, which holds no xBND." },
+          { row:"BND (holding + selling)", col:T.blue,
+            what:"The token-position leg: remaining vested tokens valued at the final price, plus proceeds already realized from selling, with its own simple-annualized rate. 100% exposed to BND price — can be negative." },
+          { row:"Combined", col:T.ink,
+            what:"The two legs added: overall value against capital in, total return %, and an Overall APY expressed as a compounded CAGR (a different convention from the two simple-annualized rates above — not directly comparable)." },
+        ]} />
+        <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
+          <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}`,
+            display:"flex", alignItems:"center", gap:16 }}>
+            <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase", letterSpacing:"0.08em" }}>Investor Economics — Cohort Summary</span>
+            <div style={{ display:"flex", gap:8 }}>
+              {[["xBND (rwaUSD)",T.green],["BND position",T.blue]].map(([l,c])=>(
+                <span key={l} style={{ fontSize:9.5, color:c, fontWeight:600 }}>* {l}</span>
+              ))}
+            </div>
+          </div>
+          <div style={{ overflowX:"auto" }}>
+          <table style={{ width:"100%", borderCollapse:"collapse", fontSize:10.5 }}>
+            <thead>
+              <tr style={{ background:T.bgSoft }}>
+                <th style={{ padding:"6px 12px", textAlign:"left", color:T.ink3, fontWeight:600, fontSize:9,
+                  textTransform:"uppercase", letterSpacing:"0.06em", borderBottom:`1px solid ${T.border}`, width:230, whiteSpace:"nowrap" }}>Metric</th>
+                {investorSummary.map(r => (
+                  <th key={r.key} style={{ padding:"6px 12px", textAlign:"right", color:T.ink3, fontWeight:600, fontSize:9,
+                    textTransform:"uppercase", letterSpacing:"0.06em", borderBottom:`1px solid ${T.border}`, whiteSpace:"nowrap" }}>{r.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { label:"Invested", grp:T.ink3, get:r=>fd(r.invested), cellCol:()=>T.ink2, bold:false, sep:true },
+                { label:"xBND earned (rwaUSD)", grp:T.green, get:r=>r.hasDist?fd(r.cumDist):"n/a", cellCol:()=>T.green, bold:false, sep:false },
+                { label:"xBND APY (simple, ann.)", grp:T.green, get:r=>r.hasDist?fp(r.xbndYieldOnCapitalPct):"n/a", cellCol:()=>T.green, bold:true, sep:true },
+                { label:"Remaining value (BND held)", grp:T.blue, get:r=>fd(r.remainingValue), cellCol:()=>T.ink2, bold:false, sep:false },
+                { label:"Sell proceeds ($)", grp:T.blue, get:r=>fd(r.cumSell), cellCol:()=>T.ink2, bold:false, sep:false },
+                { label:"BND APY (simple, ann.)", grp:T.blue, get:r=>`${r.bndYieldOnCapitalPct>=0?"+":""}${r.bndYieldOnCapitalPct.toFixed(1)}%`, cellCol:r=>r.bndYieldOnCapitalPct>=0?T.green:T.red, bold:true, sep:true },
+                { label:"Overall value", grp:T.ink, get:r=>fd(r.overall), cellCol:()=>T.ink, bold:true, sep:false },
+                { label:"Total return", grp:T.ink, get:r=>`${r.totalReturn>=0?"+":""}${r.totalReturn.toFixed(1)}%`, cellCol:r=>r.totalReturn>=0?T.green:T.red, bold:true, sep:false },
+                { label:"Overall APY (CAGR)", grp:T.ink, get:r=>`${r.overallApyPct>=0?"+":""}${r.overallApyPct.toFixed(1)}%`, cellCol:r=>r.overallApyPct>=0?T.green:T.red, bold:true, sep:false },
+              ].map(m => (
+                <tr key={m.label} style={{ borderBottom: m.sep?`2px solid ${T.borderS}`:`1px solid ${T.border}` }}>
+                  <td style={{ padding:"6px 12px", color:m.grp, fontWeight: m.bold?700:500, whiteSpace:"nowrap" }}>{m.label}</td>
+                  {investorSummary.map(r => (
+                    <td key={r.key} style={{ padding:"6px 12px", textAlign:"right", fontFamily:MONO,
+                      fontWeight: m.bold?700:500, color: m.get(r)==="n/a"?T.ink5:m.cellCol(r) }}>{m.get(r)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <div style={{ fontSize:10.5, color:T.ink4, marginTop:6 }}>
+          Check: xBND earned + Remaining value + Sell proceeds = Overall value, for every cohort — the xBND and BND categories are strictly additive (only their annualized APYs aren't, since compounding rates don't sum). The xBND and BND "APY" columns are simple-annualized (÷ 3 years); the Overall column is a compounded CAGR — the two conventions are not directly comparable.
+        </div>
+        <div style={{ fontSize:10.5, color:T.ink4, marginTop:6 }}>
+          Check: Remaining tokens + tokens already sold = total tokens vested by month {months} — {investorSummary.map(r=>`${r.label} ${fSupply(r.remainingTokens+r.sold)} = ${fSupply(r.vested)} vested`).join(" · ")}.
+        </div>
+        <div style={{ fontSize:10.5, color:T.ink4, marginTop:4 }}>
+          "xBND earned" is fixed by Protocol Reserve revenue and token-count share of the locked pool — BND price cancels out of that formula entirely, so it never moves this column. "Remaining value" and "Sell proceeds" are 100% exposed to BND price, since the capital invested bought BND tokens, not rwaUSD — that's the entire gap between a healthy xBND yield and a negative Total return.
+        </div>
+      </div>
+
+      <div style={{ padding:"0 24px 24px" }}>
+        <SectionTitle sub="For reference — a separate, non-round-specific position: anyone can buy BND on the open market and stake it into the Public Staking Pool (Section 6), earning rewards in kind (BND), independent of any investment round. Modeled as $10,000 buying at the launch price in month 1 and held staked throughout — no unstaking or selling.">Public Staking Pool — $10,000 Illustration</SectionTitle>
+        <RowMeaningCard title="$10,000 Illustration — What Each Column Means" items={[
+          { row:"Month", col:T.ink,
+            what:"The snapshot month (12, 24, and the final month) for a position opened at launch." },
+          { row:"Token balance", col:T.ink,
+            what:"BND held: the initial $10,000 ÷ launch price, compounded forward each month at the pool's prevailing implied APY (rewards paid in kind, in BND). Grows purely from staking rewards while the reward slice lasts." },
+          { row:"Value", col:T.ink,
+            what:"The token balance valued at that month's simulated BND price — so it moves with both reward accrual and the BND price path, unlike the token-balance column." },
+        ]} />
+        <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden", maxWidth:420 }}>
+          <table style={{ width:"100%", borderCollapse:"collapse", fontSize:10.5 }}>
+            <thead>
+              <tr>
+                {["Month","Token balance","Value"].map(h=>(
+                  <th key={h} style={{ padding:"6px 10px", textAlign:h==="Month"?"left":"right", color:T.ink3,
+                    fontWeight:600, fontSize:9, textTransform:"uppercase", letterSpacing:"0.04em",
+                    borderBottom:`1px solid ${T.border}` }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[...new Set([12,24,months].filter(m=>m>=1 && m<=months))].map(m => {
+                const row = publicStakeIllustration[m-1];
+                return (
+                  <tr key={m} style={{ borderBottom:`1px solid ${T.border}` }}>
+                    <td style={{ padding:"6px 10px", color:T.ink2 }}>Month {m}</td>
+                    <td style={{ padding:"6px 10px", textAlign:"right", fontFamily:MONO }}>{fSupply(row?.tokens||0)}</td>
+                    <td style={{ padding:"6px 10px", textAlign:"right", fontFamily:MONO, fontWeight:600 }}>{fd(row?.value||0)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      </>}
+    </>
+  );
+}
+
 /* MAIN COMPONENT */
-export default function BoundSimulator({ onOpenDocs }) {
-  const [view, setView] = useState("inputs"); // "inputs" | "results" — two-page layout
+export default function BoundSimulator({ onOpenDocs, simReq, onOpenEngineDocs }) {
+  const [view, setView] = useState("inputs"); // "inputs" | "results" | "tokenomics"
+  const { printing, exportPdf } = usePdfExport();
+  // The Documentation hub can request a specific tab when returning to the app
+  // (nonce-guarded so it fires on every request, including repeats). Ignored on
+  // the very first mount (n===0) so the app opens on the Simulator tab by default.
+  useEffect(() => {
+    if (simReq && simReq.n > 0) { setView(simReq.tab); window.scrollTo(0, 0); }
+  }, [simReq]);
   const goToResults = () => { setView("results"); window.scrollTo(0, 0); };
   const goToInputs  = () => { setView("inputs");  window.scrollTo(0, 0); };
   const [p, setP]       = useState({ ...PRESETS.default });
@@ -1426,7 +3011,7 @@ export default function BoundSimulator({ onOpenDocs }) {
     lcrWarning:            1.0,
     lcrStress:             0.7,
 
-    // (BCI lock extensions removed from UI 2026-07-09 — display-only values; the
+    // (BLI lock extensions removed from UI 2026-07-09 — display-only values; the
     //  engine's own defaults of +15/+30/+60d drive the stress-box readout instead)
 
     // Minting haircut discounts (% off baseline)
@@ -1646,7 +3231,7 @@ export default function BoundSimulator({ onOpenDocs }) {
         const mintHcut  = (st.mintHcPct  || 0) / 100;
         const integPR   = m === mk.launchMonth ? integFee : 0;
 
-        // RWA trade + haircut flipped to 80% BCI / 20% PR (owner, 2026-07-10);
+        // RWA trade + haircut flipped to 80% BLI / 20% PR (owner, 2026-07-10);
         // maintenance unchanged at 20/80.
         const liqTradeBCI     = liqVol  * tradeRate * 0.80;
         const liqTradePR      = liqVol  * tradeRate * 0.20;
@@ -1785,21 +3370,21 @@ export default function BoundSimulator({ onOpenDocs }) {
           privateContractVol: row.lpIn || 0,                // direct-contract channel, NOT pool volume
           totalAllChannels:   (row.pVol || 0) + (row.lpIn || 0), // honest combined total
 
-          // Private LP — capital flow (deposit -> BCI / idle / layer -> exit)
+          // Private LP — capital flow (deposit -> BLI / idle / layer -> exit)
           privDeposit:      row.lpIn || 0,
           privMintFee:      (row.privMintBCI || 0) + (row.privMintPR || 0),
           privRwaReceived:  row.rwaUSDReceived || 0,
-          privConvFee:      row.privConvInBCI || 0,          // conv fee, 100% to BCI SC
+          privConvFee:      row.privConvInBCI || 0,          // conv fee, 100% to BLI SC
           privToBci:        row.convAmountEntry || 0,
           privToBcIdle:     row.privateBoundCore || 0,
           privToLayer:      row.privateToLayer || 0,
           privLayerOut:     row.privateLayerOut || 0,
 
-          // Retail LP — capital flow (pool buy -> BCI / idle / layer -> exit)
+          // Retail LP — capital flow (pool buy -> BLI / idle / layer -> exit)
           retailPoolBuy:      row.retailPoolVol || 0,
           retailPoolFee:      row.retailPoolFeeEntry || 0,
           retailRwaReceived:  row.retailRwaUSDRecv || 0,
-          retailConvFee:      row.retailConvFeeEntry || 0,   // conv fee, 100% to BCI SC
+          retailConvFee:      row.retailConvFeeEntry || 0,   // conv fee, 100% to BLI SC
           retailToBci:        row.convAmountRetail || 0,
           retailToBcIdle:     row.retailBoundCore || 0,
           retailToLayer:      row.retailToLayer || 0,
@@ -1876,7 +3461,7 @@ export default function BoundSimulator({ onOpenDocs }) {
   const layerRwaPct     = rwaCollatPct;
   const layerRWAAmount  = rwaCollatAmt;
 
-  // BCI outflows derived from sim
+  // BLI outflows derived from sim
   const expectedRdmpMo  = (md?.privateLayerOut || 0) + (md?.retailLayerOut || 0);
   // Engine obligations are based on COMMITTED (served) RWA volume, not raw demand
   const dailyRWADemand  = md?.dailyRWALiqDemand ?? (md?.rwaLiq || 0) / 30;
@@ -1943,18 +3528,18 @@ export default function BoundSimulator({ onOpenDocs }) {
   }, [sim, rwaMarkets]);
   const [layerTableYear, setLayerTableYear] = useState(1);
 
-  // BCI price chart + linked BCI SC Balance table (0 = All, 1–3 = Year) — also drives
+  // BLI price chart + linked BLI SC Balance table (0 = All, 1–3 = Year) — also drives
   // the Simulation Results KPI row (moved into the shared header control there).
   const [bciPriceView, setBciPriceView] = useState(1);
   const resultsMonth = bciPriceView === 0 ? 36 : bciPriceView * 12;
   const resultsRow   = sim[resultsMonth - 1];
-  // BCI Price & Backing table — linked to the SAME Range control as the KPI cards
+  // BLI Price & Backing table — linked to the SAME Range control as the KPI cards
   // and price chart above it (bciPriceView) — owner reversed an earlier "own
   // independent selector" request, since the table sits directly under the chart
   // it describes and having a second control there was one too many controls.
 
   // Simulation Results page — tab layout (owner request 2026-07-09): Overview
-  // (KPI cards + price chart + Price & Backing table), BCI SC Revenue, Protocol
+  // (KPI cards + price chart + Price & Backing table), BLI SC Revenue, Protocol
   // Reserve Revenue, Participant Economics. One topic per tab so investors aren't
   // scrolling one endless page.
   const [resultsTab, setResultsTab] = useState("overview");
@@ -2063,8 +3648,8 @@ export default function BoundSimulator({ onOpenDocs }) {
     {n:"US Treasuries",          y:4.5,  col:T.ink4},
     {n:"Morpho DeFi Lending",    y:6.0,  col:T.ink4},
     {n:"Private Credit (avg)",   y:11.0, col:T.ink4},
-    {n:`BCI Default · M${ms}`,   y:+(defaultSim[ms-1]?.annG||0).toFixed(1), col:T.blue},
-    ...(ap==="custom"?[{n:`BCI Custom . M${ms}`, y:+(sim[ms-1]?.annG||0).toFixed(1), col:T.amber}]:[]),
+    {n:`BLI Default · M${ms}`,   y:+(defaultSim[ms-1]?.annG||0).toFixed(1), col:T.blue},
+    ...(ap==="custom"?[{n:`BLI Custom . M${ms}`, y:+(sim[ms-1]?.annG||0).toFixed(1), col:T.amber}]:[]),
   ].sort((a,b)=>a.y-b.y);
 
   // Revenue tables — 3 years only (engine horizon 36 months, P10); every field is a
@@ -2089,8 +3674,8 @@ export default function BoundSimulator({ onOpenDocs }) {
     }));
   }, [sim]);
 
-  // BCI SC Revenue — % composition (re-added 2026-07-10, owner request): each
-  // stream's share of that month's BCI SC revenue, so a reader can connect the
+  // BLI SC Revenue — % composition (re-added 2026-07-10, owner request): each
+  // stream's share of that month's BLI SC revenue, so a reader can connect the
   // headline annualized-growth number to what actually drove it (e.g. "12%
   // annualized this month, 60% of that revenue was conversion fees"). Every
   // percentage is derived from the same engine exports as the $ table above —
@@ -2277,13 +3862,48 @@ export default function BoundSimulator({ onOpenDocs }) {
   ));
 
   return (
-    <>
+    <PrintCtx.Provider value={printing}>
 
       <div style={{ background:T.bg, minHeight:"100vh", fontFamily:SANS,
         fontSize:14, color:T.ink, WebkitFontSmoothing:"antialiased" }}>
 
+        {/* Export prep mask. To reflow the charts to paper width the document is
+            momentarily constrained to 900px (see .exporting-pdf in print.css),
+            which would otherwise be visible on screen as the whole app shrinking.
+            This fixed overlay covers that reflow so the user only ever sees the
+            print dialog. .no-print keeps it out of the PDF itself. */}
+        {printing && (
+          <div className="no-print" aria-hidden="true"
+            style={{ position:"fixed", inset:0, zIndex:9999, background:T.bg,
+              display:"flex", alignItems:"center", justifyContent:"center", gap:10,
+              fontFamily:SANS, fontSize:13, fontWeight:600, color:T.ink3, letterSpacing:"0.01em" }}>
+            <span style={{ width:12, height:12, borderRadius:"50%",
+              border:`2px solid ${T.border}`, borderTopColor:T.green,
+              animation:"boundspin 0.7s linear infinite" }} />
+            Preparing PDF…
+            <style>{`@keyframes boundspin{to{transform:rotate(360deg)}}`}</style>
+          </div>
+        )}
+
+        {/* Cover sheet — only rendered into the PDF, never shown on screen. */}
+        {printing === "simulator" && (
+          <PrintCover
+            eyebrow="Simulation Report"
+            title="BOUND Protocol — Simulation Results"
+            subtitle="Full model output for the active scenario: the assumptions the run was configured with, the resulting tables, and the analysis that follows from them."
+            meta={[
+              { k:"Report",   v:"Simulation Results" },
+              { k:"Scenario", v:ap === "custom" ? "Custom" : "Default" },
+              { k:"Horizon",  v:`${sim.length} months` },
+              { k:"Generated",v:new Date().toISOString().slice(0,10) },
+            ]}
+            note="Generated from the BOUND Protocol economic simulator. All figures are model outputs on the assumptions recorded in Part I, not forecasts or guarantees of actual results. Part I lists every assumption; Part II contains the resulting tables and analysis."
+          />
+        )}
+        {printing === "simulator" && <div className="print-part">Part I — Assumptions</div>}
+
         {/* ── HEADER ── */}
-        <div style={{ background:T.bgEl, borderBottom:`1px solid ${T.border}`,
+        <div className="no-print" style={{ background:T.bgEl, borderBottom:`1px solid ${T.border}`,
           padding:"14px 24px", display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
           <div>
             <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:3 }}>
@@ -2297,20 +3917,35 @@ export default function BoundSimulator({ onOpenDocs }) {
               Architecture v4 · 10 Revenue Streams · Dynamic Liquidity Waterfall
             </div>
           </div>
-          {onOpenDocs && (
-            <button onClick={onOpenDocs}
-              style={{ padding:"7px 14px", borderRadius:7, cursor:"pointer", fontSize:12,
-                fontWeight:600, border:`1px solid ${T.border}`, background:T.bgSoft,
-                color:T.ink2, boxShadow:SHADOW, flexShrink:0 }}>
-              Documentation
-            </button>
-          )}
+          {/* ── PRIMARY NAV ── one segmented control. "Simulator" is a dropdown
+              routing to the Protocol or Tokenomics simulator; Library sits
+              beside it. Folding both simulators into the dropdown keeps the nav a
+              single obvious control rather than scattered buttons. */}
+          <div style={{ display:"flex", alignItems:"center", gap:10, flexShrink:0, flexWrap:"wrap" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:3, flexShrink:0,
+            background:T.bgSoft, border:`1px solid ${T.border}`, borderRadius:9,
+            padding:3, boxShadow:SHADOW }}>
+            <SimulatorNav view={view} setView={setView} />
+            {onOpenDocs && (
+              <button onClick={onOpenDocs}
+                style={{ padding:"6px 15px", borderRadius:7, cursor:"pointer", fontSize:12,
+                  fontWeight:600, border:"none", whiteSpace:"nowrap",
+                  background:"transparent", color:T.ink2,
+                  transition:"background 0.15s, color 0.15s" }}>
+                Library
+              </button>
+            )}
+          </div>
+          </div>
         </div>
 
-        {/* ── SCENARIO BAR ── inputs page shows the scenario buttons; the results
-            page shows a Back-to-Inputs button in the same spot instead (owner
-            request — replaces the floating sticky button). */}
-        <div style={{ background:T.bgSoft, borderBottom:`1px solid ${T.border}`,
+        {/* ── SCENARIO BAR ── only for the Simulator area (inputs shows the
+            scenario buttons; results shows a Back-to-Inputs button in the same
+            spot). The Tokenomics area is suppressed here — it carries its own
+            assumptions↔results sub-navigation inside TokenomicsPage, so a second
+            "Back to Inputs" strip here would point at the wrong page. */}
+        {view !== "tokenomics" && (
+        <div className="no-print" style={{ background:T.bgSoft, borderBottom:`1px solid ${T.border}`,
           padding:"10px 24px", display:"flex", justifyContent:"space-between",
           alignItems:"center", flexWrap:"wrap", gap:10 }}>
           {view === "inputs" ? (
@@ -2329,9 +3964,17 @@ export default function BoundSimulator({ onOpenDocs }) {
               Back to Inputs
             </button>
           )}
+          <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
+            {/* The engine reference lives with the engine a reader is questioning. */}
+            {onOpenEngineDocs && <EngineDocsBtn onClick={onOpenEngineDocs} />}
+            <ExportPdfBtn onClick={() => exportPdf("simulator")} label="Export Simulation PDF" />
+          </div>
         </div>
+        )}
 
-        {view === "inputs" && <>
+        {/* During a simulator export both halves render, in the order the report
+            requires: assumptions first, then the results that follow from them. */}
+        {(view === "inputs" || printing === "simulator") && <>
         {/* -- ASSUMPTION SECTIONS -- */}
         <div style={{ padding:"0 24px 4px" }}>
 
@@ -2352,9 +3995,9 @@ export default function BoundSimulator({ onOpenDocs }) {
                       hint="New institutional capital deposited every month, including Month 1 (added on top of the Seed Allocation that month only). Shown as 'New Capital' in the table below." />
                   </div>
                   <div style={{ flex:1 }}>
-                    <Slider label="BCI Conversion Rate (%)" value={p.privateBCIConversion||95} min={50} max={100} step={1}
+                    <Slider label="BLI Conversion Rate (%)" value={p.privateBCIConversion||95} min={50} max={100} step={1}
                       onChange={v=>up("privateBCIConversion",v)} fmt={v=>`${v}%`}
-                      hint={`Share of the LP's rwaUSD (after the mint fee) that converts to BCI and enters the Liquidity Layer. The other ${100-(p.privateBCIConversion||95)}% stays as idle rwaUSD backing in Bound Core instead — it does not earn BCI's collateral performance.`} />
+                      hint={`Share of the LP's rwaUSD (after the mint fee) that converts to BLI and enters the Liquidity Layer. The other ${100-(p.privateBCIConversion||95)}% stays as idle rwaUSD backing in Bound Core instead — it does not earn BLI's collateral performance.`} />
                   </div>
                   <div style={{ flex:1 }}>
                     <Slider label="Monthly Outflow - % of Layer Balance" value={p.lpOutflow} min={0.5} max={50} step={0.5}
@@ -2373,17 +4016,17 @@ export default function BoundSimulator({ onOpenDocs }) {
                   <div style={{ flex:1 }}>
                     <Slider label="Conversion Fee (%)" value={p.convFeeRwaUSD||0.88} min={0.1} max={2.0} step={0.01}
                       onChange={v=>up("convFeeRwaUSD",v)} fmt={v=>`${v}%`}
-                      hint="Charged on the rwaUSD amount converting to/from BCI, on BOTH entry and exit. 100% credited to BCI SC as collateral surplus — the single biggest driver of BCI price growth." />
+                      hint="Charged on the rwaUSD amount converting to/from BLI, on BOTH entry and exit. 100% credited to BLI SC as collateral surplus — the single biggest driver of BLI price growth." />
                   </div>
                   <div style={{ flex:1 }}>
                     <Slider label="Discounted Conversion Fee (%)" value={p.convFeeBND||0.44} min={0.05} max={1.0} step={0.01}
                       onChange={v=>up("convFeeBND",v)} fmt={v=>`${v}%`}
-                      hint="Rate charged when a conversion is paid in BND instead of rwaUSD. Applies to Private AND Retail LPs alike, gated by the single 'BND Discount Usage %' slider in the Retail LP section below. 100% burned — zero credited to BCI SC or Protocol Reserve." />
+                      hint="Rate charged when a conversion is paid in BND instead of rwaUSD. Applies to Private AND Retail LPs alike, gated by the single 'BND Discount Usage %' slider in the Retail LP section below. 100% burned — zero credited to BLI SC or Protocol Reserve." />
                   </div>
                   <div style={{ flex:1 }}>
                     <Slider label="Private Mint / Redeem Fee (%)" value={p.mintRedeemFee||0.3} min={0.05} max={1.0} step={0.05}
                       onChange={v=>up("mintRedeemFee",v)} fmt={v=>`${v}%`}
-                      hint="Charged twice at this same rate: on the full deposit at entry (mint), and on the post-conversion-fee rwaUSD at exit (redeem). Both split 80% BCI SC / 20% Protocol Reserve." />
+                      hint="Charged twice at this same rate: on the full deposit at entry (mint), and on the post-conversion-fee rwaUSD at exit (redeem). Both split 80% BLI SC / 20% Protocol Reserve." />
                   </div>
                   <div style={{ flex:1 }} />
                 </div>
@@ -2405,7 +4048,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                       { row:"Outflow", col:T.red,
                         what:`This month's exit volume: the Monthly Outflow % applied to the CURRENT Layer balance (Remaining), not to the original deposit. Always zero for the first ${p.lockPeriod ?? 6} months — Private LP capital is locked and cannot exit at all during that window.` },
                       { row:"Remaining", col:T.ink,
-                        what:"The actual Liquidity Layer position after fees: New Capital arrives net of the mint fee, the Bound-Core-retained share, and the conversion fee — then Outflow leaves. This is the real number that backs BCI price, not the gross deposit total." },
+                        what:"The actual Liquidity Layer position after fees: New Capital arrives net of the mint fee, the Bound-Core-retained share, and the conversion fee — then Outflow leaves. This is the real number that backs BLI price, not the gross deposit total." },
                     ].map(({ row, col, what }, i, arr) => (
                       <div key={row} style={{
                         flex:1, padding:"12px 14px",
@@ -2491,9 +4134,9 @@ export default function BoundSimulator({ onOpenDocs }) {
                       { fee:"Mint Fee", rate:"On full deposit . direct contract",
                         bci:"80%", pr:"20%",
                         what:"Charged when a private LP deposits USDC directly into the protocol contract (bypassing the pool). Applied to the full deposit amount before any conversion." },
-                      { fee:"Conversion Fee - rwaUSD path", rate:"On rwaUSD amount converting to BCI",
+                      { fee:"Conversion Fee - rwaUSD path", rate:"On rwaUSD amount converting to BLI",
                         bci:"100%", pr:"0%",
-                        what:`Charged when rwaUSD is converted to BCI. At ${p.convFeeRwaUSD||0.88}%, converting $1M rwaUSD costs $${Math.round((p.convFeeRwaUSD||0.88)*10_000).toLocaleString()} - credited entirely to BCI SC as collateral surplus, directly supporting BCI price.` },
+                        what:`Charged when rwaUSD is converted to BLI. At ${p.convFeeRwaUSD||0.88}%, converting $1M rwaUSD costs $${Math.round((p.convFeeRwaUSD||0.88)*10_000).toLocaleString()} - credited entirely to BLI SC as collateral surplus, directly supporting BLI price.` },
                       { fee:"Conversion Fee - BND path", rate:"Set independently by the Discounted Conversion Fee slider",
                         bci:"0%", pr:"0%",
                         what:`When the conversion fee is paid using BND governance tokens, ${p.convFeeBND||0.44}% is charged instead of ${p.convFeeRwaUSD||0.88}% (both sliders set independently — not automatically 50%). BND tokens are burned permanently - reducing BND supply, no revenue credited to any pool.` },
@@ -2515,7 +4158,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                             color: bci==="0%" ? T.ink4 : T.green,
                             background: bci==="0%" ? T.bgInset : T.greenSoft,
                             padding:"2px 7px", borderRadius:3 }}>
-                            {bci} BCI SC
+                            {bci} BLI SC
                           </span>
                           <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600,
                             color: pr==="0%" ? T.ink4 : T.blue,
@@ -2546,34 +4189,34 @@ export default function BoundSimulator({ onOpenDocs }) {
                   return (
                     <>
                       <FeeTable title="Private LP — Minting & Redemption Fees"
-                        legend={[["-> BCI SC",T.green],["-> Protocol Reserve",T.blue]]}
+                        legend={[["-> BLI SC",T.green],["-> Protocol Reserve",T.blue]]}
                         year={feeYear} onYear={setFeeYear} years={3} months={months}
                         rows={[
                           { label:"Mint Fee (Entry)", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>d.mintInBCI+d.mintInPR },
-                          { key:"mintInBCI", label:"  -> BCI SC",             col:T.green, bg:T.bgSoft },
+                          { key:"mintInBCI", label:"  -> BLI SC",             col:T.green, bg:T.bgSoft },
                           { key:"mintInPR",  label:"  -> Protocol Reserve",   col:T.blue,  bg:T.bgSoft, sep:true },
                           { label:"Redeem Fee (Exit)", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>d.redeemOutBCI+d.redeemOutPR },
-                          { key:"redeemOutBCI", label:"  -> BCI SC",           col:T.green, bg:T.bgSoft },
+                          { key:"redeemOutBCI", label:"  -> BLI SC",           col:T.green, bg:T.bgSoft },
                           { key:"redeemOutPR",  label:"  -> Protocol Reserve", col:T.blue,  bg:T.bgSoft, sep:true },
                         ]} />
-                      <FeeTable title="Private LP — Conversion Fees (rwaUSD <-> BCI)"
-                        legend={[["-> BCI SC",T.green2],["BND Burn",T.amber]]}
+                      <FeeTable title="Private LP — Conversion Fees (rwaUSD <-> BLI)"
+                        legend={[["-> BLI SC",T.green2],["BND Burn",T.amber]]}
                         year={feeYear} months={months}
                         rows={[
                           { label:"Entry Conversion Fee", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>d.convInBCI+d.convInBND },
-                          { key:"convInBCI", label:"  -> BCI SC",   col:T.green2, bg:T.bgSoft },
+                          { key:"convInBCI", label:"  -> BLI SC",   col:T.green2, bg:T.bgSoft },
                           { key:"convInBND", label:"  -> BND Burn", col:T.amber,  bg:T.bgSoft, sep:true },
                           { label:"Exit Conversion Fee", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>d.convOutBCI+d.convOutBND },
-                          { key:"convOutBCI", label:"  -> BCI SC",   col:T.green2, bg:T.bgSoft },
+                          { key:"convOutBCI", label:"  -> BLI SC",   col:T.green2, bg:T.bgSoft },
                           { key:"convOutBND", label:"  -> BND Burn", col:T.amber,  bg:T.bgSoft, sep:true },
                         ]} />
                       <FeeTable title="Private LP — Totals" year={feeYear} months={months}
                         rows={[
-                          { key:"totalBCI", label:"TOTAL -> BCI SC",             col:T.green, bg:T.greenSoft, bold:true },
+                          { key:"totalBCI", label:"TOTAL -> BLI SC",             col:T.green, bg:T.greenSoft, bold:true },
                           { key:"totalPR",  label:"TOTAL -> Protocol Reserve",   col:T.blue,  bg:T.blueSoft,  bold:true },
                           { key:"totalBND", label:"TOTAL   BND Burn Value",     col:T.amber, bg:T.amberSoft, bold:true, sep:true },
                         ]} />
@@ -2603,7 +4246,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                       hint="Months before this show $0 in the table below" />
                   </div>
                   <div style={{ flex:1 }}>
-                    <Slider label="Retail BCI Conversion Rate (%)" value={p.retailBCIConversion||98} min={50} max={100} step={1}
+                    <Slider label="Retail BLI Conversion Rate (%)" value={p.retailBCIConversion||98} min={50} max={100} step={1}
                       onChange={v=>up("retailBCIConversion",v)} fmt={v=>`${v}%`}
                       hint={`${100-(p.retailBCIConversion||98)}% stays idle as rwaUSD in Bound Core`} />
                   </div>
@@ -2615,7 +4258,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                   <div style={{ flex:1 }}>
                     <Slider label="Monthly Outflow - % of Retail Layer" value={p.retailOutflowRate||5} min={0.5} max={50} step={0.5}
                       onChange={v=>up("retailOutflowRate",v)} fmt={v=>`${v}%`}
-                      hint="Percentage of retail BCI capital in the Layer that converts BCI->rwaUSD and sells on pool each month." />
+                      hint="Percentage of retail BLI capital in the Layer that converts BLI->rwaUSD and sells on pool each month." />
                   </div>
                 </div>
 
@@ -2629,12 +4272,12 @@ export default function BoundSimulator({ onOpenDocs }) {
                   <div style={{ flex:1 }}>
                     <Slider label="Pool Trading Fee (%)" value={p.poolFee||0.3} min={0.05} max={1.0} step={0.05}
                       onChange={v=>up("poolFee",v)} fmt={v=>`${v}%`}
-                      hint="Fee charged on every rwaUSD/USDC swap on the Uniswap v4 pool -> 80% BCI SC / 20% Protocol Reserve" />
+                      hint="Fee charged on every rwaUSD/USDC swap on the Uniswap v4 pool -> 80% BLI SC / 20% Protocol Reserve" />
                   </div>
                   <div style={{ flex:1 }}>
                     <Slider label="APSS Profit Capture (%)" value={p.apssFee||0.5} min={0.05} max={2.0} step={0.05}
                       onChange={v=>up("apssFee",v)} fmt={v=>`${v}%`}
-                      hint="Protocol arbitrage profit from peg stabilization - not a fee charged to users -> 80% BCI SC / 20% Protocol Reserve" />
+                      hint="Protocol arbitrage profit from peg stabilization - not a fee charged to users -> 80% BLI SC / 20% Protocol Reserve" />
                   </div>
                   <div style={{ flex:3 }} />
                 </div>
@@ -2678,19 +4321,19 @@ export default function BoundSimulator({ onOpenDocs }) {
                     {[
                       { fee:"Pool Trading Fee - Buy", rate:"On retail pool buy volume",
                         bci:"80%", pr:"20%",
-                        what:"Charged on every rwaUSD purchase on the Uniswap v4 pool. Retail LPs pay this when buying rwaUSD to then convert to BCI. The large majority flows to BCI SC, directly supporting BCI price growth." },
+                        what:"Charged on every rwaUSD purchase on the Uniswap v4 pool. Retail LPs pay this when buying rwaUSD to then convert to BLI. The large majority flows to BLI SC, directly supporting BLI price growth." },
                       { fee:"APSS Revenue - Buy", rate:"On retail pool buy volume",
                         bci:"80%", pr:"20%",
                         what:"Protocol arbitrage profit captured by the Atomic Peg Stabilization System when retail buy pressure pushes rwaUSD above $1. Not a fee charged to users - BOUND captures the spread from peg restoration." },
-                      { fee:"Conversion Fee - Buy", rate:"On rwaUSD amount converting to BCI",
+                      { fee:"Conversion Fee - Buy", rate:"On rwaUSD amount converting to BLI",
                         bci:"100%", pr:"0%",
-                        what:"Charged when retail buyers convert rwaUSD to BCI after purchasing on the pool. Credited entirely to BCI SC as collateral surplus. BND discount path (50% off) results in BND burn instead." },
-                      { fee:"Conversion Fee - Exit", rate:"On BCI amount converting back to rwaUSD",
+                        what:"Charged when retail buyers convert rwaUSD to BLI after purchasing on the pool. Credited entirely to BLI SC as collateral surplus. BND discount path (50% off) results in BND burn instead." },
+                      { fee:"Conversion Fee - Exit", rate:"On BLI amount converting back to rwaUSD",
                         bci:"100%", pr:"0%",
-                        what:"Charged when retail LPs exit by converting BCI back to rwaUSD before selling on the pool. Same 100% BCI SC credit as on entry - supports BCI price on both the way in and out." },
+                        what:"Charged when retail LPs exit by converting BLI back to rwaUSD before selling on the pool. Same 100% BLI SC credit as on entry - supports BLI price on both the way in and out." },
                       { fee:"Pool Trading Fee - Exit", rate:"On retail exit sell volume",
                         bci:"80%", pr:"20%",
-                        what:"Charged when retail LPs sell rwaUSD on the pool to exit their position. The exit creates sell-side pool volume which generates both pool fees and APSS revenue - retail exits contribute to BCI SC twice (conversion + pool)." },
+                        what:"Charged when retail LPs sell rwaUSD on the pool to exit their position. The exit creates sell-side pool volume which generates both pool fees and APSS revenue - retail exits contribute to BLI SC twice (conversion + pool)." },
                       { fee:"APSS Revenue - Exit", rate:"On retail exit sell volume",
                         bci:"80%", pr:"20%",
                         what:"APSS arbitrage profit captured when retail exit sell pressure pushes rwaUSD below $1. BOUND buys rwaUSD cheaply and burns it, restoring the peg and capturing the spread as protocol revenue." },
@@ -2708,7 +4351,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                           <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600,
                             color:T.green, background:T.greenSoft,
                             padding:"2px 7px", borderRadius:3 }}>
-                            {bci} BCI SC
+                            {bci} BLI SC
                           </span>
                           <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600,
                             color: pr==="0%" ? T.ink4 : T.blue,
@@ -2738,42 +4381,42 @@ export default function BoundSimulator({ onOpenDocs }) {
                           { key:"retailExitSellVol",  label:"  -> Sell (exit)", col:T.amber,  bg:T.bgSoft, sep:true },
                         ]} />
                       <FeeTable title="Retail LP — Trading & APSS Fees"
-                        legend={[["-> BCI SC",T.green],["-> Protocol Reserve",T.blue]]}
+                        legend={[["-> BLI SC",T.green],["-> Protocol Reserve",T.blue]]}
                         year={retailFeeYear} onYear={setRetailFeeYear} years={3} months={months}
                         rows={[
                           { label:"Buy - Pool Trading Fee", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>(d.retBuyPoolFeeBCI||0)+(d.retBuyPoolFeePR||0) },
-                          { key:"retBuyPoolFeeBCI", label:"  -> BCI SC",           col:T.green, bg:T.bgSoft },
+                          { key:"retBuyPoolFeeBCI", label:"  -> BLI SC",           col:T.green, bg:T.bgSoft },
                           { key:"retBuyPoolFeePR",  label:"  -> Protocol Reserve", col:T.blue,  bg:T.bgSoft, sep:true },
                           { label:"Buy - APSS Revenue", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>(d.retBuyAPSSBCI||0)+(d.retBuyAPSSPR||0) },
-                          { key:"retBuyAPSSBCI", label:"  -> BCI SC",           col:T.green, bg:T.bgSoft },
+                          { key:"retBuyAPSSBCI", label:"  -> BLI SC",           col:T.green, bg:T.bgSoft },
                           { key:"retBuyAPSSPR",  label:"  -> Protocol Reserve", col:T.blue,  bg:T.bgSoft, sep:true },
                           { label:"Exit - Pool Trading Fee", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>(d.retExitPoolFeeBCI||0)+(d.retExitPoolFeePR||0) },
-                          { key:"retExitPoolFeeBCI", label:"  -> BCI SC",           col:T.green, bg:T.bgSoft },
+                          { key:"retExitPoolFeeBCI", label:"  -> BLI SC",           col:T.green, bg:T.bgSoft },
                           { key:"retExitPoolFeePR",  label:"  -> Protocol Reserve", col:T.blue,  bg:T.bgSoft, sep:true },
                           { label:"Exit - APSS Revenue", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>(d.retExitAPSSBCI||0)+(d.retExitAPSSPR||0) },
-                          { key:"retExitAPSSBCI", label:"  -> BCI SC",           col:T.green, bg:T.bgSoft },
+                          { key:"retExitAPSSBCI", label:"  -> BLI SC",           col:T.green, bg:T.bgSoft },
                           { key:"retExitAPSSPR",  label:"  -> Protocol Reserve", col:T.blue,  bg:T.bgSoft, sep:true },
                         ]} />
-                      <FeeTable title="Retail LP — Conversion Fees (rwaUSD <-> BCI)"
-                        legend={[["-> BCI SC",T.green2],["BND Burn",T.amber]]}
+                      <FeeTable title="Retail LP — Conversion Fees (rwaUSD <-> BLI)"
+                        legend={[["-> BLI SC",T.green2],["BND Burn",T.amber]]}
                         year={retailFeeYear} onYear={setRetailFeeYear} years={3} months={months}
                         rows={[
                           { label:"Buy Conversion Fee", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>(d.retBuyConvBCI||0)+(d.retBuyConvBND||0) },
-                          { key:"retBuyConvBCI", label:"  -> BCI SC",   col:T.green2, bg:T.bgSoft },
+                          { key:"retBuyConvBCI", label:"  -> BLI SC",   col:T.green2, bg:T.bgSoft },
                           { key:"retBuyConvBND", label:"  -> BND Burn", col:T.amber,  bg:T.bgSoft, sep:true },
                           { label:"Exit Conversion Fee", col:T.ink, bg:T.bgEl, bold:true,
                             calc:d=>(d.retExitConvBCI||0)+(d.retExitConvBND||0) },
-                          { key:"retExitConvBCI", label:"  -> BCI SC",   col:T.green2, bg:T.bgSoft },
+                          { key:"retExitConvBCI", label:"  -> BLI SC",   col:T.green2, bg:T.bgSoft },
                           { key:"retExitConvBND", label:"  -> BND Burn", col:T.amber,  bg:T.bgSoft, sep:true },
                         ]} />
                       <FeeTable title="Retail LP — Totals" year={retailFeeYear} months={months}
                         rows={[
-                          { key:"totalBCI", label:"TOTAL -> BCI SC",           col:T.green, bg:T.greenSoft, bold:true },
+                          { key:"totalBCI", label:"TOTAL -> BLI SC",           col:T.green, bg:T.greenSoft, bold:true },
                           { key:"totalPR",  label:"TOTAL -> Protocol Reserve", col:T.blue,  bg:T.blueSoft,  bold:true },
                           { key:"totalBND", label:"TOTAL   BND Burn Value",   col:T.amber, bg:T.amberSoft, bold:true, sep:true },
                         ]} />
@@ -2792,7 +4435,7 @@ export default function BoundSimulator({ onOpenDocs }) {
 
               {/* Intro text */}
               <div style={{ fontSize:11, color:T.ink3, lineHeight:1.6 }}>
-                Each market has its own liquidation and minting open dates. Capacity for RWA liquidations is allocated in strict order each month: (1) estimated USDC on hand is sized off THIS month's real Layer minus what is already committed to held RWA inventory and pipeline cash, plus pipeline cash returning this month; (2) BCI redemptions are served FIRST — LP exits are an obligation, RWA liquidation service is discretionary; (3) an LCR guard caps acceptance so the month-end LCR never drops below the configured floor ({(yld.rwaLcrTarget ?? 1.5).toFixed(2)}x); (4) whatever remains serves market demand ({fd(Math.min(md?.rwaFundsAfterBci ?? 0, md?.rwaLcrCap ?? Infinity))} at M{ms}) — see the Layer Capacity card below for the full waterfall. Minting volume = min(held RWA inventory, market demand).
+                Each market has its own liquidation and minting open dates. Capacity for RWA liquidations is allocated in strict order each month: (1) estimated USDC on hand is sized off THIS month's real Layer minus what is already committed to held RWA inventory and pipeline cash, plus pipeline cash returning this month; (2) BLI redemptions are served FIRST — LP exits are an obligation, RWA liquidation service is discretionary; (3) an LCR guard caps acceptance so the month-end LCR never drops below the configured floor ({(yld.rwaLcrTarget ?? 1.5).toFixed(2)}x); (4) whatever remains serves market demand ({fd(Math.min(md?.rwaFundsAfterBci ?? 0, md?.rwaLcrCap ?? Infinity))} at M{ms}) — see the Layer Capacity card below for the full waterfall. Minting volume = min(held RWA inventory, market demand).
               </div>
 
               {/* Named Markets */}
@@ -2963,7 +4606,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                           <div style={{ flex:1 }}>
                             <Slider label="Annual Maintenance Fee ($)" value={mk.maintFee ?? 75_000} min={0} max={250_000} step={25_000}
                               onChange={v=>upMarket(i,"maintFee",v)} fmt={fd}
-                              hint="Recurring annual fee for this market -> 20% BCI SC / 80% Protocol Reserve." />
+                              hint="Recurring annual fee for this market -> 20% BLI SC / 80% Protocol Reserve." />
                           </div>
                         </div>
                       </div>
@@ -3027,7 +4670,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                         <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600,
                           color:T.green, background:T.greenSoft,
                           padding:"2px 7px", borderRadius:3 }}>
-                          {bci} BCI SC
+                          {bci} BLI SC
                         </span>
                         <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600,
                           color:T.blue, background:T.blueSoft,
@@ -3055,20 +4698,20 @@ export default function BoundSimulator({ onOpenDocs }) {
 
                 const rows = [
                   { key:"liqVol",        label:"Liq. Volume",                    col:T.amber,  bg:T.bgEl,      bold:false, sep:false, isVol:true  },
-                  { key:"liqTradeBCI",   label:"Liq. Trade Fee -> BCI SC",        col:T.green,  bg:T.bgEl,      bold:false, sep:false, isVol:false },
+                  { key:"liqTradeBCI",   label:"Liq. Trade Fee -> BLI SC",        col:T.green,  bg:T.bgEl,      bold:false, sep:false, isVol:false },
                   { key:"liqTradePR",    label:"Liq. Trade Fee -> Protocol",      col:T.blue,   bg:T.bgEl,      bold:false, sep:false, isVol:false },
-                  { key:"liqHaircutBCI", label:"Liq. Haircut -> BCI SC",          col:T.green,  bg:T.bgEl,      bold:false, sep:false, isVol:false },
+                  { key:"liqHaircutBCI", label:"Liq. Haircut -> BLI SC",          col:T.green,  bg:T.bgEl,      bold:false, sep:false, isVol:false },
                   { key:"liqHaircutPR",  label:"Liq. Haircut -> Protocol",        col:T.blue,   bg:T.bgEl,      bold:false, sep:true,  isVol:false },
                   { key:"mintVol",       label:"Mint Volume",                    col:T.green2, bg:T.bgSoft,    bold:false, sep:false, isVol:true  },
-                  { key:"mintTradeBCI",  label:"Mint Trade Fee -> BCI SC",        col:T.green,  bg:T.bgSoft,    bold:false, sep:false, isVol:false },
+                  { key:"mintTradeBCI",  label:"Mint Trade Fee -> BLI SC",        col:T.green,  bg:T.bgSoft,    bold:false, sep:false, isVol:false },
                   { key:"mintTradePR",   label:"Mint Trade Fee -> Protocol",      col:T.blue,   bg:T.bgSoft,    bold:false, sep:false, isVol:false },
-                  { key:"mintHaircutBCI",label:"Mint Haircut -> BCI SC",          col:T.green,  bg:T.bgSoft,    bold:false, sep:false, isVol:false },
+                  { key:"mintHaircutBCI",label:"Mint Haircut -> BLI SC",          col:T.green,  bg:T.bgSoft,    bold:false, sep:false, isVol:false },
                   { key:"mintHaircutPR", label:"Mint Haircut -> Protocol",        col:T.blue,   bg:T.bgSoft,    bold:false, sep:true,  isVol:false },
                   { key:"integPR",       label:"Integration Fee -> Protocol",     col:T.blue,   bg:T.bgEl,      bold:false, sep:false, isVol:false },
-                  { key:"maintBCI",      label:"Maintenance Fee -> BCI SC",       col:T.green,  bg:T.bgEl,      bold:false, sep:false, isVol:false },
+                  { key:"maintBCI",      label:"Maintenance Fee -> BLI SC",       col:T.green,  bg:T.bgEl,      bold:false, sep:false, isVol:false },
                   { key:"maintPR",       label:"Maintenance Fee -> Protocol",     col:T.blue,   bg:T.bgEl,      bold:false, sep:true,  isVol:false },
                   { key:"totalVol",      label:"TOTAL Volume",                   col:T.ink,    bg:T.bgInset,   bold:true,  sep:false, isVol:true  },
-                  { key:"totalBCI",      label:"TOTAL -> BCI SC",                 col:T.green,  bg:T.greenSoft, bold:true,  sep:false, isVol:false },
+                  { key:"totalBCI",      label:"TOTAL -> BLI SC",                 col:T.green,  bg:T.greenSoft, bold:true,  sep:false, isVol:false },
                   { key:"totalPR",       label:"TOTAL -> Protocol Reserve",       col:T.blue,   bg:T.blueSoft,  bold:true,  sep:true,  isVol:false },
                 ];
 
@@ -3084,7 +4727,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                           RWA Fee Revenue
                         </span>
                         <div style={{ display:"flex", gap:8 }}>
-                          {[["-> BCI SC",T.green],["-> Protocol",T.blue]].map(([l,c])=>(
+                          {[["-> BLI SC",T.green],["-> Protocol",T.blue]].map(([l,c])=>(
                             <span key={l} style={{ fontSize:9.5, color:c, fontWeight:600 }}>* {l}</span>
                           ))}
                         </div>
@@ -3185,7 +4828,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                 // All figures read directly from the engine (single source of truth, no
                 // re-derivation). Capacity waterfall: this month's real Layer, minus what
                 // is already committed to RWA, plus pipeline cash returning this month;
-                // BCI redemptions are served FIRST, then an LCR guard caps acceptance,
+                // BLI redemptions are served FIRST, then an LCR guard caps acceptance,
                 // then market demand binds.
                 const capacityBasis = md?.layerPostUpdate || 0;
                 const committed     = md?.rwaInLayerNow || 0;
@@ -3257,7 +4900,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                             ["  − already committed (held RWA + pipeline)", `${fd(committed)} (${committedPct.toFixed(0)}%)`, T.ink4],
                             ["  = est. USDC on hand", fd(capacity), T.ink4],
                             ["  + pipeline cash returning this month", fd(pipeReturn), T.ink4],
-                            ["  − BCI redemptions (served first)", fd(bciServed), T.ink4],
+                            ["  − BLI redemptions (served first)", fd(bciServed), T.ink4],
                             ["  − LCR guard withholding", fd(Math.max(0, fundsAfterBci - effectiveCap)), T.ink4],
                             ["Available for RWA liquidations", fd(effectiveCap), T.blue],
                             ["Liq. demand this month", fd(demand), T.amber],
@@ -3274,7 +4917,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                             Sized off THIS month's real Layer (prior balances + this month's
                             LP entry/exit flows — Layer yield is paid out as protocol revenue,
                             never compounded into the Layer, so this IS the final figure).
-                            BCI redemptions are senior: they are served before any RWA capacity
+                            BLI redemptions are senior: they are served before any RWA capacity
                             is allocated. The LCR guard then caps acceptance so the month-end
                             LCR never drops below {(yld.rwaLcrTarget ?? 1.5).toFixed(2)}x.
                           </div>
@@ -3398,7 +5041,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                         )}
                         {(md?.bciQueueBal||0) > 1 && (
                           <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
-                            <span style={{ fontSize:10.5, color:T.red }}>BCI redemption queue (waiting on Layer liquidity)</span>
+                            <span style={{ fontSize:10.5, color:T.red }}>BLI redemption queue (waiting on Layer liquidity)</span>
                             <span style={{ fontSize:10.5, fontFamily:MONO, fontWeight:600, color:T.red }}>{fd(md?.bciQueueBal)}</span>
                           </div>
                         )}
@@ -3466,10 +5109,10 @@ export default function BoundSimulator({ onOpenDocs }) {
                 <span style={{ fontWeight:600 }}>Enhanced yield</span> (T+0–T+1, {yld.enhancedYield}%/yr, capped at {yld.enhancedMaxPct}% of yield bucket), and{" "}
                 <span style={{ fontWeight:600, color:rwaColor }}>RWA inventory + pipeline</span> (T+30–90, illiquid, capped at {yld.maxRwaPct}% held).{" "}
                 The USDC buffer is sized to the largest of three constraints: the {yld.layerMinBuffer}% floor,{" "}
-                {yld.layerRedemptionDays}-day BCI redemption coverage, or {yld.layerRwaCoverageDays}-day served-RWA coverage.{" "}
-                <span style={{ fontWeight:600 }}>LCR</span> = liquid capital (USDC + Morpho + Enhanced) ÷ near-term obligations (30-day BCI exits + {yld.layerRwaCoverageDays}-day served RWA).{" "}
+                {yld.layerRedemptionDays}-day BLI redemption coverage, or {yld.layerRwaCoverageDays}-day served-RWA coverage.{" "}
+                <span style={{ fontWeight:600 }}>LCR</span> = liquid capital (USDC + Morpho + Enhanced) ÷ near-term obligations (30-day BLI exits + {yld.layerRwaCoverageDays}-day served RWA).{" "}
                 Circuit breakers fire at {yld.lcrHealthy.toFixed(1)}× / {yld.lcrWarning.toFixed(2)}× / {yld.lcrStress.toFixed(2)}×.{" "}
-                <span style={{ fontWeight:600 }}>BCI redemptions are senior</span> to RWA liquidation capacity — LP exits are served first; RWA acceptance is further capped by the LCR floor ({yld.rwaLcrTarget.toFixed(2)}×).
+                <span style={{ fontWeight:600 }}>BLI redemptions are senior</span> to RWA liquidation capacity — LP exits are served first; RWA acceptance is further capped by the LCR floor ({yld.rwaLcrTarget.toFixed(2)}×).
               </div>
 
               {/* LCR GAUGE - the primary risk metric */}
@@ -3591,7 +5234,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                       </div>
                     </div>
                     <div style={{ flex:1 }}>
-                      <div style={{ color:T.ink3, marginBottom:3 }}>BCI Lock Extension</div>
+                      <div style={{ color:T.ink3, marginBottom:3 }}>BLI Lock Extension</div>
                       <div style={{ fontFamily:MONO, fontWeight:600, color:T.amber }}>
                         +{bciLockExt} days ({30+bciLockExt}d total)
                       </div>
@@ -3622,9 +5265,9 @@ export default function BoundSimulator({ onOpenDocs }) {
                   <Slider label="USDC Minimum Floor (%)" value={yld.layerMinBuffer} min={2} max={20} step={1}
                     onChange={v=>upYld("layerMinBuffer",v)} fmt={v=>`${v}%`}
                     hint="Absolute minimum USDC % — operational floor. Recommended 5%." />
-                  <Slider label="BCI Redemption Coverage (days)" value={yld.layerRedemptionDays} min={7} max={30} step={1}
+                  <Slider label="BLI Redemption Coverage (days)" value={yld.layerRedemptionDays} min={7} max={30} step={1}
                     onChange={v=>upYld("layerRedemptionDays",v)} fmt={v=>`${v} days`}
-                    hint={`Days of BCI outflows to keep liquid. Currently reserves ${fd(expectedRdmpMo/30*yld.layerRedemptionDays)}.`} />
+                    hint={`Days of BLI outflows to keep liquid. Currently reserves ${fd(expectedRdmpMo/30*yld.layerRedemptionDays)}.`} />
                   <Slider label="RWA Liquidation Coverage (days)" value={yld.layerRwaCoverageDays} min={7} max={30} step={1}
                     onChange={v=>upYld("layerRwaCoverageDays",v)} fmt={v=>`${v} days`}
                     hint={`Days of SERVED RWA liq volume ready in USDC. Currently reserves ${fd((md?.dailyRWALiqDemand||0)*yld.layerRwaCoverageDays)}.`} />
@@ -3672,7 +5315,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                     hint="RWA liq acceptance rate in EMERGENCY (prior-month throttle). 100% in all other modes." />
                   <Slider label="RWA Acceptance LCR Floor (x)" value={yld.rwaLcrTarget} min={0.8} max={2.0} step={0.05}
                     onChange={v=>upYld("rwaLcrTarget",v)} fmt={v=>`${v.toFixed(2)}x`}
-                    hint="Caps RWA liquidations so projected month-end LCR stays at or above this floor. BCI redemptions are always served first." />
+                    hint="Caps RWA liquidations so projected month-end LCR stays at or above this floor. BLI redemptions are always served first." />
                   <Slider label="Protocol Reserve Target (% of Layer)" value={yld.protocolReservePct} min={0} max={20} step={1}
                     onChange={v=>upYld("protocolReservePct",v)} fmt={v=>`${v}%`}
                     hint={`Separate treasury target. Auto-deploys when LCR < 0.5x for 7 straight months — with the RWA LCR floor at ${yld.rwaLcrTarget.toFixed(2)}x this cannot fire in the default run; it is a tail-risk backstop for stress scenarios.`} />
@@ -3692,8 +5335,8 @@ export default function BoundSimulator({ onOpenDocs }) {
                 <div style={{ display:"flex", borderBottom:`1px solid ${T.border}` }}>
                   {[
                     { fee:"Total Layer NAV", rate:"All LP money currently in the Layer",
-                      tags:[{ l:"Backs BCI price", c:T.ink, bg:T.bgInset }],
-                      what:"Everything private and retail LPs have deposited (after fees), minus what has exited. Together with BCI SC, this is what backs the BCI price. The yield the Layer earns is paid out as protocol revenue every month — it does not grow this balance." },
+                      tags:[{ l:"Backs BLI price", c:T.ink, bg:T.bgInset }],
+                      what:"Everything private and retail LPs have deposited (after fees), minus what has exited. Together with BLI SC, this is what backs the BLI price. The yield the Layer earns is paid out as protocol revenue every month — it does not grow this balance." },
                     { fee:"LCR (Liquidity Coverage Ratio)", rate:`Can we cover what we owe soon?`,
                       tags:[
                         { l:`≥ ${yld.lcrHealthy.toFixed(1)}× HEALTHY`, c:T.green, bg:T.greenSoft },
@@ -3742,9 +5385,9 @@ export default function BoundSimulator({ onOpenDocs }) {
                     { fee:"Layer Yield (Gross)", rate:"What the three liquid tiers earn per month",
                       tags:[{ l:"Paid out as revenue", c:T.ink, bg:T.bgInset }],
                       what:"Aave + Morpho + Enhanced earnings on this month's actual balances. This money leaves the Layer as protocol revenue (split below) — it does not compound inside the Layer. The table reads these numbers from the engine, never re-computes them." },
-                    { fee:"Yield → BCI SC", rate:"80 cents of every yield dollar",
-                      tags:[{ l:"80% BCI SC", c:T.green, bg:T.greenSoft }],
-                      what:"The biggest share goes to BCI SC, directly pushing the BCI index price up. This exact figure appears as the 'Layer Yield' slice in the BCI SC Revenue chart below." },
+                    { fee:"Yield → BLI SC", rate:"80 cents of every yield dollar",
+                      tags:[{ l:"80% BLI SC", c:T.green, bg:T.greenSoft }],
+                      what:"The biggest share goes to BLI SC, directly pushing the BLI index price up. This exact figure appears as the 'Layer Yield' slice in the BLI SC Revenue chart below." },
                     { fee:"Yield → Protocol Reserve", rate:"10 cents of every yield dollar",
                       tags:[{ l:"10% Protocol Reserve", c:T.blue, bg:T.blueSoft }],
                       what:"Funds protocol operations. Appears as 'Layer Yield' in the Protocol Reserve Revenue table below." },
@@ -3753,7 +5396,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                       what:"Builds the safety fund that absorbs losses before LPs ever would. Grows toward its target (a % of the capital actually at risk in Morpho and Bound Core deployments)." },
                     { fee:"Blended Annual Yield", rate:"Yearly % the whole Layer earns",
                       tags:[{ l:"% on full Layer", c:T.ink, bg:T.bgInset }],
-                      what:"Gross monthly yield annualised, as a % of the full Layer. This is the Layer's own earning rate — NOT the BCI index growth rate (annG), which also includes fee revenue from every other source." },
+                      what:"Gross monthly yield annualised, as a % of the full Layer. This is the Layer's own earning rate — NOT the BLI index growth rate (annG), which also includes fee revenue from every other source." },
                   ].map(({ fee, rate, tags, what }, i, arr) => (
                     <div key={fee} style={{
                       flex:1, padding:"12px 14px", minWidth:0,
@@ -3814,7 +5457,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                   { key:"morphoYieldMo", label:"  → from Morpho", col:T.blue, bold:false, sep:false, bg:T.bgSoft },
                   { key:"enhancedYieldMo", label:"  → from Enhanced", col:T.amber, bold:false, sep:false, bg:T.bgSoft },
                   { key:"blendedAnnual", label:"Blended annual yield (% of Layer)", col:INK, bold:false, sep:true, bg:T.bgEl, isPct:true },
-                  { key:"bciShare", label:"Paid → BCI SC (80%)", col:T.green, bold:false, sep:false, bg:T.greenSoft },
+                  { key:"bciShare", label:"Paid → BLI SC (80%)", col:T.green, bold:false, sep:false, bg:T.greenSoft },
                   { key:"prShare", label:"Paid → Protocol Reserve (10%)", col:T.blue, bold:false, sep:false, bg:T.blueSoft },
                   { key:"erShare", label:"Paid → Emergency Reserve (10%)", col:INK3, bold:false, sep:true, bg:T.bgSoft },
                 ];
@@ -3942,7 +5585,7 @@ export default function BoundSimulator({ onOpenDocs }) {
               {/* Architecture note */}
               <div style={{ background:T.bgSoft, border:`1px solid ${T.border}`, borderRadius:8,
                 padding:"12px 14px", fontSize:11, color:T.ink2, lineHeight:1.7 }}>
-                <span style={{ fontWeight:600, color:T.ink }}>Bound Core split:</span> This section covers <span style={{ fontWeight:600 }}>idle rwaUSD</span> — rwaUSD that never converted to BCI (private 5% + retail 2%). It can exit instantly via direct redemption or the pool. <span style={{ fontWeight:600, color:T.green }}>Raw USDC</span> in the smart contract is sized to <span style={{ fontWeight:600 }}>coverage % × idle rwaUSD TVL</span> (0% yield). Any USDC NAV above that requirement is deployed to the <span style={{ fontWeight:600, color:T.blue }}>USDC Yield Position</span> (T+0, earns yield). BCI exit flows are handled separately.
+                <span style={{ fontWeight:600, color:T.ink }}>Bound Core split:</span> This section covers <span style={{ fontWeight:600 }}>idle rwaUSD</span> — rwaUSD that never converted to BLI (private 5% + retail 2%). It can exit instantly via direct redemption or the pool. <span style={{ fontWeight:600, color:T.green }}>Raw USDC</span> in the smart contract is sized to <span style={{ fontWeight:600 }}>coverage % × idle rwaUSD TVL</span> (0% yield). Any USDC NAV above that requirement is deployed to the <span style={{ fontWeight:600, color:T.blue }}>USDC Yield Position</span> (T+0, earns yield). BLI exit flows are handled separately.
               </div>
 
               {/* Liability + asset composition */}
@@ -4006,7 +5649,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                     hint={`Raw USDC for instant redemption = ${yld.bcUsdcCoverage}% × idle rwaUSD TVL (${fd(rwaUSDIdle)}). Required now: ${fd(bcUsdcRequired)}. Remainder of USDC NAV → Yield Position.`} />
                   <Slider label="Monthly Outflow - % of Idle rwaUSD" value={yld.bcOutflowRate ?? 2} min={0} max={20} step={0.5}
                     onChange={v=>upYld("bcOutflowRate",v)} fmt={v=>`${v}%`}
-                    hint="Share of idle rwaUSD leaving Bound Core each month (redeemed to USDC or converted to BCI). Drains the rwaUSD liability and its USDC backing 1:1." />
+                    hint="Share of idle rwaUSD leaving Bound Core each month (redeemed to USDC or converted to BLI). Drains the rwaUSD liability and its USDC backing 1:1." />
                 </div>
 
                 {/* Column 2: USDC Yield Position */}
@@ -4092,7 +5735,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                   { key:"covAch",     label:"Coverage Achieved (%)",         col:T.green, bold:false, sep:false, bg:T.bgSoft, isPct:true },
                   { key:"yieldMo",    label:"USDC Yield / mo",               col:T.blue,  bold:false, sep:false, bg:T.bgSoft },
                   { key:"grossMo",    label:"Total Gross Yield / mo",        col:T.ink,   bold:true,  sep:true,  bg:T.bgEl },
-                  { key:"toBCI",      label:"-> BCI SC (80%)",                col:T.green, bold:false, sep:false, bg:T.greenSoft },
+                  { key:"toBCI",      label:"-> BLI SC (80%)",                col:T.green, bold:false, sep:false, bg:T.greenSoft },
                   { key:"toPR",       label:"-> Protocol Reserve (20%)",      col:T.blue,  bold:false, sep:true,  bg:T.blueSoft },
                   { key:"blended",    label:"Blended Annual Yield",          col:T.green, bold:true,  sep:false, bg:T.bgEl, isPct:true },
                 ];
@@ -4182,7 +5825,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                 pool</span> (retail buy/exit, RWA liquidation/minting) and the <span style={{ fontWeight:600, color:T.green }}>private
                 contract</span> (institutional LP deposits) — they are never summed into one "total volume"
                 figure below, since the private path never touches the pool. Balance-sheet/stock figures
-                (Layer NAV, Bound Core NAV, BCI Supply) are not repeated here — see the Liquidity Layer, Bound
+                (Layer NAV, Bound Core NAV, BLI Supply) are not repeated here — see the Liquidity Layer, Bound
                 Core Reserve, and Simulation Results sections for those; this section shows flow only.
               </div>
 
@@ -4271,10 +5914,10 @@ export default function BoundSimulator({ onOpenDocs }) {
 
                 const privateRows = [
                   { key:"privDeposit",     label:"Private Deposit (seed + monthly growth)", col:T.green, bold:true,  sep:false, bg:T.bgSoft },
-                  { key:"privMintFee",     label:"  Mint Fee (0.3% · 80/20 BCI/PR)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
+                  { key:"privMintFee",     label:"  Mint Fee (0.3% · 80/20 BLI/PR)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
                   { key:"privRwaReceived", label:"  rwaUSD Received (post mint fee)",       col:T.green, bold:false, sep:false, bg:T.bgEl },
-                  { key:"privToBci",       label:`  → Converting to BCI (${p.privateBCIConversion||95}%, gross)`, col:T.green, bold:false, sep:false, bg:T.bgEl },
-                  { key:"privConvFee",     label:"    Conversion Fee (100% BCI SC)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
+                  { key:"privToBci",       label:`  → Converting to BLI (${p.privateBCIConversion||95}%, gross)`, col:T.green, bold:false, sep:false, bg:T.bgEl },
+                  { key:"privConvFee",     label:"    Conversion Fee (100% BLI SC)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
                   { key:"privToLayer",     label:"    → Net to Liquidity Layer",           col:T.blue,  bold:false, sep:false, bg:T.bgEl },
                   { key:"privToBcIdle",    label:`  → Idle (${100-(p.privateBCIConversion||95)}%) → Bound Core`, col:T.amber, bold:false, sep:true, bg:T.bgEl },
                   { key:"privLayerOut",    label:"Monthly Layer Exit (outflow)",            col:T.red,   bold:true,  sep:false, bg:T.bgSoft },
@@ -4284,8 +5927,8 @@ export default function BoundSimulator({ onOpenDocs }) {
                   { key:"retailPoolBuy",     label:"Retail Pool Buy Volume",                 col:T.blue,  bold:true,  sep:false, bg:T.bgSoft },
                   { key:"retailPoolFee",     label:"  Pool Fee (0.3%)",                      col:T.red,   bold:false, sep:false, bg:T.bgEl },
                   { key:"retailRwaReceived", label:"  rwaUSD Received (post pool fee)",       col:T.blue,  bold:false, sep:false, bg:T.bgEl },
-                  { key:"retailToBci",       label:`  → Converting to BCI (${p.retailBCIConversion||98}%, gross)`, col:T.blue, bold:false, sep:false, bg:T.bgEl },
-                  { key:"retailConvFee",     label:"    Conversion Fee (100% BCI SC)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
+                  { key:"retailToBci",       label:`  → Converting to BLI (${p.retailBCIConversion||98}%, gross)`, col:T.blue, bold:false, sep:false, bg:T.bgEl },
+                  { key:"retailConvFee",     label:"    Conversion Fee (100% BLI SC)",        col:T.red,   bold:false, sep:false, bg:T.bgEl },
                   { key:"retailToLayer",     label:"    → Net to Liquidity Layer",           col:T.blue,  bold:false, sep:false, bg:T.bgEl },
                   { key:"retailToBcIdle",    label:`  → Idle (${100-(p.retailBCIConversion||98)}%) → Bound Core`, col:T.amber, bold:false, sep:true, bg:T.bgEl },
                   { key:"retailLayerOut",    label:"Monthly Layer Exit (outflow)",            col:T.red,   bold:true,  sep:false, bg:T.bgSoft },
@@ -4327,7 +5970,7 @@ export default function BoundSimulator({ onOpenDocs }) {
         {/* ── STICKY "SEE SIMULATION RESULTS" BUTTON ──
             Fixed to the viewport so it stays reachable while scrolling through the
             long assumptions page; jumps to the separate Simulation Results page. */}
-        <button onClick={goToResults}
+        <button className="no-print" onClick={goToResults}
           style={{ position:"fixed", right:24, bottom:24, zIndex:50,
             display:"flex", alignItems:"center", gap:8,
             padding:"12px 20px", borderRadius:999, cursor:"pointer",
@@ -4339,7 +5982,8 @@ export default function BoundSimulator({ onOpenDocs }) {
         </button>
         </>}
 
-        {view === "results" && <>
+        {(view === "results" || printing === "simulator") && <>
+        {printing === "simulator" && <div className="print-part">Part II — Simulation Results</div>}
         {/* ══ SIMULATION RESULTS — header + tab bar ═══════════════════ */}
         <div style={{ padding:"0 24px", marginBottom:16 }}>
           <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between",
@@ -4348,10 +5992,10 @@ export default function BoundSimulator({ onOpenDocs }) {
               paddingBottom:10 }}>
               Simulation Results
             </div>
-            <div style={{ display:"flex", gap:2 }}>
+            <div className="no-print" style={{ display:"flex", gap:2 }}>
               {[
                 ["overview", "Overview"],
-                ["bci", "BCI SC Revenue"],
+                ["bci", "BLI SC Revenue"],
                 ["pr", "Protocol Reserve Revenue"],
                 ["participants", "Participant Economics"],
               ].map(([key, label]) => (
@@ -4369,8 +6013,8 @@ export default function BoundSimulator({ onOpenDocs }) {
         </div>
 
         {/* ════ TAB 1 — OVERVIEW: KPI cards + price chart + Price & Backing ════ */}
-        {resultsTab === "overview" && <>
-        {/* Range control — drives the KPI row AND the BCI Index Price chart together */}
+        {(resultsTab === "overview" || printing === "simulator") && <>
+        {/* Range control — drives the KPI row AND the BLI Index Price chart together */}
         <div style={{ padding:"0 24px 10px", display:"flex", justifyContent:"flex-end" }}>
           <div style={{ display:"flex", gap:3, alignItems:"center", flexWrap:"wrap" }}>
             <span style={{ fontSize:10, color:T.ink4, fontWeight:600, textTransform:"uppercase",
@@ -4393,7 +6037,7 @@ export default function BoundSimulator({ onOpenDocs }) {
              always describe the same month. */}
         <div style={{ padding:"0 24px 16px", display:"flex", gap:10 }}>
           <KPI
-            label={`BCI Annualized Growth · M${resultsMonth}`}
+            label={`BLI Annualized Growth · M${resultsMonth}`}
             value={fp(resultsRow?.annG)}
             sub={`Price ${fpr(resultsRow?.bciPrice)} rwaUSD at M${resultsMonth}`}
             accent
@@ -4401,10 +6045,10 @@ export default function BoundSimulator({ onOpenDocs }) {
           <KPI
             label={`Liquidity Layer · M${resultsMonth}`}
             value={fd(resultsRow?.layer)}
-            sub="Backs all BCI tokens"
+            sub="Backs all BLI tokens"
           />
           <KPI
-            label={`BCI Supply · M${resultsMonth}`}
+            label={`BLI Supply · M${resultsMonth}`}
             value={resultsRow?.bciSupply ? `${(resultsRow.bciSupply/1e6).toFixed(2)}M` : "—"}
             sub={`Price: ${fpr(resultsRow?.bciPrice)} rwaUSD`}
           />
@@ -4420,13 +6064,13 @@ export default function BoundSimulator({ onOpenDocs }) {
           />
         </div>
 
-        {/* ── BCI PRICE CHART + LINKED BCI SC BALANCE TABLE ── */}
+        {/* ── BLI PRICE CHART + LINKED BLI SC BALANCE TABLE ── */}
         <div style={{ padding:"0 24px", marginBottom:12 }}>
           <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10,
             padding:16, boxShadow:SHADOW }}>
             <div style={{ marginBottom:12 }}>
-              <SectionTitle sub="Layer NAV + BCI SC revenue ÷ BCI Supply · active scenario · starts at 1.0000 rwaUSD">
-                BCI Index Price — 36-Month Projection
+              <SectionTitle sub="Layer NAV + BLI SC revenue ÷ BLI Supply · active scenario · starts at 1.0000 rwaUSD">
+                BLI Index Price — 36-Month Projection
               </SectionTitle>
             </div>
             <ResponsiveContainer width="100%" height={bciPriceView===0?280:320}>
@@ -4456,7 +6100,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                         <div style={{ fontWeight:700, color:T.ink, marginBottom:4 }}>Month {d.m}</div>
                         <div style={{ fontFamily:MONO, color:T.greenInk }}>Price: {d.Price.toFixed(4)} rwaUSD</div>
                         <div style={{ fontFamily:MONO, color:T.ink3, marginTop:2 }}>annG: {d.annG}%</div>
-                        <div style={{ fontFamily:MONO, color:T.ink3 }}>BCI SC: {fd(d.bciSC)}</div>
+                        <div style={{ fontFamily:MONO, color:T.ink3 }}>BLI SC: {fd(d.bciSC)}</div>
                         <div style={{ fontFamily:MONO, color:T.ink3 }}>Supply: {fSupply(d.supply)}</div>
                       </div>
                     );
@@ -4464,7 +6108,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                 />
                 <ReferenceLine y={1} stroke={T.borderS} strokeDasharray="4 3" strokeWidth={1.5}
                   label={{ value:"1.0000", position:"insideTopLeft", fill:T.ink4, fontSize:9, fontFamily:MONO }} />
-                <Line type="monotone" dataKey="Price" stroke={T.green} strokeWidth={2.5}
+                <Line isAnimationActive={chartAnim()} type="monotone" dataKey="Price" stroke={T.green} strokeWidth={2.5}
                   dot={{ r:bciPriceView>0?4:2.5, fill:T.green, stroke:T.bgEl, strokeWidth:2 }}
                   activeDot={{ r:6, fill:T.greenInk, stroke:T.bgEl, strokeWidth:2 }}>
                   <LabelList
@@ -4478,7 +6122,7 @@ export default function BoundSimulator({ onOpenDocs }) {
               </LineChart>
             </ResponsiveContainer>
 
-            {/* Linked BCI SC Balance table — shares bciPriceView with the chart/KPIs above */}
+            {/* Linked BLI SC Balance table — shares bciPriceView with the chart/KPIs above */}
             {(() => {
               const isAll = bciPriceView === 0;
               const monthCols = isAll
@@ -4494,14 +6138,14 @@ export default function BoundSimulator({ onOpenDocs }) {
                 { key:"retailIn",   label:"  → Retail pool to Layer",             col:T.blue,  bold:false, sep:false, bg:T.bgSoft },
                 { key:"layerOut",   label:"  − Layer redemptions",                col:T.red,   bold:false, sep:true,  bg:T.bgSoft },
 
-                { section: "2 · BCI Smart Contract — accumulated fee revenue" },
-                { key:"scEnd",      label:"BCI SC Balance (fee revenue, running total)", col:T.green, bold:true,  sep:false, bg:T.greenSoft },
+                { section: "2 · BLI Smart Contract — accumulated fee revenue" },
+                { key:"scEnd",      label:"BLI SC Balance (fee revenue, running total)", col:T.green, bold:true,  sep:false, bg:T.greenSoft },
                 { key:"revenue",    label:isAll ? "  + New fee revenue this year" : "  + New fee revenue this month", col:T.green, bold:false, sep:true,  bg:T.bgSoft },
 
-                { section: "3 · BCI Price Calculation" },
-                { key:"bciNav",     label:"Total backing (Layer + BCI SC)",       col:T.ink,   bold:true,  sep:false, bg:T.bgSoft },
-                { key:"supply",     label:"÷ BCI Supply (tokens)",                col:T.ink3,  bold:false, sep:false, bg:T.bgEl, isTokens:true },
-                { key:"price",      label:"= BCI Price (rwaUSD)",                 col:T.green, bold:true,  sep:false, bg:T.greenSoft, isDec:true },
+                { section: "3 · BLI Price Calculation" },
+                { key:"bciNav",     label:"Total backing (Layer + BLI SC)",       col:T.ink,   bold:true,  sep:false, bg:T.bgSoft },
+                { key:"supply",     label:"÷ BLI Supply (tokens)",                col:T.ink3,  bold:false, sep:false, bg:T.bgEl, isTokens:true },
+                { key:"price",      label:"= BLI Price (rwaUSD)",                 col:T.green, bold:true,  sep:false, bg:T.greenSoft, isDec:true },
                 { key:"annG",       label:"Annualized Growth",                    col:T.green, bold:false, sep:false, bg:T.bgSoft, isPct:true },
               ];
               return (
@@ -4510,7 +6154,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                     flexWrap:"wrap", gap:8, marginBottom:8 }}>
                     <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
                       letterSpacing:"0.08em" }}>
-                      BCI Price & Backing — {isAll ? "Annual Summary" : `Monthly Breakdown · Year ${bciPriceView}`}
+                      BLI Price & Backing — {isAll ? "Annual Summary" : `Monthly Breakdown · Year ${bciPriceView}`}
                     </span>
                   </div>
                   <div style={{ overflowX:"auto", border:`1px solid ${T.border}`, borderRadius:8 }}>
@@ -4572,13 +6216,13 @@ export default function BoundSimulator({ onOpenDocs }) {
         </div>
         </>}
 
-        {/* ════ TAB 2 — BCI SC REVENUE ════ */}
-        {resultsTab === "bci" && (
+        {/* ════ TAB 2 — BLI SC REVENUE ════ */}
+        {(resultsTab === "bci" || printing === "simulator") && (
         <div style={{ padding:"0 24px", display:"flex", flexDirection:"column", gap:16, marginBottom:20 }}>
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:8 }}>
               <span style={{ fontSize:12, fontWeight:700, color:T.ink, letterSpacing:"-0.01em" }}>
-                BCI SC Revenue
+                BLI SC Revenue
               </span>
               <div style={{ display:"flex", gap:3, alignItems:"center" }}>
                 <span style={{ fontSize:10, color:T.ink4, fontWeight:600, textTransform:"uppercase",
@@ -4596,13 +6240,13 @@ export default function BoundSimulator({ onOpenDocs }) {
               </div>
             </div>
 
-            {/* BCI SC Revenue — stacked chart (linked to year + tables below) */}
+            {/* BLI SC Revenue — stacked chart (linked to year + tables below) */}
             <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10,
               padding:16, boxShadow:SHADOW }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start",
                 flexWrap:"wrap", gap:10, marginBottom:10 }}>
-                <SectionTitle sub={`Monthly revenue by source · $K · Year ${bciRevYear} · stacked = total to BCI SC`}>
-                  BCI SC Revenue — Chart
+                <SectionTitle sub={`Monthly revenue by source · $K · Year ${bciRevYear} · stacked = total to BLI SC`}>
+                  BLI SC Revenue — Chart
                 </SectionTitle>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
                   <div style={{ fontSize:9.5, color:T.ink3, textTransform:"uppercase", letterSpacing:"0.08em", fontWeight:600 }}>
@@ -4640,13 +6284,13 @@ export default function BoundSimulator({ onOpenDocs }) {
                       );
                     }}
                   />
-                  <Bar dataKey="Conv. Fees"  stackId="a" fill={RC.conv}   />
-                  <Bar dataKey="Mint/Redem"  stackId="a" fill={RC.entry}  />
-                  <Bar dataKey="Pool+APSS"   stackId="a" fill={RC.pool}   />
-                  <Bar dataKey="RWA Fees"    stackId="a" fill={RC.rwa}    />
-                  <Bar dataKey="Layer Yield" stackId="a" fill={RC.morpho} />
-                  <Bar dataKey="BC Yield"    stackId="a" fill={RC.float}  />
-                  <Bar dataKey="Maintenance" stackId="a" fill={RC.maint}  radius={[3,3,0,0]} />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Conv. Fees"  stackId="a" fill={RC.conv}   />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Mint/Redem"  stackId="a" fill={RC.entry}  />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Pool+APSS"   stackId="a" fill={RC.pool}   />
+                  <Bar isAnimationActive={chartAnim()} dataKey="RWA Fees"    stackId="a" fill={RC.rwa}    />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Layer Yield" stackId="a" fill={RC.morpho} />
+                  <Bar isAnimationActive={chartAnim()} dataKey="BC Yield"    stackId="a" fill={RC.float}  />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Maintenance" stackId="a" fill={RC.maint}  radius={[3,3,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
               <div style={{ display:"flex", flexWrap:"wrap", gap:"8px 14px", marginTop:10, paddingTop:10,
@@ -4668,12 +6312,12 @@ export default function BoundSimulator({ onOpenDocs }) {
             <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
               <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
                 <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
-                  letterSpacing:"0.08em" }}>BCI SC Revenue — Fee Sources & Allocation to BCI</span>
+                  letterSpacing:"0.08em" }}>BLI SC Revenue — Fee Sources & Allocation to BLI</span>
               </div>
               <div style={{ display:"flex", flexWrap:"wrap", borderBottom:`1px solid ${T.border}` }}>
                 {[
-                  { fee:"Conversion Fees", rate:"On rwaUSD ↔ BCI conversion", bci:"100%", pr:"0%", col:RC.conv,
-                    what:"Charged when rwaUSD converts to/from BCI. Credited entirely to BCI SC — the strongest driver of BCI price." },
+                  { fee:"Conversion Fees", rate:"On rwaUSD ↔ BLI conversion", bci:"100%", pr:"0%", col:RC.conv,
+                    what:"Charged when rwaUSD converts to/from BLI. Credited entirely to BLI SC — the strongest driver of BLI price." },
                   { fee:"Mint / Redemption", rate:`${p.mintRedeemFee||0.3}% · rwaUSD mint & redeem (protocol)`, bci:"80%", pr:"20%", col:RC.entry,
                     what:"Smart-contract fee when rwaUSD is minted or redeemed via the protocol — including pre-pool RWA liquidations." },
                   { fee:"Pool + APSS", rate:"On ALL pool volume (retail + RWA)", bci:"80%", pr:"20%", col:RC.pool,
@@ -4683,7 +6327,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                   { fee:"Layer Yield", rate:"On Liquidity Layer deployed capital", bci:"80%", pr:"10%", er:"10%", col:RC.morpho,
                     what:"Aave / Morpho / Enhanced yield on the Liquidity Layer. 10% tops up the Emergency Reserve." },
                   { fee:"Bound Core Yield", rate:"USDC Yield Position · flat split", bci:"80%", pr:"20%", col:RC.float,
-                    what:"Yield on the USDC Yield Position. Flat 80% to BCI SC, 20% to Protocol Reserve." },
+                    what:"Yield on the USDC Yield Position. Flat 80% to BLI SC, 20% to Protocol Reserve." },
                   { fee:"Maintenance", rate:"Annual · per active market", bci:"20%", pr:"80%", col:RC.maint,
                     what:"Recurring per-market maintenance fee." },
                 ].map(({ fee, rate, bci, pr, er, what, col }, i, arr) => (
@@ -4695,7 +6339,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                     <div style={{ fontSize:10.5, color:T.ink3, marginBottom:8 }}>{rate}</div>
                     <div style={{ display:"flex", gap:6, marginBottom:8, flexWrap:"wrap" }}>
                       <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600, color:T.green,
-                        background:T.greenSoft, padding:"2px 7px", borderRadius:3 }}>{bci} BCI SC</span>
+                        background:T.greenSoft, padding:"2px 7px", borderRadius:3 }}>{bci} BLI SC</span>
                       <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600,
                         color: pr==="0%" ? T.ink4 : T.blue, background: pr==="0%" ? T.bgInset : T.blueSoft,
                         padding:"2px 7px", borderRadius:3 }}>{pr} Protocol</span>
@@ -4710,25 +6354,25 @@ export default function BoundSimulator({ onOpenDocs }) {
               </div>
             </div>
 
-            {/* BCI SC Revenue — Monthly Breakdown */}
+            {/* BLI SC Revenue — Monthly Breakdown */}
             {(() => {
               const { months } = bciScRevenueTableData[bciRevYear - 1] || { months:[] };
               const rows = [
-                { key:"conv",    label:"Conv. Fees → BCI SC",        col:RC.conv,   bold:false, sep:false, bg:T.bgEl },
-                { key:"entry",   label:"Mint / Redemption → BCI SC", col:RC.entry,  bold:false, sep:false, bg:T.bgEl },
-                { key:"pool",    label:"Pool + APSS → BCI SC",       col:RC.pool,   bold:false, sep:false, bg:T.bgEl },
-                { key:"rwa",     label:"RWA Fees → BCI SC",          col:RC.rwa,    bold:false, sep:false, bg:T.bgEl },
-                { key:"layer",   label:"Layer Yield → BCI SC",       col:RC.morpho, bold:false, sep:false, bg:T.bgEl },
-                { key:"bcYield", label:"Bound Core Yield → BCI SC",  col:RC.float,  bold:false, sep:false, bg:T.bgEl },
-                { key:"maint",   label:"Maintenance → BCI SC",       col:RC.maint,  bold:false, sep:true,  bg:T.bgEl },
-                { key:"gross",   label:"Total to BCI SC",            col:T.green,   bold:true,  sep:false, bg:T.greenSoft },
+                { key:"conv",    label:"Conv. Fees → BLI SC",        col:RC.conv,   bold:false, sep:false, bg:T.bgEl },
+                { key:"entry",   label:"Mint / Redemption → BLI SC", col:RC.entry,  bold:false, sep:false, bg:T.bgEl },
+                { key:"pool",    label:"Pool + APSS → BLI SC",       col:RC.pool,   bold:false, sep:false, bg:T.bgEl },
+                { key:"rwa",     label:"RWA Fees → BLI SC",          col:RC.rwa,    bold:false, sep:false, bg:T.bgEl },
+                { key:"layer",   label:"Layer Yield → BLI SC",       col:RC.morpho, bold:false, sep:false, bg:T.bgEl },
+                { key:"bcYield", label:"Bound Core Yield → BLI SC",  col:RC.float,  bold:false, sep:false, bg:T.bgEl },
+                { key:"maint",   label:"Maintenance → BLI SC",       col:RC.maint,  bold:false, sep:true,  bg:T.bgEl },
+                { key:"gross",   label:"Total to BLI SC",            col:T.green,   bold:true,  sep:false, bg:T.greenSoft },
               ];
               return (
                 <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
                   <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}`,
                     display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                     <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
-                      letterSpacing:"0.08em" }}>BCI SC Revenue — Monthly Breakdown · Year {bciRevYear}</span>
+                      letterSpacing:"0.08em" }}>BLI SC Revenue — Monthly Breakdown · Year {bciRevYear}</span>
                     <span style={{ fontSize:9, color:T.ink4 }}>Linked to Year {bciRevYear} selector above</span>
                   </div>
                   <div style={{ overflowX:"auto" }}>
@@ -4770,7 +6414,7 @@ export default function BoundSimulator({ onOpenDocs }) {
               );
             })()}
 
-            {/* BCI SC Revenue — % Composition. Re-added 2026-07-10 (owner request):
+            {/* BLI SC Revenue — % Composition. Re-added 2026-07-10 (owner request):
                 connects the headline annualized-growth number to what drove it —
                 the LAST row is Annualized Growth for that month, directly below
                 the composition rows, so a reader can read down the column and see
@@ -4790,9 +6434,9 @@ export default function BoundSimulator({ onOpenDocs }) {
                 <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:8, overflow:"hidden" }}>
                   <div style={{ padding:"8px 14px", background:T.bgSoft, borderBottom:`1px solid ${T.border}` }}>
                     <span style={{ fontSize:10, fontWeight:600, color:T.ink3, textTransform:"uppercase",
-                      letterSpacing:"0.08em" }}>BCI SC Revenue — % Composition · Year {bciRevYear}</span>
+                      letterSpacing:"0.08em" }}>BLI SC Revenue — % Composition · Year {bciRevYear}</span>
                     <div style={{ fontSize:9, color:T.ink5, marginTop:2, fontWeight:400 }}>
-                      Each source as a share of that month's fee revenue credited to BCI SC (sums to 100%). Bottom row: that month's annualized index growth.
+                      Each source as a share of that month's fee revenue credited to BLI SC (sums to 100%). Bottom row: that month's annualized index growth.
                     </div>
                   </div>
                   <div style={{ overflowX:"auto" }}>
@@ -4841,7 +6485,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                           })}
                         </tr>
                         <tr style={{ background:T.greenSoft }}>
-                          <td style={{ padding:"6px 12px", color:T.ink, fontSize:10.5, fontWeight:700 }}>Annualized Growth (BCI Index)</td>
+                          <td style={{ padding:"6px 12px", color:T.ink, fontSize:10.5, fontWeight:700 }}>Annualized Growth (BLI Index)</td>
                           {months.map((c,mi) => {
                             if (!c) return <td key={mi} style={{ padding:"6px 5px", textAlign:"right",
                               fontFamily:MONO, fontSize:10, color:T.ink5 }}>—</td>;
@@ -4864,7 +6508,7 @@ export default function BoundSimulator({ onOpenDocs }) {
         )}
 
         {/* ════ TAB 3 — PROTOCOL RESERVE REVENUE ════ */}
-        {resultsTab === "pr" && (
+        {(resultsTab === "pr" || printing === "simulator") && (
         <div style={{ padding:"0 24px", display:"flex", flexDirection:"column", gap:16, marginBottom:20 }}>
           <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:8 }}>
@@ -4942,13 +6586,13 @@ export default function BoundSimulator({ onOpenDocs }) {
                   />
                   <ReferenceLine y={333} stroke={T.amber} strokeDasharray="4 3" strokeWidth={1.5}
                     label={{ value:"Op. cost", fill:T.amber, fontSize:8, position:"insideTopRight" }} />
-                  <Bar dataKey="RWA Fees"    stackId="a" fill={RC.rwa}    />
-                  <Bar dataKey="Mint/Redem"  stackId="a" fill={RC.entry}  />
-                  <Bar dataKey="Pool+APSS"   stackId="a" fill={RC.pool}   />
-                  <Bar dataKey="Maintenance" stackId="a" fill={RC.maint}  />
-                  <Bar dataKey="Integration" stackId="a" fill={RC.integ}  />
-                  <Bar dataKey="Layer Yield" stackId="a" fill={RC.morpho} />
-                  <Bar dataKey="Float Yield" stackId="a" fill={RC.float}  radius={[3,3,0,0]} />
+                  <Bar isAnimationActive={chartAnim()} dataKey="RWA Fees"    stackId="a" fill={RC.rwa}    />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Mint/Redem"  stackId="a" fill={RC.entry}  />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Pool+APSS"   stackId="a" fill={RC.pool}   />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Maintenance" stackId="a" fill={RC.maint}  />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Integration" stackId="a" fill={RC.integ}  />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Layer Yield" stackId="a" fill={RC.morpho} />
+                  <Bar isAnimationActive={chartAnim()} dataKey="Float Yield" stackId="a" fill={RC.float}  radius={[3,3,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
               <div style={{ display:"flex", flexWrap:"wrap", gap:"8px 14px", marginTop:10, paddingTop:10,
@@ -4975,15 +6619,15 @@ export default function BoundSimulator({ onOpenDocs }) {
               <div style={{ display:"flex", flexWrap:"wrap" }}>
                 {[
                   { fee:"Mint / Redemption", rate:`${p.mintRedeemFee||0.3}% · rwaUSD mint & redeem (protocol)`, pr:"20%", bci:"80%", col:RC.entry,
-                    what:"Smart-contract fee on rwaUSD mint and redeem — including pre-pool RWA liquidations. Majority to BCI SC." },
+                    what:"Smart-contract fee on rwaUSD mint and redeem — including pre-pool RWA liquidations. Majority to BLI SC." },
                   { fee:"RWA Fees", rate:"On RWA liquidation + minting volume", pr:"20%", bci:"80%", col:RC.rwa,
-                    what:"Liquidation trade fee and dynamic haircut from RWA markets. Majority to BCI SC." },
+                    what:"Liquidation trade fee and dynamic haircut from RWA markets. Majority to BLI SC." },
                   { fee:"Maintenance", rate:"Annual · per active market", pr:"80%", bci:"20%", col:RC.maint,
                     what:"Recurring per-market maintenance fee. Majority to Protocol Reserve." },
                   { fee:"Pool + APSS", rate:"On ALL pool volume (retail + RWA)", pr:"20%", bci:"80%", col:RC.pool,
                     what:"Pool trading fee plus APSS on every pool swap — retail AND RWA legs routed through the pool. Zero before pool launch (month poolStart)." },
                   { fee:"Bound Core Yield", rate:"USDC Yield Position · flat split", pr:"20%", bci:"80%", col:RC.float,
-                    what:"Yield on the USDC Yield Position. Flat 20% to Protocol Reserve, 80% to BCI SC." },
+                    what:"Yield on the USDC Yield Position. Flat 20% to Protocol Reserve, 80% to BLI SC." },
                   { fee:"Layer Yield", rate:"On Liquidity Layer deployed capital", pr:"10%", bci:"80%", er:"10%", col:RC.morpho,
                     what:"Aave / Morpho / Enhanced yield on the Liquidity Layer. 10% to Protocol Reserve, 10% to ER." },
                   { fee:"Integration", rate:"One-time · per market launch", pr:"100%", bci:"0%", col:RC.integ,
@@ -5000,7 +6644,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                         background:T.blueSoft, padding:"2px 7px", borderRadius:3 }}>{pr} Protocol</span>
                       <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600,
                         color: bci==="0%" ? T.ink4 : T.green, background: bci==="0%" ? T.bgInset : T.greenSoft,
-                        padding:"2px 7px", borderRadius:3 }}>{bci} BCI SC</span>
+                        padding:"2px 7px", borderRadius:3 }}>{bci} BLI SC</span>
                       {er && (
                         <span style={{ fontSize:10, fontFamily:MONO, fontWeight:600, color:T.amber,
                           background:T.amberSoft, padding:"2px 7px", borderRadius:3 }}>{er} ER</span>
@@ -5013,7 +6657,7 @@ export default function BoundSimulator({ onOpenDocs }) {
             </div>
 
             {/* Protocol Reserve — Monthly Breakdown ($). Restructured 2026-07-10
-                (owner request) to mirror the BCI SC Revenue tab exactly: 7 source
+                (owner request) to mirror the BLI SC Revenue tab exactly: 7 source
                 rows + one bold Total. The "Gross (sum of sources)" / "− ER top-up"
                 rows that used to live here (added when the S30 audit found the net
                 total didn't visibly add up to the sources) have moved to their own
@@ -5084,9 +6728,9 @@ export default function BoundSimulator({ onOpenDocs }) {
             })()}
 
             {/* Protocol Reserve Revenue — % Composition (re-added 2026-07-10,
-                mirrors the BCI SC Revenue % Composition table). Last row is the
+                mirrors the BLI SC Revenue % Composition table). Last row is the
                 cumulative Protocol Reserve balance — the connecting metric, same
-                role annG plays on the BCI SC tab. */}
+                role annG plays on the BLI SC tab. */}
             {(() => {
               const { months } = prMonthlyCompositionData[prRevYear - 1] || { months:[] };
               const rows = [
@@ -5200,7 +6844,7 @@ export default function BoundSimulator({ onOpenDocs }) {
                   { fee:"Target Size", rate:"At-risk assets × year rate", col:T.ink,
                     what:"At-risk assets = Morpho deployment + Bound Core's USDC Yield Position. Rate rises each year: 10% (Year 1) → 15% (Year 2) → 20% (Year 3) → 25% cap beyond the simulator's 36-month horizon." },
                   { fee:"Loss Waterfall", rate:"3 layers, in order", col:T.red,
-                    what:"(1) Emergency Reserve absorbs first. (2) Insurance policy covers losses beyond the ER's balance. (3) BCI index reduction — debiting the BCI SC directly — is the last resort, reached only if both prior layers are exhausted." },
+                    what:"(1) Emergency Reserve absorbs first. (2) Insurance policy covers losses beyond the ER's balance. (3) BLI index reduction — debiting the BLI SC directly — is the last resort, reached only if both prior layers are exhausted." },
                 ].map(({ fee, rate, what, col }, i, arr) => (
                   <div key={fee} style={{ flex:"1 1 220px", minWidth:0, padding:"12px 14px",
                     borderRight: i < arr.length-1 ? `1px solid ${T.border}` : "none" }}>
@@ -5277,7 +6921,7 @@ export default function BoundSimulator({ onOpenDocs }) {
         )}
 
         {/* ════ TAB 4 — PARTICIPANT ECONOMICS ════ */}
-        {resultsTab === "participants" && <>
+        {(resultsTab === "participants" || printing === "simulator") && <>
         {/* ── PARTICIPANT ECONOMICS — WHO PAYS · WHO EARNS ──
             Rework 2026-07-09 (owner feedback): each card is now a self-contained
             calculator — investment amount + holding period are the ONLY controls,
@@ -5321,8 +6965,8 @@ export default function BoundSimulator({ onOpenDocs }) {
             });
             const privFeeLegs = [
               { label:`Mint fee — ${p.mintRedeemFee||0.3}% of ${fd(privAmount)} (full deposit), at entry`, value: privOut.entryFeeDollar },
-              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(privOut.convertingAmt)} (the ${p.privateBCIConversion||95}% that converts to BCI), at entry`, value: privOut.entryConvFee },
-              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(privOut.grown)} (grown BCI value), at exit`, value: privOut.exitConvFee },
+              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(privOut.convertingAmt)} (the ${p.privateBCIConversion||95}% that converts to BLI), at entry`, value: privOut.entryConvFee },
+              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(privOut.grown)} (grown BLI value), at exit`, value: privOut.exitConvFee },
               { label:`Redeem fee — ${p.mintRedeemFee||0.3}% of ${fd(privOut.afterExitConv)} (post-conversion exit amount), at exit`, value: privOut.exitFeeDollar },
             ];
             const privFeesPaidTotal = privFeeLegs.reduce((a,x)=>a+x.value, 0);
@@ -5336,8 +6980,8 @@ export default function BoundSimulator({ onOpenDocs }) {
             });
             const retailFeeLegs = [
               { label:`Pool trading fee — ${p.poolFee||0.3}% of ${fd(retailAmount)} (full deposit), at entry`, value: retailOut.entryFeeDollar },
-              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(retailOut.convertingAmt)} (the ${p.retailBCIConversion||98}% that converts to BCI), at entry`, value: retailOut.entryConvFee },
-              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(retailOut.grown)} (grown BCI value), at exit`, value: retailOut.exitConvFee },
+              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(retailOut.convertingAmt)} (the ${p.retailBCIConversion||98}% that converts to BLI), at entry`, value: retailOut.entryConvFee },
+              { label:`Conversion fee — ${((p.convFeeRwaUSD||0.89)*(1-bnd)).toFixed(2)}% of ${fd(retailOut.grown)} (grown BLI value), at exit`, value: retailOut.exitConvFee },
               { label:`Pool trading fee — ${p.poolFee||0.3}% of ${fd(retailOut.afterExitConv)} (post-conversion exit amount), at exit`, value: retailOut.exitFeeDollar },
             ];
             const retailFeesPaidTotal = retailFeeLegs.reduce((a,x)=>a+x.value, 0);
@@ -5377,13 +7021,13 @@ export default function BoundSimulator({ onOpenDocs }) {
                       ],
                       pays:["Haircut on liquidation/minting volume","Trade fee each direction"],
                       earns:["Instant T+0 exit guaranteed","No issuer wait (T+30–T+120 avoided)","rwaUSD received instantly"] },
-                    { name:"rwaUSD Holder", blurb:"Anyone holding rwaUSD outside the BCI conversion path — no minimum, redeemable any time.",
+                    { name:"rwaUSD Holder", blurb:"Anyone holding rwaUSD outside the BLI conversion path — no minimum, redeemable any time.",
                       stats:[
                         { label:"Holding Cost", value:"0%", note:"free to hold" },
                         { label:"Exit Fee", value:`${p.poolFee||0.3}%`, note:"only if sold via the pool" },
                       ],
                       pays:["Nothing to hold $1 freely","0.3% pool fee only on USDC exit"],
-                      earns:["$1 peg stability via APSS","DeFi composability","Passively generates float yield for BCI SC","Stake rwaUSD for BND — governance token + partner benefits"] },
+                      earns:["$1 peg stability via APSS","DeFi composability","Passively generates float yield for BLI SC","Stake rwaUSD for BND — governance token + partner benefits"] },
                   ].map(({ name, blurb, stats, pays, earns }) => (
                     <div key={name} style={{ flex:1, minWidth:340, border:`1px solid ${T.border}`,
                       borderRadius:10, overflow:"hidden", display:"flex", flexDirection:"column" }}>
@@ -5429,8 +7073,25 @@ export default function BoundSimulator({ onOpenDocs }) {
             in the scenario bar at the top of the page, per owner request.) */}
         </>}
 
+        {printing === "tokenomics" && (
+          <PrintCover
+            eyebrow="Tokenomics Report"
+            title="BOUND Protocol — BND Tokenomics"
+            subtitle="Full tokenomics model output: the capital-formation, allocation, vesting and market assumptions the run was configured with, followed by the resulting schedules, tables and analysis."
+            meta={[
+              { k:"Report",    v:"BND Tokenomics" },
+              { k:"Supply",    v:"1,000,000,000 BND" },
+              { k:"Basis",     v:"Live simulation engine" },
+              { k:"Generated", v:new Date().toISOString().slice(0,10) },
+            ]}
+            note="Generated from the BOUND Protocol economic simulator. All figures are model outputs on the assumptions recorded in this report, not forecasts or guarantees of actual results."
+          />
+        )}
+        {(view === "tokenomics" || printing === "tokenomics") && <TokenomicsPage sim={sim} exportBtn={
+          <ExportPdfBtn onClick={() => exportPdf("tokenomics")} label="Export Tokenomics PDF" />} />}
+
       </div>
-    </>
+    </PrintCtx.Provider>
   );
 }
 // end

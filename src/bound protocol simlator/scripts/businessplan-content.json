@@ -1,0 +1,1460 @@
+{
+  "front": {
+    "brand": "BOUND Protocol",
+    "kind": "Business Plan",
+    "tagline": "Protocol Business Plan — 36-Month Operating Model",
+    "version": "Year 1–Year 3 — July 2026",
+    "place": "Bucharest, Romania"
+  },
+  "chapters": [
+    {
+      "num": "",
+      "id": "summary",
+      "title": "Executive Summary",
+      "nav": "Executive Summary",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "BOUND Protocol is on-chain liquidity infrastructure for tokenized real-world assets. It allows any holder of an integrated RWA token to exit into dollars instantly, at a transparent risk-tiered haircut, without waiting on issuer redemption calendars. This plan sets out the operating model over the thirty-six months the protocol's simulation engine covers, and it is built entirely from that engine's default case.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "Over the horizon the protocol generates $6,828,594 of revenue against an operating cost base of $9,407,335. Value under protocol custody grows from $3,958,942 in the first month to $46,060,161 by month thirty-six, and the Bound Liquidity Index appreciates from 1.0000 to 1.3693, an Annualized Index Growth of 11.0% at the close of the period.",
+          "boldLabel": false
+        },
+        {
+          "t": "p",
+          "text": "The protocol reaches monthly operating breakeven in <b>month 31</b>. Peak cumulative operating deficit is −$2,911,224, reached in month 30. That deficit is the capital requirement this plan is built to fund: it is the amount the protocol consumes before its own revenue covers its own cost base. Nothing in this document assumes a scenario more favourable than the engine's default preset.",
+          "boldLabel": false
+        },
+        {
+          "t": "kpis",
+          "items": [
+            {
+              "n": "$6,828,594",
+              "l": "36-month protocol revenue"
+            },
+            {
+              "n": "$46,060,161",
+              "l": "Value under custody, month 36"
+            },
+            {
+              "n": "Month 31",
+              "l": "Operating breakeven",
+              "c": "g"
+            },
+            {
+              "n": "$2,911,224",
+              "l": "Peak capital requirement",
+              "c": "w"
+            },
+            {
+              "n": "11.0%",
+              "l": "Annualized Index Growth"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "1",
+      "id": "company",
+      "title": "Business Overview — Company Description",
+      "nav": "Company Description",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "1.1 What the protocol does",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Tokenization has succeeded at putting real-world assets on-chain and failed at making them liquid. Institutional fixed-income RWAs redeem primarily through their issuer, on settlement windows of thirty to ninety days or longer. The asset class markets itself as instant and around-the-clock; its exits are neither.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "BOUND supplies the missing exit. A holder brings an integrated RWA token to a BOUND market and receives rwaUSD in the same transaction, at a haircut priced in advance from the asset's redemption profile. The protocol's own reserve stands on the other side of that trade every time — liquidity is owned rather than rented, so it cannot reprice or withdraw under stress. Acquired RWA inventory is then recycled through protocol markets or redeemed with the issuer over time.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "1.2 The three-token architecture",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Functions are separated across three tokens so that risk is never carried by the instrument used as money.",
+              "boldLabel": false
+            },
+            {
+              "t": "ul",
+              "items": [
+                "rwaUSD: The settlement dollar. Minted exclusively against USDC and backed 100% by USDC at all times. Tokenized RWA exposure never enters its backing — a hard rule of the protocol, not a preference.",
+                "BLI (Bound Liquidity Index): The index token carrying all protocol RWA exposure and reserve performance. Its value can rise or fall. It is an index, not a deposit.",
+                "BND: The governance token. It coordinates market onboarding and risk parameters, and is burned through protocol activity."
+              ],
+              "boldLabel": true
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "1.3 How the group is structured",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Three entities, each with a distinct role. They are separate legal persons, and the costs and revenues that arise in each cannot be netted against one another — a distinction Chapter 9 depends on.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Entity",
+                "Jurisdiction",
+                "Role"
+              ],
+              "rows": [
+                [
+                  "Nexus Technologies Foundation",
+                  "Panama",
+                  "Owns the protocol and its intellectual property; grants the token delegation"
+                ],
+                [
+                  "BITSWIFT TECHNOLOGIES INC.",
+                  "Panama",
+                  "Issues and distributes the token; holds raise proceeds; counterparty on the SAFT"
+                ],
+                [
+                  "Operating company",
+                  "European Union",
+                  "Develops the protocol, employs the team, runs go-to-market; bears all operating cost"
+                ]
+              ]
+            },
+            {
+              "t": "p",
+              "text": "The protocol is built by the operating company, not by the issuer. The operating company works under a development-and-services agreement with the Foundation and the Issuer at cost plus 8%, and the intellectual property it creates vests in the Foundation. Entity roles are as recorded in the corporate documents and the SAFT.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "1.4 Who the protocol serves",
+          "blocks": [
+            {
+              "t": "ul",
+              "items": [
+                "Institutions and funds holding tokenized assets: an exit that does not exist today.",
+                "RWA issuers: a liquidity layer they plug into with zero capital pre-allocation, making their product more attractive to allocate to.",
+                "Liquidity providers: transparent exposure, through BLI, to the growth of RWA liquidity infrastructure."
+              ],
+              "boldLabel": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "2",
+      "id": "architecture",
+      "title": "Business Overview — Protocol Architecture",
+      "nav": "Protocol Architecture",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "2.1 The Atomic Peg Stabilization System",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Conventional stablecoins outsource their peg. When price deviates in a liquidity pool, external arbitrageurs perform the correcting trades and keep the profit. The APSS internalizes that function: when the rwaUSD/USDC pool deviates beyond a defined threshold, the protocol executes the correcting operation atomically — detection, mint-and-sell or buy-and-burn, and settlement all inside a single transaction.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "Because minting in an above-peg correction is performed against value received into backing within the same atomic operation, the APSS never operates the supply unbacked at any point. Each cycle realizes a small collateral surplus — the spread between the deviated pool price and par — which accrues to the protocol and is the origin of the pool-trading revenue line in this plan.",
+              "boldLabel": false
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "2.2 The Bound Liquidity Layer",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Liquidity is supplied by a protocol-owned reserve deployed across a four-tier structure and governed by Basel-style liquidity-coverage rules. A minimum USDC buffer is held for immediate availability; the remainder is deployed into yield-generating positions and RWA collateral under concentration limits that throttle intake before capacity is threatened.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Tier",
+                "Function",
+                "Assumption in this plan"
+              ],
+              "rows": [
+                [
+                  "USDC buffer",
+                  "Immediate redemption availability",
+                  "Minimum 5% of layer"
+                ],
+                [
+                  "Aave",
+                  "Liquid lending yield",
+                  "3.5% annualized"
+                ],
+                [
+                  "Morpho",
+                  "Curated lending yield",
+                  "4.5% annualized"
+                ],
+                [
+                  "Enhanced strategies",
+                  "Institutional yield sources",
+                  "7.5% annualized"
+                ],
+                [
+                  "RWA collateral",
+                  "Inventory acquired through liquidations",
+                  "Hard concentration limit 10%"
+                ]
+              ],
+              "cap": "Layer configuration as run in the simulator default case."
+            },
+            {
+              "t": "p",
+              "text": "The coverage rule is the binding constraint, not an aspiration. Liquidity coverage closes the horizon at 6.36×, against a floor of 1.00× below which the protocol throttles new intake.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "3",
+      "id": "streams",
+      "title": "Business Sustainability — Revenue Streams",
+      "nav": "Revenue Streams",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The protocol earns predominantly from transaction flow rather than from holding assets. Eight streams are active in the default case; each is a charge on an event the protocol processes, not a fee on assets under management.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Revenue stream",
+            "What it charges",
+            "36-month total",
+            "Share"
+          ],
+          "rows": [
+            [
+              "RWA trade and haircut revenue",
+              "Trade fee and haircut on RWA liquidation and resale",
+              "$2,196,952",
+              "31.7%"
+            ],
+            [
+              "Pool trading and APSS stabilization",
+              "Trading fee and peg-correction surplus on pool volume",
+              "$2,018,176",
+              "29.1%"
+            ],
+            [
+              "Deployed-capital yield",
+              "Yield on protocol capital deployed in the layer",
+              "$1,542,345",
+              "22.3%"
+            ],
+            [
+              "Conversion fees",
+              "Conversion between rwaUSD and BLI",
+              "$627,236",
+              "9.1%"
+            ],
+            [
+              "Maintenance fees",
+              "Recurring fee per integrated RWA market",
+              "$225,000",
+              "3.2%"
+            ],
+            [
+              "Mint and redemption fees",
+              "Mint and redemption of rwaUSD against USDC",
+              "$168,024",
+              "2.4%"
+            ],
+            [
+              "Integration fees",
+              "One-time fee on RWA market onboarding",
+              "$150,000",
+              "2.2%"
+            ],
+            [
+              "Total",
+              "",
+              "$6,927,734",
+              "100.0%"
+            ]
+          ],
+          "cap": "Simulator default case, 36 months. Streams are shown gross of the split between BCI surplus capital and the Protocol Reserve."
+        },
+        {
+          "t": "donut",
+          "title": "Revenue composition — 36 months",
+          "slices": [
+            {
+              "lab": "RWA trade and haircut revenue",
+              "val": "$2,196,952",
+              "pct": 31.712419906533306
+            },
+            {
+              "lab": "Pool trading and APSS stabilization",
+              "val": "$2,018,176",
+              "pct": 29.131840018891477
+            },
+            {
+              "lab": "Deployed-capital yield",
+              "val": "$1,542,345",
+              "pct": 22.263340693065143
+            },
+            {
+              "lab": "Conversion fees",
+              "val": "$627,236",
+              "pct": 9.053990943725347
+            },
+            {
+              "lab": "Maintenance fees",
+              "val": "$225,000",
+              "pct": 3.2478152065248436
+            },
+            {
+              "lab": "Mint and redemption fees",
+              "val": "$168,024",
+              "pct": 2.4253830935766403
+            },
+            {
+              "lab": "Integration fees",
+              "val": "$150,000",
+              "pct": 2.1652101376832293
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "Two properties of this mix matter for the business. It is <b>diversified</b> — no single stream exceeds 31.7% of the total — and it is <b>counter-cyclical in the right direction</b>: pool trading and haircut revenue both rise when markets are stressed and exits are most in demand, which is precisely when a rented liquidity model would be withdrawing.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "4",
+      "id": "keyelements",
+      "title": "Summary — Key Elements of the Business Model",
+      "nav": "Key Elements",
+      "blocks": [
+        {
+          "t": "table",
+          "head": [
+            "Metric",
+            "Year 1",
+            "Year 2",
+            "Year 3"
+          ],
+          "rows": [
+            [
+              "Protocol revenue",
+              "$1,279,599",
+              "$2,043,708",
+              "$3,505,287"
+            ],
+            [
+              "Operating cost base",
+              "$3,367,283",
+              "$2,649,724",
+              "$3,390,328"
+            ],
+            [
+              "Operating result",
+              "−$2,087,684",
+              "−$606,016",
+              "$114,959"
+            ],
+            [
+              "Transaction volume",
+              "$107,319,881",
+              "$233,713,326",
+              "$382,654,043"
+            ],
+            [
+              "Value under custody (year end)",
+              "$11,799,404",
+              "$21,640,912",
+              "$46,060,161"
+            ],
+            [
+              "Liquidity Layer (year end)",
+              "$10,785,150",
+              "$19,036,873",
+              "$37,791,553"
+            ],
+            [
+              "BLI price (year end)",
+              "1.1248",
+              "1.2461",
+              "1.3693"
+            ],
+            [
+              "Annualized Index Growth",
+              "12.5%",
+              "11.6%",
+              "11.0%"
+            ],
+            [
+              "Liquidity coverage ratio",
+              "3.08×",
+              "4.55×",
+              "6.36×"
+            ]
+          ],
+          "cap": "All figures from the simulator default case; cost base from the verified cost model."
+        },
+        {
+          "t": "combo",
+          "title": "Revenue against cost base, by year",
+          "cats": [
+            "Year 1",
+            "Year 2",
+            "Year 3"
+          ],
+          "bars": [
+            {
+              "name": "Protocol revenue",
+              "vals": [
+                1279599.4119096603,
+                2043707.79646135,
+                3505287.108409142
+              ],
+              "color": "accent"
+            },
+            {
+              "name": "Operating cost base",
+              "vals": [
+                3367283.0688331877,
+                2649723.8535983516,
+                3390327.908934651
+              ],
+              "color": "warn"
+            }
+          ],
+          "line": {
+            "name": "Cost-to-revenue",
+            "vals": [
+              2.6315134545176844,
+              1.2965277414835474,
+              0.96720405606756
+            ],
+            "fmt": "x"
+          }
+        },
+        {
+          "t": "p",
+          "text": "Revenue compounds faster than the cost base in every year of the horizon. Cost-to-revenue falls from 2.63× to 0.97×, and the monthly position turns positive in month 31.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "5",
+      "id": "capital",
+      "title": "Key Assumptions — Capital Formation",
+      "nav": "Capital Formation",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "5.1 How the Liquidity Layer is funded",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The layer is capitalized by liquidity providers in two channels. Private providers commit at inception and on a monthly growth schedule, entering under a lock that holds their capital through the first six months. Retail providers enter continuously from the pool once it is live. Both receive BLI; neither receives a deposit claim.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Channel",
+                "Year 1",
+                "Year 2",
+                "Year 3",
+                "Character"
+              ],
+              "rows": [
+                [
+                  "Private liquidity providers",
+                  "$10,357,669",
+                  "$15,273,225",
+                  "$18,900,897",
+                  "Seeded at inception, monthly growth, six-month lock"
+                ],
+                [
+                  "Retail liquidity providers",
+                  "$427,481",
+                  "$3,763,648",
+                  "$18,890,656",
+                  "Continuous entry via the pool"
+                ],
+                [
+                  "Total layer balance",
+                  "$10,785,150",
+                  "$19,036,873",
+                  "$37,791,553",
+                  ""
+                ]
+              ],
+              "cap": "Year-end balances, simulator default case."
+            },
+            {
+              "t": "stackbar",
+              "title": "Liquidity Layer composition by year (year-end balance)",
+              "cats": [
+                "Year 1",
+                "Year 2",
+                "Year 3"
+              ],
+              "series": [
+                {
+                  "name": "Private LP",
+                  "vals": [
+                    10357668.97336615,
+                    15273224.987125928,
+                    18900897.194098894
+                  ],
+                  "color": "accent"
+                },
+                {
+                  "name": "Retail LP",
+                  "vals": [
+                    427481.34732194076,
+                    3763648.2818217296,
+                    18890655.62835761
+                  ],
+                  "color": "accent2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "5.2 Growth of value under custody",
+          "blocks": [
+            {
+              "t": "bar",
+              "title": "Value under protocol custody (year-end)",
+              "cats": [
+                "Year 1",
+                "Year 2",
+                "Year 3"
+              ],
+              "vals": [
+                11799403.717624294,
+                21640911.788052674,
+                46060161.21006768
+              ],
+              "labels": [
+                "$11,799,404",
+                "$21,640,912",
+                "$46,060,161"
+              ],
+              "unit": "",
+              "cap": "Liquidity Layer plus Bound Core balance. Simulator default case."
+            },
+            {
+              "t": "p",
+              "text": "Value under custody grows from $3,958,942 to $46,060,161 over the horizon. The growth is funded by liquidity-provider inflow and retained protocol revenue; it is not a market-price effect, and the plan assumes no appreciation of the underlying RWA collateral beyond the yields recorded in Chapter 2.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "6",
+      "id": "volume",
+      "title": "Key Assumptions — Transaction Volume",
+      "nav": "Transaction Volume",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "Every transactional revenue stream is a function of volume, so volume is the single most consequential assumption in this plan. It is generated by the engine from RWA market parameters — asset size, liquidation propensity and minting demand — rather than assumed directly or benchmarked against a comparable protocol.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Component",
+            "Year 1",
+            "Year 2",
+            "Year 3",
+            "36-month total"
+          ],
+          "rows": [
+            [
+              "RWA liquidation",
+              "$40,793,044",
+              "$55,792,055",
+              "$70,757,815",
+              "$167,342,914"
+            ],
+            [
+              "RWA minting",
+              "$3,741,571",
+              "$17,105,876",
+              "$30,952,788",
+              "$51,800,235"
+            ],
+            [
+              "Pool volume",
+              "$31,392,633",
+              "$80,407,698",
+              "$140,471,720",
+              "$252,272,050"
+            ],
+            [
+              "Retail pool volume",
+              "$645,795",
+              "$6,061,296",
+              "$30,122,036",
+              "$36,829,128"
+            ],
+            [
+              "Total",
+              "$107,319,881",
+              "$233,713,326",
+              "$382,654,043",
+              "$723,687,250"
+            ]
+          ],
+          "cap": "Simulator default case. Components shown are the largest four; total includes RWA pool sell/buy and retail exit volume."
+        },
+        {
+          "t": "bar",
+          "title": "Transaction volume by year",
+          "cats": [
+            "Year 1",
+            "Year 2",
+            "Year 3"
+          ],
+          "vals": [
+            107319881.02733248,
+            233713325.8586945,
+            382654043.107241
+          ],
+          "labels": [
+            "$107,319,881",
+            "$233,713,326",
+            "$382,654,043"
+          ],
+          "unit": "",
+          "cap": "Total flow the protocol charges against."
+        },
+        {
+          "t": "p",
+          "text": "Volume grows 3.57× between the first and third years. Because the protocol charges on flow rather than on balances, revenue tracks this series far more closely than it tracks value under custody — which is the structural reason the business scales without requiring a proportional increase in assets.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "7",
+      "id": "index",
+      "title": "Key Assumptions — Index Formation and Yield",
+      "nav": "Index Formation",
+      "blocks": [
+        {
+          "t": "sub",
+          "title": "7.1 How the BLI price is formed",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "BLI price is an on-chain identity, not a quoted rate. It is the net asset value of the Liquidity Layer plus accumulated BCI surplus capital, divided by BLI supply. It rises when the protocol earns and falls when the reserve loses value; there is no cap, no floor, and no discretionary smoothing.",
+              "boldLabel": false
+            },
+            {
+              "t": "line",
+              "title": "BLI price — 36-month projection",
+              "xs": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36
+              ],
+              "series": [
+                {
+                  "name": "BLI price",
+                  "vals": [
+                    1.0171919488645607,
+                    1.0262764743117598,
+                    1.0350769027397122,
+                    1.0436720113800888,
+                    1.0521139831165678,
+                    1.0622128727815254,
+                    1.0722076453599518,
+                    1.0819463101168831,
+                    1.092917432532732,
+                    1.1036936930560814,
+                    1.1143087105830785,
+                    1.124790377743269,
+                    1.1351622347049022,
+                    1.1454444822968801,
+                    1.155654746362134,
+                    1.1658086667442542,
+                    1.1759203599422208,
+                    1.1859909830769952,
+                    1.196031918715217,
+                    1.206053481862349,
+                    1.2160651319125337,
+                    1.2260756423148358,
+                    1.2360932365567885,
+                    1.2461256966104222,
+                    1.2561804482387562,
+                    1.2662646263272719,
+                    1.2763851225602911,
+                    1.286548617224931,
+                    1.2967615966393333,
+                    1.3070065760838898,
+                    1.3172894764478282,
+                    1.327615813499683,
+                    1.337990742005878,
+                    1.3484190887420362,
+                    1.358851189000277,
+                    1.3692733900790983
+                  ],
+                  "color": "accent"
+                }
+              ],
+              "ylabel": "Price (rwaUSD)",
+              "cap": "Starts at 1.0000. Simulator default case."
+            },
+            {
+              "t": "table",
+              "head": [
+                "Measure",
+                "Year 1",
+                "Year 2",
+                "Year 3"
+              ],
+              "rows": [
+                [
+                  "BLI price (year end)",
+                  "1.1248",
+                  "1.2461",
+                  "1.3693"
+                ],
+                [
+                  "Annualized Index Growth",
+                  "12.5%",
+                  "11.6%",
+                  "11.0%"
+                ],
+                [
+                  "BLI supply (year end)",
+                  "10,382,508",
+                  "17,350,108",
+                  "31,652,762"
+                ],
+                [
+                  "BCI surplus capital",
+                  "$892,995",
+                  "$2,583,542",
+                  "$5,549,732"
+                ]
+              ],
+              "cap": "Annualized Index Growth is a historical measure of an index whose value can also decline. It is not a yield and implies nothing about future performance."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "7.2 Where the yield comes from",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "Two sources contribute. Deployed capital in the layer earns the tier yields set out in Chapter 2, contributing $1,542,345 over the horizon. Protocol fee revenue contributes the remainder, and it is the larger of the two: $5,385,389, or 77.7% of the total.",
+              "boldLabel": false
+            },
+            {
+              "t": "p",
+              "text": "That ratio is the plan's central economic claim. A protocol whose index is driven mostly by fee capture is a business; one whose index is driven mostly by the yield on its own collateral is a fund. The default case produces the former.",
+              "boldLabel": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "8",
+      "id": "costs",
+      "title": "Key Assumptions — Cost Base",
+      "nav": "Cost Base",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The cost base is taken from the protocol's Operating Cost Analysis, which rebases every revenue-scaling cost line onto this same simulator case and is independently verified against its sources. It is summarized here; the full derivation, the personnel roster and the external benchmarking sit in that document.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Category",
+            "Year 1",
+            "Year 2",
+            "Year 3",
+            "36-month total"
+          ],
+          "rows": [
+            [
+              "Cost of goods sold",
+              "$1,396,303",
+              "$2,075,182",
+              "$2,815,786",
+              "$6,287,271"
+            ],
+            [
+              "  of which personnel",
+              "$894,391",
+              "$993,135",
+              "$1,051,343",
+              "$2,938,869"
+            ],
+            [
+              "Sales and marketing",
+              "$711,429",
+              "$394,286",
+              "$394,286",
+              "$1,500,000"
+            ],
+            [
+              "Legal",
+              "$872,000",
+              "$72,000",
+              "$72,000",
+              "$1,016,000"
+            ],
+            [
+              "Development",
+              "$250,000",
+              "$50,000",
+              "$50,000",
+              "$350,000"
+            ],
+            [
+              "General and administrative",
+              "$137,551",
+              "$58,256",
+              "$58,256",
+              "$254,064"
+            ],
+            [
+              "Total",
+              "$3,367,283",
+              "$2,649,724",
+              "$3,390,328",
+              "$9,407,335"
+            ]
+          ],
+          "cap": "Source: Operating Cost Analysis, rebased on the simulator default case."
+        },
+        {
+          "t": "p",
+          "text": "The base falls in the second year as launch-only obligations roll off — regulatory licensing, the smart-contract audit, the bug-bounty allocation, equipment and application development — then resumes growing as the volume-linked lines compound. Personnel is 31.2% of the total at full employer cost, across a steady-state team of 9.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "9",
+      "id": "income",
+      "title": "Outputs — The Three Statements",
+      "nav": "The Three Statements",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The protocol and the operating company are different entities. Protocol fee income accrues to index holders and to the Protocol Reserve; the operating company's costs are borne by a European company that earns a services fee. Netting one against the other produces a number that describes no entity that exists, so this chapter reports them separately and shows the transfer between them.",
+          "boldLabel": false
+        },
+        {
+          "t": "note",
+          "text": "An earlier revision of this plan presented a single income statement combining the two. That statement has been withdrawn. It set money belonging to BLI holders against costs borne by a company with no revenue, and the resulting deficit was not a real figure.",
+          "kind": "warn",
+          "head": "What changed"
+        },
+        {
+          "t": "sub",
+          "title": "9.1 Protocol economics — 36 months",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "A protocol has no profit and therefore no profit-and-loss account. It has flows: fees in, split between the index and the treasury, less the costs of processing that flow. The statement ends at distribution, not at earnings.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "USD",
+                "Year 1",
+                "Year 2",
+                "Year 3",
+                "36-month total"
+              ],
+              "rows": [
+                [
+                  "Fee income",
+                  "$1,279,599",
+                  "$2,043,708",
+                  "$3,505,287",
+                  "$6,828,594"
+                ],
+                [
+                  "— to BCI surplus capital (BLI holders)",
+                  "$892,995",
+                  "$1,690,547",
+                  "$2,966,190",
+                  "$5,549,732"
+                ],
+                [
+                  "— to Protocol Reserve (treasury)",
+                  "$386,605",
+                  "$353,161",
+                  "$539,097",
+                  "$1,278,862"
+                ],
+                [
+                  "Protocol costs (payment fees)",
+                  "−$107,320",
+                  "−$233,713",
+                  "−$382,654",
+                  "−$723,687"
+                ],
+                [
+                  "Net to protocol participants",
+                  "$1,172,280",
+                  "$1,809,994",
+                  "$3,122,633",
+                  "$6,104,907"
+                ]
+              ],
+              "cap": "Simulator default case. Every dollar of BCI surplus raises the index price; it is liquidity-provider return and is never available to the company."
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "9.2 Operating company — profit and loss",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "The operating company is paid under a development-and-services agreement with the Foundation and the Issuer at cost plus 8%. That fee is its revenue. It runs deliberately close to break-even because it is a service provider, not a profit centre — and it carries a margin because an EU company working for a Panama principal at zero margin is not a defensible transfer-pricing position.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "USD",
+                "Year 1",
+                "Year 2",
+                "Year 3",
+                "36-month total"
+              ],
+              "rows": [
+                [
+                  "Services revenue",
+                  "$3,520,760",
+                  "$2,609,291",
+                  "$3,248,288",
+                  "$9,378,339"
+                ],
+                [
+                  "Operating cost",
+                  "−$3,259,963",
+                  "−$2,416,011",
+                  "−$3,007,674",
+                  "−$8,683,648"
+                ],
+                [
+                  "Margin",
+                  "$260,797",
+                  "$193,281",
+                  "$240,614",
+                  "$694,692"
+                ],
+                [
+                  "EU corporate tax",
+                  "−$41,728",
+                  "−$30,925",
+                  "−$38,498",
+                  "−$111,151"
+                ],
+                [
+                  "Net result",
+                  "$219,070",
+                  "$162,356",
+                  "$202,116",
+                  "$583,541"
+                ]
+              ],
+              "cap": "Full derivation, including the personnel roster and entity attribution of every cost line, is in the Operating Cost & Company Analysis."
+            },
+            {
+              "t": "note",
+              "text": "The company commits to a <b>funded 24-month plan</b>, not to the protocol's thirty-six. Different entity, different clock. Cost to month 24 is $6,252,226 against $7,023,750 of available funding — a surplus of $771,524.",
+              "kind": "",
+              "head": "Horizon"
+            }
+          ]
+        },
+        {
+          "t": "sub",
+          "title": "9.3 Group — sources and uses",
+          "blocks": [
+            {
+              "t": "p",
+              "text": "What the raise funds, and what funds the company. This is the statement that answers whether the launch is affordable, and it is the one the earlier revision lacked.",
+              "boldLabel": false
+            },
+            {
+              "t": "table",
+              "head": [
+                "Use of the raise",
+                "Amount",
+                "% of raise"
+              ],
+              "rows": [
+                [
+                  "AMM liquidity — rwaUSD/USDC and BND/USDC",
+                  "$4,975,000",
+                  "36.4%"
+                ],
+                [
+                  "Burn Engine seed",
+                  "$3,225,000",
+                  "23.6%"
+                ],
+                [
+                  "Operating company",
+                  "$4,730,000",
+                  "34.6%"
+                ],
+                [
+                  "Emergency Reserve",
+                  "$750,000",
+                  "5.5%"
+                ],
+                [
+                  "Total raise",
+                  "$13,680,000",
+                  "100.0%"
+                ]
+              ],
+              "cap": "Seed raise directed to operations; public raise split 17 / 30 / 10 / 43."
+            },
+            {
+              "t": "table",
+              "head": [
+                "Operating company funding",
+                "Amount",
+                "Form"
+              ],
+              "rows": [
+                [
+                  "Cash from the raise",
+                  "$4,730,000",
+                  "At token generation"
+                ],
+                [
+                  "Marketing and Treasury allocations, vested by month 24",
+                  "$2,293,750",
+                  "Tokens, liquidated on schedule"
+                ],
+                [
+                  "Total available by month 24",
+                  "$7,023,750",
+                  ""
+                ],
+                [
+                  "Cost to month 24",
+                  "−$6,252,226",
+                  ""
+                ],
+                [
+                  "Surplus",
+                  "$771,524",
+                  ""
+                ]
+              ],
+              "cap": "Token figures at the launch price, on the tokenomics vesting schedules."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "num": "10",
+      "id": "funding",
+      "title": "Outputs — Capital Requirement and Breakeven",
+      "nav": "Capital Requirement",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "A business plan's central question is how much capital is consumed before the business funds itself, and when that happens. Both are outputs of the model rather than inputs to it.",
+          "boldLabel": false
+        },
+        {
+          "t": "note",
+          "text": "This chapter is deliberately a <b>consolidated group</b> view, and it is the only place in this document where protocol revenue and the operating cost base are set against one another. That combination has no entity-level meaning — Chapter 9 reports the two separately, and the Operating Cost &amp; Company Analysis rules the netting out. It is used here only to answer the funding question: how much cash the group must hold before the whole structure sustains itself. Read every figure below as a group cash figure, not as a statement that the protocol fails to cover its own costs.",
+          "kind": "warn",
+          "head": "What this chapter is, and is not"
+        },
+        {
+          "t": "kpis",
+          "items": [
+            {
+              "n": "Month 31",
+              "l": "First month in group operating surplus",
+              "c": "g"
+            },
+            {
+              "n": "$2,911,224",
+              "l": "Peak cumulative group deficit",
+              "c": "w"
+            },
+            {
+              "n": "Month 30",
+              "l": "Deficit peaks"
+            },
+            {
+              "n": "$103,557",
+              "l": "Month-36 monthly result",
+              "c": "g"
+            }
+          ]
+        },
+        {
+          "t": "line",
+          "title": "Cumulative operating position — 36 months",
+          "xs": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36
+          ],
+          "series": [
+            {
+              "name": "Cumulative operating result",
+              "vals": [
+                -55441.72652737089,
+                -283880.5276157325,
+                -506149.1760119189,
+                -722247.6717159301,
+                -932176.0147277662,
+                -1119797.1724484614,
+                -1302001.4129239467,
+                -1480355.4547845037,
+                -1639223.6884476433,
+                -1793450.9413523753,
+                -1942969.2159773759,
+                -2087683.6569235278,
+                -2170453.15641537,
+                -2248205.9067046666,
+                -2320736.346760383,
+                -2387786.881678762,
+                -2449037.9896761314,
+                -2504414.902839454,
+                -2553638.9144275053,
+                -2596380.1880899216,
+                -2632250.6150540425,
+                -2660795.5782909286,
+                -2681484.46122304,
+                -2693699.7140605296,
+                -2758441.267326212,
+                -2813161.0221100687,
+                -2856897.178568163,
+                -2888538.0291845636,
+                -2906799.863307001,
+                -2911224.187378668,
+                -2900672.116282414,
+                -2873856.226213366,
+                -2829323.667526357,
+                -2765437.1911157966,
+                -2682297.558819907,
+                -2578740.51458604
+              ],
+              "color": "crit"
+            }
+          ],
+          "ylabel": "USD",
+          "cap": "Revenue less operating cost base, accumulated monthly. Trough is the capital requirement."
+        },
+        {
+          "t": "table",
+          "head": [
+            "Measure",
+            "Value",
+            "Interpretation"
+          ],
+          "rows": [
+            [
+              "First month in surplus",
+              "Month 31",
+              "Monthly protocol revenue exceeds the monthly group cost base"
+            ],
+            [
+              "Peak cumulative deficit",
+              "$2,911,224",
+              "Group cash consumed before the structure funds itself"
+            ],
+            [
+              "Month of peak deficit",
+              "Month 30",
+              "Funding must be in place until here"
+            ],
+            [
+              "Month-36 run rate",
+              "$4,633,012 revenue",
+              "Against $3,390,328 of cost"
+            ],
+            [
+              "Cumulative position, month 36",
+              "−$2,578,741",
+              "Recovering from the trough"
+            ]
+          ],
+          "cap": "Derived from the monthly series; costs allocated evenly within each year."
+        },
+        {
+          "t": "p",
+          "text": "The group capital requirement is therefore approximately $2,911,224, and it must be available through month 30. From month 31 protocol revenue exceeds the group cost base month on month, and the cumulative position begins to recover. Chapter 9.3 shows this requirement is already funded from the raise: the operating company holds $7,023,750 against a cost to month twenty-four of $6,252,226. The deficit below is a timing profile, not an unfunded gap.",
+          "boldLabel": false
+        },
+        {
+          "t": "note",
+          "text": "Breakeven here means <b>group operating</b> breakeven — monthly protocol revenue exceeding the monthly group cost base. It is not a return on invested capital, it does not imply recovery of the cumulative deficit within the horizon, and it is not a statement about either entity on its own.",
+          "kind": "",
+          "head": "Definition"
+        }
+      ]
+    },
+    {
+      "num": "11",
+      "id": "treasury",
+      "title": "Outputs — Treasury and Reserves",
+      "nav": "Treasury",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "The treasury view is deliberately conservative. It records protocol-owned balances only and excludes any valuation of the governance token, for which no reliable long-term valuation assumption exists.",
+          "boldLabel": false
+        },
+        {
+          "t": "table",
+          "head": [
+            "Balance (year end)",
+            "Year 1",
+            "Year 2",
+            "Year 3"
+          ],
+          "rows": [
+            [
+              "Liquidity Layer",
+              "$10,785,150",
+              "$19,036,873",
+              "$37,791,553"
+            ],
+            [
+              "Bound Core",
+              "$1,014,253",
+              "$2,604,039",
+              "$8,268,608"
+            ],
+            [
+              "Emergency Reserve",
+              "$515,908",
+              "$604,172",
+              "$770,511"
+            ],
+            [
+              "BCI surplus capital",
+              "$892,995",
+              "$2,583,542",
+              "$5,549,732"
+            ],
+            [
+              "RWA collateral held",
+              "$1,078,515",
+              "$1,903,687",
+              "$3,779,155"
+            ],
+            [
+              "Total value under custody",
+              "$11,799,404",
+              "$21,640,912",
+              "$46,060,161"
+            ]
+          ],
+          "cap": "Simulator default case. Governance-token value excluded by design."
+        },
+        {
+          "t": "stackbar",
+          "title": "Protocol balances by year (year-end)",
+          "cats": [
+            "Year 1",
+            "Year 2",
+            "Year 3"
+          ],
+          "series": [
+            {
+              "name": "Liquidity Layer",
+              "vals": [
+                10785150.320688091,
+                19036873.268947657,
+                37791552.82245651
+              ],
+              "color": "accent"
+            },
+            {
+              "name": "Bound Core",
+              "vals": [
+                1014253.3969362028,
+                2604038.5191050163,
+                8268608.387611171
+              ],
+              "color": "accent2"
+            },
+            {
+              "name": "Emergency Reserve",
+              "vals": [
+                515907.78577825514,
+                604171.6984350252,
+                770511.4054315288
+              ],
+              "color": "warn"
+            }
+          ]
+        },
+        {
+          "t": "p",
+          "text": "The Emergency Reserve closes the horizon at $770,511. It is funded from Protocol Reserve revenue rather than from liquidity-provider capital, and it exists to absorb stress without drawing on the layer's coverage.",
+          "boldLabel": false
+        }
+      ]
+    },
+    {
+      "num": "12",
+      "id": "limits",
+      "title": "Model Limits and Open Items",
+      "nav": "Limits",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This chapter states what the plan does not establish. It is an engineering disclosure of the model's boundaries.",
+          "boldLabel": false
+        },
+        {
+          "t": "ul",
+          "items": [
+            "Single scenario: every figure derives from one preset against one RWA market. No scenario range, sensitivity band or probability is presented, and none should be inferred.",
+            "Single market: the default case runs one integrated RWA market. Revenue concentration risk is therefore not visible in these figures.",
+            "Horizon: the plan stops at month thirty-six because the engine does. The cumulative deficit is not recovered inside that window, and the recovery path is not modelled.",
+            "Capital structure: the plan sizes the capital requirement but assumes nothing about how it is raised, on what terms, or at what dilution.",
+            "Cost inheritance: the cost base carries the limits recorded in the Operating Cost Analysis, including understated regulatory licensing, a bug-bounty programme booked only at launch, and technical salaries below published market floors.",
+            "Headcount: the team is flat at nine from month five. No hiring is funded against the growth in value under custody.",
+            "No terminal value: the plan contains no valuation, no exit assumption and no terminal growth rate."
+          ],
+          "boldLabel": true
+        }
+      ]
+    },
+    {
+      "num": "",
+      "id": "disclaimer",
+      "title": "Legal Disclaimer",
+      "nav": "Legal Disclaimer",
+      "blocks": [
+        {
+          "t": "p",
+          "text": "This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. All figures are outputs of the BOUND simulation engine on its default preset and of a cost model documented separately; they are not forecasts, budgets, commitments or guarantees of actual results, and a different preset produces different figures throughout. rwaUSD makes no return promise of any kind. The Bound Liquidity Index is an index token whose value can rise or fall; Annualized Index Growth is a historical metric and implies nothing about future performance; participants can lose value. BND confers governance utility only and no claim on protocol revenue. Statements about the capital requirement describe a model output and are not a fundraising offer or a representation that capital has been or will be secured. Forward-looking statements are subject to material uncertainty and change. © 2026 BOUND Protocol.",
+          "boldLabel": false
+        }
+      ]
+    }
+  ]
+}

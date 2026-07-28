@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Plan — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+body{
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;background-repeat:no-repeat;
+}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+table{font-size:13px}
+th,td{padding:8px 10px}
+td:not(:first-child){font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+#streams td:nth-child(2),#architecture td:nth-child(2),#architecture td:nth-child(3),
+#capital td:last-child,#funding td:nth-child(3){font-family:var(--sans);white-space:normal}
+
+/* Categorical chart ramp — distinguishable hues that hold up in both themes.
+   base.css intentionally ships only greens, which cannot separate a 7-series chart. */
+:root{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;
+      --c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+@media (prefers-color-scheme:dark){
+  :root{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;
+        --c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}
+}
+:root[data-theme="light"]{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;
+      --c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+:root[data-theme="dark"]{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;
+      --c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}
+/* charts */
+.cv{width:100%;height:auto;display:block;overflow:visible}
+.cv .grid{stroke:var(--line);stroke-width:1}
+.cv .axis{stroke:var(--line2);stroke-width:1.5}
+.cv .ax{fill:var(--ink3);font-family:var(--mono);font-size:10.5px}
+.cv .ac{text-anchor:middle}
+.cv .ar{text-anchor:end}
+.cv .vl{fill:var(--ink);font-family:var(--mono);font-size:11.5px;font-weight:600;text-anchor:middle}
+.cv .vl.sm{font-size:10px}
+.cv .vl.crit{fill:var(--crit)}
+.cv .lg{fill:var(--ink2);font-family:var(--sans);font-size:12.5px}
+.cv .lg.strong{fill:var(--ink);font-family:var(--mono);font-size:12px;font-weight:600}
+.lgnd{display:flex;flex-wrap:wrap;gap:14px;margin:-6px 0 14px}
+.lgnd span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2)}
+.lgnd i{width:11px;height:11px;border-radius:3px;display:inline-block}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Business Plan</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/simulator#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="summary" href="#summary"><span class="snav-num">§</span>Executive Summary</a><a data-id="company" href="#company"><span class="snav-num">1</span>Company Description</a><a data-id="architecture" href="#architecture"><span class="snav-num">2</span>Protocol Architecture</a><a data-id="streams" href="#streams"><span class="snav-num">3</span>Revenue Streams</a><a data-id="keyelements" href="#keyelements"><span class="snav-num">4</span>Key Elements</a><a data-id="capital" href="#capital"><span class="snav-num">5</span>Capital Formation</a><a data-id="volume" href="#volume"><span class="snav-num">6</span>Transaction Volume</a><a data-id="index" href="#index"><span class="snav-num">7</span>Index Formation</a><a data-id="costs" href="#costs"><span class="snav-num">8</span>Cost Base</a><a data-id="income" href="#income"><span class="snav-num">9</span>The Three Statements</a><a data-id="funding" href="#funding"><span class="snav-num">10</span>Capital Requirement</a><a data-id="treasury" href="#treasury"><span class="snav-num">11</span>Treasury</a><a data-id="limits" href="#limits"><span class="snav-num">12</span>Limits</a><a data-id="disclaimer" href="#disclaimer"><span class="snav-num">§</span>Legal Disclaimer</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Business Plan</div><h1>Protocol Business Plan — 36-Month Operating Model</h1>
+<p class="lede">BOUND Protocol — every figure derived from the simulation engine's default case.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Business Plan</div></div>
+<div><div class="k">Period</div><div class="v">Year 1–Year 3 — July 2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+<div><div class="k">Origin</div><div class="v">Bucharest, Romania</div></div>
+</div></div></div>
+<div class="wrap">
+<section id="summary"><div class="sec-head"><div class="sec-num">§</div><h2>Executive Summary</h2></div>
+<p>BOUND Protocol is on-chain liquidity infrastructure for tokenized real-world assets. It allows any holder of an integrated RWA token to exit into dollars instantly, at a transparent risk-tiered haircut, without waiting on issuer redemption calendars. This plan sets out the operating model over the thirty-six months the protocol's simulation engine covers, and it is built entirely from that engine's default case.</p>
+<p>Over the horizon the protocol generates $6,828,594 of revenue against an operating cost base of $9,407,335. Value under protocol custody grows from $3,958,942 in the first month to $46,060,161 by month thirty-six, and the Bound Liquidity Index appreciates from 1.0000 to 1.3693, an Annualized Index Growth of 11.0% at the close of the period.</p>
+<p>The protocol reaches monthly operating breakeven in <b>month 31</b>. Peak cumulative operating deficit is −$2,911,224, reached in month 30. That deficit is the capital requirement this plan is built to fund: it is the amount the protocol consumes before its own revenue covers its own cost base. Nothing in this document assumes a scenario more favourable than the engine's default preset.</p>
+<div class="kpis"><div class="kpi"><div class="kn">$6,828,594</div><div class="kl">36-month protocol revenue</div></div><div class="kpi"><div class="kn">$46,060,161</div><div class="kl">Value under custody, month 36</div></div><div class="kpi"><div class="kn g">Month 31</div><div class="kl">Operating breakeven</div></div><div class="kpi"><div class="kn w">$2,911,224</div><div class="kl">Peak capital requirement</div></div><div class="kpi"><div class="kn">11.0%</div><div class="kl">Annualized Index Growth</div></div></div>
+</section>
+<section id="company"><div class="sec-head"><div class="sec-num">1</div><h2>Business Overview — Company Description</h2></div>
+<h4 class="sub">1.1 What the protocol does</h4><p>Tokenization has succeeded at putting real-world assets on-chain and failed at making them liquid. Institutional fixed-income RWAs redeem primarily through their issuer, on settlement windows of thirty to ninety days or longer. The asset class markets itself as instant and around-the-clock; its exits are neither.</p>
+<p>BOUND supplies the missing exit. A holder brings an integrated RWA token to a BOUND market and receives rwaUSD in the same transaction, at a haircut priced in advance from the asset's redemption profile. The protocol's own reserve stands on the other side of that trade every time — liquidity is owned rather than rented, so it cannot reprice or withdraw under stress. Acquired RWA inventory is then recycled through protocol markets or redeemed with the issuer over time.</p>
+<h4 class="sub">1.2 The three-token architecture</h4><p>Functions are separated across three tokens so that risk is never carried by the instrument used as money.</p>
+<ul class="find"><li><b>rwaUSD:</b> The settlement dollar. Minted exclusively against USDC and backed 100% by USDC at all times. Tokenized RWA exposure never enters its backing — a hard rule of the protocol, not a preference.</li><li><b>BLI (Bound Liquidity Index):</b> The index token carrying all protocol RWA exposure and reserve performance. Its value can rise or fall. It is an index, not a deposit.</li><li><b>BND:</b> The governance token. It coordinates market onboarding and risk parameters, and is burned through protocol activity.</li></ul>
+<h4 class="sub">1.3 How the group is structured</h4><p>Three entities, each with a distinct role. They are separate legal persons, and the costs and revenues that arise in each cannot be netted against one another — a distinction Chapter 9 depends on.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Entity</th><th>Jurisdiction</th><th>Role</th></tr></thead><tbody><tr><td>Nexus Technologies Foundation</td><td>Panama</td><td>Owns the protocol and its intellectual property; grants the token delegation</td></tr><tr><td>BITSWIFT TECHNOLOGIES INC.</td><td>Panama</td><td>Issues and distributes the token; holds raise proceeds; counterparty on the SAFT</td></tr><tr><td>Operating company</td><td>European Union</td><td>Develops the protocol, employs the team, runs go-to-market; bears all operating cost</td></tr></tbody></table></div>
+<p>The protocol is built by the operating company, not by the issuer. The operating company works under a development-and-services agreement with the Foundation and the Issuer at cost plus 8%, and the intellectual property it creates vests in the Foundation. Entity roles are as recorded in the corporate documents and the SAFT.</p>
+<h4 class="sub">1.4 Who the protocol serves</h4><ul class="find"><li><b>Institutions and funds holding tokenized assets:</b> an exit that does not exist today.</li><li><b>RWA issuers:</b> a liquidity layer they plug into with zero capital pre-allocation, making their product more attractive to allocate to.</li><li><b>Liquidity providers:</b> transparent exposure, through BLI, to the growth of RWA liquidity infrastructure.</li></ul>
+</section>
+<section id="architecture"><div class="sec-head"><div class="sec-num">2</div><h2>Business Overview — Protocol Architecture</h2></div>
+<h4 class="sub">2.1 The Atomic Peg Stabilization System</h4><p>Conventional stablecoins outsource their peg. When price deviates in a liquidity pool, external arbitrageurs perform the correcting trades and keep the profit. The APSS internalizes that function: when the rwaUSD/USDC pool deviates beyond a defined threshold, the protocol executes the correcting operation atomically — detection, mint-and-sell or buy-and-burn, and settlement all inside a single transaction.</p>
+<p>Because minting in an above-peg correction is performed against value received into backing within the same atomic operation, the APSS never operates the supply unbacked at any point. Each cycle realizes a small collateral surplus — the spread between the deviated pool price and par — which accrues to the protocol and is the origin of the pool-trading revenue line in this plan.</p>
+<h4 class="sub">2.2 The Bound Liquidity Layer</h4><p>Liquidity is supplied by a protocol-owned reserve deployed across a four-tier structure and governed by Basel-style liquidity-coverage rules. A minimum USDC buffer is held for immediate availability; the remainder is deployed into yield-generating positions and RWA collateral under concentration limits that throttle intake before capacity is threatened.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Tier</th><th>Function</th><th>Assumption in this plan</th></tr></thead><tbody><tr><td>USDC buffer</td><td>Immediate redemption availability</td><td>Minimum 5% of layer</td></tr><tr><td>Aave</td><td>Liquid lending yield</td><td>3.5% annualized</td></tr><tr><td>Morpho</td><td>Curated lending yield</td><td>4.5% annualized</td></tr><tr><td>Enhanced strategies</td><td>Institutional yield sources</td><td>7.5% annualized</td></tr><tr><td>RWA collateral</td><td>Inventory acquired through liquidations</td><td>Hard concentration limit 10%</td></tr></tbody></table></div><div class="cap">Layer configuration as run in the simulator default case.</div>
+<p>The coverage rule is the binding constraint, not an aspiration. Liquidity coverage closes the horizon at 6.36×, against a floor of 1.00× below which the protocol throttles new intake.</p>
+</section>
+<section id="streams"><div class="sec-head"><div class="sec-num">3</div><h2>Business Sustainability — Revenue Streams</h2></div>
+<p>The protocol earns predominantly from transaction flow rather than from holding assets. Eight streams are active in the default case; each is a charge on an event the protocol processes, not a fee on assets under management.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Revenue stream</th><th>What it charges</th><th>36-month total</th><th>Share</th></tr></thead><tbody><tr><td>RWA trade and haircut revenue</td><td>Trade fee and haircut on RWA liquidation and resale</td><td>$2,196,952</td><td>31.7%</td></tr><tr><td>Pool trading and APSS stabilization</td><td>Trading fee and peg-correction surplus on pool volume</td><td>$2,018,176</td><td>29.1%</td></tr><tr><td>Deployed-capital yield</td><td>Yield on protocol capital deployed in the layer</td><td>$1,542,345</td><td>22.3%</td></tr><tr><td>Conversion fees</td><td>Conversion between rwaUSD and BLI</td><td>$627,236</td><td>9.1%</td></tr><tr><td>Maintenance fees</td><td>Recurring fee per integrated RWA market</td><td>$225,000</td><td>3.2%</td></tr><tr><td>Mint and redemption fees</td><td>Mint and redemption of rwaUSD against USDC</td><td>$168,024</td><td>2.4%</td></tr><tr><td>Integration fees</td><td>One-time fee on RWA market onboarding</td><td>$150,000</td><td>2.2%</td></tr><tr class="tot"><td>Total</td><td></td><td>$6,927,734</td><td>100.0%</td></tr></tbody></table></div><div class="cap">Simulator default case, 36 months. Streams are shown gross of the split between BCI surplus capital and the Protocol Reserve.</div>
+<div class="chart"><div class="ct">Revenue composition — 36 months</div><svg viewBox="0 0 880 340" role="img" aria-label="Revenue composition — 36 months" class="cv"><path d="M210.0 54.0 A116 116 0 0 1 315.8 217.5 L270.2 197.0 A66 66 0 0 0 210.0 104.0 Z" fill="var(--c1)" stroke="var(--surface)" stroke-width="1.5"/><path d="M315.8 217.5 A116 116 0 0 1 136.9 260.1 L168.4 221.3 A66 66 0 0 0 270.2 197.0 Z" fill="var(--c2)" stroke="var(--surface)" stroke-width="1.5"/><path d="M136.9 260.1 A116 116 0 0 1 108.7 113.4 L152.4 137.8 A66 66 0 0 0 168.4 221.3 Z" fill="var(--c3)" stroke="var(--surface)" stroke-width="1.5"/><path d="M108.7 113.4 A116 116 0 0 1 155.2 67.8 L178.8 111.8 A66 66 0 0 0 152.4 137.8 Z" fill="var(--c4)" stroke="var(--surface)" stroke-width="1.5"/><path d="M155.2 67.8 A116 116 0 0 1 177.0 58.8 L191.2 106.7 A66 66 0 0 0 178.8 111.8 Z" fill="var(--c5)" stroke="var(--surface)" stroke-width="1.5"/><path d="M177.0 58.8 A116 116 0 0 1 194.3 55.1 L201.0 104.6 A66 66 0 0 0 191.2 106.7 Z" fill="var(--c6)" stroke="var(--surface)" stroke-width="1.5"/><path d="M194.3 55.1 A116 116 0 0 1 210.0 54.0 L210.0 104.0 A66 66 0 0 0 201.0 104.6 Z" fill="var(--c7)" stroke="var(--surface)" stroke-width="1.5"/><rect x="392" y="37" width="11" height="11" rx="2.5" fill="var(--c1)"/><text x="412" y="46" class="lg">RWA trade and haircut revenue</text><text x="854" y="46" class="lg ar strong">$2,196,952 · 31.7%</text><rect x="392" y="67" width="11" height="11" rx="2.5" fill="var(--c2)"/><text x="412" y="76" class="lg">Pool trading and APSS stabilization</text><text x="854" y="76" class="lg ar strong">$2,018,176 · 29.1%</text><rect x="392" y="97" width="11" height="11" rx="2.5" fill="var(--c3)"/><text x="412" y="106" class="lg">Deployed-capital yield</text><text x="854" y="106" class="lg ar strong">$1,542,345 · 22.3%</text><rect x="392" y="127" width="11" height="11" rx="2.5" fill="var(--c4)"/><text x="412" y="136" class="lg">Conversion fees</text><text x="854" y="136" class="lg ar strong">$627,236 · 9.1%</text><rect x="392" y="157" width="11" height="11" rx="2.5" fill="var(--c5)"/><text x="412" y="166" class="lg">Maintenance fees</text><text x="854" y="166" class="lg ar strong">$225,000 · 3.2%</text><rect x="392" y="187" width="11" height="11" rx="2.5" fill="var(--c6)"/><text x="412" y="196" class="lg">Mint and redemption fees</text><text x="854" y="196" class="lg ar strong">$168,024 · 2.4%</text><rect x="392" y="217" width="11" height="11" rx="2.5" fill="var(--c7)"/><text x="412" y="226" class="lg">Integration fees</text><text x="854" y="226" class="lg ar strong">$150,000 · 2.2%</text></svg></div>
+<p>Two properties of this mix matter for the business. It is <b>diversified</b> — no single stream exceeds 31.7% of the total — and it is <b>counter-cyclical in the right direction</b>: pool trading and haircut revenue both rise when markets are stressed and exits are most in demand, which is precisely when a rented liquidity model would be withdrawing.</p>
+</section>
+<section id="keyelements"><div class="sec-head"><div class="sec-num">4</div><h2>Summary — Key Elements of the Business Model</h2></div>
+<div class="tbl-scroll"><table><thead><tr><th>Metric</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead><tbody><tr><td>Protocol revenue</td><td>$1,279,599</td><td>$2,043,708</td><td>$3,505,287</td></tr><tr><td>Operating cost base</td><td>$3,367,283</td><td>$2,649,724</td><td>$3,390,328</td></tr><tr><td>Operating result</td><td>−$2,087,684</td><td>−$606,016</td><td>$114,959</td></tr><tr><td>Transaction volume</td><td>$107,319,881</td><td>$233,713,326</td><td>$382,654,043</td></tr><tr><td>Value under custody (year end)</td><td>$11,799,404</td><td>$21,640,912</td><td>$46,060,161</td></tr><tr><td>Liquidity Layer (year end)</td><td>$10,785,150</td><td>$19,036,873</td><td>$37,791,553</td></tr><tr><td>BLI price (year end)</td><td>1.1248</td><td>1.2461</td><td>1.3693</td></tr><tr><td>Annualized Index Growth</td><td>12.5%</td><td>11.6%</td><td>11.0%</td></tr><tr><td>Liquidity coverage ratio</td><td>3.08×</td><td>4.55×</td><td>6.36×</td></tr></tbody></table></div><div class="cap">All figures from the simulator default case; cost base from the verified cost model.</div>
+<div class="chart"><div class="ct">Revenue against cost base, by year</div><div class="lgnd"><span><i style="background:var(--accent)"></i>Protocol revenue</span><span><i style="background:var(--warn)"></i>Operating cost base</span><span><i style="background:var(--crit)"></i>Cost-to-revenue</span></div><svg viewBox="0 0 880 330" role="img" aria-label="Revenue against cost base, by year" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">4.0M</text><line x1="64" y1="90.5" x2="854" y2="90.5" class="grid"/><text x="55" y="94.0" class="ax ar">3.0M</text><line x1="64" y1="155.0" x2="854" y2="155.0" class="grid"/><text x="55" y="158.5" class="ax ar">2.0M</text><line x1="64" y1="219.5" x2="854" y2="219.5" class="grid"/><text x="55" y="223.0" class="ax ar">1.0M</text><line x1="64" y1="284.0" x2="854" y2="284.0" class="grid"/><text x="55" y="287.5" class="ax ar">0</text><rect x="120.7" y="201.5" width="70.0" height="82.5" rx="3" fill="var(--accent)"/><text x="155.7" y="194.5" class="vl sm">1.3M</text><rect x="195.7" y="66.8" width="70.0" height="217.2" rx="3" fill="var(--warn)"/><text x="230.7" y="59.8" class="vl sm">3.4M</text><text x="195.7" y="304.0" class="ax ac">Year 1</text><rect x="384.0" y="152.2" width="70.0" height="131.8" rx="3" fill="var(--accent)"/><text x="419.0" y="145.2" class="vl sm">2.0M</text><rect x="459.0" y="113.1" width="70.0" height="170.9" rx="3" fill="var(--warn)"/><text x="494.0" y="106.1" class="vl sm">2.6M</text><text x="459.0" y="304.0" class="ax ac">Year 2</text><rect x="647.3" y="57.9" width="70.0" height="226.1" rx="3" fill="var(--accent)"/><text x="682.3" y="50.9" class="vl sm">3.5M</text><rect x="722.3" y="65.3" width="70.0" height="218.7" rx="3" fill="var(--warn)"/><text x="757.3" y="58.3" class="vl sm">3.4M</text><text x="722.3" y="304.0" class="ax ac">Year 3</text><path d="M195.7 77.6 L459.0 182.3 L722.3 208.1" fill="none" stroke="var(--crit)" stroke-width="2" stroke-dasharray="5 4"/><circle cx="195.7" cy="77.6" r="3.6" fill="var(--crit)"/><text x="195.7" y="66.6" class="vl sm crit">2.63×</text><circle cx="459.0" cy="182.3" r="3.6" fill="var(--crit)"/><text x="459.0" y="171.3" class="vl sm crit">1.30×</text><circle cx="722.3" cy="208.1" r="3.6" fill="var(--crit)"/><text x="722.3" y="197.1" class="vl sm crit">0.97×</text><line x1="64" y1="284" x2="854" y2="284" class="axis"/></svg></div>
+<p>Revenue compounds faster than the cost base in every year of the horizon. Cost-to-revenue falls from 2.63× to 0.97×, and the monthly position turns positive in month 31.</p>
+</section>
+<section id="capital"><div class="sec-head"><div class="sec-num">5</div><h2>Key Assumptions — Capital Formation</h2></div>
+<h4 class="sub">5.1 How the Liquidity Layer is funded</h4><p>The layer is capitalized by liquidity providers in two channels. Private providers commit at inception and on a monthly growth schedule, entering under a lock that holds their capital through the first six months. Retail providers enter continuously from the pool once it is live. Both receive BLI; neither receives a deposit claim.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Channel</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>Character</th></tr></thead><tbody><tr><td>Private liquidity providers</td><td>$10,357,669</td><td>$15,273,225</td><td>$18,900,897</td><td>Seeded at inception, monthly growth, six-month lock</td></tr><tr><td>Retail liquidity providers</td><td>$427,481</td><td>$3,763,648</td><td>$18,890,656</td><td>Continuous entry via the pool</td></tr><tr><td>Total layer balance</td><td>$10,785,150</td><td>$19,036,873</td><td>$37,791,553</td><td></td></tr></tbody></table></div><div class="cap">Year-end balances, simulator default case.</div>
+<div class="chart"><div class="ct">Liquidity Layer composition by year (year-end balance)</div><div class="lgnd"><span><i style="background:var(--accent)"></i>Private LP</span><span><i style="background:var(--accent2)"></i>Retail LP</span></div><svg viewBox="0 0 880 320" role="img" aria-label="Liquidity Layer composition by year (year-end balance)" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">40.0M</text><line x1="64" y1="88.0" x2="854" y2="88.0" class="grid"/><text x="55" y="91.5" class="ax ar">30.0M</text><line x1="64" y1="150.0" x2="854" y2="150.0" class="grid"/><text x="55" y="153.5" class="ax ar">20.0M</text><line x1="64" y1="212.0" x2="854" y2="212.0" class="grid"/><text x="55" y="215.5" class="ax ar">10.0M</text><line x1="64" y1="274.0" x2="854" y2="274.0" class="grid"/><text x="55" y="277.5" class="ax ar">0</text><rect x="149.7" y="209.8" width="92.0" height="64.2" fill="var(--accent)"/><rect x="149.7" y="207.1" width="92.0" height="2.7" fill="var(--accent2)"/><text x="195.7" y="199.1" class="vl">10.8M</text><text x="195.7" y="294.0" class="ax ac">Year 1</text><rect x="413.0" y="179.3" width="92.0" height="94.7" fill="var(--accent)"/><rect x="413.0" y="156.0" width="92.0" height="23.3" fill="var(--accent2)"/><text x="459.0" y="148.0" class="vl">19.0M</text><text x="459.0" y="294.0" class="ax ac">Year 2</text><rect x="676.3" y="156.8" width="92.0" height="117.2" fill="var(--accent)"/><rect x="676.3" y="39.7" width="92.0" height="117.1" fill="var(--accent2)"/><text x="722.3" y="31.7" class="vl">37.8M</text><text x="722.3" y="294.0" class="ax ac">Year 3</text><line x1="64" y1="274" x2="854" y2="274" class="axis"/></svg></div>
+<h4 class="sub">5.2 Growth of value under custody</h4><div class="chart"><div class="ct">Value under protocol custody (year-end)</div><svg viewBox="0 0 880 300" role="img" aria-label="Value under protocol custody (year-end)" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">50.0M</text><line x1="64" y1="83.0" x2="854" y2="83.0" class="grid"/><text x="55" y="86.5" class="ax ar">37.5M</text><line x1="64" y1="140.0" x2="854" y2="140.0" class="grid"/><text x="55" y="143.5" class="ax ar">25.0M</text><line x1="64" y1="197.0" x2="854" y2="197.0" class="grid"/><text x="55" y="200.5" class="ax ar">12.5M</text><line x1="64" y1="254.0" x2="854" y2="254.0" class="grid"/><text x="55" y="257.5" class="ax ar">0</text><rect x="147.7" y="200.2" width="96.0" height="53.8" rx="3" fill="var(--accent)"/><text x="195.7" y="192.2" class="vl">$11,799,404</text><text x="195.7" y="274.0" class="ax ac">Year 1</text><rect x="411.0" y="155.3" width="96.0" height="98.7" rx="3" fill="var(--accent)"/><text x="459.0" y="147.3" class="vl">$21,640,912</text><text x="459.0" y="274.0" class="ax ac">Year 2</text><rect x="674.3" y="44.0" width="96.0" height="210.0" rx="3" fill="var(--accent)"/><text x="722.3" y="36.0" class="vl">$46,060,161</text><text x="722.3" y="274.0" class="ax ac">Year 3</text><line x1="64" y1="254" x2="854" y2="254" class="axis"/></svg></div><div class="cap">Liquidity Layer plus Bound Core balance. Simulator default case.</div>
+<p>Value under custody grows from $3,958,942 to $46,060,161 over the horizon. The growth is funded by liquidity-provider inflow and retained protocol revenue; it is not a market-price effect, and the plan assumes no appreciation of the underlying RWA collateral beyond the yields recorded in Chapter 2.</p>
+</section>
+<section id="volume"><div class="sec-head"><div class="sec-num">6</div><h2>Key Assumptions — Transaction Volume</h2></div>
+<p>Every transactional revenue stream is a function of volume, so volume is the single most consequential assumption in this plan. It is generated by the engine from RWA market parameters — asset size, liquidation propensity and minting demand — rather than assumed directly or benchmarked against a comparable protocol.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Component</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>36-month total</th></tr></thead><tbody><tr><td>RWA liquidation</td><td>$40,793,044</td><td>$55,792,055</td><td>$70,757,815</td><td>$167,342,914</td></tr><tr><td>RWA minting</td><td>$3,741,571</td><td>$17,105,876</td><td>$30,952,788</td><td>$51,800,235</td></tr><tr><td>Pool volume</td><td>$31,392,633</td><td>$80,407,698</td><td>$140,471,720</td><td>$252,272,050</td></tr><tr><td>Retail pool volume</td><td>$645,795</td><td>$6,061,296</td><td>$30,122,036</td><td>$36,829,128</td></tr><tr class="tot"><td>Total</td><td>$107,319,881</td><td>$233,713,326</td><td>$382,654,043</td><td>$723,687,250</td></tr></tbody></table></div><div class="cap">Simulator default case. Components shown are the largest four; total includes RWA pool sell/buy and retail exit volume.</div>
+<div class="chart"><div class="ct">Transaction volume by year</div><svg viewBox="0 0 880 300" role="img" aria-label="Transaction volume by year" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">400.0M</text><line x1="64" y1="83.0" x2="854" y2="83.0" class="grid"/><text x="55" y="86.5" class="ax ar">300.0M</text><line x1="64" y1="140.0" x2="854" y2="140.0" class="grid"/><text x="55" y="143.5" class="ax ar">200.0M</text><line x1="64" y1="197.0" x2="854" y2="197.0" class="grid"/><text x="55" y="200.5" class="ax ar">100.0M</text><line x1="64" y1="254.0" x2="854" y2="254.0" class="grid"/><text x="55" y="257.5" class="ax ar">0</text><rect x="147.7" y="192.8" width="96.0" height="61.2" rx="3" fill="var(--accent)"/><text x="195.7" y="184.8" class="vl">$107,319,881</text><text x="195.7" y="274.0" class="ax ac">Year 1</text><rect x="411.0" y="120.8" width="96.0" height="133.2" rx="3" fill="var(--accent)"/><text x="459.0" y="112.8" class="vl">$233,713,326</text><text x="459.0" y="274.0" class="ax ac">Year 2</text><rect x="674.3" y="35.9" width="96.0" height="218.1" rx="3" fill="var(--accent)"/><text x="722.3" y="27.9" class="vl">$382,654,043</text><text x="722.3" y="274.0" class="ax ac">Year 3</text><line x1="64" y1="254" x2="854" y2="254" class="axis"/></svg></div><div class="cap">Total flow the protocol charges against.</div>
+<p>Volume grows 3.57× between the first and third years. Because the protocol charges on flow rather than on balances, revenue tracks this series far more closely than it tracks value under custody — which is the structural reason the business scales without requiring a proportional increase in assets.</p>
+</section>
+<section id="index"><div class="sec-head"><div class="sec-num">7</div><h2>Key Assumptions — Index Formation and Yield</h2></div>
+<h4 class="sub">7.1 How the BLI price is formed</h4><p>BLI price is an on-chain identity, not a quoted rate. It is the net asset value of the Liquidity Layer plus accumulated BCI surplus capital, divided by BLI supply. It rises when the protocol earns and falls when the reserve loses value; there is no cap, no floor, and no discretionary smoothing.</p>
+<div class="chart"><div class="ct">BLI price — 36-month projection</div><svg viewBox="0 0 880 320" role="img" aria-label="BLI price — 36-month projection" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">1.37</text><line x1="64" y1="88.0" x2="854" y2="88.0" class="grid"/><text x="55" y="91.5" class="ax ar">1.03</text><line x1="64" y1="150.0" x2="854" y2="150.0" class="grid"/><text x="55" y="153.5" class="ax ar">0.68</text><line x1="64" y1="212.0" x2="854" y2="212.0" class="grid"/><text x="55" y="215.5" class="ax ar">0.34</text><line x1="64" y1="274.0" x2="854" y2="274.0" class="grid"/><text x="55" y="277.5" class="ax ar">0.00</text><path d="M64.0 89.8 L86.6 88.1 L109.1 86.5 L131.7 85.0 L154.3 83.4 L176.9 81.6 L199.4 79.8 L222.0 78.0 L244.6 76.1 L267.1 74.1 L289.7 72.2 L312.3 70.3 L334.9 68.4 L357.4 66.5 L380.0 64.7 L402.6 62.9 L425.1 61.0 L447.7 59.2 L470.3 57.4 L492.9 55.6 L515.4 53.7 L538.0 51.9 L560.6 50.1 L583.1 48.3 L605.7 46.5 L628.3 44.7 L650.9 42.8 L673.4 41.0 L696.0 39.1 L718.6 37.3 L741.1 35.4 L763.7 33.5 L786.3 31.7 L808.9 29.8 L831.4 27.9 L854.0 26.0 L854.0 274.0 L64.0 274.0 Z" fill="var(--accent)" opacity=".10"/><path d="M64.0 89.8 L86.6 88.1 L109.1 86.5 L131.7 85.0 L154.3 83.4 L176.9 81.6 L199.4 79.8 L222.0 78.0 L244.6 76.1 L267.1 74.1 L289.7 72.2 L312.3 70.3 L334.9 68.4 L357.4 66.5 L380.0 64.7 L402.6 62.9 L425.1 61.0 L447.7 59.2 L470.3 57.4 L492.9 55.6 L515.4 53.7 L538.0 51.9 L560.6 50.1 L583.1 48.3 L605.7 46.5 L628.3 44.7 L650.9 42.8 L673.4 41.0 L696.0 39.1 L718.6 37.3 L741.1 35.4 L763.7 33.5 L786.3 31.7 L808.9 29.8 L831.4 27.9 L854.0 26.0" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><text x="64.0" y="294.0" class="ax ac">M1</text><text x="176.9" y="294.0" class="ax ac">M6</text><text x="312.3" y="294.0" class="ax ac">M12</text><text x="447.7" y="294.0" class="ax ac">M18</text><text x="583.1" y="294.0" class="ax ac">M24</text><text x="718.6" y="294.0" class="ax ac">M30</text><text x="854.0" y="294.0" class="ax ac">M36</text><line x1="64" y1="274" x2="854" y2="274" class="axis"/></svg></div><div class="cap">Starts at 1.0000. Simulator default case.</div>
+<div class="tbl-scroll"><table><thead><tr><th>Measure</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead><tbody><tr><td>BLI price (year end)</td><td>1.1248</td><td>1.2461</td><td>1.3693</td></tr><tr><td>Annualized Index Growth</td><td>12.5%</td><td>11.6%</td><td>11.0%</td></tr><tr><td>BLI supply (year end)</td><td>10,382,508</td><td>17,350,108</td><td>31,652,762</td></tr><tr><td>BCI surplus capital</td><td>$892,995</td><td>$2,583,542</td><td>$5,549,732</td></tr></tbody></table></div><div class="cap">Annualized Index Growth is a historical measure of an index whose value can also decline. It is not a yield and implies nothing about future performance.</div>
+<h4 class="sub">7.2 Where the yield comes from</h4><p>Two sources contribute. Deployed capital in the layer earns the tier yields set out in Chapter 2, contributing $1,542,345 over the horizon. Protocol fee revenue contributes the remainder, and it is the larger of the two: $5,385,389, or 77.7% of the total.</p>
+<p>That ratio is the plan's central economic claim. A protocol whose index is driven mostly by fee capture is a business; one whose index is driven mostly by the yield on its own collateral is a fund. The default case produces the former.</p>
+</section>
+<section id="costs"><div class="sec-head"><div class="sec-num">8</div><h2>Key Assumptions — Cost Base</h2></div>
+<p>The cost base is taken from the protocol's Operating Cost Analysis, which rebases every revenue-scaling cost line onto this same simulator case and is independently verified against its sources. It is summarized here; the full derivation, the personnel roster and the external benchmarking sit in that document.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Category</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>36-month total</th></tr></thead><tbody><tr><td>Cost of goods sold</td><td>$1,396,303</td><td>$2,075,182</td><td>$2,815,786</td><td>$6,287,271</td></tr><tr><td>  of which personnel</td><td>$894,391</td><td>$993,135</td><td>$1,051,343</td><td>$2,938,869</td></tr><tr><td>Sales and marketing</td><td>$711,429</td><td>$394,286</td><td>$394,286</td><td>$1,500,000</td></tr><tr><td>Legal</td><td>$872,000</td><td>$72,000</td><td>$72,000</td><td>$1,016,000</td></tr><tr><td>Development</td><td>$250,000</td><td>$50,000</td><td>$50,000</td><td>$350,000</td></tr><tr><td>General and administrative</td><td>$137,551</td><td>$58,256</td><td>$58,256</td><td>$254,064</td></tr><tr class="tot"><td>Total</td><td>$3,367,283</td><td>$2,649,724</td><td>$3,390,328</td><td>$9,407,335</td></tr></tbody></table></div><div class="cap">Source: Operating Cost Analysis, rebased on the simulator default case.</div>
+<p>The base falls in the second year as launch-only obligations roll off — regulatory licensing, the smart-contract audit, the bug-bounty allocation, equipment and application development — then resumes growing as the volume-linked lines compound. Personnel is 31.2% of the total at full employer cost, across a steady-state team of 9.</p>
+</section>
+<section id="income"><div class="sec-head"><div class="sec-num">9</div><h2>Outputs — The Three Statements</h2></div>
+<p>The protocol and the operating company are different entities. Protocol fee income accrues to index holders and to the Protocol Reserve; the operating company's costs are borne by a European company that earns a services fee. Netting one against the other produces a number that describes no entity that exists, so this chapter reports them separately and shows the transfer between them.</p>
+<div class="note warn"><span class="nh">What changed</span>An earlier revision of this plan presented a single income statement combining the two. That statement has been withdrawn. It set money belonging to BLI holders against costs borne by a company with no revenue, and the resulting deficit was not a real figure.</div>
+<h4 class="sub">9.1 Protocol economics — 36 months</h4><p>A protocol has no profit and therefore no profit-and-loss account. It has flows: fees in, split between the index and the treasury, less the costs of processing that flow. The statement ends at distribution, not at earnings.</p>
+<div class="tbl-scroll"><table><thead><tr><th>USD</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>36-month total</th></tr></thead><tbody><tr><td>Fee income</td><td>$1,279,599</td><td>$2,043,708</td><td>$3,505,287</td><td>$6,828,594</td></tr><tr><td>— to BCI surplus capital (BLI holders)</td><td>$892,995</td><td>$1,690,547</td><td>$2,966,190</td><td>$5,549,732</td></tr><tr><td>— to Protocol Reserve (treasury)</td><td>$386,605</td><td>$353,161</td><td>$539,097</td><td>$1,278,862</td></tr><tr><td>Protocol costs (payment fees)</td><td>−$107,320</td><td>−$233,713</td><td>−$382,654</td><td>−$723,687</td></tr><tr><td>Net to protocol participants</td><td>$1,172,280</td><td>$1,809,994</td><td>$3,122,633</td><td>$6,104,907</td></tr></tbody></table></div><div class="cap">Simulator default case. Every dollar of BCI surplus raises the index price; it is liquidity-provider return and is never available to the company.</div>
+<h4 class="sub">9.2 Operating company — profit and loss</h4><p>The operating company is paid under a development-and-services agreement with the Foundation and the Issuer at cost plus 8%. That fee is its revenue. It runs deliberately close to break-even because it is a service provider, not a profit centre — and it carries a margin because an EU company working for a Panama principal at zero margin is not a defensible transfer-pricing position.</p>
+<div class="tbl-scroll"><table><thead><tr><th>USD</th><th>Year 1</th><th>Year 2</th><th>Year 3</th><th>36-month total</th></tr></thead><tbody><tr><td>Services revenue</td><td>$3,520,760</td><td>$2,609,291</td><td>$3,248,288</td><td>$9,378,339</td></tr><tr><td>Operating cost</td><td>−$3,259,963</td><td>−$2,416,011</td><td>−$3,007,674</td><td>−$8,683,648</td></tr><tr><td>Margin</td><td>$260,797</td><td>$193,281</td><td>$240,614</td><td>$694,692</td></tr><tr><td>EU corporate tax</td><td>−$41,728</td><td>−$30,925</td><td>−$38,498</td><td>−$111,151</td></tr><tr class="tot"><td>Net result</td><td>$219,070</td><td>$162,356</td><td>$202,116</td><td>$583,541</td></tr></tbody></table></div><div class="cap">Full derivation, including the personnel roster and entity attribution of every cost line, is in the Operating Cost &amp; Company Analysis.</div>
+<div class="note"><span class="nh">Horizon</span>The company commits to a <b>funded 24-month plan</b>, not to the protocol's thirty-six. Different entity, different clock. Cost to month 24 is $6,252,226 against $7,023,750 of available funding — a surplus of $771,524.</div>
+<h4 class="sub">9.3 Group — sources and uses</h4><p>What the raise funds, and what funds the company. This is the statement that answers whether the launch is affordable, and it is the one the earlier revision lacked.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Use of the raise</th><th>Amount</th><th>% of raise</th></tr></thead><tbody><tr><td>AMM liquidity — rwaUSD/USDC and BND/USDC</td><td>$4,975,000</td><td>36.4%</td></tr><tr><td>Burn Engine seed</td><td>$3,225,000</td><td>23.6%</td></tr><tr><td>Operating company</td><td>$4,730,000</td><td>34.6%</td></tr><tr><td>Emergency Reserve</td><td>$750,000</td><td>5.5%</td></tr><tr><td>Total raise</td><td>$13,680,000</td><td>100.0%</td></tr></tbody></table></div><div class="cap">Seed raise directed to operations; public raise split 17 / 30 / 10 / 43.</div>
+<div class="tbl-scroll"><table><thead><tr><th>Operating company funding</th><th>Amount</th><th>Form</th></tr></thead><tbody><tr><td>Cash from the raise</td><td>$4,730,000</td><td>At token generation</td></tr><tr><td>Marketing and Treasury allocations, vested by month 24</td><td>$2,293,750</td><td>Tokens, liquidated on schedule</td></tr><tr><td>Total available by month 24</td><td>$7,023,750</td><td></td></tr><tr><td>Cost to month 24</td><td>−$6,252,226</td><td></td></tr><tr><td>Surplus</td><td>$771,524</td><td></td></tr></tbody></table></div><div class="cap">Token figures at the launch price, on the tokenomics vesting schedules.</div>
+</section>
+<section id="funding"><div class="sec-head"><div class="sec-num">10</div><h2>Outputs — Capital Requirement and Breakeven</h2></div>
+<p>A business plan's central question is how much capital is consumed before the business funds itself, and when that happens. Both are outputs of the model rather than inputs to it.</p>
+<div class="note warn"><span class="nh">What this chapter is, and is not</span>This chapter is deliberately a <b>consolidated group</b> view, and it is the only place in this document where protocol revenue and the operating cost base are set against one another. That combination has no entity-level meaning — Chapter 9 reports the two separately, and the Operating Cost &amp;amp; Company Analysis rules the netting out. It is used here only to answer the funding question: how much cash the group must hold before the whole structure sustains itself. Read every figure below as a group cash figure, not as a statement that the protocol fails to cover its own costs.</div>
+<div class="kpis"><div class="kpi"><div class="kn g">Month 31</div><div class="kl">First month in group operating surplus</div></div><div class="kpi"><div class="kn w">$2,911,224</div><div class="kl">Peak cumulative group deficit</div></div><div class="kpi"><div class="kn">Month 30</div><div class="kl">Deficit peaks</div></div><div class="kpi"><div class="kn g">$103,557</div><div class="kl">Month-36 monthly result</div></div></div>
+<div class="chart"><div class="ct">Cumulative operating position — 36 months</div><svg viewBox="0 0 880 320" role="img" aria-label="Cumulative operating position — 36 months" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">-55K</text><line x1="64" y1="88.0" x2="854" y2="88.0" class="grid"/><text x="55" y="91.5" class="ax ar">-769K</text><line x1="64" y1="150.0" x2="854" y2="150.0" class="grid"/><text x="55" y="153.5" class="ax ar">-1.5M</text><line x1="64" y1="212.0" x2="854" y2="212.0" class="grid"/><text x="55" y="215.5" class="ax ar">-2.2M</text><line x1="64" y1="274.0" x2="854" y2="274.0" class="grid"/><text x="55" y="277.5" class="ax ar">-2.9M</text><line x1="64" y1="21.2" x2="854" y2="21.2" class="axis"/><path d="M64.0 26.0 L86.6 45.8 L109.1 65.1 L131.7 83.9 L154.3 102.1 L176.9 118.4 L199.4 134.3 L222.0 149.7 L244.6 163.5 L267.1 176.9 L289.7 189.9 L312.3 202.5 L334.9 209.7 L357.4 216.4 L380.0 222.7 L402.6 228.5 L425.1 233.9 L447.7 238.7 L470.3 242.9 L492.9 246.7 L515.4 249.8 L538.0 252.3 L560.6 254.0 L583.1 255.1 L605.7 260.7 L628.3 265.5 L650.9 269.3 L673.4 272.0 L696.0 273.6 L718.6 274.0 L741.1 273.1 L763.7 270.8 L786.3 266.9 L808.9 261.3 L831.4 254.1 L854.0 245.1 L854.0 21.2 L64.0 21.2 Z" fill="var(--crit)" opacity=".10"/><path d="M64.0 26.0 L86.6 45.8 L109.1 65.1 L131.7 83.9 L154.3 102.1 L176.9 118.4 L199.4 134.3 L222.0 149.7 L244.6 163.5 L267.1 176.9 L289.7 189.9 L312.3 202.5 L334.9 209.7 L357.4 216.4 L380.0 222.7 L402.6 228.5 L425.1 233.9 L447.7 238.7 L470.3 242.9 L492.9 246.7 L515.4 249.8 L538.0 252.3 L560.6 254.0 L583.1 255.1 L605.7 260.7 L628.3 265.5 L650.9 269.3 L673.4 272.0 L696.0 273.6 L718.6 274.0 L741.1 273.1 L763.7 270.8 L786.3 266.9 L808.9 261.3 L831.4 254.1 L854.0 245.1" fill="none" stroke="var(--crit)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><text x="64.0" y="294.0" class="ax ac">M1</text><text x="176.9" y="294.0" class="ax ac">M6</text><text x="312.3" y="294.0" class="ax ac">M12</text><text x="447.7" y="294.0" class="ax ac">M18</text><text x="583.1" y="294.0" class="ax ac">M24</text><text x="718.6" y="294.0" class="ax ac">M30</text><text x="854.0" y="294.0" class="ax ac">M36</text><line x1="64" y1="274" x2="854" y2="274" class="axis"/></svg></div><div class="cap">Revenue less operating cost base, accumulated monthly. Trough is the capital requirement.</div>
+<div class="tbl-scroll"><table><thead><tr><th>Measure</th><th>Value</th><th>Interpretation</th></tr></thead><tbody><tr><td>First month in surplus</td><td>Month 31</td><td>Monthly protocol revenue exceeds the monthly group cost base</td></tr><tr><td>Peak cumulative deficit</td><td>$2,911,224</td><td>Group cash consumed before the structure funds itself</td></tr><tr><td>Month of peak deficit</td><td>Month 30</td><td>Funding must be in place until here</td></tr><tr><td>Month-36 run rate</td><td>$4,633,012 revenue</td><td>Against $3,390,328 of cost</td></tr><tr><td>Cumulative position, month 36</td><td>−$2,578,741</td><td>Recovering from the trough</td></tr></tbody></table></div><div class="cap">Derived from the monthly series; costs allocated evenly within each year.</div>
+<p>The group capital requirement is therefore approximately $2,911,224, and it must be available through month 30. From month 31 protocol revenue exceeds the group cost base month on month, and the cumulative position begins to recover. Chapter 9.3 shows this requirement is already funded from the raise: the operating company holds $7,023,750 against a cost to month twenty-four of $6,252,226. The deficit below is a timing profile, not an unfunded gap.</p>
+<div class="note"><span class="nh">Definition</span>Breakeven here means <b>group operating</b> breakeven — monthly protocol revenue exceeding the monthly group cost base. It is not a return on invested capital, it does not imply recovery of the cumulative deficit within the horizon, and it is not a statement about either entity on its own.</div>
+</section>
+<section id="treasury"><div class="sec-head"><div class="sec-num">11</div><h2>Outputs — Treasury and Reserves</h2></div>
+<p>The treasury view is deliberately conservative. It records protocol-owned balances only and excludes any valuation of the governance token, for which no reliable long-term valuation assumption exists.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Balance (year end)</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead><tbody><tr><td>Liquidity Layer</td><td>$10,785,150</td><td>$19,036,873</td><td>$37,791,553</td></tr><tr><td>Bound Core</td><td>$1,014,253</td><td>$2,604,039</td><td>$8,268,608</td></tr><tr><td>Emergency Reserve</td><td>$515,908</td><td>$604,172</td><td>$770,511</td></tr><tr><td>BCI surplus capital</td><td>$892,995</td><td>$2,583,542</td><td>$5,549,732</td></tr><tr><td>RWA collateral held</td><td>$1,078,515</td><td>$1,903,687</td><td>$3,779,155</td></tr><tr class="tot"><td>Total value under custody</td><td>$11,799,404</td><td>$21,640,912</td><td>$46,060,161</td></tr></tbody></table></div><div class="cap">Simulator default case. Governance-token value excluded by design.</div>
+<div class="chart"><div class="ct">Protocol balances by year (year-end)</div><div class="lgnd"><span><i style="background:var(--accent)"></i>Liquidity Layer</span><span><i style="background:var(--accent2)"></i>Bound Core</span><span><i style="background:var(--warn)"></i>Emergency Reserve</span></div><svg viewBox="0 0 880 320" role="img" aria-label="Protocol balances by year (year-end)" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">50.0M</text><line x1="64" y1="88.0" x2="854" y2="88.0" class="grid"/><text x="55" y="91.5" class="ax ar">37.5M</text><line x1="64" y1="150.0" x2="854" y2="150.0" class="grid"/><text x="55" y="153.5" class="ax ar">25.0M</text><line x1="64" y1="212.0" x2="854" y2="212.0" class="grid"/><text x="55" y="215.5" class="ax ar">12.5M</text><line x1="64" y1="274.0" x2="854" y2="274.0" class="grid"/><text x="55" y="277.5" class="ax ar">0</text><rect x="149.7" y="220.5" width="92.0" height="53.5" fill="var(--accent)"/><rect x="149.7" y="215.5" width="92.0" height="5.0" fill="var(--accent2)"/><rect x="149.7" y="212.9" width="92.0" height="2.6" fill="var(--warn)"/><text x="195.7" y="204.9" class="vl">12.3M</text><text x="195.7" y="294.0" class="ax ac">Year 1</text><rect x="413.0" y="179.6" width="92.0" height="94.4" fill="var(--accent)"/><rect x="413.0" y="166.7" width="92.0" height="12.9" fill="var(--accent2)"/><rect x="413.0" y="163.7" width="92.0" height="3.0" fill="var(--warn)"/><text x="459.0" y="155.7" class="vl">22.2M</text><text x="459.0" y="294.0" class="ax ac">Year 2</text><rect x="676.3" y="86.6" width="92.0" height="187.4" fill="var(--accent)"/><rect x="676.3" y="45.5" width="92.0" height="41.0" fill="var(--accent2)"/><rect x="676.3" y="41.7" width="92.0" height="3.8" fill="var(--warn)"/><text x="722.3" y="33.7" class="vl">46.8M</text><text x="722.3" y="294.0" class="ax ac">Year 3</text><line x1="64" y1="274" x2="854" y2="274" class="axis"/></svg></div>
+<p>The Emergency Reserve closes the horizon at $770,511. It is funded from Protocol Reserve revenue rather than from liquidity-provider capital, and it exists to absorb stress without drawing on the layer's coverage.</p>
+</section>
+<section id="limits"><div class="sec-head"><div class="sec-num">12</div><h2>Model Limits and Open Items</h2></div>
+<p>This chapter states what the plan does not establish. It is an engineering disclosure of the model's boundaries.</p>
+<ul class="find"><li><b>Single scenario:</b> every figure derives from one preset against one RWA market. No scenario range, sensitivity band or probability is presented, and none should be inferred.</li><li><b>Single market:</b> the default case runs one integrated RWA market. Revenue concentration risk is therefore not visible in these figures.</li><li><b>Horizon:</b> the plan stops at month thirty-six because the engine does. The cumulative deficit is not recovered inside that window, and the recovery path is not modelled.</li><li><b>Capital structure:</b> the plan sizes the capital requirement but assumes nothing about how it is raised, on what terms, or at what dilution.</li><li><b>Cost inheritance:</b> the cost base carries the limits recorded in the Operating Cost Analysis, including understated regulatory licensing, a bug-bounty programme booked only at launch, and technical salaries below published market floors.</li><li><b>Headcount:</b> the team is flat at nine from month five. No hiring is funded against the growth in value under custody.</li><li><b>No terminal value:</b> the plan contains no valuation, no exit assumption and no terminal growth rate.</li></ul>
+</section>
+<section id="disclaimer"><div class="sec-head"><div class="sec-num">§</div><h2>Legal Disclaimer</h2></div>
+<p>This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. All figures are outputs of the BOUND simulation engine on its default preset and of a cost model documented separately; they are not forecasts, budgets, commitments or guarantees of actual results, and a different preset produces different figures throughout. rwaUSD makes no return promise of any kind. The Bound Liquidity Index is an index token whose value can rise or fall; Annualized Index Growth is a historical metric and implies nothing about future performance; participants can lose value. BND confers governance utility only and no claim on protocol revenue. Statements about the capital requirement describe a model output and are not a fundraising offer or a representation that capital has been or will be secured. Forward-looking statements are subject to material uncertainty and change. © 2026 BOUND Protocol.</p>
+</section>
+<footer><div class="disc"><b>Note.</b> Every figure in this plan is derived from the BOUND simulation engine's default preset and from the verified operating cost model. Regenerate via <span class="mono">node scripts/sim-default-dump.mjs</span>, <span class="mono">python3 scripts/gen-costs-content.py</span>, <span class="mono">python3 scripts/gen-businessplan-content.py</span>, then <span class="mono">node scripts/build-businessplan.mjs</span>.</div>
+<div>BOUND Protocol · Business Plan Year 1–Year 3 — July 2026 · Bucharest, Romania</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>

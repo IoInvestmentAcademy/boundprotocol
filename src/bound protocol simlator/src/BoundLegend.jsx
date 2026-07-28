@@ -205,7 +205,7 @@ const SECTIONS = [
   { id:"s3",  n:"3",  label:"Participant Flows" },
   { id:"s4",  n:"4",  label:"10 Revenue Streams" },
   { id:"s5",  n:"5",  label:"Distribution Table" },
-  { id:"s6",  n:"6",  label:"BCI Price Mechanics" },
+  { id:"s6",  n:"6",  label:"BLI Price Mechanics" },
   { id:"s7",  n:"7",  label:"Bound Core & Float" },
   { id:"s8",  n:"8",  label:"Liquidity Layer" },
   { id:"s9",  n:"9",  label:"Emergency System" },
@@ -216,7 +216,7 @@ const SECTIONS = [
 ];
 
 /* --- MAIN --- */
-export default function BoundLegend({ onClose }) {
+export default function BoundLegend({ onClose, backLabel = "Back" }) {
   const [active, setActive] = useState("s1");
   const scrollRef = useRef(null);
 
@@ -275,7 +275,7 @@ export default function BoundLegend({ onClose }) {
             <button onClick={onClose} style={{ marginTop:10, width:"100%", padding:"6px 10px",
               borderRadius:6, cursor:"pointer", fontSize:11, fontWeight:600,
               border:`1px solid ${T.border}`, background:T.bgSoft, color:T.ink3 }}>
-              &larr; Back to Simulator
+              &larr; {backLabel}
             </button>
           )}
         </div>
@@ -323,7 +323,7 @@ export default function BoundLegend({ onClose }) {
             marginBottom:12, lineHeight:1.15 }}>BOUND Protocol<br/>Complete Reference</h1>
           <P>This document explains every concept, formula, token, revenue stream, and participant mechanic behind the BOUND Financial Simulator. Written for investors, analysts, and pitch judges who want to understand the model from first principles.</P>
           <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginTop:14 }}>
-            {[["Spec","Architecture v4 · July 2026"],["Revenue Streams","10"],["Market","~$31B on-chain RWA"],["BCI Unit","rwaUSD"],["Horizon","36 months"]].map(([k,v]) => (
+            {[["Spec","Architecture v4 · July 2026"],["Revenue Streams","10"],["Market","~$31B on-chain RWA"],["BLI Unit","rwaUSD"],["Horizon","36 months"]].map(([k,v]) => (
               <div key={k} style={{ padding:"4px 10px", background:T.bgEl, border:`1px solid ${T.border}`,
                 borderRadius:6, fontSize:11.5, boxShadow:SHADOW }}>
                 <span style={{ color:T.ink3 }}>{k}:</span>{" "}
@@ -337,7 +337,7 @@ export default function BoundLegend({ onClose }) {
         <SH id="s1" n="1">Protocol Overview</SH>
         <P>The tokenized real-world asset (RWA) market has grown to ~$31 billion on-chain by mid-2026, led by tokenized Treasuries, private credit, and money market funds. Tokenization solved issuance — it did not solve liquidity. RWA holders face T+30 to T+90 redemption windows from issuers. Between issuance and maturity, the asset is effectively locked.</P>
         <P><strong style={{ color:T.ink, fontWeight:600 }}>BOUND's answer:</strong> Build a protocol-native liquidity layer. rwaUSD is the first liquid dollar for RWAs — holders can exit instantly, at any time, without waiting on the issuer. BOUND also provides the shared infrastructure that connects all RWA markets, positioning rwaUSD as the native stablecoin of the entire sector.</P>
-        <Note col="green"><strong>The flywheel:</strong> More RWA markets onboard &rarr; more liquidation volume &rarr; more protocol fees &rarr; stronger BCI collateral performance &rarr; more LPs attracted &rarr; more capacity for exits &rarr; BOUND becomes the industry standard.</Note>
+        <Note col="green"><strong>The flywheel:</strong> More RWA markets onboard &rarr; more liquidation volume &rarr; more protocol fees &rarr; stronger BLI collateral performance &rarr; more LPs attracted &rarr; more capacity for exits &rarr; BOUND becomes the industry standard.</Note>
 
         {/* S2 */}
         <SH id="s2" n="2">Token Architecture — Three Tokens</SH>
@@ -350,19 +350,19 @@ export default function BoundLegend({ onClose }) {
             "Envisioned as the native stablecoin of the entire RWA sector.",
             "Compliance framing: stable value access token — not a yield product. MiCA review ongoing.",
           ]},
-          { token:"BCI", sub:"Bound Collateralization Index · The LP Index Token", points:[
+          { token:"BLI", sub:"Bound Liquidity Index · The LP Index Token", points:[
             "Index token tracking collateral performance (NAV) of the Bound Liquidity Layer.",
-            "Price denominated in rwaUSD: BCI Price = (Layer NAV + BCI SC balance) / BCI Supply.",
-            "LP capital sits in the Liquidity Layer as collateral; the BCI SC holds fee revenue only.",
+            "Price denominated in rwaUSD: BLI Price = (Layer NAV + BLI SC balance) / BLI Supply.",
+            "LP capital sits in the Liquidity Layer as collateral; the BLI SC holds fee revenue only.",
             "Obtained ONLY by converting rwaUSD through the protocol converter — never on DEX.",
             "Junior, at-risk layer: RWA exposure, fee surpluses, and yield all accrue here.",
-            "BCI price rises when fee revenue credits to the SC without minting new BCI tokens.",
+            "BLI price rises when fee revenue credits to the SC without minting new BLI tokens.",
             "Language rule: never 'yield', 'APY', 'earn', 'interest'. Use 'index growth' or 'collateral performance'.",
           ]},
           { token:"BND", sub:"BOUND Governance Token", points:[
             "Governance token: holders vote on fee structures, ER policy, market approvals.",
             "When used to pay conversion fees: ~50% discount (0.44% instead of 0.88%).",
-            "BND tokens used for fee payment are 100% burned — ZERO credit flows to BCI SC.",
+            "BND tokens used for fee payment are 100% burned — ZERO credit flows to BLI SC.",
             "BND burning creates deflationary pressure benefiting BND holders independently.",
             "Protocol Reserve executes periodic BND buybacks from the market.",
           ]},
@@ -388,9 +388,9 @@ export default function BoundLegend({ onClose }) {
 
         {[
           { title:"LP User Flow", flows:[
-            ["Private LP","LP provides USDC → pays 0.3% mint fee → receives rwaUSD → converts to BCI (0.88% or 0.44% BND; default 98% of the deposit converts) → holds BCI through a 6-month capital lock → BCI collateral performance accrues → after the lock, exits monthly at the configured outflow rate (conversion fee + 0.3% redeem fee on the way out)."],
-            ["Retail LP","LP buys rwaUSD on pool (0.3% pool fee + slippage) → converts to BCI (0.88%/0.44%; default 98%) → holds BCI → converts back and sells on pool. No lock, no minimum."],
-            ["LP redemption priority","BCI redemptions are SENIOR: LP exits are served first each month from the Layer's USDC buffer plus cash returning from the RWA issuer pipeline — before any new RWA liquidation demand is accepted. RWA service is discretionary; LP exits are an obligation."],
+            ["Private LP","LP provides USDC → pays 0.3% mint fee → receives rwaUSD → converts to BLI (0.88% or 0.44% BND; default 98% of the deposit converts) → holds BLI through a 6-month capital lock → BLI collateral performance accrues → after the lock, exits monthly at the configured outflow rate (conversion fee + 0.3% redeem fee on the way out)."],
+            ["Retail LP","LP buys rwaUSD on pool (0.3% pool fee + slippage) → converts to BLI (0.88%/0.44%; default 98%) → holds BLI → converts back and sells on pool. No lock, no minimum."],
+            ["LP redemption priority","BLI redemptions are SENIOR: LP exits are served first each month from the Layer's USDC buffer plus cash returning from the RWA issuer pipeline — before any new RWA liquidation demand is accepted. RWA service is discretionary; LP exits are an obligation."],
           ]},
           { title:"RWA Holder Flow", flows:[
             ["Instant exit (T+0)","RWA holder sells tokenized asset to BOUND → BOUND pays rwaUSD instantly from USDC sleeve → holder swaps rwaUSD→USDC on pool → full exit in seconds."],
@@ -418,56 +418,56 @@ export default function BoundLegend({ onClose }) {
 
         {/* S4 */}
         <SH id="s4" n="4">Ten Revenue Streams</SH>
-        <P>BOUND Protocol generates revenue from ten distinct sources. Each has a defined trigger, rate, and split between the BCI SC (benefits LP holders) and the Protocol Reserve (funds operations).</P>
+        <P>BOUND Protocol generates revenue from ten distinct sources. Each has a defined trigger, rate, and split between the BLI SC (benefits LP holders) and the Protocol Reserve (funds operations).</P>
 
         <FeeCard n="01" title="Pool Trading Fee" rate="0.3% of pool vol" trigger="Every retail swap"
           what="Standard Uniswap v4 pool fee on every rwaUSD/USDC swap."
           how="Charged to every retail buyer or seller of rwaUSD. Collected automatically by the pool contract."
-          dist="80% BCI SC · 20% Protocol Reserve" />
+          dist="80% BLI SC · 20% Protocol Reserve" />
         <FeeCard n="02" title="APSS Arbitrage Capture" rate="~0.5% of pool vol" trigger="Every pool trade"
           what="Protocol revenue from peg stabilization. Not a fee charged to users."
           how="Buy-side: APSS mints rwaUSD at elevated price, captures spread. Sell-side: APSS buys at discount, burns, captures. Executes atomically in the same block. User only pays pool fee + slippage."
-          dist="80% BCI SC · 20% Protocol Reserve" />
-        <FeeCard n="03" title="rwaUSD Conversion Fee (full)" rate="0.88% per conversion" trigger="rwaUSD to BCI"
-          what="Fee charged when any user converts between rwaUSD and BCI in either direction (entry and exit, private and retail)."
-          how="The conversion fee is deducted from the rwaUSD amount. That rwaUSD is burned — its supply is reduced. The USDC that was backing that burned rwaUSD in Bound Core is released and credited to the BCI SC as collateral surplus. This is what drives BCI price up. The single biggest BCI SC revenue stream."
-          dist="100% BCI SC (USDC from Bound Core backing the burned rwaUSD) · 0% to Protocol Reserve" />
+          dist="80% BLI SC · 20% Protocol Reserve" />
+        <FeeCard n="03" title="rwaUSD Conversion Fee (full)" rate="0.88% per conversion" trigger="rwaUSD to BLI"
+          what="Fee charged when any user converts between rwaUSD and BLI in either direction (entry and exit, private and retail)."
+          how="The conversion fee is deducted from the rwaUSD amount. That rwaUSD is burned — its supply is reduced. The USDC that was backing that burned rwaUSD in Bound Core is released and credited to the BLI SC as collateral surplus. This is what drives BLI price up. The single biggest BLI SC revenue stream."
+          dist="100% BLI SC (USDC from Bound Core backing the burned rwaUSD) · 0% to Protocol Reserve" />
         <FeeCard n="04" title="BND Conversion Fee (discounted)" rate="0.44% · BND burned" trigger="BND token payment"
           what="When user pays conversion fee in BND governance token, they get ~50% discount."
-          how="BND tokens are 100% burned. No rwaUSD is burned, so no USDC is released to BCI SC. Zero benefit to BCI SC. BND supply reduction benefits BND holders only."
-          dist="0% BCI SC · 0% Protocol Reserve · 100% BND burn" />
+          how="BND tokens are 100% burned. No rwaUSD is burned, so no USDC is released to BLI SC. Zero benefit to BLI SC. BND supply reduction benefits BND holders only."
+          dist="0% BLI SC · 0% Protocol Reserve · 100% BND burn" />
         <FeeCard n="05" title="Private Mint / Redeem Fee" rate="0.3% per side" trigger="Private LP entry/exit"
           what="Fee charged when institutional LPs mint or redeem rwaUSD directly, bypassing the pool."
-          how="Service fee for the direct minting path. Charged 0.3% on entry and 0.3% on exit. Majority credited to BCI SC, supporting the index."
-          dist="80% BCI SC · 20% Protocol Reserve" />
+          how="Service fee for the direct minting path. Charged 0.3% on entry and 0.3% on exit. Majority credited to BLI SC, supporting the index."
+          dist="80% BLI SC · 20% Protocol Reserve" />
         <FeeCard n="06" title="RWA Trade Fee" rate="0.3% per direction" trigger="Every RWA transaction"
           what="Fee charged on every RWA transaction routed through BOUND markets."
           how="RWA to rwaUSD: 0.3% on the sell side. rwaUSD to RWA (reverse direction): 0.3% charged independently. Each direction charged separately on the transaction value."
-          dist="80% BCI SC · 20% Protocol Reserve" />
+          dist="80% BLI SC · 20% Protocol Reserve" />
         <FeeCard n="07" title="RWA Haircut Spread" rate="Dynamic (0.5% baseline, per market)" trigger="Every RWA purchase"
           what="Spread between what BOUND pays for an RWA (below NAV) and what it recovers at maturity."
           how="BOUND buys $1M Treasury at 0.5% haircut, pays $995K, recovers $1M at maturity — $5K spread is revenue. Each market has its own haircut, escalated by a gentle 3-step ladder when concentration rises: per-market held inventory is capped at 10% of the Layer and the whole RWA category at 20%; approaching either cap bumps the haircut and trade fee stepwise (no punitive cliff). The minting-side haircut is reduced by a stress-linked discount ladder (applied with a one-month lag)."
-          dist="80% BCI SC · 20% Protocol Reserve" />
+          dist="80% BLI SC · 20% Protocol Reserve" />
         <FeeCard n="08" title="Annual Market Maintenance Fee" rate="$75K/market/year" trigger="Monthly, per active market"
           what="Recurring annual fee per active RWA market."
           how="RWA issuers pay $75,000/year. Covers oracle maintenance, smart contract upkeep, governance support. Collected monthly ($6,250/month/market)."
-          dist="20% BCI SC · 80% Protocol Reserve" />
+          dist="20% BLI SC · 80% Protocol Reserve" />
         <FeeCard n="09" title="RWA Integration Fee" rate="$150K per market" trigger="One-time, new market"
           what="One-time fee paid by new RWA issuers at onboarding."
           how="Covers due diligence, smart contract deployment, oracle setup, concentration cap enforcement, legal review. Based on RWA infrastructure market research ($75K-$250K range). No ongoing commitment from this fee alone."
-          dist="100% Protocol Reserve · 0% to BCI SC" />
+          dist="100% Protocol Reserve · 0% to BLI SC" />
         <FeeCard n="10" title="Bound Core Float Yield" rate="4.5%/yr on the USDC Yield Position" trigger="Continuous, rwaUSD circulation"
           what="Yield on Bound Core's USDC Yield Position — the USDC NAV above the instant-redemption coverage requirement."
-          how="Bound Core sizes raw USDC to coverage% × idle rwaUSD (default 100%, 0% yield — instant redemption always covered). Any NAV surplus above that requirement is the USDC Yield Position (T+0), earning the configured rate (default 4.5%/yr). Yield is paid out once — never retained in NAV. At the default 100% coverage the yield position is $0; the stream activates when coverage is set below 100%. Grows with rwaUSD adoption — independent of LP/BCI activity."
-          dist="Flat 80% BCI SC · 20% Protocol Reserve" />
+          how="Bound Core sizes raw USDC to coverage% × idle rwaUSD (default 100%, 0% yield — instant redemption always covered). Any NAV surplus above that requirement is the USDC Yield Position (T+0), earning the configured rate (default 4.5%/yr). Yield is paid out once — never retained in NAV. At the default 100% coverage the yield position is $0; the stream activates when coverage is set below 100%. Grows with rwaUSD adoption — independent of LP/BLI activity."
+          dist="Flat 80% BLI SC · 20% Protocol Reserve" />
 
-        <Note col="green"><strong>Stream 10 insight:</strong> Every rwaUSD holder who uses it as a stablecoin without converting to BCI is generating protocol revenue that partly flows to BCI SC. rwaUSD adoption makes BCI collateral stronger — even from users who never interact with BCI.</Note>
+        <Note col="green"><strong>Stream 10 insight:</strong> Every rwaUSD holder who uses it as a stablecoin without converting to BLI is generating protocol revenue that partly flows to BLI SC. rwaUSD adoption makes BLI collateral stronger — even from users who never interact with BLI.</Note>
 
         {/* S5 */}
         <SH id="s5" n="5">Complete Fee Distribution Table</SH>
         <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, overflow:"hidden", margin:"14px 0", boxShadow:SHADOW }}>
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
-            <thead><tr><TH>Fee Source</TH><TH>Rate</TH><TH>BCI SC</TH><TH>Protocol Reserve</TH><TH>Note</TH></tr></thead>
+            <thead><tr><TH>Fee Source</TH><TH>Rate</TH><TH>BLI SC</TH><TH>Protocol Reserve</TH><TH>Note</TH></tr></thead>
             <tbody>
               {[
                 ["Pool Trading Fee","0.3% of pool vol","80%","20%","Retail swaps only"],
@@ -495,14 +495,14 @@ export default function BoundLegend({ onClose }) {
           </table>
         </div>
 
-        <Sub>If you hold BCI — your revenue exposure</Sub>
+        <Sub>If you hold BLI — your revenue exposure</Sub>
         <div style={{ background:T.bgEl, border:`1px solid ${T.border}`, borderRadius:10, overflow:"hidden", marginBottom:16, boxShadow:SHADOW }}>
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
-            <thead><tr><TH>Revenue Stream</TH><TH>BCI SC Share</TH><TH>When It Accrues</TH><TH>Mechanism</TH></tr></thead>
+            <thead><tr><TH>Revenue Stream</TH><TH>BLI SC Share</TH><TH>When It Accrues</TH><TH>Mechanism</TH></tr></thead>
             <tbody>
               {[
                 ["Pool fee + APSS","80%","Every pool swap","Protocol arbitrage surplus to SC"],
-                ["Conversion fee (rwaUSD path)","100%","Every rwaUSD to BCI conversion","USDC from Bound Core backing burned rwaUSD to SC"],
+                ["Conversion fee (rwaUSD path)","100%","Every rwaUSD to BLI conversion","USDC from Bound Core backing burned rwaUSD to SC"],
                 ["Private mint/redeem fee","80%","Private LP entry and exit","Majority of service fee to SC"],
                 ["RWA trade fee (0.3%/dir.)","80%","Every RWA transaction","SC credited from RWA revenue"],
                 ["RWA haircut spread","80%","On served liquidation/minting volume","Per-market haircut on volume served"],
@@ -547,36 +547,36 @@ export default function BoundLegend({ onClose }) {
         <Note col="blue"><strong>Protocol Reserve outflows (BND governance):</strong> Three primary channels — (1) Periodic BND buyback and burn, (2) Fund all protocol operations, (3) Cover RWA minting/redemption fees when the Layer cannot. At launch, the always-flowing pool/APSS stream backstops any Layer shortfall before the PR builds sufficient balance.</Note>
 
         {/* S6 */}
-        <SH id="s6" n="6">BCI Price Mechanics</SH>
+        <SH id="s6" n="6">BLI Price Mechanics</SH>
 
         <Sub>Core Formula</Sub>
-        <Formula label="BCI Index Price" lines={[
-          "BCI_price  =  ( Layer_NAV  +  BCI_SC_Balance )  /  BCI_Supply",
+        <Formula label="BLI Index Price" lines={[
+          "BLI_price  =  ( Layer_NAV  +  BLI_SC_Balance )  /  BLI_Supply",
           "",
-          "// Unit: rwaUSD per BCI token · starts at 1.0000 rwaUSD at launch",
+          "// Unit: rwaUSD per BLI token · starts at 1.0000 rwaUSD at launch",
           "// Layer_NAV:        LP collateral held in the Liquidity Layer",
           "//                   (private balance + retail balance)",
-          "// BCI_SC_Balance:   accumulated FEE REVENUE only — no LP capital",
+          "// BLI_SC_Balance:   accumulated FEE REVENUE only — no LP capital",
           "// Price rises when fee revenue credits the SC without minting new supply",
           "",
           "Example (Default preset, Month 12):",
           "  Layer_NAV       =  $9.7M   (LP collateral)",
-          "  BCI_SC_Balance  =  $560.7K (cumulative fee revenue)",
-          "  BCI_Supply      =  9.43M tokens",
-          "→ BCI_Price       =  (9.7M + 560.7K) / 9.43M  ≈  1.0840 rwaUSD",
+          "  BLI_SC_Balance  =  $560.7K (cumulative fee revenue)",
+          "  BLI_Supply      =  9.43M tokens",
+          "→ BLI_Price       =  (9.7M + 560.7K) / 9.43M  ≈  1.0840 rwaUSD",
         ]} />
 
         <Sub>How the Two Terms Behave</Sub>
-        <P>LP capital and fee revenue are kept in separate ledgers so that deposits and exits cannot manufacture price movement. The Liquidity Layer holds the collateral; the BCI SC holds only the protocol's fee surplus.</P>
+        <P>LP capital and fee revenue are kept in separate ledgers so that deposits and exits cannot manufacture price movement. The Liquidity Layer holds the collateral; the BLI SC holds only the protocol's fee surplus.</P>
         <Formula label="Layer NAV (collateral term)" lines={[
           "+ Private LP net deposits         after mint + conversion fees",
           "+ Retail LP net pool inflows      after pool + conversion fees",
           "- LP exits                        monthly outflow (private: after 6-mo lock)",
           "",
           "// Layer yield is NOT compounded into balances — it is distributed",
-          "// once as revenue (80% BCI SC / 10% PR / 10% Emergency Reserve)",
+          "// once as revenue (80% BLI SC / 10% PR / 10% Emergency Reserve)",
         ]} />
-        <Formula label="BCI SC balance (revenue term)" lines={[
+        <Formula label="BLI SC balance (revenue term)" lines={[
           "+ Conversion fees x 100%          rwaUSD path, entry + exit",
           "+ Mint/redeem fees x 20%          private path + pre-pool RWA redemptions",
           "+ Pool + APSS x 80%               from retail pool activity",
@@ -585,7 +585,7 @@ export default function BoundLegend({ onClose }) {
           "+ Layer yield x 80%               monthly, on actual tier balances",
           "+ Bound Core float yield x 80%    flat split",
           "",
-          "// Mint/burn of BCI supply happens at the START-of-month price,",
+          "// Mint/burn of BLI supply happens at the START-of-month price,",
           "// so entries and exits change NAV and supply proportionally —",
           "// only fee credits move the price",
         ]} />
@@ -594,7 +594,7 @@ export default function BoundLegend({ onClose }) {
           <div style={{ flex:1, background:T.greenSoft, border:`1px solid ${T.green}22`, borderRadius:8, padding:"12px 14px" }}>
             <div style={{ fontSize:10.5, fontWeight:600, color:T.green, marginBottom:8,
               textTransform:"uppercase", letterSpacing:"0.08em" }}>Moves Price UP</div>
-            {["Fee revenues credited to SC without minting new BCI",
+            {["Fee revenues credited to SC without minting new BLI",
               "Layer yield distribution (80% of blended yield)",
               "Bound Core float yield (flat 80%)",
               "RWA haircut + trade fees (80% share)",
@@ -617,11 +617,11 @@ export default function BoundLegend({ onClose }) {
           </div>
         </div>
 
-        <Note col="amber"><strong>Removed in v4:</strong> earlier drafts described a "monthly appreciation threshold" that re-routed excess revenue to the Protocol Reserve above a 12% annual target. That mechanism is <strong>not part of the current architecture or the simulator</strong> — all fee revenue follows the fixed splits in the distribution table, every month. BCI growth is whatever the revenue engine produces; nothing is capped or managed.</Note>
+        <Note col="amber"><strong>Removed in v4:</strong> earlier drafts described a "monthly appreciation threshold" that re-routed excess revenue to the Protocol Reserve above a 12% annual target. That mechanism is <strong>not part of the current architecture or the simulator</strong> — all fee revenue follows the fixed splits in the distribution table, every month. BLI growth is whatever the revenue engine produces; nothing is capped or managed.</Note>
 
         <Sub>Annualized Index Growth Formula</Sub>
         <Formula label="Compound annualized growth from launch" lines={[
-          "Ann_Growth(t)  =  [ BCI_price(t) / 1.0000 ] ^ (12 / t)  -  1",
+          "Ann_Growth(t)  =  [ BLI_price(t) / 1.0000 ] ^ (12 / t)  -  1",
           "",
           "// t = months from launch",
           "// NOT a return guarantee — transparency/reporting metric",
@@ -631,7 +631,7 @@ export default function BoundLegend({ onClose }) {
         {/* S7 */}
         <SH id="s7" n="7">Bound Core Smart Contract & Float Yield</SH>
         <Sub>Bound Core Architecture — Two-Tier USDC Allocation</Sub>
-        <P>Bound Core holds the USDC backing <strong style={{ color:T.ink }}>idle rwaUSD</strong> — the share of LP deposits that never converted to BCI (default: 2% private + 2% retail). That rwaUSD is a liability with instant exit rights, so its backing is sized for instant redemption first, yield second.</P>
+        <P>Bound Core holds the USDC backing <strong style={{ color:T.ink }}>idle rwaUSD</strong> — the share of LP deposits that never converted to BLI (default: 2% private + 2% retail). That rwaUSD is a liability with instant exit rights, so its backing is sized for instant redemption first, yield second.</P>
         <Formula label="Bound Core composition (v4 two-tier model)" lines={[
           "Liability:   idle rwaUSD in circulation (instant exit, no lock)",
           "Assets:      USDC NAV — funded 1:1 at mint, drained 1:1 at redemption",
@@ -646,12 +646,12 @@ export default function BoundLegend({ onClose }) {
           "",
           "Monthly outflow:  bcOutflowRate% of idle rwaUSD redeemed  // default 2%/mo",
           "",
-          "// Yield is DISTRIBUTED ONCE — flat 80% BCI SC / 20% Protocol Reserve.",
+          "// Yield is DISTRIBUTED ONCE — flat 80% BLI SC / 20% Protocol Reserve.",
           "// It is never retained in Bound Core NAV (no compounding).",
           "// At the default 100% coverage the Yield Position is $0 —",
           "// the stream activates only when coverage is set below 100%.",
         ]} />
-        <Note col="amber"><strong>Changed from v3:</strong> the fixed 70/30 "Float Yield Portfolio" split, the phase schedule (80/20 → 60/40 → 20/80 based on BCI growth), the insurance-premium netting, and the 20% FYP haircut buffer are all gone. The current model is coverage-first: instant-redemption backing is sized explicitly, only the surplus earns yield, and the split is a flat 80/20 with no phases.</Note>
+        <Note col="amber"><strong>Changed from v3:</strong> the fixed 70/30 "Float Yield Portfolio" split, the phase schedule (80/20 → 60/40 → 20/80 based on BLI growth), the insurance-premium netting, and the 20% FYP haircut buffer are all gone. The current model is coverage-first: instant-redemption backing is sized explicitly, only the surplus earns yield, and the split is a flat 80/20 with no phases.</Note>
 
         {/* S8 */}
         <SH id="s8" n="8">Bound Liquidity Layer — 4-Tier Waterfall & LCR</SH>
@@ -659,7 +659,7 @@ export default function BoundLegend({ onClose }) {
         <Formula label="Layer tiers — allocated monthly, in order" lines={[
           "Tier 1  USDC Buffer (Aave)      ~3.5%/yr  ·  T+0",
           "  Buffer%  =  MAX( min buffer (5%),",
-          "                   BCI redemption coverage:  daily LP outflow x 14d,",
+          "                   BLI redemption coverage:  daily LP outflow x 14d,",
           "                   RWA liq coverage:         daily served RWA liq x 14d )",
           "  Capped at 80% of the Layer",
           "",
@@ -675,7 +675,7 @@ export default function BoundLegend({ onClose }) {
           "  each market draining at its own issuerRedemptionDays (T+30-T+120)",
           "",
           "Blended_yield  =  Σ ( tier balance x tier rate )  /  Layer",
-          "// Distributed once: 80% BCI SC · 10% Protocol Reserve · 10% Emergency Reserve",
+          "// Distributed once: 80% BLI SC · 10% Protocol Reserve · 10% Emergency Reserve",
         ]} />
 
         <Sub>LCR & Stress Modes</Sub>
@@ -697,7 +697,7 @@ export default function BoundLegend({ onClose }) {
         <Sub>Monthly Capacity Order (who gets served first)</Sub>
         <Formula label="Strict allocation order, every month" lines={[
           "Step 1:  Size available USDC off THIS month's Layer (post LP flows)",
-          "Step 2:  Serve BCI redemptions FIRST  — LP exits are an obligation",
+          "Step 2:  Serve BLI redemptions FIRST  — LP exits are an obligation",
           "Step 3:  Apply the LCR guard          — cap RWA acceptance at the floor",
           "Step 4:  Serve RWA demand pro-rata across markets with what remains",
           "",
@@ -738,8 +738,8 @@ export default function BoundLegend({ onClose }) {
               desc:"$500K seeded and insured, then fed continuously by 10% of gross Layer yield plus PR top-ups toward its target (10% → 25% of at-risk assets). First absorber of any RWA default or venue loss." },
             { step:"2nd", label:"Insurance",
               desc:"Single combined policy covering RWA defaults and yield-venue exploit events, engaged alongside the ER for losses beyond its balance." },
-            { step:"3rd — last resort", label:"BCI Index Ratio Reduction",
-              desc:"BCI SC balance is debited directly. BCI collateral performance falls. The ER + insurance layers make this scenario remote. This is the disclosed risk BCI holders accept." },
+            { step:"3rd — last resort", label:"BLI Index Ratio Reduction",
+              desc:"BLI SC balance is debited directly. BLI collateral performance falls. The ER + insurance layers make this scenario remote. This is the disclosed risk BLI holders accept." },
           ].map(({ step, label, desc }) => (
             <div key={step} style={{ display:"flex", gap:12, marginBottom:14, alignItems:"flex-start" }}>
               <Tag col="muted">{step}</Tag>
@@ -773,24 +773,24 @@ export default function BoundLegend({ onClose }) {
         {/* S10 */}
         <SH id="s10" n="10">User Economics — Who Pays What</SH>
         <ParticipantCard type="Private LP" pays={[
-          "Mint rwaUSD: 0.3% (80% BCI / 20% PR)",
-          "Convert rwaUSD to BCI: 0.88% full or 0.44% with BND",
-          "Exit: 0.88% conversion + 0.3% redeem (80% BCI / 20% PR)",
+          "Mint rwaUSD: 0.3% (80% BLI / 20% PR)",
+          "Convert rwaUSD to BLI: 0.88% full or 0.44% with BND",
+          "Exit: 0.88% conversion + 0.3% redeem (80% BLI / 20% PR)",
           "Commitment: 6-month capital lock, then scheduled monthly exits",
         ]} earns={[
-          "BCI collateral performance (simulated ~8-9% annualized at M12, Default preset)",
+          "BLI collateral performance (simulated ~8-9% annualized at M12, Default preset)",
           "Performance from: pool fees, APSS, RWA fees, haircut, yield, float",
           "Better than private credit: comparable return profile, on-chain and auditable",
-          "Auditable: Layer NAV and BCI SC balance verifiable on-chain at all times",
+          "Auditable: Layer NAV and BLI SC balance verifiable on-chain at all times",
         ]} />
         <ParticipantCard type="Retail LP (Pool)" pays={[
           "Buy rwaUSD on pool: 0.3% fee + natural slippage (APSS invisible to user)",
-          "Convert to BCI: 0.88% or 0.44% with BND",
+          "Convert to BLI: 0.88% or 0.44% with BND",
           "Exit: 0.88% conversion + 0.3% pool + slippage",
         ]} earns={[
-          "Same BCI collateral performance as private LP",
+          "Same BLI collateral performance as private LP",
           "No minimum — accessible to any wallet",
-          "rwaUSD usable as DeFi collateral even before BCI conversion",
+          "rwaUSD usable as DeFi collateral even before BLI conversion",
         ]} />
         <ParticipantCard type="RWA Holder (Instant Exit)" pays={[
           "Haircut: 0.5% baseline, dynamic (rises with issuer concentration or stress)",
@@ -807,7 +807,7 @@ export default function BoundLegend({ onClose }) {
         ]} earns={[
           "$1 peg stability defended by APSS",
           "DeFi composability: collateral, LP positions, payments",
-          "Passively contributes float yield to BCI SC and Protocol Reserve",
+          "Passively contributes float yield to BLI SC and Protocol Reserve",
         ]} />
         <ParticipantCard type="BND Governance Holder" pays={[
           "BND tokens burned when used for conversion fee payment",
@@ -822,48 +822,48 @@ export default function BoundLegend({ onClose }) {
         <SH id="s11" n="11">Core Formulas — Complete Reference</SH>
         <P>All formulas match the simulator engine exactly. Presented one per line for clarity.</P>
 
-        <Sub>1. BCI Price</Sub>
+        <Sub>1. BLI Price</Sub>
         <Formula label="Fundamental pricing equation" lines={[
-          "BCI_price(t)  =  ( Layer_NAV(t)  +  BCI_SC_Balance(t) )  /  BCI_supply(t)",
+          "BLI_price(t)  =  ( Layer_NAV(t)  +  BLI_SC_Balance(t) )  /  BLI_supply(t)",
           "",
-          "// Unit: rwaUSD per BCI token · starts at 1.0000 rwaUSD",
+          "// Unit: rwaUSD per BLI token · starts at 1.0000 rwaUSD",
           "// Layer_NAV = private + retail LP collateral in the Liquidity Layer",
-          "// BCI_SC_Balance = accumulated fee revenue ONLY",
+          "// BLI_SC_Balance = accumulated fee revenue ONLY",
         ]} />
 
         <Sub>2. Ledger Updates</Sub>
         <Formula label="Monthly updates — capital and revenue kept separate" lines={[
           "Layer_NAV(t)  =  Layer_NAV(t-1)  +  LP_in_net(t)  -  LP_out(t)",
-          "BCI_SC(t)     =  BCI_SC(t-1)  +  Total_to_BCI(t)",
+          "BLI_SC(t)     =  BLI_SC(t-1)  +  Total_to_BLI(t)",
           "",
-          "Total_to_BCI  =  bci_pool  +  bci_entry  +  bci_conv",
-          "               + bci_maint  +  bci_rwa  +  bci_morpho  +  bci_float",
+          "Total_to_BLI  =  bli_pool  +  bli_entry  +  bli_conv",
+          "               + bli_maint  +  bli_rwa  +  bli_morpho  +  bli_float",
           "",
           "// Layer yield is never compounded into Layer_NAV — distributed once",
         ]} />
 
-        <Sub>3. BCI Supply Update</Sub>
+        <Sub>3. BLI Supply Update</Sub>
         <Formula label="Token minting and burning — both at START-of-month price" lines={[
-          "BCI_minted(t)  =  LP_in_net(t)  /  BCI_price(t-1)",
-          "BCI_burned(t)  =  LP_out(t)     /  BCI_price(t-1)",
-          "BCI_supply(t)  =  BCI_supply(t-1) + BCI_minted(t) - BCI_burned(t)",
+          "BLI_minted(t)  =  LP_in_net(t)  /  BLI_price(t-1)",
+          "BLI_burned(t)  =  LP_out(t)     /  BLI_price(t-1)",
+          "BLI_supply(t)  =  BLI_supply(t-1) + BLI_minted(t) - BLI_burned(t)",
           "",
           "// LP entries/exits: NAV and supply change proportionally — no price impact",
           "// Fee credits: SC grows, supply unchanged — price rises",
         ]} />
 
-        <Sub>4. BCI Revenue Components</Sub>
-        <Formula label="Each stream credited to BCI SC (default rates)" lines={[
-          "bci_pool    =  Pool_volume  x  0.008  x  0.80        // 0.3% pool + 0.5% APSS",
-          "bci_entry   =  (mint fee + redeem fee + pre-pool RWA redeem fee)  x  0.80",
-          "bci_conv    =  all conversion fees, rwaUSD path       // 100% to SC",
+        <Sub>4. BLI Revenue Components</Sub>
+        <Formula label="Each stream credited to BLI SC (default rates)" lines={[
+          "bli_pool    =  Pool_volume  x  0.008  x  0.80        // 0.3% pool + 0.5% APSS",
+          "bli_entry   =  (mint fee + redeem fee + pre-pool RWA redeem fee)  x  0.80",
+          "bli_conv    =  all conversion fees, rwaUSD path       // 100% to SC",
           "               (entry + exit, private + retail, at 0.88% x (1 - BND_usage))",
-          "bci_maint   =  Σ active markets' maint fee  /  12  x  0.20",
-          "bci_rwa     =  (RWA trade revenue + haircut revenue)  x  0.80",
+          "bli_maint   =  Σ active markets' maint fee  /  12  x  0.20",
+          "bli_rwa     =  (RWA trade revenue + haircut revenue)  x  0.80",
           "               // per-market rates on SERVED volume, incl. minting side",
-          "bci_morpho  =  Layer_yield_gross  x  0.80",
+          "bli_morpho  =  Layer_yield_gross  x  0.80",
           "               // Σ (tier balance x tier rate / 12) across USDC/Morpho/Enhanced",
-          "bci_float   =  BC_yield_position  x  BC_rate / 12  x  0.80   // flat",
+          "bli_float   =  BC_yield_position  x  BC_rate / 12  x  0.80   // flat",
         ]} />
 
         <Sub>5. Protocol Reserve Revenue Components</Sub>
@@ -882,12 +882,12 @@ export default function BoundLegend({ onClose }) {
         ]} />
 
         <Sub>6. Effective Conversion Rate</Sub>
-        <Formula label="BCI SC receives only the rwaUSD-path portion" lines={[
-          "BCI_conv_revenue  =  Conv_volume  x  (1 - BND_usage)  x  0.0088",
+        <Formula label="BLI SC receives only the rwaUSD-path portion" lines={[
+          "BLI_conv_revenue  =  Conv_volume  x  (1 - BND_usage)  x  0.0088",
           "",
-          "// BND portion is burned — zero to BCI SC",
+          "// BND portion is burned — zero to BLI SC",
           "// Example at 10% BND usage (default):",
-          "  BCI_conv  =  Conv_vol  x  0.90  x  0.0088  ≈  Conv_vol x 0.80%",
+          "  BLI_conv  =  Conv_vol  x  0.90  x  0.0088  ≈  Conv_vol x 0.80%",
         ]} />
 
         <Sub>7. Layer Allocation (4-Tier Waterfall)</Sub>
@@ -906,7 +906,7 @@ export default function BoundLegend({ onClose }) {
           "Liq_demand_mk  =  AUM_mk  x  liqRate_mk / 100        // e.g. 0.8%/mo",
           "Mint_demand_mk =  AUM_mk  x  mintRate_mk / 100       // from mintStartMonth",
           "",
-          "Served volume  =  MIN( demand,  Layer capacity after BCI redemptions",
+          "Served volume  =  MIN( demand,  Layer capacity after BLI redemptions",
           "                       and the LCR guard )  — pro-rata across markets",
           "Minting serves =  MIN( that market's HELD inventory,  mint demand )",
         ]} />
@@ -923,7 +923,7 @@ export default function BoundLegend({ onClose }) {
 
         <Sub>10. Annualized Index Growth</Sub>
         <Formula label="Compound annualized growth from launch" lines={[
-          "Ann_Growth(t)  =  [ BCI_price(t) / 1.0000 ] ^ (12 / t)  -  1",
+          "Ann_Growth(t)  =  [ BLI_price(t) / 1.0000 ] ^ (12 / t)  -  1",
           "// t = months from launch · reporting metric, not a return guarantee",
         ]} />
 
@@ -931,7 +931,7 @@ export default function BoundLegend({ onClose }) {
         <SH id="s12" n="12">Scenario Definitions</SH>
         <P>The simulator ships one calibrated <strong style={{ color:T.ink }}>Default</strong> scenario over a hard 36-month horizon; any slider change becomes a <strong style={{ color:T.ink }}>Custom</strong> scenario. (The v3 Bear/Base/Bull presets were retired — every assumption is now individually adjustable instead.)</P>
         {[
-          { name:"Default", desc:"Calibrated base case: moderate institutional inflows, retail pool from Month 4, ten named RWA markets launching staggered between Month 1 and Month 28 — each with its own AUM, growth, liquidation/minting rates, haircut, and issuer redemption period.", params:[["Private seed","$3.2M (M1)"],["LP growth","$500K/mo"],["BCI conversion","98% (private & retail)"],["Private outflow","2.5%/mo after 6-mo lock"],["Pool start","M4 · $200K"],["RWA markets","10, staggered M1-M28"],["Horizon","36 months"]], implication:"Demand-constrained throughout: RWA demand exceeds Layer capacity in all 36 months, so growth is set by LP inflows, not by market demand. BCI annualized growth ≈ 8-9% at M12 under default assumptions. LCR stays HEALTHY all 36 months with the 1.5x acceptance guard." },
+          { name:"Default", desc:"Calibrated base case: moderate institutional inflows, retail pool from Month 4, ten named RWA markets launching staggered between Month 1 and Month 28 — each with its own AUM, growth, liquidation/minting rates, haircut, and issuer redemption period.", params:[["Private seed","$3.2M (M1)"],["LP growth","$500K/mo"],["BLI conversion","98% (private & retail)"],["Private outflow","2.5%/mo after 6-mo lock"],["Pool start","M4 · $200K"],["RWA markets","10, staggered M1-M28"],["Horizon","36 months"]], implication:"Demand-constrained throughout: RWA demand exceeds Layer capacity in all 36 months, so growth is set by LP inflows, not by market demand. BLI annualized growth ≈ 8-9% at M12 under default assumptions. LCR stays HEALTHY all 36 months with the 1.5x acceptance guard." },
           { name:"Custom", desc:"Any slider movement — LP flows, fees, conversion rates, market parameters, Layer/Bound Core configuration — recomputes the full 36-month simulation instantly. All tables and charts read from the same single engine run.", params:[["Sliders","~60 across 8 sections"],["Recompute","Instant, full-horizon"],["Verification","30 invariant families"]], implication:"Use the assumptions page to stress any input; the Simulation Results page always reflects the current inputs." },
         ].map(({ name, desc, params, implication }) => (
           <div key={name} style={{ background:T.bgEl, border:`1px solid ${T.border}`,
@@ -960,21 +960,21 @@ export default function BoundLegend({ onClose }) {
         <div style={{ marginTop:10 }}>
           {[
             ["rwaUSD", "BOUND's 100% USDC-backed stablecoin. Backed by Bound Core SC. RWA never backs rwaUSD. Peg defended atomically by APSS on Uniswap v4."],
-            ["BCI (Bound Collateralization Index)", "Index token tracking Bound Liquidity Layer collateral performance. Price = (Layer NAV + BCI SC balance) / BCI Supply, in rwaUSD. Never on secondary market. Not a yield product — language is 'index growth' / 'collateral performance.'"],
-            ["BND (BOUND Governance Token)", "Governance token with conversion fee discount utility. ~50% discount when used (0.44% vs 0.88%). 100% burned on use. Zero benefit to BCI SC from BND payments."],
+            ["BLI (Bound Liquidity Index)", "Index token tracking Bound Liquidity Layer collateral performance. Price = (Layer NAV + BLI SC balance) / BLI Supply, in rwaUSD. Never on secondary market. Not a yield product — language is 'index growth' / 'collateral performance.'"],
+            ["BND (BOUND Governance Token)", "Governance token with conversion fee discount utility. ~50% discount when used (0.44% vs 0.88%). 100% burned on use. Zero benefit to BLI SC from BND payments."],
             ["APSS (Atomic Peg Stabilization System)", "Core peg defense. Executes corrective trades in same block as every pool trade. Not a user fee — protocol captures arbitrage that would otherwise go to MEV bots."],
-            ["BCI SC (BCI Smart Contract)", "Running rwaUSD ledger of accumulated FEE REVENUE only — LP capital lives in the Liquidity Layer, not here. Fee credits grow the SC without minting supply, which is what moves BCI price."],
+            ["BLI SC (BLI Smart Contract)", "Running rwaUSD ledger of accumulated FEE REVENUE only — LP capital lives in the Liquidity Layer, not here. Fee credits grow the SC without minting supply, which is what moves BLI price."],
             ["Bound Core SC", "Holds the USDC backing idle rwaUSD (the non-converting share of LP deposits). Two tiers: raw USDC sized to coverage% × idle rwaUSD (default 100%, 0% yield, instant redemption), plus a USDC Yield Position for any surplus NAV (default 4.5%/yr, flat 80/20 split)."],
-            ["Bound Liquidity Layer", "Capital pool backing all BCI tokens. 4-tier monthly waterfall: USDC buffer (Aave) → Morpho vaults → Enhanced yield → RWA held inventory, with LCR-based stress modes."],
+            ["Bound Liquidity Layer", "Capital pool backing all BLI tokens. 4-tier monthly waterfall: USDC buffer (Aave) → Morpho vaults → Enhanced yield → RWA held inventory, with LCR-based stress modes."],
             ["USDC Buffer (Tier 1)", "Aave-held USDC sized each month to the LARGEST of: 5% floor, 14 days of LP exits, 14 days of served RWA liquidations. T+0, ~3.5%/yr. Capped at 80% of Layer."],
             ["Morpho / Enhanced (Tiers 2-3)", "Morpho vaults (~4.5%/yr, min 20% reserve share) and Enhanced yield (~7.5%/yr, capped at 20% of Layer). Both T+0-T+1 liquid."],
             ["RWA Held Inventory (Tier 4)", "RWA positions bought from liquidating holders, held until matched with minting demand or matured. Illiquid. Capped at 10% of Layer per market, 20% category-wide; overflow drains through each market's own issuer pipeline (T+30-T+120)."],
             ["LCR (Liquidity Coverage Ratio)", "Liquid capital (Tiers 1-3) ÷ near-term obligations (LP exits due + RWA volume actually accepted). Modes: HEALTHY ≥1.5, WARNING ≥1.0, STRESS ≥0.7, EMERGENCY below. An acceptance guard keeps projected month-end LCR above a configured floor (default 1.5x)."],
-            ["USDC Yield Position", "Bound Core's Tier 2 — USDC NAV above the instant-redemption coverage requirement. Earns the configured rate (default 4.5%/yr), paid out once, flat 80% BCI SC / 20% PR. $0 at the default 100% coverage."],
+            ["USDC Yield Position", "Bound Core's Tier 2 — USDC NAV above the instant-redemption coverage requirement. Earns the configured rate (default 4.5%/yr), paid out once, flat 80% BLI SC / 20% PR. $0 at the default 100% coverage."],
             ["Emergency Reserve (ER)", "$500K seed, insured. Fed by 10% of gross Layer yield every month plus PR top-ups (capped at 10% of gross monthly PR) toward its target: 10% → 20% of at-risk assets over the 36-month horizon (25% cap beyond)."],
-            ["Loss Waterfall", "Order: (1) Emergency Reserve, (2) insurance policy, (3) BCI index reduction. BCI holders are the absolute last resort."],
-            ["Haircut", "Discount at which BOUND buys RWA below NAV. Per-market baseline (0.5% default), escalated by a 3-step ladder as held inventory approaches the 10% per-market / 20% category caps. Minting-side haircut is reduced by a stress-linked discount ladder (one-month lag). Revenue: 80% BCI / 20% PR."],
-            ["Collateral Surplus", "Revenue credited to BCI SC. Includes USDC released from Bound Core when rwaUSD is burned (conversion fee), plus fee shares and yield distributions. This drives BCI price."],
+            ["Loss Waterfall", "Order: (1) Emergency Reserve, (2) insurance policy, (3) BLI index reduction. BLI holders are the absolute last resort."],
+            ["Haircut", "Discount at which BOUND buys RWA below NAV. Per-market baseline (0.5% default), escalated by a 3-step ladder as held inventory approaches the 10% per-market / 20% category caps. Minting-side haircut is reduced by a stress-linked discount ladder (one-month lag). Revenue: 80% BLI / 20% PR."],
+            ["Collateral Surplus", "Revenue credited to BLI SC. Includes USDC released from Bound Core when rwaUSD is burned (conversion fee), plus fee shares and yield distributions. This drives BLI price."],
             ["Issuer Redemption Pipeline", "Per-market ledger of RWA inventory sent back to its issuer for redemption. Each market's pipeline returns cash at that market's own issuerRedemptionDays (T+30-T+120) — no blended average. Pipeline cash counts as returning liquidity, not held risk."],
             ["T+0", "Instant settlement. Guaranteed for RWA holders. NOT for LP holders — LP redemption tied to RWA issuer period."],
             ["MiCA", "EU Markets in Crypto-Assets Regulation. rwaUSD positioned as stable value access token. DeFi deployments under ongoing legal review with VD Law Group."],
@@ -985,7 +985,7 @@ export default function BoundLegend({ onClose }) {
         <div style={{ padding:"12px 16px", background:T.bgSoft, border:`1px solid ${T.border}`,
           borderRadius:8, fontSize:11.5, color:T.ink3, lineHeight:1.75 }}>
           <strong style={{ color:T.ink, fontSize:12.5 }}>BOUND Protocol Reference Document v4.0</strong><br />
-          Architecture v4, July 2026 — synchronized with simulator v8 after the full 10-section audit. Key changes from v3: BCI price = (Layer NAV + BCI SC) ÷ supply — LP capital and fee revenue in separate ledgers, mint/burn at start-of-month price. Liquidity Layer = 4-tier waterfall (USDC/Morpho/Enhanced/RWA held) with LCR stress modes and a 1.5x RWA acceptance guard — replaces the ILB/AYL/EYL velocity model. BCI redemptions senior to RWA service; per-market issuer pipelines at each market's own T+30-T+120. Bound Core = two-tier coverage model (raw USDC + USDC Yield Position), float yield flat 80/20 — phase schedule removed. Conversion fee 0.88%. Private mint/redeem and RWA trade/haircut splits flipped to 80% BCI SC / 20% Protocol Reserve (July 2026). Monthly appreciation threshold removed. Concentration: gentle 3-step escalation at 10% per-market / 20% category caps — punitive cliff removed. ER fed by 10% of Layer yield + capped PR top-ups; 36-month horizon throughout. Ten named RWA markets with individual parameters.<br />
+          Architecture v4, July 2026 — synchronized with simulator v8 after the full 10-section audit. Key changes from v3: BLI price = (Layer NAV + BLI SC) ÷ supply — LP capital and fee revenue in separate ledgers, mint/burn at start-of-month price. Liquidity Layer = 4-tier waterfall (USDC/Morpho/Enhanced/RWA held) with LCR stress modes and a 1.5x RWA acceptance guard — replaces the ILB/AYL/EYL velocity model. BLI redemptions senior to RWA service; per-market issuer pipelines at each market's own T+30-T+120. Bound Core = two-tier coverage model (raw USDC + USDC Yield Position), float yield flat 80/20 — phase schedule removed. Conversion fee 0.88%. Private mint/redeem and RWA trade/haircut splits flipped to 80% BLI SC / 20% Protocol Reserve (July 2026). Monthly appreciation threshold removed. Concentration: gentle 3-step escalation at 10% per-market / 20% category caps — punitive cliff removed. ER fed by 10% of Layer yield + capped PR top-ups; 36-month horizon throughout. Ten named RWA markets with individual parameters.<br />
           <span style={{ color:T.red }}>Illustrative only. Not a financial projection or investment advice.</span>
         </div>
       </div>

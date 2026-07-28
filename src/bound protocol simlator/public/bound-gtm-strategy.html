@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go-to-Market Strategy — BOUND Protocol</title>
+<style>
+  :root{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8;
+    --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD;
+    --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --mono:'SF Mono','JetBrains Mono','Roboto Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+      --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+      --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+      --good:#79C6A9; --goodSoft:#16241C;
+      --warn:#E2AC48; --warnSoft:#2A2113;
+      --crit:#E28168; --critSoft:#2C1913;
+      --bar:#4E9E82; --barTrack:#232C24;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F6F4EC; --surface:#FFFFFF; --raise:#FBFAF4;
+    --ink:#16201B; --ink2:#3B4640; --ink3:#6B7169; --line:#E4E1D5; --line2:#EEEBE0;
+    --accent:#1F4D3F; --accent2:#2C6A57; --accentSoft:#E6EFE9;
+    --good:#2C6A57; --goodSoft:#E4EFE8; --warn:#9A6B0F; --warnSoft:#F5ECD7;
+    --crit:#9E3A2C; --critSoft:#F4E2DD; --bar:#3C7A64; --barTrack:#EAE7DB;
+    --shadow:0 1px 2px rgba(20,40,30,.05),0 6px 24px rgba(20,40,30,.05);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E130F; --surface:#151B16; --raise:#1A211B;
+    --ink:#ECEFE8; --ink2:#BAC2B9; --ink3:#889086; --line:#28322A; --line2:#1F271F;
+    --accent:#79C6A9; --accent2:#5FAE90; --accentSoft:#17251E;
+    --good:#79C6A9; --goodSoft:#16241C; --warn:#E2AC48; --warnSoft:#2A2113;
+    --crit:#E28168; --critSoft:#2C1913; --bar:#4E9E82; --barTrack:#232C24;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 28px}
+  h1,h2,h3,h4{text-wrap:balance;line-height:1.15}
+  p{margin:0 0 14px}
+  a{color:var(--accent2)}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mast{border-bottom:1px solid var(--line);background:radial-gradient(120% 140% at 85% -10%,var(--accentSoft) 0%,transparent 55%)}
+  .mast-inner{max-width:860px;margin:0 auto;padding:54px 28px 40px}
+  .brandrow{display:flex;align-items:center;gap:11px;margin-bottom:34px}
+  .infinity{width:26px;height:15px;flex:0 0 auto}
+  .infinity svg{display:block}
+  .brandname{font-weight:600;letter-spacing:.02em;font-size:15px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mast h1{font-family:var(--serif);font-weight:600;font-size:clamp(38px,7vw,62px);letter-spacing:-.015em;margin:14px 0 18px;color:var(--ink)}
+  .mast .lede{font-size:18px;color:var(--ink2);max-width:60ch;margin:0}
+  .metarow{display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+  .metarow .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+  .metarow .v{font-size:14.5px;font-weight:500;color:var(--ink)}
+  .verdict{margin:38px 0 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .verdict-top{display:flex;flex-wrap:wrap;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line2)}
+  .grade{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1;color:var(--good)}
+  .verdict-top .vt{flex:1;min-width:220px}
+  .verdict-top .vt h2{font-size:17px;margin:0 0 3px}
+  .verdict-top .vt p{margin:0;color:var(--ink3);font-size:13.5px}
+  .scorewrap{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .pill.g{background:var(--goodSoft);color:var(--good);border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .pill.w{background:var(--warnSoft);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .pill.c{background:var(--critSoft);color:var(--crit);border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+  .verdict-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+  .verdict-grid .cell{padding:16px 20px;border-right:1px solid var(--line2)}
+  .verdict-grid .cell:last-child{border-right:none}
+  .verdict-grid .n{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .verdict-grid .l{font-size:12px;color:var(--ink3);margin-top:2px}
+  .toc{margin:40px 0 8px;padding:24px 26px;background:var(--raise);border:1px solid var(--line);border-radius:12px}
+  .toc h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 14px;font-weight:600}
+  .toc ol{margin:0;padding:0;list-style:none;columns:2;column-gap:34px}
+  .toc li{break-inside:avoid;padding:5px 0;border-bottom:1px solid var(--line2);display:flex;gap:10px;align-items:baseline;font-size:14px}
+  .toc li .num{font-family:var(--mono);font-size:11.5px;color:var(--accent2);min-width:20px}
+  .toc li a{color:var(--ink2);text-decoration:none}
+  .toc li a:hover{color:var(--accent2)}
+  section{padding:46px 0 8px;border-top:1px solid var(--line);margin-top:38px}
+  section:first-of-type{border-top:none}
+  .sec-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+  .sec-num{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.06em;padding-top:9px;min-width:34px}
+  .sec-head h2{font-family:var(--serif);font-size:29px;font-weight:600;margin:0;letter-spacing:-.01em;flex:1}
+  .rating{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:6px 11px;border-radius:7px;text-transform:uppercase;white-space:nowrap;margin-top:6px}
+  .rating.g{background:var(--goodSoft);color:var(--good)}
+  .rating.w{background:var(--warnSoft);color:var(--warn)}
+  .rating.c{background:var(--critSoft);color:var(--crit)}
+  .rating.i{background:var(--line2);color:var(--ink3)}
+  .part-label{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent2);font-weight:600;margin:56px 0 -14px;text-align:center}
+  h4.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:26px 0 10px;font-weight:600;display:flex;align-items:center;gap:10px}
+  h4.sub::after{content:"";flex:1;height:1px;background:var(--line2)}
+  ul.find{margin:0 0 6px;padding:0;list-style:none}
+  ul.find li{position:relative;padding:6px 0 6px 22px;font-size:15px;color:var(--ink2);border-bottom:1px solid var(--line2)}
+  ul.find li:last-child{border-bottom:none}
+  ul.find li::before{content:"";position:absolute;left:2px;top:13px;width:6px;height:6px;border-radius:2px;background:var(--accent2)}
+  ul.find li b{color:var(--ink);font-weight:600}
+  ul.find.risk li::before{background:var(--warn);border-radius:50%}
+  .tbl-scroll{overflow-x:auto;margin:8px 0 6px;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  thead th{background:var(--raise);text-align:right;padding:11px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  tbody td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line2);font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  tbody td:first-child{color:var(--ink);font-weight:500}
+  tbody tr.tot td{background:var(--raise);font-weight:600;color:var(--ink)}
+  .cap{font-size:12.5px;color:var(--ink3);margin:8px 2px 0;font-style:italic}
+  .chart{margin:12px 0 6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
+  .chart .ct{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px;font-weight:600}
+  .barrow{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;padding:5px 0;font-size:13px}
+  .barrow .lab{color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{height:16px;background:var(--barTrack);border-radius:5px;overflow:hidden;position:relative}
+  .fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent2),var(--bar))}
+  .barrow .val{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .note{border-left:3px solid var(--accent2);background:var(--raise);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:14.5px;color:var(--ink2)}
+  .note.warn{border-color:var(--warn);background:var(--warnSoft)}
+  .note.crit{border-color:var(--crit);background:var(--critSoft)}
+  .note b{color:var(--ink)}
+  .note .nh{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink3);display:block;margin-bottom:5px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi .kn{font-family:var(--serif);font-size:25px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+  .kpi .kn.g{color:var(--good)} .kpi .kn.w{color:var(--warn)} .kpi .kn.c{color:var(--crit)}
+  .kpi .kl{font-size:12px;color:var(--ink3);margin-top:5px}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .mcard h4{margin:0 0 4px;font-size:15px;color:var(--ink);font-family:var(--sans);font-weight:600}
+  .mcard .tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);font-weight:600}
+  .mcard p{font-size:13.5px;color:var(--ink2);margin:8px 0 0}
+  footer{margin:60px 0 0;border-top:1px solid var(--line);padding:30px 0 60px;color:var(--ink3);font-size:12.5px}
+  footer .disc{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;line-height:1.55}
+  @media(max-width:680px){
+    .verdict-grid{grid-template-columns:repeat(2,1fr)}
+    .verdict-grid .cell:nth-child(2){border-right:none}
+    .toc ol{columns:1}
+    .mgrid{grid-template-columns:1fr}
+    .barrow{grid-template-columns:96px 1fr 60px;gap:8px}
+    .sec-head h2{font-size:24px}
+  }
+  @media(prefers-reduced-motion:no-preference){
+    .fill{animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+    @keyframes grow{from{transform:scaleX(0);transform-origin:left}to{transform:scaleX(1)}}
+  }
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;border-radius:4px}
+
+body{background-color:var(--paper);
+  background-image:
+    radial-gradient(58% 46% at 86% -6%, color-mix(in srgb,var(--accent2) 26%,transparent), transparent 60%),
+    radial-gradient(52% 42% at 2% 6%, color-mix(in srgb,var(--accent2) 15%,transparent), transparent 58%),
+    radial-gradient(60% 50% at 110% 40%, color-mix(in srgb,var(--accent) 16%,transparent), transparent 56%),
+    radial-gradient(50% 44% at -10% 82%, color-mix(in srgb,var(--accent2) 12%,transparent), transparent 55%),
+    radial-gradient(46% 40% at 78% 108%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 55%);
+  background-attachment:fixed;background-repeat:no-repeat;}
+.mast{background:
+  radial-gradient(120% 150% at 85% -14%, color-mix(in srgb,var(--accent2) 30%,transparent) 0%, transparent 56%),
+  radial-gradient(90% 120% at 6% -30%, color-mix(in srgb,var(--accent) 22%,transparent) 0%, transparent 52%);
+  border-bottom:1px solid var(--line);}
+.layout{display:flex;align-items:flex-start;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;flex:0 0 262px;width:262px;overflow-y:auto;
+  background:color-mix(in srgb,var(--surface) 78%,transparent);border-right:1px solid var(--line);
+  padding:26px 0;z-index:5}
+.sb-head{padding:0 20px 18px;border-bottom:1px solid var(--line2);margin-bottom:8px}
+.sb-title{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--ink);letter-spacing:-.01em;line-height:1.1}
+.sb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:6px}
+.sb-back{margin-top:16px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid var(--line);background:var(--raise);color:var(--ink2);font-family:var(--sans);text-align:left}
+.sb-back:hover{border-color:var(--accent2);color:var(--accent2)}
+.snav{padding:2px 12px 20px}
+.snav a{display:flex;gap:9px;align-items:baseline;padding:7px 9px;border-radius:7px;text-decoration:none;
+  color:var(--ink2);font-size:13px;line-height:1.3;border:1px solid transparent;transition:background .12s,color .12s}
+.snav a:hover{background:var(--raise);color:var(--ink)}
+.snav a.active{background:var(--accentSoft);color:var(--accent);border-color:color-mix(in srgb,var(--accent2) 28%,transparent);font-weight:600}
+.snav-num{font-family:var(--mono);font-size:11px;color:var(--accent2);min-width:20px;flex-shrink:0}
+.content{flex:1;min-width:0}
+.content .mast-inner{max-width:940px;margin:0;padding:44px 44px 34px}
+.content .wrap{max-width:940px;margin:0;padding:0 44px}
+table{font-size:13px}th,td{padding:8px 10px}
+/* Most tables in this document carry prose, not figures. base.css right-aligns
+   every body cell for financial tables, so these overrides have to match its
+   tbody-td specificity to take effect. Numeric columns are opted back in. */
+tbody td{font-family:var(--sans);white-space:normal;text-align:left}
+thead th{text-align:left}
+/* numeric columns, per table */
+#budget tbody td:nth-child(3),#budget tbody td:nth-child(4),
+#stages tbody td:nth-child(n+2),
+#targets tbody td:nth-child(n+2){font-family:var(--mono);font-variant-numeric:tabular-nums;
+  white-space:nowrap;text-align:right}
+#budget thead th:nth-child(3),#budget thead th:nth-child(4),
+#stages thead th:nth-child(n+2),
+#targets thead th:nth-child(n+2){text-align:right}
+/* chapter 9 opens with a prose gates table before the numeric one */
+#targets table:first-of-type tbody td{font-family:var(--sans);white-space:normal;text-align:left}
+#targets table:first-of-type thead th{text-align:left}
+/* Categorical chart ramp — base.css ships only greens. */
+:root{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;--c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+@media (prefers-color-scheme:dark){
+  :root{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;--c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}}
+:root[data-theme="light"]{--c1:#1F4D3F;--c2:#2D5D8C;--c3:#9A6B0F;--c4:#4E9E82;--c5:#8A5A9E;--c6:#9E3A2C;--c7:#5F7A6E;--c8:#B08A3E}
+:root[data-theme="dark"]{--c1:#79C6A9;--c2:#7FA8DC;--c3:#E2AC48;--c4:#4E9E82;--c5:#B792CE;--c6:#E28168;--c7:#93A79C;--c8:#D4B776}
+.cv{width:100%;height:auto;display:block;overflow:visible}
+.cv .grid{stroke:var(--line);stroke-width:1}
+.cv .axis{stroke:var(--line2);stroke-width:1.5}
+.cv .stem{stroke:var(--line2);stroke-width:1;stroke-dasharray:2 3}
+.cv .ax{fill:var(--ink3);font-family:var(--mono);font-size:10.5px}
+.cv .ac{text-anchor:middle}.cv .ar{text-anchor:end}
+.cv .vl{fill:var(--ink);font-family:var(--mono);font-size:12px;font-weight:600;text-anchor:middle}
+.cv .lg{fill:var(--ink2);font-family:var(--sans);font-size:12.5px}
+.cv .lg.strong{fill:var(--ink);font-family:var(--mono);font-size:12px;font-weight:600}
+.cv .pb{fill:#fff;font-family:var(--sans);font-size:12.5px;font-weight:600;text-anchor:middle}
+.cv .lnm{fill:var(--ink);font-family:var(--sans);font-size:12.5px;font-weight:600}
+.cv .swc{fill:var(--ink2);font-family:var(--sans);font-size:10.5px}
+.cv .gid{fill:#fff;font-family:var(--mono);font-size:10.5px;font-weight:700}
+.cv .gidbg{fill:var(--accent2)}
+.cv .gtl{fill:var(--ink);font-family:var(--sans);font-size:12.5px}
+.cv .gwk{fill:var(--ink3);font-family:var(--mono);font-size:10.5px;font-variant-numeric:tabular-nums}
+/* milestone cards */
+.mstones{display:grid;gap:16px;margin:16px 0}
+.ms{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px 16px;box-shadow:var(--shadow)}
+.ms-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.ms-id{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;color:#fff;
+  background:var(--accent2);border-radius:5px;padding:3px 8px}
+.ms-wk{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.ms h5{margin:0 0 7px;font-family:var(--serif);font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.ms-i{font-size:14px;color:var(--ink2);margin:0 0 10px;line-height:1.55}
+.ms ul{margin:0 0 12px;padding-left:18px}
+.ms li{font-size:13.5px;color:var(--ink2);line-height:1.5;margin:4px 0}
+.ms-o{border-left:3px solid var(--accent2);background:var(--raise);border-radius:0 8px 8px 0;
+  padding:10px 14px;font-size:13.5px;color:var(--ink2);line-height:1.5}
+.ms-o span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:700;color:var(--ink3);margin-bottom:4px}
+@media(max-width:880px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;height:auto;width:100%;flex:none;border-right:none;border-bottom:1px solid var(--line);padding:16px 0}
+  .snav{display:flex;flex-wrap:wrap;gap:4px}
+  .content .mast-inner{padding:32px 22px 24px}.content .wrap{padding:0 22px}
+}
+
+/* ---------------------------------------------------------------- print ---- */
+.print-only{display:none}
+.sb-print{margin-top:8px;width:100%;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:12px;
+  font-weight:600;border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent);
+  background:var(--accentSoft);color:var(--accent);font-family:var(--sans);text-align:left;
+  display:flex;align-items:center;gap:7px}
+.sb-print:hover{border-color:var(--accent2);background:color-mix(in srgb,var(--accent2) 16%,transparent)}
+
+@media print{
+  /* Light palette on paper, whatever the on-screen theme is */
+  :root,:root[data-theme="dark"],:root[data-theme="light"]{
+    --paper:#FFFFFF; --surface:#FFFFFF; --raise:#FAFAF8;
+    --ink:#14201A; --ink2:#33403A; --ink3:#5A655F; --ink4:#6E766D; --ink5:#8A928B;
+    --line:#C9D1CC; --line2:#E2E7E3;
+    --accent:#1B4A3C; --accent2:#2C6A57; --accentSoft:#EDF4F0;
+    --good:#1F6B4F; --goodSoft:#E9F3ED;
+    --warn:#7E5200; --warnSoft:#FAF0DA;
+    --crit:#8C2F22; --critSoft:#F8E7E2;
+    --bar:#2C6A57; --barTrack:#E2E7E3;
+    --c-green:#2C6A57; --c-blue:#2F5C9E; --c-amber:#8A5E12; --c-red:#8C2F22; --c-grid:#D8DEDA;
+    --shadow:none;
+  }
+  @page{ size:A4; margin:17mm 15mm 18mm; }
+
+  html,body{background:#fff !important;background-image:none !important;color:var(--ink) !important}
+  body{font-size:10pt;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  /* Chrome furniture that must not reach paper */
+  .sidebar,.sb-back,.sb-print,.no-print{display:none !important}
+  .print-only{display:block !important}
+
+  /* The two-column app shell collapses to a single full-width flow */
+  .layout{display:block !important}
+  .content{display:block !important}
+  .content .mast-inner,.content .wrap,.wrap{max-width:none !important;margin:0 !important;padding:0 !important}
+
+  /* Masthead becomes a cover block rather than a coloured banner */
+  .mast{background:none !important;border-bottom:1.5pt solid var(--accent2) !important;
+    padding:0 0 10pt !important;margin-bottom:16pt !important;break-after:avoid}
+  .mast h1{font-size:24pt !important;line-height:1.15}
+  .mast .lede{font-size:11pt !important}
+  .metarow{border-top:none !important;padding-top:8pt !important}
+
+  /* Keep headings attached to the text they introduce */
+  h1,h2,h3,h4,.sec-head,.part-label,.sb-title{break-after:avoid;page-break-after:avoid}
+  .sec-head{border-bottom:0.75pt solid var(--line) !important}
+  section{break-before:auto}
+  .part-label{break-before:page;page-break-before:always;margin-top:0 !important}
+  section:first-of-type,.part-label:first-of-type{break-before:avoid;page-break-before:avoid}
+
+  /* Atomic blocks must never be split across a page boundary */
+  .kpi,.mcard,.note,.formula,.cap,.barrow,.chart,.verdict,figure,img,svg{
+    break-inside:avoid;page-break-inside:avoid}
+  p,li{orphans:3;widows:3}
+
+  /* Tables: show in full, repeat the header row on every page */
+  .tbl-scroll{overflow:visible !important;border:none !important}
+  table{width:100% !important;font-size:8.5pt !important;border-collapse:collapse;break-inside:auto}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  thead th{background:var(--accentSoft) !important;color:var(--accent) !important;
+    border-bottom:0.75pt solid var(--accent2) !important}
+  tbody td{border-bottom:0.5pt solid var(--line2) !important}
+
+  /* Links print as text; the URL is appended only where it is not already visible */
+  a{color:var(--accent) !important;text-decoration:none}
+  a[href^="http"]::after{content:" <" attr(href) ">";font-size:7.5pt;color:var(--ink3);word-break:break-all}
+  .cite a[href^="http"]::after{content:none}
+
+  /* Cards and tiles flatten — borders read better than fills on paper */
+  .kpi,.mcard,.note,.formula{background:none !important;border:0.75pt solid var(--line) !important}
+  .pill,.rating,.tag{border:0.5pt solid var(--line) !important;background:none !important}
+}
+</style></head><body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sb-head">
+    <div class="sb-title">Go-to-Market Strategy</div>
+    <div class="sb-sub">BOUND Protocol</div>
+    <button class="sb-back" onclick="location.assign('/#docs')">&larr; Back to Library</button>
+    <button class="sb-print" onclick="window.print()" title="Opens your browser's print dialog — choose &quot;Save as PDF&quot;">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3.5h12V9"/><path d="M6 18H4.5A1.5 1.5 0 0 1 3 16.5v-5A1.5 1.5 0 0 1 4.5 10h15a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H18"/><rect x="6" y="14" width="12" height="6.5" rx="1"/></svg>
+  Export PDF
+</button>
+  </div>
+  <nav class="snav"><a data-id="abstract" href="#abstract"><span class="snav-num">§</span>Abstract</a><a data-id="market" href="#market"><span class="snav-num">1</span>The Market</a><a data-id="coldstart" href="#coldstart"><span class="snav-num">2</span>Cold Start</a><a data-id="stages" href="#stages"><span class="snav-num">3</span>The Staged Plan</a><a data-id="stage1" href="#stage1"><span class="snav-num">4</span>Stage One</a><a data-id="stage2" href="#stage2"><span class="snav-num">5</span>Stage Two</a><a data-id="stage3" href="#stage3"><span class="snav-num">6</span>Stage Three</a><a data-id="acquisition" href="#acquisition"><span class="snav-num">7</span>Acquisition</a><a data-id="budget" href="#budget"><span class="snav-num">8</span>Marketing Allocation</a><a data-id="targets" href="#targets"><span class="snav-num">9</span>Targets and Gates</a><a data-id="risks" href="#risks"><span class="snav-num">10</span>Risks</a><a data-id="limits" href="#limits"><span class="snav-num">11</span>Limits</a><a data-id="disclaimer" href="#disclaimer"><span class="snav-num">§</span>Legal Disclaimer</a></nav>
+</aside>
+<div class="content">
+<div class="mast"><div class="mast-inner">
+<div class="eyebrow">Go-to-Market Strategy</div><h1>Sequencing a Two-Sided Liquidity Market</h1>
+<p class="lede">BOUND Protocol — sequencing both sides of a two-sided liquidity market.</p>
+<div class="metarow">
+<div><div class="k">Document</div><div class="v">Go-to-Market Strategy</div></div>
+<div><div class="k">Horizon</div><div class="v">Months 1–36 — July 2026</div></div>
+<div><div class="k">Protocol</div><div class="v">BOUND Protocol</div></div>
+<div><div class="k">Origin</div><div class="v">Bucharest, Romania</div></div>
+</div></div></div>
+<div class="wrap">
+<section id="abstract"><div class="sec-head"><div class="sec-num">§</div><h2>Abstract</h2></div>
+<p>BOUND is a two-sided market. One side supplies liquidity and receives BLI; the other brings tokenized real-world assets and receives dollars. Neither side is useful without the other, and both cannot be opened at once. This document sets out the order in which they open, what gates each stage, and how the protocol is taken to market on both sides.</p>
+<p>The plan is staged on two independent axes. Liquidity supply opens first to private investors, DAOs and companies, and later to any holder seeking yield. Liquidity demand opens first to institutional RWA holders transacting directly against the smart contract, and later to the open market once the rwaUSD pool is live. RWA market onboarding runs in parallel from the first month and is independent of both.</p>
+<p>Every figure here is drawn from the simulation engine's default case. Over thirty-six months the protocol earns $6,828,594 against a Liquidity Layer that reaches $37,791,553. The marketing allocation of $1,500,000 in the launch year is taken from the operating cost model and allocated in full in Chapter 8.</p>
+<div class="kpis"><div class="kpi"><div class="kn">3</div><div class="kl">Stages, two axes</div></div><div class="kpi"><div class="kn">Month 6</div><div class="kl">Pool and retail liquidity open</div></div><div class="kpi"><div class="kn">Month 9</div><div class="kl">RWA minting opens</div></div><div class="kpi"><div class="kn">$1,500,000</div><div class="kl">Launch-year marketing</div></div><div class="kpi"><div class="kn">$37,791,553</div><div class="kl">Liquidity Layer, month 36</div></div></div>
+</section>
+<section id="market"><div class="sec-head"><div class="sec-num">1</div><h2>The Market</h2></div>
+<h4 class="sub">1.1 Supply side — where liquidity comes from</h4><p>Public companies, DAOs, fintechs and crypto-native businesses hold more than $35 billion in on-chain stablecoin reserves, and for most treasury teams those balances are idle. Mainstream stablecoin yields run from roughly 4.1% to 11.8%, and the spread across that range reflects real differences in collateral, custody and liquidity risk.</p>
+<p>BOUND's modelled Annualized Index Growth sits at the upper end of that band. More importantly it is earned differently: the return comes from the spread on exits the protocol underwrites, not from lending the capital out. That is a different risk shape, and it is the positioning wedge — not a higher number, a different exposure.</p>
+<p>The capital requirement is small against the available pool. The default case needs roughly $6,551,823 of Liquidity Layer by month five, which is about 0.019% of idle on-chain stablecoin reserves. The constraint on this side is access and credibility, not market size.</p>
+<h4 class="sub">1.2 Demand side — where the assets are</h4><p>Tokenized real-world assets stand at $22–33 billion on-chain and are growing at roughly 75% a year. The category divides into three unequal parts, and they do not share the same problem.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Category</th><th>On-chain AUM</th><th>Representative issuers</th><th>Exit problem</th></tr></thead><tbody><tr><td>Treasuries and money-market funds</td><td>~$10B</td><td>BUIDL $2.5B, USYC $3B, USDY $2.1B, BENJI $828M, OUSG $625M</td><td>Least acute — shortest redemption cycles</td></tr><tr><td>Private credit</td><td>~$8B</td><td>Maple, Centrifuge, Goldfinch, Apollo</td><td>Most acute — permissioned, eligibility-gated, uneven liquidity</td></tr><tr><td>Real estate</td><td>~$2–3B</td><td>RealT, Lofty, Propy</td><td>Structurally illiquid, but fragmented and jurisdiction-bound</td></tr></tbody></table></div><div class="cap">Market data as at 2026. Sources: Eco; MetaMask; StablecoinInsider.</div>
+<p>This asymmetry should drive onboarding order, and it cuts against the obvious path. Treasuries are the easiest markets to integrate and the least in need of the product. Private credit is the hardest to integrate and the most underserved. The commercial answer is to lead with treasuries to prove the mechanism, and to prioritise private credit for the markets that follow — where the haircut the protocol can charge is widest because the alternative is waiting ninety days.</p>
+</section>
+<section id="coldstart"><div class="sec-head"><div class="sec-num">2</div><h2>The Cold-Start Problem</h2></div>
+<p>A liquidity venue with no liquidity serves nobody, and liquidity providers do not fund a venue with no flow. Most protocols answer this by renting liquidity — committed facilities, market makers, or partner rails — and rented liquidity has one universal property: it is repriced or withdrawn under stress, which is precisely when exits are demanded.</p>
+<p>BOUND's architecture makes the problem tractable rather than eliminating it. Because the reserve is protocol-owned, the protocol can stand on the other side of every exit from the first month without waiting for a counterparty to appear. The cold-start question therefore reduces to a single one: how much capital is needed before the first exits can be served, and who supplies it.</p>
+<p>The answer is that the first side to open is the one that can be closed by direct sale. Institutional liquidity providers can be approached, diligenced and committed one at a time; retail liquidity cannot. That is why supply opens before demand broadens, and why the first stage is a sales motion rather than a marketing one.</p>
+</section>
+<section id="stages"><div class="sec-head"><div class="sec-num">3</div><h2>The Staged Plan</h2></div>
+<p>Three stages, two axes. The axes move independently: the gate that opens retail liquidity supply is the same event that opens public demand — the rwaUSD pool going live — but the market set is being widened continuously underneath both.</p>
+<div class="chart"><div class="ct">Market opening sequence — supply and demand axes</div><svg viewBox="0 0 880 350" role="img" aria-label="Market opening sequence — supply and demand axes" class="cv"><rect x="154.0" y="18" width="230.0" height="30" rx="6" fill="var(--c1)" opacity=".85"/><text x="269.0" y="38" class="pb">Stage 1</text><text x="269.0" y="60.0" class="ax ac">Months 1–5</text><rect x="392.0" y="18" width="230.0" height="30" rx="6" fill="var(--c2)" opacity=".85"/><text x="507.0" y="38" class="pb">Stage 2</text><text x="507.0" y="60.0" class="ax ac">Months 6–8</text><rect x="630.0" y="18" width="230.0" height="30" rx="6" fill="var(--c3)" opacity=".85"/><text x="745.0" y="38" class="pb">Stage 3</text><text x="745.0" y="60.0" class="ax ac">Months 9–36</text><rect x="0" y="62" width="880" height="92" fill="var(--ink)" opacity=".03"/><text x="6" y="112.0" class="lnm">Liquidity supply</text><rect x="154.0" y="70.0" width="230.0" height="76.0" rx="7" fill="var(--c1)" opacity=".10" stroke="var(--c1)" stroke-opacity=".35"/><text x="269.0" y="88.0" class="swc ac">Private investors, DAOs, companies.</text><text x="269.0" y="102.0" class="swc ac">Six-month lock.</text><rect x="392.0" y="70.0" width="230.0" height="76.0" rx="7" fill="var(--c2)" opacity=".10" stroke="var(--c2)" stroke-opacity=".35"/><text x="507.0" y="88.0" class="swc ac">Opens to any holder. BLI purchasable</text><text x="507.0" y="102.0" class="swc ac">and secondary-tradeable.</text><rect x="630.0" y="70.0" width="230.0" height="76.0" rx="7" fill="var(--c3)" opacity=".10" stroke="var(--c3)" stroke-opacity=".35"/><text x="745.0" y="88.0" class="swc ac">Open market. Retail reaches parity</text><text x="745.0" y="102.0" class="swc ac">with private by month 36.</text><text x="6" y="204.0" class="lnm">Liquidity demand</text><rect x="154.0" y="162.0" width="230.0" height="76.0" rx="7" fill="var(--c1)" opacity=".10" stroke="var(--c1)" stroke-opacity=".35"/><text x="269.0" y="180.0" class="swc ac">Institutional RWA holders. Direct</text><text x="269.0" y="194.0" class="swc ac">smart-contract mint and redeem only.</text><rect x="392.0" y="162.0" width="230.0" height="76.0" rx="7" fill="var(--c2)" opacity=".10" stroke="var(--c2)" stroke-opacity=".35"/><text x="507.0" y="180.0" class="swc ac">rwaUSD pool live. APSS active. Public</text><text x="507.0" y="194.0" class="swc ac">exits available.</text><rect x="630.0" y="162.0" width="230.0" height="76.0" rx="7" fill="var(--c3)" opacity=".10" stroke="var(--c3)" stroke-opacity=".35"/><text x="745.0" y="180.0" class="swc ac">RWA minting opens. Full stream set</text><text x="745.0" y="194.0" class="swc ac">operating.</text><rect x="0" y="246" width="880" height="92" fill="var(--ink)" opacity=".03"/><text x="6" y="296.0" class="lnm">RWA markets</text><rect x="154.0" y="254.0" width="230.0" height="76.0" rx="7" fill="var(--c1)" opacity=".10" stroke="var(--c1)" stroke-opacity=".35"/><text x="269.0" y="272.0" class="swc ac">Onboarding from month one —</text><text x="269.0" y="286.0" class="swc ac">independent of both axes.</text><rect x="392.0" y="254.0" width="230.0" height="76.0" rx="7" fill="var(--c2)" opacity=".10" stroke="var(--c2)" stroke-opacity=".35"/><text x="507.0" y="272.0" class="swc ac">Continues.</text><rect x="630.0" y="254.0" width="230.0" height="76.0" rx="7" fill="var(--c3)" opacity=".10" stroke="var(--c3)" stroke-opacity=".35"/><text x="745.0" y="272.0" class="swc ac">Continues; widening beyond launch</text><text x="745.0" y="286.0" class="swc ac">partners.</text></svg></div><div class="cap">Stage boundaries read from the simulation engine: retail liquidity and pool volume both begin in month 6; RWA minting begins in month 9.</div>
+<div class="tbl-scroll"><table><thead><tr><th></th><th>Stage 1 — Institutional</th><th>Stage 2 — Pool launch</th><th>Stage 3 — Open market</th></tr></thead><tbody><tr><td>Months</td><td>1–5</td><td>6–8</td><td>9–36</td></tr><tr><td>Revenue</td><td>$470,859</td><td>$293,641</td><td>$6,064,094</td></tr><tr><td>Average Liquidity Layer</td><td>$5,095,863</td><td>$7,907,099</td><td>$19,676,716</td></tr><tr><td>Annualised take on capital</td><td>22.18%</td><td>14.85%</td><td>13.21%</td></tr><tr><td>Motion</td><td>Direct sales</td><td>Launch campaign</td><td>Performance marketing</td></tr></tbody></table></div><div class="cap">Simulator default case. "Take on capital" is protocol revenue over average Liquidity Layer, annualised.</div>
+</section>
+<section id="stage1"><div class="sec-head"><div class="sec-num">4</div><h2>Stage One — Private Liquidity and Institutional Exits</h2></div>
+<h4 class="sub">4.1 What is actually being sold</h4><p>It is tempting to describe the pre-pool period as a yield product — capital parked in the Liquidity Layer, earning the underlying deployment yield until the real business starts. The model does not support that description, and the correct one is stronger.</p>
+<p>Deployed-capital yield is 5.9% of Stage 1 revenue. The remaining 94.1% comes from the liquidity business itself: fees on market onboarding, and the spread on exits the protocol underwrites for institutional holders transacting directly against the smart contract. The business is operating from month one. What the pool adds later is reach, not existence.</p>
+<div class="chart"><div class="ct">Stage 1 revenue composition — months 1–5</div><svg viewBox="0 0 880 360" role="img" aria-label="Stage 1 revenue composition — months 1–5" class="cv"><path d="M195.0 68.0 A112 112 0 0 1 296.8 226.8 L253.2 206.7 A64 64 0 0 0 195.0 116.0 Z" fill="var(--c1)" stroke="var(--surface)" stroke-width="1.5"/><path d="M296.8 226.8 A112 112 0 0 1 113.9 257.2 L148.6 224.1 A64 64 0 0 0 253.2 206.7 Z" fill="var(--c2)" stroke="var(--surface)" stroke-width="1.5"/><path d="M113.9 257.2 A112 112 0 0 1 83.4 170.7 L131.2 174.7 A64 64 0 0 0 148.6 224.1 Z" fill="var(--c3)" stroke="var(--surface)" stroke-width="1.5"/><path d="M83.4 170.7 A112 112 0 0 1 115.5 101.2 L149.5 134.9 A64 64 0 0 0 131.2 174.7 Z" fill="var(--c4)" stroke="var(--surface)" stroke-width="1.5"/><path d="M115.5 101.2 A112 112 0 0 1 154.2 75.7 L171.7 120.4 A64 64 0 0 0 149.5 134.9 Z" fill="var(--c5)" stroke="var(--surface)" stroke-width="1.5"/><path d="M154.2 75.7 A112 112 0 0 1 195.0 68.0 L195.0 116.0 A64 64 0 0 0 171.7 120.4 Z" fill="var(--c6)" stroke="var(--surface)" stroke-width="1.5"/><rect x="368" y="31" width="11" height="11" rx="2.5" fill="var(--c1)"/><text x="388" y="40" class="lg">Integration fees</text><text x="854" y="40" class="lg ar strong">$150,000 · 31.9%</text><rect x="368" y="64" width="11" height="11" rx="2.5" fill="var(--c2)"/><text x="388" y="73" class="lg">RWA trade and haircut</text><text x="854" y="73" class="lg ar strong">$146,155 · 31.0%</text><rect x="368" y="97" width="11" height="11" rx="2.5" fill="var(--c3)"/><text x="388" y="106" class="lg">Mint and redemption fees</text><text x="854" y="106" class="lg ar strong">$63,212 · 13.4%</text><rect x="368" y="130" width="11" height="11" rx="2.5" fill="var(--c4)"/><text x="388" y="139" class="lg">Conversion fees</text><text x="854" y="139" class="lg ar strong">$52,305 · 11.1%</text><rect x="368" y="163" width="11" height="11" rx="2.5" fill="var(--c5)"/><text x="388" y="172" class="lg">Maintenance fees</text><text x="854" y="172" class="lg ar strong">$31,250 · 6.6%</text><rect x="368" y="196" width="11" height="11" rx="2.5" fill="var(--c6)"/><text x="388" y="205" class="lg">Deployed-capital yield</text><text x="854" y="205" class="lg ar strong">$27,937 · 5.9%</text></svg></div><div class="cap">Simulator default case, $470,859 total.</div>
+<p><b>Integration fees are the largest single line.</b> They are charged on onboarding rather than on volume, which makes issuer acquisition the highest-leverage activity of the entire stage — it converts to revenue immediately rather than waiting for flow to build. The marketing allocation in Chapter 8 reflects that.</p>
+<h4 class="sub">4.2 Why direct settlement is a feature</h4><p>While the pool is closed, the only route to mint or redeem rwaUSD is directly through the smart contract. For the audience this stage targets, that is an advantage rather than a limitation: institutional tickets executed through a public pool would suffer material slippage, and direct settlement prices the transaction at protocol terms with no exposure to pool depth.</p>
+<p>The message follows from the mechanism. An allocator holding a position they cannot exit for ninety days is not looking for a trading venue; they are looking for a counterparty with a known price. That is exactly what the protocol is in this stage.</p>
+<h4 class="sub">4.3 The liquidity-provider proposition</h4><p>Early capital earns the most. Stage 1 returns 22.18% annualised on the capital in the layer, against 13.21% in Stage 3 — not because the business weakens, but because there is less capital competing for the same exit spread. This is a real and defensible reason to commit early, and Chapter 6 sets out why it should not be restated as a forward promise.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Audience</th><th>What they hold</th><th>What BOUND offers</th><th>Primary objection</th></tr></thead><tbody><tr><td>DAO treasuries</td><td>Idle stablecoin reserves</td><td>Yield from an exit spread, not lending risk</td><td>Smart-contract risk on a new protocol</td></tr><tr><td>Crypto-native funds</td><td>Deployable mandate capital</td><td>Uncorrelated return with defined mechanics</td><td>Capacity — is the position large enough to matter</td></tr><tr><td>Corporate and fintech treasuries</td><td>Operating stablecoin float</td><td>Transparent, on-chain, no lock beyond six months</td><td>Accounting and custody treatment</td></tr><tr><td>Family offices and private investors</td><td>Discretionary allocation</td><td>Early entry at the widest spread</td><td>Liquidity — no secondary market until Stage 2</td></tr></tbody></table></div><div class="cap">Objections are what the Stage 1 sales motion must answer; the proof points are the audit, the APSS mainnet telemetry, and the published cost and business models.</div>
+</section>
+<section id="stage2"><div class="sec-head"><div class="sec-num">5</div><h2>Stage Two — Pool Launch</h2></div>
+<p>The rwaUSD pool going live is the single largest structural change in the plan. Three things happen at once, and they serve different audiences.</p>
+<ul class="find"><li><b>Public exits become available:</b> any holder of an integrated RWA can exit through the pool rather than only through direct settlement.</li><li><b>BLI becomes secondary-tradeable:</b> liquidity providers gain an exit that does not require redeeming against the layer — the answer to the main Stage 1 objection.</li><li><b>The APSS stream opens:</b> pool trading and peg-correction surplus begin accruing, reaching $124,506 a month by month 36, or 32.2% of monthly revenue.</li></ul>
+<p>The commercial consequence is that Stage 2 is the first stage with a launch moment. Stage 1 is a sequence of private closes with no public event; Stage 2 has a date, a deployment, and something demonstrable. The campaign allocation in Chapter 8 is concentrated accordingly.</p>
+<div class="note"><span class="nh">On sequencing</span>The pool is deployed at mainnet launch, at the close of the delivery programme. Keeping public access closed through Stage 1 is a commercial decision, not a technical constraint — the contracts exist and are audited before the gate opens.</div>
+</section>
+<section id="stage3"><div class="sec-head"><div class="sec-num">6</div><h2>Stage Three — The Open Market</h2></div>
+<h4 class="sub">6.1 What opening retail actually does</h4><p>Retail participation scales the business on both axes. Retail liquidity reaches parity with private capital by month 36 — $18,890,656 against $18,900,897 — and retail flow drives the pool stream that becomes 32.2% of monthly revenue.</p>
+<p>It does not raise the return per unit of capital, and the strategy should be built on the truth of that rather than around it. Retail volume genuinely adds revenue; retail capital arrives slightly faster than the revenue it generates. Between the first five months and the final twelve, average monthly revenue grows 3.10× while the average Liquidity Layer grows 5.43×. The second number is the larger, so Annualized Index Growth drifts down from 13.0% to 11.0% across the horizon.</p>
+<div class="chart"><div class="ct">Annualized Index Growth against Liquidity Layer growth</div><svg viewBox="0 0 880 300" role="img" aria-label="Annualized Index Growth against Liquidity Layer growth" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">23.6%</text><line x1="64" y1="83.0" x2="854" y2="83.0" class="grid"/><text x="55" y="86.5" class="ax ar">20.2%</text><line x1="64" y1="140.0" x2="854" y2="140.0" class="grid"/><text x="55" y="143.5" class="ax ar">16.9%</text><line x1="64" y1="197.0" x2="854" y2="197.0" class="grid"/><text x="55" y="200.5" class="ax ar">13.5%</text><line x1="64" y1="254.0" x2="854" y2="254.0" class="grid"/><text x="55" y="257.5" class="ax ar">10.2%</text><path d="M64.0 41.4 L86.6 140.8 L109.1 175.6 L131.7 194.3 L154.3 206.4 L176.9 208.7 L199.4 211.0 L222.0 213.6 L244.6 213.0 L267.1 213.2 L289.7 213.8 L312.3 214.7 L334.9 215.8 L357.4 217.0 L380.0 218.2 L402.6 219.5 L425.1 220.8 L447.7 222.1 L470.3 223.3 L492.9 224.6 L515.4 225.7 L538.0 226.9 L560.6 228.0 L583.1 229.1 L605.7 230.1 L628.3 231.1 L650.9 232.0 L673.4 232.9 L696.0 233.8 L718.6 234.6 L741.1 235.4 L763.7 236.2 L786.3 236.9 L808.9 237.6 L831.4 238.3 L854.0 239.0" fill="none" stroke="var(--c1)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><text x="64.0" y="274.0" class="ax ac">M1</text><text x="176.9" y="274.0" class="ax ac">M6</text><text x="312.3" y="274.0" class="ax ac">M12</text><text x="447.7" y="274.0" class="ax ac">M18</text><text x="583.1" y="274.0" class="ax ac">M24</text><text x="718.6" y="274.0" class="ax ac">M30</text><text x="854.0" y="274.0" class="ax ac">M36</text><line x1="64" y1="254" x2="854" y2="254" class="axis"/></svg></div><div class="cap">Simulator default case. AIG is a historical measure of an index whose value can also decline.</div>
+<h4 class="sub">6.2 What this means for messaging</h4><p>The protocol has committed, in its whitepaper, to describing Annualized Index Growth as a historical metric of an index that can fall. Marketing a yield increase at the moment retail opens would contradict that commitment and would be falsified by the protocol's own published model within a year.</p>
+<p>Retail is therefore positioned on what it genuinely delivers: an entry that requires no private placement, an exit that does not require redemption, and participation in a business whose absolute scale is compounding. The mechanism by which volume supports yield is disclosed in the documentation for anyone who works through it. It is not a headline.</p>
+<div class="note warn"><span class="nh">Messaging discipline</span>Operating rule: no marketing asset states or implies that Annualized Index Growth rises as the protocol scales. The published model shows it declining as capital grows faster than revenue, and every public number must be one the model produces.</div>
+</section>
+<section id="acquisition"><div class="sec-head"><div class="sec-num">7</div><h2>Acquisition Strategy</h2></div>
+<p>Five audiences, three of them addressed by sales rather than marketing. The distinction matters for budget: the institutional side is closed one relationship at a time and scales with headcount, while the retail side scales with spend.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Audience</th><th>Stage</th><th>Channel</th><th>Core message</th><th>Proof point</th></tr></thead><tbody><tr><td>RWA issuers</td><td>1 →</td><td>Direct BD, category research, conference presence</td><td>Instant exit liquidity removes the largest objection allocators raise, at zero capital pre-allocation</td><td>APSS mainnet telemetry; audit report</td></tr><tr><td>Institutional LPs</td><td>1 →</td><td>Direct sales, roadshow, warm introductions</td><td>A return earned from an underwritten exit spread, not from lending risk</td><td>Published cost model, business plan and simulator</td></tr><tr><td>DAO treasuries</td><td>1 →</td><td>Governance forums, treasury working groups, direct</td><td>Idle reserves earning from a transparent, on-chain spread business</td><td>On-chain verifiability of every figure</td></tr><tr><td>RWA holders</td><td>2 →</td><td>Issuer co-marketing, integrations, search</td><td>Exit a ninety-day position in one transaction at a price known in advance</td><td>Live haircut quotes; settlement tracker</td></tr><tr><td>DeFi yield users</td><td>3 →</td><td>Performance marketing, aggregators, community</td><td>Index exposure to RWA liquidity infrastructure, freely entered and exited</td><td>Secondary market depth; published index history</td></tr></tbody></table></div><div class="cap">Channels are ordered by the stage at which each audience opens.</div>
+<h4 class="sub">7.1 Issuer onboarding is the priority activity</h4><p>Integration fees are 31.9% of Stage 1 revenue and are collected on onboarding. Every additional market also widens the exit inventory that makes the protocol useful to holders, and diversifies a revenue base that would otherwise concentrate in a single market. It is the only activity that compounds across both axes at once.</p>
+</section>
+<section id="budget"><div class="sec-head"><div class="sec-num">8</div><h2>Marketing Allocation</h2></div>
+<p>The cost model books $1,500,000 of sales and marketing across the horizon, rebuilt from B2B benchmarks rather than carried over from the financial model, which had it at $3,740,000. This chapter allocates it in full. The shape follows the staging: institutional sales support first, a concentrated launch campaign second, performance acquisition last. The Marketing token allocation covers $1,000,000 of it — 66.7% — and is spent before cash.</p>
+<div class="chart"><div class="ct">Marketing allocation by stage</div><svg viewBox="0 0 880 290" role="img" aria-label="Marketing allocation by stage" class="cv"><line x1="64" y1="26.0" x2="854" y2="26.0" class="grid"/><text x="55" y="29.5" class="ax ar">950K</text><line x1="64" y1="80.5" x2="854" y2="80.5" class="grid"/><text x="55" y="84.0" class="ax ar">713K</text><line x1="64" y1="135.0" x2="854" y2="135.0" class="grid"/><text x="55" y="138.5" class="ax ar">475K</text><line x1="64" y1="189.5" x2="854" y2="189.5" class="grid"/><text x="55" y="193.0" class="ax ar">238K</text><line x1="64" y1="244.0" x2="854" y2="244.0" class="grid"/><text x="55" y="247.5" class="ax ar">0</text><rect x="140.7" y="175.2" width="110.0" height="68.8" rx="3" fill="var(--c1)"/><text x="195.7" y="167.2" class="vl">$300,000</text><text x="195.7" y="264.0" class="ax ac">Stage 1 — Institutional</text><rect x="404.0" y="179.7" width="110.0" height="64.3" rx="3" fill="var(--c2)"/><text x="459.0" y="171.7" class="vl">$280,000</text><text x="459.0" y="264.0" class="ax ac">Stage 2 — Pool launch</text><rect x="667.3" y="32.9" width="110.0" height="211.1" rx="3" fill="var(--c3)"/><text x="722.3" y="24.9" class="vl">$920,000</text><text x="722.3" y="264.0" class="ax ac">Stage 3 — Open market</text><line x1="64" y1="244" x2="854" y2="244" class="axis"/></svg></div><div class="cap">Total $1,500,000, reconciling to the launch-year sales and marketing line in the Operating Cost Analysis.</div>
+<div class="tbl-scroll"><table><thead><tr><th>Stage</th><th>Activity</th><th>Amount</th><th>Share</th><th>Rationale</th></tr></thead><tbody><tr><td>Stage 1</td><td>Brand system and institutional collateral</td><td>$60,000</td><td>4.0%</td><td>Data room, issuer materials, institutional-grade presentation</td></tr><tr><td>Stage 1</td><td>Category research and thought leadership</td><td>$50,000</td><td>3.3%</td><td>Authority in the RWA liquidity category before the pool opens</td></tr><tr><td>Stage 1</td><td>Two Tier-2 conferences</td><td>$120,000</td><td>8.0%</td><td>Where institutional LPs and RWA issuers are actually met</td></tr><tr><td>Stage 1</td><td>Public relations and analyst relations</td><td>$40,000</td><td>2.7%</td><td>Coverage that supports a direct sales motion</td></tr><tr><td>Stage 1</td><td>Issuer business-development materials</td><td>$30,000</td><td>2.0%</td><td>Integration fees are the largest Stage 1 revenue line</td></tr><tr><td>Stage 2</td><td>Launch campaign</td><td>$120,000</td><td>8.0%</td><td>rwaUSD pool live; BLI becomes secondary-tradeable</td></tr><tr><td>Stage 2</td><td>One Tier-2 conference</td><td>$60,000</td><td>4.0%</td><td>Launch visibility with the institutional audience</td></tr><tr><td>Stage 2</td><td>Public relations and earned media</td><td>$40,000</td><td>2.7%</td><td>Launch coverage and analyst briefings</td></tr><tr><td>Stage 2</td><td>DeFi ecosystem and integrations</td><td>$60,000</td><td>4.0%</td><td>Aggregators, dashboards, analytics</td></tr><tr><td>Stage 3</td><td>Content and search, $12,000 a month</td><td>$336,000</td><td>22.4%</td><td>Sustaining organic acquisition</td></tr><tr><td>Stage 3</td><td>Community and education, $7,000 a month</td><td>$196,000</td><td>13.1%</td><td>Documentation, support, guides</td></tr><tr><td>Stage 3</td><td>Conferences, two a year</td><td>$240,000</td><td>16.0%</td><td>Continued issuer and LP origination</td></tr><tr><td>Stage 3</td><td>Performance marketing, retail</td><td>$148,000</td><td>9.9%</td><td>The most discretionary line, and the last to spend</td></tr></tbody></table></div><div class="cap">Allocation of the launch-year sales and marketing budget. Totals $1,500,000.</div>
+<p>Two features of this allocation are deliberate. Issuer business development is the single largest Stage 1 line, because integration fees convert to revenue on onboarding rather than on volume. And no allocation is made to token incentives: the protocol's governance token confers governance utility only, and buying liquidity with emissions would contradict the architecture the whitepaper describes.</p>
+</section>
+<section id="targets"><div class="sec-head"><div class="sec-num">9</div><h2>Targets and Gates</h2></div>
+<p>Each stage opens on a gate rather than on a date. The engineering programme sets the earliest possible date for each; commercial readiness sets the actual one.</p>
+<div class="tbl-scroll"><table><thead><tr><th>Gate</th><th>Depends on</th><th>Commercial criterion</th></tr></thead><tbody><tr><td>Stage 1 opens</td><td>Mainnet launch (delivery roadmap M12)</td><td>First RWA market onboarded; audit report published</td></tr><tr><td>Stage 2 opens</td><td>rwaUSD pool deployed and audited</td><td>Liquidity Layer deep enough to absorb public exit flow without breaching coverage</td></tr><tr><td>Stage 3 opens</td><td>RWA minting live; secondary market functioning</td><td>Multiple markets onboarded; settlement and support operating at volume</td></tr></tbody></table></div><div class="cap">Milestone references are to the Delivery Roadmap.</div>
+<div class="tbl-scroll"><table><thead><tr><th>Measure</th><th>Month 5</th><th>Month 12</th><th>Month 24</th><th>Month 36</th></tr></thead><tbody><tr><td>Liquidity Layer</td><td>$6,551,823</td><td>$10,785,150</td><td>$19,036,873</td><td>$37,791,553</td></tr><tr><td>— private</td><td>$6,551,823</td><td>$10,357,669</td><td>$15,273,225</td><td>$18,900,897</td></tr><tr><td>— retail</td><td>$0</td><td>$427,481</td><td>$3,763,648</td><td>$18,890,656</td></tr><tr><td>Monthly revenue</td><td>$70,679</td><td>$135,892</td><td>$208,595</td><td>$386,084</td></tr><tr><td>Monthly volume</td><td>$3,510,471</td><td>$15,650,628</td><td>$23,455,307</td><td>$40,965,866</td></tr><tr><td>BLI price</td><td>1.0521</td><td>1.1248</td><td>1.2461</td><td>1.3693</td></tr><tr><td>Annualized Index Growth</td><td>13.0%</td><td>12.5%</td><td>11.6%</td><td>11.0%</td></tr></tbody></table></div><div class="cap">Simulator default case. These are model outputs, not commitments.</div>
+</section>
+<section id="risks"><div class="sec-head"><div class="sec-num">10</div><h2>Risks to the Plan</h2></div>
+<div class="tbl-scroll"><table><thead><tr><th>Risk</th><th>Mechanism</th><th>Mitigation in this plan</th></tr></thead><tbody><tr><td>Cold start fails on the supply side</td><td>Institutional LPs decline to fund a protocol with no operating history</td><td>APSS is already deployed with mainnet telemetry; audit and published models precede the raise</td></tr><tr><td>Capital outpaces demand</td><td>Layer grows faster than onboarded markets can absorb, diluting return and weakening the next raise</td><td>Issuer onboarding funded as the largest Stage 1 activity; capital raised against a widening market set</td></tr><tr><td>Issuer concentration</td><td>Revenue concentrated in a single market; one issuer withdrawing removes the business</td><td>Continuous onboarding across all three stages; explicitly funded in Stage 3</td></tr><tr><td>Retail access is restricted</td><td>Jurisdictional gating delays or narrows Stage 3</td><td>Stages 1 and 2 are viable without retail; the plan does not depend on it for coverage</td></tr><tr><td>Yield expectation mismatch</td><td>Providers expect rising returns and encounter the modelled decline</td><td>Messaging discipline in Chapter 6; every public number produced by the published model</td></tr><tr><td>Competitor response</td><td>An incumbent bundles instant exit into an existing distribution advantage</td><td>Protocol-owned liquidity and issuer-neutral onboarding are hard to replicate from a single-issuer position</td></tr></tbody></table></div><div class="cap">Competitive positioning is assessed in the Competitors Analysis.</div>
+</section>
+<section id="limits"><div class="sec-head"><div class="sec-num">11</div><h2>Limits and Open Items</h2></div>
+<ul class="find"><li><b>Single scenario:</b> every figure derives from one preset against one RWA market. Stage boundaries would move under a different preset.</li><li><b>Market concentration:</b> the default case runs one market, so the issuer-concentration risk above is not visible in the figures that accompany it.</li><li><b>No conversion assumptions:</b> this plan states channels and audiences but does not model acquisition cost, conversion rate or sales-cycle length. Those require pipeline data the protocol does not yet have.</li><li><b>Budget horizon:</b> the allocation covers the launch year only. Years two and three carry $1,080,000 a year in the cost model, unallocated here.</li><li><b>Capital pacing:</b> this plan optimises for capital raised rather than for yield defended. That is a deliberate choice — the Liquidity Layer is the protocol's exit capacity, and depth is what makes issuers integrate — but it accepts the dilution set out in Chapter 6.</li><li><b>Regulatory:</b> retail access is subject to jurisdictional restriction, and the timing of Stage 3 is not wholly within the protocol's control.</li></ul>
+</section>
+<section id="disclaimer"><div class="sec-head"><div class="sec-num">§</div><h2>Legal Disclaimer</h2></div>
+<p>This document is provided for informational purposes only. It does not constitute an offer to sell, a solicitation of an offer to buy, or a recommendation of any token, security or financial instrument, in any jurisdiction, and nothing in it constitutes investment, legal, tax or accounting advice. All figures are outputs of the BOUND simulation engine on its default preset and of a cost model documented separately; they are model outputs, not forecasts, budgets, commitments or targets, and a different preset produces different figures throughout. rwaUSD makes no return promise of any kind. The Bound Liquidity Index is an index token whose value can rise or fall; Annualized Index Growth is a historical metric, is shown in this document declining as the protocol scales, and implies nothing about future performance. BND confers governance utility only and no claim on protocol revenue. Market data is drawn from third-party published sources as at July 2026 and may change. Statements about market opening sequence and access are subject to regulatory restriction and are not commitments. Forward-looking statements are subject to material uncertainty and change. © 2026 BOUND Protocol.</p>
+</section>
+<footer><div class="disc"><b>Note.</b> Every figure in this strategy is derived from the BOUND simulation engine's default preset and from the verified operating cost model. Regenerate via <span class="mono">python3 scripts/gen-gtm-content.py</span>, then <span class="mono">node scripts/build-gtm.mjs</span>.</div>
+<div>BOUND Protocol · Go-to-Market Strategy · Months 1–36 — July 2026 · Bucharest, Romania</div></footer>
+</div></div></div>
+<script>(function(){
+  var links=[].slice.call(document.querySelectorAll('.snav a[data-id]'));
+  var secs=links.map(function(a){return document.getElementById(a.getAttribute('data-id'));});
+  function spy(){var y=window.scrollY+150,cur=0;for(var i=0;i<secs.length;i++){if(secs[i]&&secs[i].offsetTop<=y)cur=i;}for(var j=0;j<links.length;j++){links[j].classList.toggle('active',j===cur);}}
+  links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var el=document.getElementById(a.getAttribute('data-id'));if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}});});
+  window.addEventListener('scroll',spy,{passive:true});spy();
+})();</script>
+</body></html>
