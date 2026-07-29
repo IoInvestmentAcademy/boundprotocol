@@ -13,7 +13,8 @@
     "heroku-postbuild": "npm run build",
     "generate-favicon": "node scripts/generate-favicon.js",
     "sync:simulator": "node scripts/sync-simulator-public.mjs",
-    "sync:dataroom": "node scripts/sync-simulator-public.mjs"
+    "sync:dataroom": "node scripts/sync-simulator-public.mjs",
+    "patch:doc-mobile": "node scripts/patch-doc-html-mobile.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

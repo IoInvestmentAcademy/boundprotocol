@@ -87,7 +87,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#141710] via-[#0e1110] to-[#1a2018] text-[#EFECE2] font-primary relative w-full">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-[#141710] via-[#0e1110] to-[#1a2018] text-[#EFECE2] font-primary relative w-full">
       <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
@@ -133,7 +133,7 @@ export default function Home() {
       {/* Top-right nav — Whitepaper + Docs */}
       <nav
         aria-label="Site"
-        className="absolute top-5 right-5 sm:top-6 sm:right-6 md:top-8 md:right-8 z-20 flex items-center gap-1.5 sm:gap-2.5 opacity-0"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-20 flex items-center gap-1.5 sm:gap-2.5 opacity-0 max-w-[calc(100%-5.5rem)] sm:max-w-none"
         style={{ animation: "word-appear 1s ease-out forwards", animationDelay: "0.35s" }}
       >
         <a
@@ -183,7 +183,7 @@ export default function Home() {
       <div className="floating-element" style={{ pointerEvents: "none", top: "40%", left: "10%", animationDelay: "6s" }}></div>
       <div className="floating-element" style={{ pointerEvents: "none", top: "75%", left: "90%", animationDelay: "6.5s" }}></div>
 
-      <div className="relative z-10 flex flex-col gap-10 items-center px-8 pt-24 pb-28 md:min-h-screen md:justify-between md:gap-0 md:px-16 md:py-20">
+      <div className="relative z-10 flex flex-col gap-8 sm:gap-10 items-center px-4 sm:px-8 pt-[4.75rem] sm:pt-24 pb-20 sm:pb-28 md:min-h-screen md:justify-between md:gap-0 md:px-16 md:py-20">
 
         {/* Top tagline */}
         <div className="text-center">
@@ -216,8 +216,8 @@ export default function Home() {
                 <span className="word" data-delay="2950">Dollar</span>
               </div>
             </h1>
-            <div className="absolute -left-8 top-1/2 w-4 h-px opacity-20" style={{ background: colors[200], animation: "word-appear 1s ease-out forwards", animationDelay: "3.5s" }}></div>
-            <div className="absolute -right-8 top-1/2 w-4 h-px opacity-20" style={{ background: colors[200], animation: "word-appear 1s ease-out forwards", animationDelay: "3.7s" }}></div>
+            <div className="absolute -left-8 top-1/2 w-4 h-px opacity-20 hidden sm:block" style={{ background: colors[200], animation: "word-appear 1s ease-out forwards", animationDelay: "3.5s" }}></div>
+            <div className="absolute -right-8 top-1/2 w-4 h-px opacity-20 hidden sm:block" style={{ background: colors[200], animation: "word-appear 1s ease-out forwards", animationDelay: "3.7s" }}></div>
           </div>
 
           {/* Instant Exit panel */}
@@ -292,8 +292,8 @@ export default function Home() {
                   <div style={{ flex: "1 1 260px", minWidth: 0, display: "flex", flexDirection: "column", gap: 8 }}>
                     <div style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: "0.1em", color: "#5a8a6a" }}>YOU RECEIVE NOW</div>
                     <div style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", justifyContent: "center", padding: "16px 16px 14px", background: "rgba(27,74,56,0.35)", border: `1px solid rgba(60,100,70,0.2)`, borderRadius: 12 }}>
-                      <div style={{ display: "flex", alignItems: "baseline", gap: 7 }}>
-                        <span style={{ fontFamily: "monospace", fontSize: 26, fontWeight: 500, color: colors[50], letterSpacing: "-0.02em", lineHeight: 1 }}>49,812.50</span>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 7, flexWrap: "wrap" }}>
+                        <span className="text-xl sm:text-2xl md:text-[26px]" style={{ fontFamily: "monospace", fontWeight: 500, color: colors[50], letterSpacing: "-0.02em", lineHeight: 1 }}>49,812.50</span>
                         <span style={{ fontSize: 13, fontWeight: 600, color: colors[200] }}>rwaUSD</span>
                       </div>
                       <div style={{ marginTop: 5, fontSize: 11.5, color: colors[300] }}>≈ $49,812.50 · settles in seconds</div>
@@ -306,13 +306,13 @@ export default function Home() {
                 </div>
 
                 {/* Footer */}
-                <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid rgba(185,212,196,0.08)`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", fontSize: 11, color: colors[300] }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-3" style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid rgba(185,212,196,0.08)`, fontSize: 11, color: colors[300] }}>
+                  <span className="text-center sm:text-left" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
                     Redeem illiquid RWA positions instantly with rwaUSD.
                   </span>
 
                   {/* rwaUSD/USDC chip */}
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,0.04)", border: `1px solid rgba(185,212,196,0.1)`, padding: "7px 7px 7px 13px", borderRadius: 12 }}>
+                  <div className="w-full sm:w-auto flex justify-center sm:justify-end" style={{ display: "flex", alignItems: "center", gap: 12, background: "rgba(255,255,255,0.04)", border: `1px solid rgba(185,212,196,0.1)`, padding: "7px 7px 7px 13px", borderRadius: 12 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <span style={{ width: 22, height: 22, borderRadius: "50%", overflow: "hidden", border: `1.5px solid rgba(20,23,16,0.8)`, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff" }}>

@@ -28,6 +28,17 @@ const htmlFiles = [
 
 const dirs = ["decks", "evidence", "legal", "media"];
 
+const MOBILE_LINKS =
+  '<link rel="stylesheet" href="/bound-doc-mobile.css">\n<script src="/bound-doc-mobile.js" defer></script>';
+
+function injectMobile(html) {
+  if (html.includes("/bound-doc-mobile.css")) return html;
+  if (html.includes("</head>")) {
+    return html.replace("</head>", `${MOBILE_LINKS}\n</head>`);
+  }
+  return html;
+}
+
 if (!existsSync(src)) {
   console.error("Simulator public folder not found:", src);
   process.exit(1);
@@ -46,6 +57,7 @@ for (const file of htmlFiles) {
   // Standalone Vite hub is /#docs; Next.js hub is /dataroom#docs
   html = html.replaceAll("location.assign('/#docs')", "location.assign('/dataroom#docs')");
   html = html.replaceAll("location.assign('/simulator#docs')", "location.assign('/dataroom#docs')");
+  html = injectMobile(html);
   writeFileSync(to, html, "utf8");
   console.log("synced", file);
 }

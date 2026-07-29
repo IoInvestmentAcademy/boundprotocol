@@ -1,0 +1,375 @@
+/* BOUND documentation — mobile layout overrides (all bound-*.html) */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Core reading column — must shrink inside flex layout */
+.layout {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.content {
+  flex: 1 1 auto;
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.content .mast,
+.content .mast-inner,
+.content .wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.content p,
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content li,
+.content .lede,
+.content .desc,
+.content .cap,
+.content .note {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
+
+.mast .lede {
+  max-width: 100% !important;
+}
+
+/* Collapsible table-of-contents toggle (injected by bound-doc-mobile.js) */
+.sb-toggle {
+  display: none;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  background: var(--raise);
+  color: var(--ink2);
+  font-family: var(--sans);
+  text-align: left;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sb-toggle::after {
+  content: "▾";
+  font-size: 11px;
+  color: var(--ink3);
+  transition: transform 0.2s ease;
+}
+
+.sidebar.nav-open .sb-toggle::after {
+  transform: rotate(180deg);
+}
+
+/* Collapse sidebar + stack content below tablet width */
+@media (max-width: 1024px) {
+  .layout {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .sidebar {
+    position: static !important;
+    height: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--line);
+    padding: 16px 0 !important;
+  }
+
+  .content {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .content .mast-inner,
+  .content .wrap {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .content .mast-inner {
+    padding-top: 28px !important;
+    padding-bottom: 22px !important;
+  }
+}
+
+@media (max-width: 880px) {
+  .sb-toggle {
+    display: flex;
+  }
+
+  .sidebar .snav {
+    display: block !important;
+    flex-wrap: nowrap !important;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+  }
+
+  .sidebar.nav-open .snav {
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+    opacity: 1;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .snav a {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .snav-group {
+    width: 100% !important;
+    padding-top: 10px !important;
+  }
+
+  .mast h1 {
+    font-size: clamp(26px, 8.5vw, 40px) !important;
+    line-height: 1.12 !important;
+  }
+
+  .mast .lede {
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+  }
+
+  body {
+    font-size: 15px;
+    line-height: 1.62;
+  }
+
+  .sec-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .sec-head h2 {
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+  }
+
+  .sec-num {
+    padding-top: 0 !important;
+  }
+
+  .rating {
+    margin-top: 0 !important;
+    align-self: flex-start;
+  }
+
+  .verdict-top {
+    padding: 16px !important;
+    gap: 12px !important;
+  }
+
+  .verdict-top .vt {
+    min-width: 0 !important;
+  }
+
+  .grade {
+    font-size: 32px !important;
+  }
+
+  .toc {
+    margin: 28px 0 8px !important;
+    padding: 18px 16px !important;
+  }
+
+  .toc ol {
+    columns: 1 !important;
+  }
+
+  section {
+    padding: 32px 0 8px !important;
+    margin-top: 28px !important;
+  }
+
+  .part-label {
+    margin: 40px 0 -10px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.18em !important;
+  }
+
+  .metarow {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+
+  .tbl-scroll {
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  table {
+    font-size: 12.5px !important;
+  }
+
+  thead th,
+  tbody td {
+    padding: 8px 10px !important;
+  }
+
+  .chart {
+    padding: 16px 14px !important;
+    max-width: 100%;
+  }
+
+  .note,
+  .formula {
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  ul.find li {
+    font-size: 14.5px !important;
+    padding-left: 18px !important;
+  }
+
+  footer {
+    padding: 24px 0 48px !important;
+    margin-top: 40px !important;
+  }
+
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .kpi {
+    padding: 12px 13px !important;
+  }
+
+  .kpi .kn {
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .verdict-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .verdict-grid .cell {
+    border-right: none !important;
+    border-bottom: 1px solid var(--line2) !important;
+    padding: 12px 14px !important;
+  }
+
+  .verdict-grid .cell:last-child {
+    border-bottom: none !important;
+  }
+
+  .barrow {
+    grid-template-columns: 1fr !important;
+    gap: 4px !important;
+    padding: 8px 0 !important;
+  }
+
+  .barrow .lab {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  .barrow .val {
+    text-align: left !important;
+    font-size: 11.5px !important;
+  }
+
+  .kpis {
+    grid-template-columns: 1fr !important;
+  }
+
+  .mgrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .scorewrap {
+    width: 100%;
+  }
+
+  .pill {
+    white-space: normal !important;
+    text-align: center;
+  }
+
+  h4.sub {
+    font-size: 10px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .sb-head {
+    padding: 0 16px 14px !important;
+  }
+
+  .snav {
+    padding: 2px 10px 16px !important;
+  }
+
+  .sb-title {
+    font-size: 18px !important;
+  }
+
+  .content .mast-inner,
+  .content .wrap {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+
+@media (min-width: 881px) {
+  .sidebar .snav {
+    max-height: none !important;
+    opacity: 1 !important;
+    overflow-y: auto !important;
+  }
+}
