@@ -1,26 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-
-const COOKIE = "bound_dataroom";
-const MAX_AGE = 60 * 60 * 24; // 24 hours
-
-function expectedCode() {
-  return process.env.DATAROOM_ACCESS_CODE || "792";
-}
+import {
+  DATAROOM_ACCESS_COOKIE,
+  buildDataroomUnlockCookie,
+  dataroomAccessCode,
+} from "@/lib/dataroom-auth";
 
 function isUnlocked(req: NextApiRequest) {
-  return req.cookies?.[COOKIE] === "1";
-}
-
-function unlockCookie(secure: boolean) {
-  const parts = [
-    `${COOKIE}=1`,
-    "Path=/",
-    "HttpOnly",
-    "SameSite=Lax",
-    `Max-Age=${MAX_AGE}`,
-  ];
-  if (secure) parts.push("Secure");
-  return parts.join("; ");
+  return req.cookies?.[DATAROOM_ACCESS_COOKIE] === "1";
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -30,11 +16,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === "POST") {
     const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
-    if (!code || code !== expectedCode()) {
+    if (!code || code !== dataroomAccessCode()) {
       return res.status(401).json({ ok: false, error: "invalid_code" });
     }
 
-    res.setHeader("Set-Cookie", unlockCookie(process.env.NODE_ENV === "production"));
+    res.setHeader("Set-Cookie", buildDataroomUnlockCookie(process.env.NODE_ENV === "production"));
     return res.status(200).json({ ok: true });
   }
 

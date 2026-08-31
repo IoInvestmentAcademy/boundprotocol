@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const COOKIE = "bound_dataroom";
+import { DATAROOM_ACCESS_COOKIE } from "@/lib/dataroom-auth";
 
 function isProtected(pathname: string) {
   if (pathname.startsWith("/legal/")) return true;
@@ -19,7 +18,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (request.cookies.get(COOKIE)?.value === "1") {
+  if (request.cookies.get(DATAROOM_ACCESS_COOKIE)?.value === "1") {
     return NextResponse.next();
   }
 
