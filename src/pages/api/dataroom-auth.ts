@@ -4,7 +4,7 @@ const COOKIE = "bound_dataroom";
 const MAX_AGE = 60 * 60 * 24; // 24 hours
 
 function expectedCode() {
-  return process.env.DATAROOM_ACCESS_CODE || "888";
+  return process.env.DATAROOM_ACCESS_CODE || "792";
 }
 
 function isUnlocked(req: NextApiRequest) {
